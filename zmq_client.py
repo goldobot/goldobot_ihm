@@ -3,13 +3,17 @@ import struct
 from PyQt5.QtCore import QObject, QSocketNotifier, pyqtSignal
 
 from messages import PropulsionTelemetry
+from messages import PropulsionTelemetryEx
 from messages import OdometryConfig
+from messages import PropulsionControllerConfig
 
 class ZmqClient(QObject):
     heartbeat = pyqtSignal(int)
     match_started = pyqtSignal(int)
     propulsion_telemetry = pyqtSignal(object)
+    propulsion_telemetry_ex = pyqtSignal(object)
     odometry_config = pyqtSignal(object)
+    propulsion_controller_config = pyqtSignal(object)
 
     def __init__(self, parent = None):
         super(ZmqClient, self).__init__(None)
@@ -51,5 +55,12 @@ class ZmqClient(QObject):
         if msg_type == 4:
             timestamp = struct.unpack('<I', msg[2:6])[0]
             self.match_started.emit(timestamp)
+        if msg_type == 6:
+            telemetry = PropulsionTelemetryEx(msg[2:])
+            self.propulsion_telemetry_ex.emit(telemetry)
+        if msg_type == 7:
+            print(struct.unpack('<HH', msg[2:]))
         if msg_type == 32:
             self.odometry_config.emit(OdometryConfig(msg[2:]))
+        if msg_type == 33:
+            self.propulsion_controller_config.emit(PropulsionControllerConfig(msg[2:]))
