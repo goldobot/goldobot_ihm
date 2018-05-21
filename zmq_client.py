@@ -14,17 +14,18 @@ class ZmqClient(QObject):
     propulsion_telemetry_ex = pyqtSignal(object)
     odometry_config = pyqtSignal(object)
     propulsion_controller_config = pyqtSignal(object)
+    dynamixel_registers = pyqtSignal(int, int, object)
 
     def __init__(self, parent = None):
         super(ZmqClient, self).__init__(None)
         self._context = zmq.Context()
 
         self._sub_socket = self._context.socket(zmq.SUB)
-        self._sub_socket.connect('tcp://localhost:3001')
+        self._sub_socket.connect('tcp://192.168.1.222:3001')
         self._sub_socket.setsockopt(zmq.SUBSCRIBE,b'')
 
         self._push_socket = self._context.socket(zmq.PUSH)
-        self._push_socket.connect('tcp://localhost:3002')
+        self._push_socket.connect('tcp://192.168.1.222:3002')
 
         self._notifier = QSocketNotifier(self._sub_socket.getsockopt(zmq.FD), QSocketNotifier.Read, self)
         self._notifier.activated.connect(self._on_sub_socket_event)
@@ -64,3 +65,6 @@ class ZmqClient(QObject):
             self.odometry_config.emit(OdometryConfig(msg[2:]))
         if msg_type == 33:
             self.propulsion_controller_config.emit(PropulsionControllerConfig(msg[2:]))
+        if msg_type == 35:
+            id_, address = struct.unpack('<BB', msg[2:4])
+            self.dynamixel_registers.emit(id_, address, msg[4:])
