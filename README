@@ -1,0 +1,5 @@
+create an environment with python virtualenv command
+run pip install -r requirements.txt
+run python main.py to launch interface
+run comm_uart executable on the raspbery pi
+edit robot ip in zmq_client.py if necessary
