@@ -74,6 +74,6 @@ class ZmqClient(QObject):
         if msg_type == message_types.DbgGetPropulsionConfig:
             self.propulsion_controller_config.emit(PropulsionControllerConfig(msg[2:]))
 
-        if msg_type == 35:
+        if msg_type == message_types.DbgDynamixelGetRegisters:
             id_, address = struct.unpack('<BB', msg[2:4])
             self.dynamixel_registers.emit(id_, address, msg[4:])

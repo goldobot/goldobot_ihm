@@ -9,6 +9,7 @@ from PyQt5.QtWidgets import QLineEdit
 from PyQt5.QtWidgets import QTabWidget
 
 import struct
+import message_types
 
 class ArmValuesWidget(QWidget):
     def __init__(self, servos):
@@ -36,6 +37,11 @@ class ArmValuesWidget(QWidget):
             cb = (lambda b: lambda : self._on_torque_enable_changed(b))(id_)
             wid_torque_enable.stateChanged.connect(cb)
 
+            wid_torque_limit = QSpinBox()
+            wid_torque_limit.setRange(0,4096)
+            cb = (lambda b: lambda : self._on_torque_limit_changed(b))(id_)
+            wid_torque_limit.valueChanged.connect(cb)
+
             wid_current_pos = QLineEdit()
             wid_current_pos.setReadOnly(True)
 
@@ -55,12 +61,13 @@ class ArmValuesWidget(QWidget):
             layout.addWidget(QLabel(k),i,0)
             layout.addWidget(wid_goal_pos,i,1)
             layout.addWidget(wid_torque_enable,i,2)
+            layout.addWidget(wid_torque_limit,i,3)
             layout.addWidget(wid_current_pos,i,4)
             layout.addWidget(wid_current_speed,i,5)
             layout.addWidget(wid_current_load,i,6)
             layout.addWidget(wid_current_voltage,i,7)
             layout.addWidget(wid_current_temp,i,8)
-            self._widgets[id_] = (wid_goal_pos, wid_torque_enable, None, wid_current_pos, wid_current_speed,
+            self._widgets[id_] = (wid_goal_pos, wid_torque_enable, wid_torque_limit, wid_current_pos, wid_current_speed,
              wid_current_load, wid_current_voltage, wid_current_temp)
             i+=1
         self._button_read_state = QPushButton('Read')
@@ -93,7 +100,7 @@ class ArmValuesWidget(QWidget):
 
     def read_dynamixels_state(self):
         for id_ in self.ids:
-            self._client.send_message(77,struct.pack('<BBB',id_, 0x24, 8))
+            self._client.send_message(message_types.DbgDynamixelGetRegisters,struct.pack('<BBB',id_, 0x24, 8))
 
     def _on_dynamixel_registers(self, id_, address, data):
         if address == 36 and len(data) == 8:
@@ -108,16 +115,24 @@ class ArmValuesWidget(QWidget):
         wids = self._widgets[id_]
         # Set position
         if wids[1].isChecked():
-            self._client.send_message(75,struct.pack('<BH',id_, wids[0].value()))
+            self._client.send_message(message_types.DbgDynamixelSetGoalPosition,struct.pack('<BH',id_, wids[0].value()))
         # Read registers
-        self._client.send_message(77,struct.pack('<BBB',id_, 0x24, 8))
+        self._client.send_message(message_types.DbgDynamixelGetRegisters, struct.pack('<BBB',id_, 0x24, 8))
+
+    def _on_torque_limit_changed(self, id_):
+        wids = self._widgets[id_]
+        # Set position
+        if wids[1].isChecked():
+            self._client.send_message(message_types.DbgDynamixelSetTorqueLimit,struct.pack('<BH',id_, wids[2].value()))
+        # Read registers
+        self._client.send_message(message_types.DbgDynamixelGetRegisters, struct.pack('<BBB',id_, 0x24, 8))
 
     def _on_torque_enable_changed(self, id_):
         wids = self._widgets[id_]
         # Set torque enable
-        self._client.send_message(74,struct.pack('<BB',id_, wids[1].isChecked()))
+        self._client.send_message(message_types.DbgDynamixelSetTorqueEnable,struct.pack('<BB',id_, wids[1].isChecked()))
         # Read registers
-        self._client.send_message(77,struct.pack('<BBB',id_, 0x24, 8))
+        self._client.send_message(message_types.DbgDynamixelGetRegisters,struct.pack('<BBB',id_, 0x24, 8))
 
     def update_values(self, values):
         for k, v in values.items():
