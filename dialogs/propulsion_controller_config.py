@@ -6,6 +6,7 @@ from widgets.properties_editor import PropertiesEditorWidget
 
 from messages import PropulsionControllerConfig
 from messages import PIDConfig
+import message_types
 
 class PropulsionControllerConfigDialog(QDialog):
     def __init__(self, parent = None):
@@ -67,7 +68,8 @@ class PropulsionControllerConfigDialog(QDialog):
 
     def on_get_button_clicked(self):
         if self._client is not None:
-            self._client.send_message(66,b'')
+            print('m')
+            self._client.send_message(message_types.DbgGetPropulsionConfig,b'')
 
     def on_set_button_clicked(self):
         config = self._props.get_value()
@@ -76,7 +78,7 @@ class PropulsionControllerConfigDialog(QDialog):
         config.translation_pid_config = self._translation_pid_props.get_value()
         config.yaw_pid_config = self._yaw_pid_props.get_value()
         if self._client is not None:
-            self._client.send_message(67,config.serialize())
+            self._client.send_message(message_types.DbgSetPropulsionConfig,config.serialize())
 
     def update_propulsion_controller_config(self, config):
         self._speed_pid_props.set_value(config.speed_pid_config)

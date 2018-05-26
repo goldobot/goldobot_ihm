@@ -3,11 +3,12 @@ import signal
 import math
 import struct
 
+from optparse import OptionParser
+
 from PyQt5.QtWidgets import QMainWindow, QApplication, QWidget, QLabel, QLineEdit, QGridLayout, QFrame, QPushButton, QSpinBox, QSizePolicy
 from PyQt5.QtCore import QObject, pyqtSignal, QSize, QRectF, QPointF, Qt, QTimer
 from PyQt5.QtWidgets import QTabWidget, QAction, QDialog, QVBoxLayout, QCheckBox
-from PyQt5.QtWidgets import QGraphicsView, QGraphicsScene, QGraphicsRectItem, QHBoxLayout
-from PyQt5.QtGui import QPolygonF, QPen, QBrush, QColor
+from PyQt5.QtWidgets import  QHBoxLayout
 
 from widgets.table_view import TableViewWidget
 
@@ -17,6 +18,7 @@ from widgets.robot_status import RobotStatusWidget
 from widgets.properties_editor import PropertiesEditorWidget
 from dialogs.odometry_config import OdometryConfigDialog
 from dialogs.propulsion_controller_config import PropulsionControllerConfigDialog
+from dialogs.test_propulsion import PropulsionTestDialog
 from dialogs.test_arms import TestArmsDialog
 
 ax12_registers = [
@@ -126,12 +128,14 @@ class MainWindow(QMainWindow):
         # Create actions
         self._action_open_odometry_config = QAction("Configure Odometry")
         self._action_open_propulsion_controller_config = QAction("Configure Propulsion controller")
+        self._action_propulsion_test = QAction("Test propulsion")
         self._action_arms_test = QAction("Test arms")
         self._action_dynamixel_ax12_test = QAction("Test dynamixel AX12")
         # Add menu
         tools_menu = self.menuBar().addMenu("Tools")
         tools_menu.addAction(self._action_open_odometry_config)
         tools_menu.addAction(self._action_open_propulsion_controller_config)
+        tools_menu.addAction(self._action_propulsion_test)
         tools_menu.addAction(self._action_arms_test)
         tools_menu.addAction(self._action_dynamixel_ax12_test)
 
@@ -152,17 +156,24 @@ class MainWindow(QMainWindow):
         # Connect signals
         self._action_open_odometry_config.triggered.connect(self._open_odometry_config)
         self._action_open_propulsion_controller_config.triggered.connect(self._open_propulsion_controller_config)
+        self._action_propulsion_test.triggered.connect(self._open_propulsion_test)
         self._action_arms_test.triggered.connect(self._open_arms_test)
         self._action_dynamixel_ax12_test.triggered.connect(self._open_dynamixel_ax12_test)
 
         self._dialog_odometry_config = OdometryConfigDialog(self)
         self._dialog_propulsion_controller_config = PropulsionControllerConfigDialog(self)
+        self._dialog_propulsion_test = PropulsionTestDialog()
         self._dialog_arms_test = TestArmsDialog()
         self._dialog_dynamixel_ax12_test = TestDynamixelAx12Dialog()
 
-        self._client = ZmqClient()
+        #Dirty
+        parser = OptionParser()
+        parser.add_option('--robot-ip', default='192.168.1.222')
+        (options, args) = parser.parse_args(sys.argv)
+        self._client = ZmqClient(ip=options.robot_ip)
         self._dialog_odometry_config.set_client(self._client)
         self._dialog_propulsion_controller_config.set_client(self._client)
+        self._dialog_propulsion_test.set_client(self._client)
         self._dialog_arms_test.set_client(self._client)
         self._dialog_dynamixel_ax12_test.set_client(self._client)
         self._widget_robot_status.set_client(self._client)
@@ -173,6 +184,9 @@ class MainWindow(QMainWindow):
 
     def _open_propulsion_controller_config(self):
         self._dialog_propulsion_controller_config.show()
+
+    def _open_propulsion_test(self):
+        self._dialog_propulsion_test.show()  
 
     def _open_arms_test(self):
         self._dialog_arms_test.show()

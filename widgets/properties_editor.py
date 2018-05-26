@@ -10,7 +10,7 @@ class PropertiesEditorWidget(QWidget):
 
         i = 0
         for k, t in self._properties:
-            wid = QLineEdit()
+            wid = QLineEdit(str(t()))
             wid.setReadOnly(readonly)       
             layout.addWidget(QLabel(k),i,0)
             layout.addWidget(wid,i,1)

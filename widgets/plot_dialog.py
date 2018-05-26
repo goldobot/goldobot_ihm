@@ -7,7 +7,7 @@ from matplotlib.figure import Figure
 
 
 class PlotDialog(QtWidgets.QDialog):
-    def __init__(self, data,  parent=None):
+    def __init__(self,  parent=None):
         super(PlotDialog, self).__init__(parent)
         self.resize(1200,400)
 
@@ -28,12 +28,20 @@ class PlotDialog(QtWidgets.QDialog):
         layout.addWidget(self.canvas)
         self.setLayout(layout)
 
-        ax = self.figure.add_subplot(111)
+        self._ax = self.figure.add_subplot(211)
+        self._ax2 = self.figure.add_subplot(212)
 
         # discards the old graph
-        ax.clear()
+        self._ax.clear()
 
         # plot data
-        ax.plot(data, '*-')
+        #ax.plot(data, '*-')
 
+        self.canvas.draw()
+
+    def plot_curve(self,idx, points):
+        if idx == 0:
+            self._ax.plot(points, '*-')
+        if idx == 1:
+            self._ax2.plot(points, '*-')
         self.canvas.draw()

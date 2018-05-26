@@ -7,25 +7,27 @@ from messages import PropulsionTelemetryEx
 from messages import OdometryConfig
 from messages import PropulsionControllerConfig
 
+import message_types
+
 class ZmqClient(QObject):
     heartbeat = pyqtSignal(int)
-    match_started = pyqtSignal(int)
+    start_of_match = pyqtSignal(int)
     propulsion_telemetry = pyqtSignal(object)
     propulsion_telemetry_ex = pyqtSignal(object)
     odometry_config = pyqtSignal(object)
     propulsion_controller_config = pyqtSignal(object)
     dynamixel_registers = pyqtSignal(int, int, object)
 
-    def __init__(self, parent = None):
+    def __init__(self, ip=None, parent = None):
         super(ZmqClient, self).__init__(None)
         self._context = zmq.Context()
 
         self._sub_socket = self._context.socket(zmq.SUB)
-        self._sub_socket.connect('tcp://192.168.1.222:3001')
+        self._sub_socket.connect('tcp://{}:3001'.format(ip))
         self._sub_socket.setsockopt(zmq.SUBSCRIBE,b'')
 
         self._push_socket = self._context.socket(zmq.PUSH)
-        self._push_socket.connect('tcp://192.168.1.222:3002')
+        self._push_socket.connect('tcp://{}:3002'.format(ip))
 
         self._notifier = QSocketNotifier(self._sub_socket.getsockopt(zmq.FD), QSocketNotifier.Read, self)
         self._notifier.activated.connect(self._on_sub_socket_event)
@@ -47,24 +49,31 @@ class ZmqClient(QObject):
     def _on_message_received(self, msg):
         msg_type = struct.unpack('<H', msg[0:2])[0]
 
-        if msg_type == 1:
+        if msg_type == message_types.Heartbeat:
             timestamp = struct.unpack('<I', msg[2:6])[0]
             self.heartbeat.emit(timestamp)
-        if msg_type == 3:
+
+        if msg_type == message_types.PropulsionTelemetry:
             telemetry = PropulsionTelemetry(msg[2:])
             self.propulsion_telemetry.emit(telemetry)
-        if msg_type == 4:
-            timestamp = struct.unpack('<I', msg[2:6])[0]
-            self.match_started.emit(timestamp)
-        if msg_type == 6:
+
+        if msg_type == message_types.PropulsionTelemetryEx:
             telemetry = PropulsionTelemetryEx(msg[2:])
             self.propulsion_telemetry_ex.emit(telemetry)
-        if msg_type == 7:
+
+        if msg_type == message_types.StartOfMatch:
+            timestamp = struct.unpack('<I', msg[2:6])[0]
+            self.start_of_match.emit(timestamp)
+
+        if msg_type == message_types.CommStats:
             print(struct.unpack('<HH', msg[2:]))
-        if msg_type == 32:
+
+        if msg_type == message_types.DbgGetOdometryConfig:
             self.odometry_config.emit(OdometryConfig(msg[2:]))
-        if msg_type == 33:
+
+        if msg_type == message_types.DbgGetPropulsionConfig:
             self.propulsion_controller_config.emit(PropulsionControllerConfig(msg[2:]))
+
         if msg_type == 35:
             id_, address = struct.unpack('<BB', msg[2:4])
             self.dynamixel_registers.emit(id_, address, msg[4:])
