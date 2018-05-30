@@ -20,6 +20,7 @@ from dialogs.odometry_config import OdometryConfigDialog
 from dialogs.propulsion_controller_config import PropulsionControllerConfigDialog
 from dialogs.test_propulsion import PropulsionTestDialog
 from dialogs.test_arms import TestArmsDialog
+from dialogs.test_actuators import TestActuatorsDialog
 
 ax12_registers = [
     ('model_number',0x00, 2, 'r'),
@@ -131,6 +132,7 @@ class MainWindow(QMainWindow):
         self._action_propulsion_test = QAction("Test propulsion")
         self._action_arms_test = QAction("Test arms")
         self._action_dynamixel_ax12_test = QAction("Test dynamixel AX12")
+        self._action_actuators_test = QAction("Test actionneurs")
         # Add menu
         tools_menu = self.menuBar().addMenu("Tools")
         tools_menu.addAction(self._action_open_odometry_config)
@@ -138,6 +140,7 @@ class MainWindow(QMainWindow):
         tools_menu.addAction(self._action_propulsion_test)
         tools_menu.addAction(self._action_arms_test)
         tools_menu.addAction(self._action_dynamixel_ax12_test)
+        tools_menu.addAction(self._action_actuators_test)
 
         self._main_widget = QWidget()
         self._table_view = TableViewWidget()
@@ -159,12 +162,14 @@ class MainWindow(QMainWindow):
         self._action_propulsion_test.triggered.connect(self._open_propulsion_test)
         self._action_arms_test.triggered.connect(self._open_arms_test)
         self._action_dynamixel_ax12_test.triggered.connect(self._open_dynamixel_ax12_test)
+        self._action_actuators_test.triggered.connect(self._open_actuators_test)
 
         self._dialog_odometry_config = OdometryConfigDialog(self)
         self._dialog_propulsion_controller_config = PropulsionControllerConfigDialog(self)
         self._dialog_propulsion_test = PropulsionTestDialog()
         self._dialog_arms_test = TestArmsDialog()
         self._dialog_dynamixel_ax12_test = TestDynamixelAx12Dialog()
+        self._dialog_actuators_test = TestActuatorsDialog()
 
         #Dirty
         parser = OptionParser()
@@ -193,6 +198,9 @@ class MainWindow(QMainWindow):
 
     def _open_dynamixel_ax12_test(self):
         self._dialog_dynamixel_ax12_test.show()
+
+    def _open_actuators_test(self):
+        self._dialog_actuators_test.show()
 
 
 
