@@ -12,10 +12,11 @@ import struct
 import message_types
 
 class ArmValuesWidget(QWidget):
-    def __init__(self, servos):
+    def __init__(self, servos, motor_id):
         super(ArmValuesWidget, self).__init__()
         self.ids = [s[1] for s in servos]        
         self._widgets = {}
+        self._motor_id = motor_id
         layout = QGridLayout()
 
         i = 1
@@ -72,12 +73,19 @@ class ArmValuesWidget(QWidget):
             i+=1
         self._button_read_state = QPushButton('Read')
         self._button_copy_pos = QPushButton('Copy')
+        self._spinbox_motor = QSpinBox()
+        self._spinbox_motor.setRange(-511,511)
+        self._button_motor_activate = QPushButton('Motor')
+        self._button_motor_activate.setCheckable(True)
         layout.addWidget(self._button_read_state,i, 0)
         layout.addWidget(self._button_copy_pos,i, 1)
+        layout.addWidget(self._spinbox_motor,i, 2)
+        layout.addWidget(self._button_motor_activate,i, 3)
         self.setLayout(layout)
 
         self._button_read_state.clicked.connect(self.read_dynamixels_state)
         self._button_copy_pos.clicked.connect(self._copy_pos)
+        self._button_motor_activate.toggled.connect(self._motor_activate)
 
     def update_dynamixel_state(self, id_, values):
         if id_ in self._widgets:
@@ -134,6 +142,12 @@ class ArmValuesWidget(QWidget):
         # Read registers
         self._client.send_message(message_types.DbgDynamixelGetRegisters,struct.pack('<BBB',id_, 0x24, 8))
 
+    def _motor_activate(self):
+        if self._button_motor_activate.isChecked():
+            self._client.send_message(message_types.FpgaCmdDCMotor,struct.pack('<Bh', self._motor_id, self._spinbox_motor.value()))
+        else:
+            self._client.send_message(message_types.FpgaCmdDCMotor,struct.pack('<Bh', self._motor_id, 0))
+
     def update_values(self, values):
         for k, v in values.items():
             self._widgets[k].setValue(v)
@@ -152,19 +166,19 @@ class TestArmsDialog(QWidget):
             ('rotation', 83),
             ('shoulder', 84),
             ('elbow', 5),
-            ('head', 6)])
+            ('head', 6)], 0)
         self._right_arm_values = ArmValuesWidget([
             ('slider',1),
             ('rotation', 81),
             ('shoulder', 82),
             ('elbow', 2),
-            ('head', 3)])
+            ('head', 3)], 1)
 
         self._other_values = ArmValuesWidget([
             ('columns',62),
             ('bascule', 7),
             ('gache', 8)
-           ])
+           ], 2)
 
         self._button_reset = QPushButton('Reset')
         layout = QGridLayout()
