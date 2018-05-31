@@ -68,8 +68,15 @@ class TestActuatorsDialog(QDialog):
             ('Servomoteur 4 :', 4),
             ('Servomoteur 5 :', 5)])
 
+        self._button_reset = QPushButton('Reset')
+
         layout = QGridLayout()
         tab_widget = QTabWidget()
         tab_widget.addTab(self._servo_values, "Servo values")
         layout.addWidget(tab_widget)
+        layout.addWidget(self._button_reset)
         self.setLayout(layout)
+        self._button_reset.clicked.connect(self._reset)
+
+    def _reset(self):
+        pass
