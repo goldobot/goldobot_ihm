@@ -1,0 +1,14 @@
+#begin 0,0,1
+move,0,0,500
+move,1,0,500
+delay,1000
+pump,-511,500
+pump,0,0
+#end
+#begin 1,0,1
+move,0,0,500
+delay,1000
+delay,1000
+pump,-511,500
+pump,0,0
+#end

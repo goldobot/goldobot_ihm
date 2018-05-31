@@ -77,15 +77,32 @@ class ArmValuesWidget(QWidget):
         self._spinbox_motor.setRange(-511,511)
         self._button_motor_activate = QPushButton('Motor')
         self._button_motor_activate.setCheckable(True)
+
+        self._spinbox_position = QSpinBox()
+        self._spinbox_position.setRange(0,32)
+        self._button_go_position = QPushButton('sxecute sequence')
+        self._button_set_position = QPushButton('Set position')
+
         layout.addWidget(self._button_read_state,i, 0)
         layout.addWidget(self._button_copy_pos,i, 1)
         layout.addWidget(self._spinbox_motor,i, 2)
         layout.addWidget(self._button_motor_activate,i, 3)
+
+        self._line_edit_servo = QLineEdit()
+        layout.addWidget(self._line_edit_servo, i, 4)
+
+        layout.addWidget(self._spinbox_position, i, 5)
+        layout.addWidget(self._button_go_position, i, 6)
+        #layout.addWidget(self._button_set_position, i, 7)
+
+
         self.setLayout(layout)
 
         self._button_read_state.clicked.connect(self.read_dynamixels_state)
         self._button_copy_pos.clicked.connect(self._copy_pos)
         self._button_motor_activate.toggled.connect(self._motor_activate)
+        self._line_edit_servo.returnPressed.connect(self._servoo)
+        self._button_go_position.clicked.connect(self._execute_sequence)
 
     def update_dynamixel_state(self, id_, values):
         if id_ in self._widgets:
@@ -148,9 +165,19 @@ class ArmValuesWidget(QWidget):
         else:
             self._client.send_message(message_types.FpgaCmdDCMotor,struct.pack('<Bh', self._motor_id, 0))
 
+    def _servoo(self):
+        val = int(self._line_edit_servo.text())
+        self._client.send_message(message_types.FpgaCmdServo,struct.pack('<BI', 0,val))
+
+    def _execute_sequence(self):
+        self._client.send_message(message_types.DbgArmsExecuteSequence,
+            struct.pack('<BB', self._motor_id, self._spinbox_position.value()))
+
     def update_values(self, values):
         for k, v in values.items():
             self._widgets[k].setValue(v)
+
+
 
     
 
@@ -181,6 +208,7 @@ class TestArmsDialog(QWidget):
            ], 2)
 
         self._button_reset = QPushButton('Reset')
+        self._button_send_config = QPushButton('send config')
         layout = QGridLayout()
         tab_widget = QTabWidget()
         tab_widget.addTab(self._left_arm_values, "Left arm")
@@ -188,8 +216,10 @@ class TestArmsDialog(QWidget):
         tab_widget.addTab(self._other_values, "Others")
         layout.addWidget(tab_widget)
         layout.addWidget(self._button_reset)
+        layout.addWidget(self._button_send_config)
         self.setLayout(layout)
         self._button_reset.clicked.connect(self._reset)
+        self._button_send_config.clicked.connect(self._send_config)
         
 
     def set_client(self, client):
@@ -200,3 +230,44 @@ class TestArmsDialog(QWidget):
 
     def _reset(self):
         self._client.send_message(79,b'')
+
+    def _send_config(self):
+        #set positions
+        left_arm_positions = [[int(e) for e in l.strip().split(',')] for l in open('robot_config/left_arm_positions.txt')]
+
+        for p in left_arm_positions:
+            self._client.send_message(message_types.DbgArmsSetPose,
+                struct.pack('<BBHHHHH', 0, p[0], p[1], p[2], p[3], p[4], p[5]))
+
+        right_arm_positions = [[int(e) for e in l.strip().split(',')] for l in open('robot_config/right_arm_positions.txt')]
+
+        for p in right_arm_positions:
+            self._client.send_message(message_types.DbgArmsSetPose,
+                struct.pack('<BBHHHHH', 1, p[0], p[1], p[2], p[3], p[4], p[5]))
+        #set sequences
+        commands = []
+        sequences = []
+        for l in open('robot_config/arms_sequences.txt'):
+            if l.startswith('#begin'):
+                foo = [int(e) for e in l[7:].strip().split(',')]
+                cur_seq = [len(commands), len(commands), foo[0], foo[1]]
+            elif l.startswith('#end'):
+                cur_seq[1] = len(commands)
+                sequences.append(cur_seq)
+            else:
+                foo = l.strip().split(',')
+                if foo[0] == 'delay':
+                    commands.append(struct.pack('<BBBBH',0,0,0,0, int(foo[1])))
+                if foo[0] == 'move':
+                    commands.append(struct.pack('<BBBBH',1,0,int(foo[1]), int(foo[2]), int(foo[3])))
+                if foo[0] == 'pump':
+                    commands.append(struct.pack('<BBhH',2,0,int(foo[1]), int(foo[2])))
+        for i in range(len(commands)):
+            cmd = commands[i]
+            print(cmd)
+            self._client.send_message(message_types.DbgArmsSetCommand,struct.pack('<B', i) + cmd)
+        seqs = b''.join([struct.pack('<BBBB', 0, 0, s[0], s[1]) for s in sequences])
+        self._client.send_message(message_types.DbgArmsSetSequences, seqs)
+        print(seqs)
+
+

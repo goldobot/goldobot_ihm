@@ -41,6 +41,12 @@ DbgPropulsionExecuteReposition=87
 DbgMiscRepositionStartGreen=100
 DbgReset=127
 
+DbgArmsSetPose=160
+DbgArmsSetCommand=161
+DbgArmsSetTorques=162
+DbgArmsSetSequences=163
+DbgArmsExecuteSequence=164
+
 FpgaGetVersion=256
 FpgaCmdServo=272
 FpgaCmdDCMotor=288
