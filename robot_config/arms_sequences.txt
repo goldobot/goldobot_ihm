@@ -1,9 +1,15 @@
 #begin 0,0,1
-move,0,0,500
+//move,position_id, torque_setting, time_ms
+move,0,0,1000
 move,1,0,500
+//delay,time_ms
 delay,1000
+//pump,pwm,time_ms
 pump,-511,500
 pump,0,0
+//belt,pwm,time_ms
+belt,-256,1000
+belt,0,0
 #end
 #begin 1,0,1
 move,0,0,500

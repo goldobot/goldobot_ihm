@@ -202,7 +202,7 @@ class TestArmsDialog(QWidget):
             ('head', 3)], 1)
 
         self._other_values = ArmValuesWidget([
-            ('columns',62),
+            ('pince',101),
             ('bascule', 7),
             ('gache', 8)
            ], 2)
@@ -233,13 +233,13 @@ class TestArmsDialog(QWidget):
 
     def _send_config(self):
         #set positions
-        left_arm_positions = [[int(e) for e in l.strip().split(',')] for l in open('robot_config/left_arm_positions.txt')]
+        left_arm_positions = [[int(e) for e in l.strip().split(',')] for l in open('robot_config/left_arm_positions.txt') if not l.startswith('//')]
 
         for p in left_arm_positions:
             self._client.send_message(message_types.DbgArmsSetPose,
                 struct.pack('<BBHHHHH', 0, p[0], p[1], p[2], p[3], p[4], p[5]))
 
-        right_arm_positions = [[int(e) for e in l.strip().split(',')] for l in open('robot_config/right_arm_positions.txt')]
+        right_arm_positions = [[int(e) for e in l.strip().split(',')] for l in open('robot_config/right_arm_positions.txt') if not l.startswith('//')]
 
         for p in right_arm_positions:
             self._client.send_message(message_types.DbgArmsSetPose,
@@ -248,6 +248,8 @@ class TestArmsDialog(QWidget):
         commands = []
         sequences = []
         for l in open('robot_config/arms_sequences.txt'):
+            if l.startswith('//'):
+                continue
             if l.startswith('#begin'):
                 foo = [int(e) for e in l[7:].strip().split(',')]
                 cur_seq = [len(commands), len(commands), foo[0], foo[1]]
@@ -262,6 +264,8 @@ class TestArmsDialog(QWidget):
                     commands.append(struct.pack('<BBBBH',1,0,int(foo[1]), int(foo[2]), int(foo[3])))
                 if foo[0] == 'pump':
                     commands.append(struct.pack('<BBhH',2,0,int(foo[1]), int(foo[2])))
+                if foo[0] == 'belt':
+                    commands.append(struct.pack('<BBhH',3,0,int(foo[1]), int(foo[2])))
         for i in range(len(commands)):
             cmd = commands[i]
             print(cmd)
