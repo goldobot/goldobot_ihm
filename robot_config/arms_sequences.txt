@@ -1,20 +1,51 @@
+//prise cube droite
 #begin 0,0,1
 //move,position_id, torque_setting, time_ms
-move,0,0,1000
 move,1,0,500
+move,2,0,500
+pump,-511,0
+move,3,0,0
+move,4,0,500
+pump,-200,500
+move,5,0,1000
+move,0,0,1000
+
 //delay,time_ms
-delay,1000
+//delay,1000
 //pump,pwm,time_ms
-pump,-511,500
-pump,0,0
+//pump,-511,500
+//pump,0,0
 //belt,pwm,time_ms
-belt,-256,1000
-belt,0,0
+//belt,-256,1000
+//belt,0,0
 #end
+
 #begin 1,0,1
+move,21,0,1000
+move,22,0,1000
+pump,-400,0
+move,23,0,1000
+belt,-256,0
+move,24,0,1000
+pump,0,0
+move,25,0,1000
+belt,0,0
+move,26,0,1000
+move,27,0,1000
+move,0,0,1000
+#end
+
+#begin 2,0,1
 move,0,0,500
 delay,1000
 delay,1000
 pump,-511,500
 pump,0,0
+#end
+
+#begin 3,0,1
+move,0,0,500
+move,1,0,500
+move,2,0,500
+move,3,0,500
 #end

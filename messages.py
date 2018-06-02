@@ -20,7 +20,7 @@ class PropulsionTelemetry:
 
 class PropulsionTelemetryEx:
     def __init__(self, data):
-        unpacked = struct.unpack('<hhhhhhh', data[:14])
+        unpacked = struct.unpack('<hhhhhhhii', data[:22])
         self.target_x = unpacked[0] * 0.25e-3
         self.target_y = unpacked[1] * 0.25e-3
         self.target_yaw = unpacked[2] * math.pi / 32767
@@ -28,11 +28,9 @@ class PropulsionTelemetryEx:
         self.target_yaw_rate = unpacked[4] * 1e-3
         self.longitudinal_error = unpacked[5] * 0.25e-3
         self.lateral_error = unpacked[6] * 0.25e-3
-        return
-        self.left_encoder = unpacked[5]
-        self.right_encoder = unpacked[6]
-        self.left_pwm = unpacked[7] *1e-2
-        self.right_pwm = unpacked[8] * 1e-2
+        self.left_encoder_acc = unpacked[7]
+        self.right_encoder_acc = unpacked[8]
+
 
 class OdometryConfig:
     def __init__(self, data = None):
@@ -88,9 +86,9 @@ class PropulsionControllerConfig:
             self.speed_pid_config = PIDConfig(data[0:36])
             self.yaw_rate_pid_config = PIDConfig(data[36:72])
             self.translation_pid_config = PIDConfig(data[72:108])
-            self.yaw_pid_config = PIDConfig(data[108:144])
-            unpacked = struct.unpack('<fffff', data[144:])
-            print(unpacked)
+            self.translation_cruise_pid_config = PIDConfig(data[108:144])
+            self.yaw_pid_config = PIDConfig(data[144:180])
+            unpacked = struct.unpack('<fffff', data[180:])
             self.lookahead_distance = unpacked[0]
             self.lookahead_time = unpacked[1]
             self.static_pwm_limit = unpacked[2]
@@ -107,6 +105,7 @@ class PropulsionControllerConfig:
             [self.speed_pid_config.serialize(),
             self.yaw_rate_pid_config.serialize(),
             self.translation_pid_config.serialize(),
+            self.translation_cruise_pid_config.serialize(),
             self.yaw_pid_config.serialize(),
             dat])
 

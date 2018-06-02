@@ -35,6 +35,7 @@ class PropulsionTestDialog(QDialog):
 
         self._position_steps_button = QPushButton('position steps')
         self._speed_steps_button = QPushButton('speed steps')
+        self._yaw_rate_steps_button = QPushButton('yaw rate steps')
         self._execute_trajectory_button = QPushButton('trajectory')
 
         self._pose_x_edit = QLineEdit('0')
@@ -60,7 +61,8 @@ class PropulsionTestDialog(QDialog):
         layout.addWidget(self._zero_pwm_button,4,1)
 
         #layout.addWidget(self._set_pwm_button,5,0)
-        layout.addWidget(self._speed_steps_button,5,1)
+        layout.addWidget(self._speed_steps_button,5,0)
+        layout.addWidget(self._yaw_rate_steps_button,5,1)
 
         layout.addWidget(QLabel('x(mm)'),6,0)
         layout.addWidget(self._pose_x_edit,6,1)
@@ -83,7 +85,10 @@ class PropulsionTestDialog(QDialog):
         self._motors_disable_button.clicked.connect(self._motors_disable)
         self._set_pwm_button.clicked.connect(self._set_pwm)
         self._zero_pwm_button.clicked.connect(self._zero_pwm)
+
         self._speed_steps_button.clicked.connect(self._speed_steps)
+        self._yaw_rate_steps_button.clicked.connect(self._yaw_rate_steps)
+
         self._button_set_pose.clicked.connect(self._set_pose)
         self._button_reposition.clicked.connect(self._reposition_forward)
         self._execute_trajectory_button.clicked.connect(self._test_trajectory)
@@ -138,6 +143,11 @@ class PropulsionTestDialog(QDialog):
         self._telemetry_buffer = []
         QTimer.singleShot(5000, self.foo)
 
+    def _yaw_rate_steps(self):
+        self._client.send_message(message_types.DbgPropulsionTest, struct.pack('<B',1))
+        self._telemetry_buffer = []
+        QTimer.singleShot(5000, self.foo)
+
     def _test_trajectory(self):
         self._client.send_message(message_types.DbgPropulsionExecuteTrajectory, struct.pack('<Bfff',0, 0.2,0.2,0.2))
         self._telemetry_buffer = []
@@ -146,10 +156,17 @@ class PropulsionTestDialog(QDialog):
 
     def foo(self):
         self._plt_widget = PlotDialog()
-        self._plt_widget.plot_curve(0,[t[1].target_speed for t in self._telemetry_buffer])
-        self._plt_widget.plot_curve(0,[t[0].speed for t in self._telemetry_buffer])
+        self._plt_widget.plot_curve(0,[t[1].target_x for t in self._telemetry_buffer])
+        self._plt_widget.plot_curve(0,[t[0].x for t in self._telemetry_buffer])
 
-        self._plt_widget.plot_curve(1,[t[1].target_x for t in self._telemetry_buffer])
-        self._plt_widget.plot_curve(1,[t[0].x for t in self._telemetry_buffer])
+        self._plt_widget.plot_curve(1,[t[1].target_speed for t in self._telemetry_buffer])
+        self._plt_widget.plot_curve(1,[t[0].speed for t in self._telemetry_buffer])
+
+        self._plt_widget.plot_curve(2,[t[1].target_yaw for t in self._telemetry_buffer])
+        self._plt_widget.plot_curve(2,[t[0].yaw for t in self._telemetry_buffer])
+
+        self._plt_widget.plot_curve(3,[t[1].target_yaw_rate for t in self._telemetry_buffer])
+        self._plt_widget.plot_curve(3,[t[0].yaw_rate for t in self._telemetry_buffer])
+
         self._plt_widget.show()
         self._telemetry_buffer = []

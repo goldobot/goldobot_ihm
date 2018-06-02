@@ -58,6 +58,8 @@ class TestSequencesDialog(QDialog):
             self._client.send_message(message_types.DbgRobotSetPoint, struct.pack('<Hff',i,p[0],p[1]))
         for i in range(len(sc._commands)):
             self._client.send_message(message_types.DbgRobotSetCommand, struct.pack('<H', i) + sc._commands[i].serialize())
+        for i in range(len(sc._trajectory_buffer)):
+            self._client.send_message(message_types.DbgRobotSetTrajectoryPoint, struct.pack('<BB', i,sc._trajectory_buffer[i]))
         for i in range(len(sc._sequences)):
             seq = sc._sequences[i]
             self._client.send_message(message_types.DbgRobotSetSequence, struct.pack('<HHH', i, seq[0], seq[1])) 

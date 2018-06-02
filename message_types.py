@@ -46,11 +46,13 @@ DbgArmsSetCommand=161
 DbgArmsSetTorques=162
 DbgArmsSetSequences=163
 DbgArmsExecuteSequence=164
+DbgArmsGoToPosition=165
 
 DbgRobotSetCommand=176
 DbgRobotSetPoint=177
 DbgRobotSetSequence=178
 DbgRobotExecuteSequence=179
+DbgRobotSetTrajectoryPoint=180
 
 FpgaGetVersion=256
 FpgaCmdServo=272

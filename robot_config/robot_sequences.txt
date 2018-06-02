@@ -1,16 +1,36 @@
 // Recalage vert
 #begin prematch_green
-propulsion.set_pose,start_green,0
-propulsion.reposition,0,1000
-propulsion.rotation,90
-propulsion.reposition,90,0
+//propulsion.set_pose,start_green,0
+//propulsion.reposition,0,1000
+//propulsion.rotation,90
+//propulsion.reposition,90,0
+arms.go_to_position,grabber,0
 arms.go_to_position$,left,0
-arms.go_to_position$,right,0
-arms.excute_sequence,left,0
+//arms.go_to_position$,right,0
+arms.go_to_position$,bascule,0
 #end
 // Match vert
 #begin match_green
-propulsion.trajectory,start_green,pos1,pos2
-propulsion.left_arm,sequence,0
-propulsion.left_arm,wait
+propulsion.trajectory,0,start_green,pos1,pos2
+#end
+
+#begin test
+arms.go_to_position,left,0
+//arms.go_to_position$,right,0
+arms.execute_sequence,left,0
+arms.execute_sequence$,grabber,3
+arms.go_to_position,bascule,1
+arms.execute_sequence,left,1
+arms.go_to_position,bascule,3
+arms.go_to_position,bascule,2
+#end
+
+#begin calibrate_odometry
+propulsion.set_pose,calibration_reposition,0
+propulsion.reposition,0,170
+propulsion.trajectory,0,calibration_reposition,calibration_origin
+propulsion.rotation,360
+//propulsion.trajectory,0,calibration_origin,p1
+//propulsion.trajectory,0,p1,calibration_origin
+//propulsion.rotation,-90
 #end

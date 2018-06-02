@@ -1,0 +1,7 @@
+// position basse
+0,95,33700
+// Ouvert pour prise cube
+1,95,33000
+// Prise cube
+2,95,37400
+3,500,37000

@@ -41,6 +41,9 @@ class PropulsionControllerConfigDialog(QDialog):
         self._translation_pid_props = PropertiesEditorWidget(PIDConfig,pid_props)
         tab_widget.addTab(self._translation_pid_props, "translation")
 
+        self._translation_cruise_pid_props = PropertiesEditorWidget(PIDConfig,pid_props)
+        tab_widget.addTab(self._translation_cruise_pid_props, "translation_cuise")
+
         self._yaw_pid_props = PropertiesEditorWidget(PIDConfig,pid_props)
         tab_widget.addTab(self._yaw_pid_props, "yaw")
 
@@ -76,6 +79,7 @@ class PropulsionControllerConfigDialog(QDialog):
         config.speed_pid_config = self._speed_pid_props.get_value()
         config.yaw_rate_pid_config = self._yaw_rate_pid_props.get_value()
         config.translation_pid_config = self._translation_pid_props.get_value()
+        config.translation_cruise_pid_config = self._translation_cruise_pid_props.get_value()
         config.yaw_pid_config = self._yaw_pid_props.get_value()
         if self._client is not None:
             self._client.send_message(message_types.DbgSetPropulsionConfig,config.serialize())
@@ -84,5 +88,6 @@ class PropulsionControllerConfigDialog(QDialog):
         self._speed_pid_props.set_value(config.speed_pid_config)
         self._yaw_rate_pid_props.set_value(config.yaw_rate_pid_config)
         self._translation_pid_props.set_value(config.translation_pid_config)
+        self._translation_cruise_pid_props.set_value(config.translation_cruise_pid_config)
         self._yaw_pid_props.set_value(config.yaw_pid_config)
         self._props.set_value(config)
