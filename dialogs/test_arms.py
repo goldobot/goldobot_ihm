@@ -88,11 +88,15 @@ class ArmValuesWidget(QWidget):
         layout.addWidget(self._spinbox_motor,i, 2)
         layout.addWidget(self._button_motor_activate,i, 3)
 
-        self._line_edit_servo = QLineEdit()
-        layout.addWidget(self._line_edit_servo, i, 4)
+        self._spinbox_servo_id = QSpinBox()
+        self._spinbox_servo_id.setRange(0,32)
 
-        layout.addWidget(self._spinbox_position, i, 5)
-        layout.addWidget(self._button_go_position, i, 6)
+        self._line_edit_servo = QLineEdit()
+        layout.addWidget(self._spinbox_servo_id, i, 4)
+        layout.addWidget(self._line_edit_servo, i, 5)
+
+        layout.addWidget(self._spinbox_position, i, 6)
+        layout.addWidget(self._button_go_position, i, 7)
         #layout.addWidget(self._button_set_position, i, 7)
 
 
@@ -167,7 +171,7 @@ class ArmValuesWidget(QWidget):
 
     def _servoo(self):
         val = int(self._line_edit_servo.text())
-        self._client.send_message(message_types.FpgaCmdServo,struct.pack('<BI', 0,val))
+        self._client.send_message(message_types.FpgaCmdServo,struct.pack('<BI', self._spinbox_servo_id.value() ,val))
 
     def _execute_sequence(self):
         self._client.send_message(message_types.DbgArmsExecuteSequence,
@@ -177,11 +181,9 @@ class ArmValuesWidget(QWidget):
         for k, v in values.items():
             self._widgets[k].setValue(v)
 
-
-
     
 
-class TestArmsDialog(QWidget):
+class TestArmsDialog(QDialog):
     def __init__(self, parent = None):
         super(TestArmsDialog, self).__init__(None)
         self._client = None

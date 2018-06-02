@@ -1,0 +1,4 @@
+start_green,0,1000
+start_yellow,0,-1000
+pos1,500,0
+pos2,500,500

@@ -1,0 +1,16 @@
+// Recalage vert
+#begin prematch_green
+propulsion.set_pose,start_green,0
+propulsion.reposition,0,1000
+propulsion.rotation,90
+propulsion.reposition,90,0
+arms.go_to_position$,left,0
+arms.go_to_position$,right,0
+arms.excute_sequence,left,0
+#end
+// Match vert
+#begin match_green
+propulsion.trajectory,start_green,pos1,pos2
+propulsion.left_arm,sequence,0
+propulsion.left_arm,wait
+#end

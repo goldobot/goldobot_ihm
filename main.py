@@ -21,95 +21,50 @@ from dialogs.propulsion_controller_config import PropulsionControllerConfigDialo
 from dialogs.test_propulsion import PropulsionTestDialog
 from dialogs.test_arms import TestArmsDialog
 from dialogs.test_actuators import TestActuatorsDialog
+from dialogs.test_dynamixels import TestDynamixelAx12Dialog
 
-ax12_registers = [
-    ('model_number',0x00, 2, 'r'),
-    ('firmware_version',0x02, 1, 'r'),
-    ('id',0x03, 1, 'rwp'),
-    ('baud_rate',0x04, 1, 'rwp'),
-    ('return_delay_time', 0x05, 1, 'rwp'),
-    ('cw_angle_limit', 0x06, 2, 'rw'),
-    ('ccw_angle_limit', 0x08, 2, 'rw'),
-    ('temperature_max_limit', 0x0B, 1, 'rw'),
-    ('voltage_min_limit', 0x0C, 1, 'rw'),
-    ('voltage_max_limit', 0x0D, 1, 'rw'),
-    ('max_torque', 0x0E, 2, 'rw'),
-    ('status_return_level', 0x10, 1, 'rw'),
-    ('alarm_led', 0x11, 1, 'rw'),
-    ('alarm_shutdown', 0x12, 1, 'rw'),
-    ('down_calibration', 0x14, 2, 'r'),
-    ('up_calibration', 0x16, 2, 'r'),
-    ]
-dynamixel_registers = [
-    ('model_number',0x00, 2, 'r'),
-    ('firmware_version',0x02, 1, 'r'),
-    ('id',0x03, 1, 'rwp'),
-    ('baud_rate',0x04, 1, 'rwp'),
-    ('return_delay_time', 0x05, 1, 'rwp')
-    ]
+import message_types
+from compile_strategy import StrategyCompiler
 
-class TestDynamixelAx12Dialog(QDialog):
-    def __init__(self, parent = None):
-        super(TestDynamixelAx12Dialog, self).__init__(None)
-        self._registers = ax12_registers
-
-        layout = QGridLayout()
-        self._spinbox_id = QSpinBox()
-        self._spinbox_id.setRange(0,253)
-        layout.addWidget(self._spinbox_id, 0,1)
-
-        self._widgets = {}
-        i = 1
-        for k,a,s,r in self._registers:            
-            wid = QLineEdit()
-            layout.addWidget(QLabel(k), i, 0)
-            layout.addWidget(wid, i, 1)
-            self._widgets[k] = wid
-            i += 1
-
-        self._button_read_registers = QPushButton('Read')
-        layout.addWidget(self._button_read_registers, i, 0)
-
-        self._button_write_registers = QPushButton('Write')
-        layout.addWidget(self._button_write_registers, i, 1)
-
-        self.setLayout(layout)
-
-        self._button_read_registers.clicked.connect(self.read_registers)
-        self._button_write_registers.clicked.connect(self.write_registers)       
-
-    def set_client(self, client):
-        self._client = client
-        self._client.dynamixel_registers.connect(self._on_dynamixel_registers)
-
-    def read_registers(self):
-        id_ = self._spinbox_id.value()
-        for k, a, s, r in self._registers:
-            self._client.send_message(77,struct.pack('<BBB',id_, a, s))
-
-    def write_registers(self):
-        id_ = self._spinbox_id.value()
-        for k, a, s, r in self._registers:
-            if 'w' in r and 'p' not in r:
-                if s == 1:
-                    self._client.send_message(78,struct.pack('<BBB',id_, a, int(self._widgets[k].text())))
-
-
-    def _on_dynamixel_registers(self, id_, address, data):
-        if id_ == self._spinbox_id.value():
-            for k, a, s, r in self._registers:
-                if address == a and len(data) == s:
-                    if s == 1:
-                        val = struct.unpack('<B', data)[0]
-                    else:
-                        val = struct.unpack('<H', data)[0]
-                    self._widgets[k].setText(str(val))
        
 
 
 
+class TestSequencesDialog(QDialog):
+    def __init__(self, parent = None):
+        super(TestSequencesDialog, self).__init__(None)
+        self._client = None
+        self._button_upload = QPushButton('upload')
+        self._button_execute = QPushButton('execute')
+        self._spinbox_sequence_id = QSpinBox()
+        self._spinbox_sequence_id.setRange(0,16)
+        
+        layout = QGridLayout()        
+        layout.addWidget(self._button_upload, 0, 0)
+        layout.addWidget(self._spinbox_sequence_id, 1, 0)
+        layout.addWidget(self._button_execute, 1, 1)
+        self.setLayout(layout)
+        self._button_upload.clicked.connect(self._upload)
+        self._button_execute.clicked.connect(self._execute)        
 
+    def set_client(self, client):
+        self._client = client
+        
+    def _upload(self):
+        sc = StrategyCompiler()
+        sc.compile_strategy()
+        for i in range(len(sc._points)):
+            p = sc._points[i]
+            self._client.send_message(message_types.DbgRobotSetPoint, struct.pack('<Hff',i,p[0],p[1]))
+        for i in range(len(sc._commands)):
+            self._client.send_message(message_types.DbgRobotSetCommand, struct.pack('<H', i) + sc._commands[i].serialize())
+        for i in range(len(sc._sequences)):
+            seq = sc._sequences[i]
+            self._client.send_message(message_types.DbgRobotSetSequence, struct.pack('<HHH', i, seq[0], seq[1])) 
+    def _execute(self):
+        self._client.send_message(message_types.DbgRobotExecuteSequence, struct.pack('<B', self._spinbox_sequence_id.value()))
 
+   
 class ServoWidget(QWidget):
     def __init__(self, parent = None):
         super(ServoWidgetWidget, self).__init__(None)
@@ -133,6 +88,8 @@ class MainWindow(QMainWindow):
         self._action_arms_test = QAction("Test arms")
         self._action_dynamixel_ax12_test = QAction("Test dynamixel AX12")
         self._action_actuators_test = QAction("Test actionneurs")
+        self._action_sequences_test = QAction("Test sequences")
+
         # Add menu
         tools_menu = self.menuBar().addMenu("Tools")
         tools_menu.addAction(self._action_open_odometry_config)
@@ -141,6 +98,7 @@ class MainWindow(QMainWindow):
         tools_menu.addAction(self._action_arms_test)
         tools_menu.addAction(self._action_dynamixel_ax12_test)
         tools_menu.addAction(self._action_actuators_test)
+        tools_menu.addAction(self._action_sequences_test)
 
         self._main_widget = QWidget()
         self._table_view = TableViewWidget()
@@ -163,6 +121,7 @@ class MainWindow(QMainWindow):
         self._action_arms_test.triggered.connect(self._open_arms_test)
         self._action_dynamixel_ax12_test.triggered.connect(self._open_dynamixel_ax12_test)
         self._action_actuators_test.triggered.connect(self._open_actuators_test)
+        self._action_sequences_test.triggered.connect(self._open_sequences_test)
 
         self._dialog_odometry_config = OdometryConfigDialog(self)
         self._dialog_propulsion_controller_config = PropulsionControllerConfigDialog(self)
@@ -170,6 +129,7 @@ class MainWindow(QMainWindow):
         self._dialog_arms_test = TestArmsDialog()
         self._dialog_dynamixel_ax12_test = TestDynamixelAx12Dialog()
         self._dialog_actuators_test = TestActuatorsDialog()
+        self._dialog_sequences_test = TestSequencesDialog()
 
         #Dirty
         parser = OptionParser()
@@ -181,6 +141,7 @@ class MainWindow(QMainWindow):
         self._dialog_propulsion_test.set_client(self._client)
         self._dialog_arms_test.set_client(self._client)
         self._dialog_dynamixel_ax12_test.set_client(self._client)
+        self._dialog_sequences_test.set_client(self._client)
         self._widget_robot_status.set_client(self._client)
         self._table_view.set_client(self._client)
 
@@ -201,6 +162,9 @@ class MainWindow(QMainWindow):
 
     def _open_actuators_test(self):
         self._dialog_actuators_test.show()
+
+    def _open_sequences_test(self):
+        self._dialog_sequences_test.show()
 
 
 
