@@ -27,7 +27,7 @@ pump,-300,0
 move,11,0,600
 move,12,0,400
 pump,-511,0
-move,13,0,0
+move,13,0,200
 move,14,0,500
 delay,300
 move,15,0,540
@@ -46,7 +46,7 @@ belt,-256,0
 move,24,0,600
 pump,0,30
 pump,200,0
-move,25,0,0
+move,25,0,200
 delay,500
 pump,0,0
 belt,0,0
@@ -69,7 +69,7 @@ belt,-256,0
 move,34,0,600
 pump,0,30
 pump,200,0
-move,35,0,0
+move,35,0,200
 delay,500
 pump,0,0
 belt,0,0
@@ -92,7 +92,6 @@ move,44,0,400
 move,0,0,300
 #end
 
-
 //TEST_pompe - initial_pos:0
 #begin 7,0,1
 move,0,0,500
@@ -102,15 +101,111 @@ pump,-511,500
 pump,0,0
 #end
 
-//#######-Pince-#######
-
 //#######-Bascule-#######
 
 //lever bascule
 #begin 8,0,1
+belt,-256,0
 move,0,0,500
 move,1,0,500
-move,2,0,500
+belt,0,0
+move,2,0,1000
 move,3,0,500
+move,4,0,700
+move,0,0,300
 #end
 
+//abaisser gache avec tapis activé
+#begin 9,0,1
+belt,-256,0
+move,4,0,100
+delay,1000
+belt,0,0
+#end
+
+//monter gache + arret tapis
+#begin 10,0,1
+move,0,0,500
+belt,0,0
+#end
+
+//lever sans gache (debute par un retrait de la gache, fini avec gache relevé)
+#begin 11,0,1
+belt,0,0
+move,4,0,500
+move,2,0,800
+delay,500
+move,4,0,700
+move,0,0,300
+#end
+
+//chargement avec debourage
+#begin 12,0,1
+belt,-256,0
+move,4,0,100
+delay,300
+belt,0,0
+move,0,0,100
+move,4,0,100
+move,0,0,100
+move,4,0,100
+move,0,0,100
+belt,-256,500
+belt,0,0
+#end
+
+//#######-Pince-#######
+
+//position garage
+#begin 13,0,1
+move,0,0,100
+delay,300
+#end
+
+//position prise cube
+#begin 14,0,1
+move,1,0,100
+delay,300
+#end
+
+//saisie cube
+#begin 15,0,1
+move,2,0,100
+#end
+
+//monté et dépose cube
+#begin 16,0,1
+belt,0,0
+move,2,0,100
+delay,300
+move,3,0,600
+belt,-256,200
+move,4,0,200
+delay,800
+move,5,0,500
+delay,300
+//fin en position garage
+move,0,0,100
+belt,0,0
+#end
+
+//mise en position buté tapis
+#begin 17,0,1
+move,11,0,300
+delay,500
+move,12,0,300
+#end
+
+//#######-Colonnes-#######
+
+//fermeture colonne
+#begin 18,0,1
+move,1,0,500
+#end
+
+//depose colonne (reste ouverte)
+#begin 19,0,1
+move,2,0,500
+delay,800
+move,3,0,500
+#end

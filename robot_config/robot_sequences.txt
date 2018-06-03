@@ -1,10 +1,13 @@
 #begin prematch_green
+delay,2000
 propulsion.set_pose,green_start,90
 arms.go_to_position$,left,0
 arms.go_to_position$,right,0
 arms.go_to_position$,grabber,0
 arms.go_to_position$,bascule,0
-delay,1000
+arms.go_to_position$,colonnes,0
+//arms.go_to_position$,cubibox,0
+delay,2000
 propulsion.rotation,90,0
 propulsion.reposition,180,0
 propulsion.trajectory,0,green_reposition_1,green_start
@@ -14,12 +17,15 @@ propulsion.trajectory,0,green_reposition_2,green_start
 #end
 
 #begin prematch_yellow
+delay,2000
 propulsion.set_pose,yellow_start,-90
 arms.go_to_position$,left,0
 arms.go_to_position$,right,0
 arms.go_to_position$,grabber,0
 arms.go_to_position$,bascule,0
-delay,1000
+arms.go_to_position$,colonnes,0
+//arms.go_to_position$,cubibox,0
+delay,2000
 propulsion.rotation,-90,0
 propulsion.reposition,180,0
 propulsion.trajectory,0,yellow_reposition_1,yellow_start
@@ -33,41 +39,105 @@ propulsion.trajectory,0,yellow_reposition_2,yellow_start
 
 // Match vert
 #begin match_green
-arms.execute_sequence$,left,0
-arms.execute_sequence,right,1
-arms.execute_sequence,right,6
+arms.execute_sequence$,colonnes,18
+propulsion.trajectory,0,green_start,green_switch
+arms.execute_sequence,left,6
+propulsion.trajectory,0,green_switch,green_1
+propulsion.rotation,-90,0
+arms.execute_sequence$,grabber,14
+delay,2000
+propulsion.trajectory,1,green_1,green_prise_cube_1
+delay,2000
+//debut prise cubes
+arms.execute_sequence$,grabber,15
+arms.execute_sequence$,left,1
+arms.execute_sequence,right,0
+arms.execute_sequence,right,4
+arms.execute_sequence,bascule,11
+arms.execute_sequence$,right,5
+arms.execute_sequence,grabber,16
+arms.execute_sequence,bascule,11
+arms.execute_sequence,left,2
+arms.execute_sequence$,bascule,11
+arms.execute_sequence,left,3
+//fin prise cubes
+propulsion.trajectory,1,green_prise_cube_1,green_recalage_1
+propulsion.trajectory,1,green_recalage_1,green_depose_colonne
+arms.execute_sequence,colonnes,19
+propulsion.trajectory,1,green_depose_colonne,green_recalage_1
 #end
 
 #begin match_yellow
+arms.execute_sequence$,colonnes,18
 propulsion.trajectory,0,yellow_start,yellow_switch
 arms.execute_sequence,right,6
 propulsion.trajectory,0,yellow_switch,yellow_1
 propulsion.rotation,90,0
-delay,5000
+arms.execute_sequence$,grabber,14
+delay,2000
 propulsion.trajectory,1,yellow_1,yellow_prise_cube_1
-delay,5000
+delay,2000
+//debut prise cubes
+arms.execute_sequence$,grabber,15
 arms.execute_sequence$,left,1
 arms.execute_sequence,right,0
+arms.execute_sequence,right,4
+arms.execute_sequence,bascule,11
+arms.execute_sequence,right,5
+delay,5000
+arms.execute_sequence,grabber,16
+arms.execute_sequence,bascule,11
+arms.execute_sequence,left,2
+arms.execute_sequence,bascule,11
+delay,1000
+arms.execute_sequence,bascule,11
+delay,1000
+arms.execute_sequence,left,3
+//fin prise cubes
 propulsion.trajectory,1,yellow_prise_cube_1,yellow_recalage_1
+delay,2000
+arms.execute_sequence,colonnes,19
+delay,2000
 propulsion.trajectory,1,yellow_recalage_1,yellow_depose_colonne
 //propulsion.reposition,-180,0
 #end
 
-#begin testa
-propulsion.set_pose,yellow_2,0
-propulsion.reposition,-180,0
-propulsion.trajectory,1,yellow_recalage_1,yellow_depose_colonne
+#begin prise1_Gdroit_Ddiag
+arms.execute_sequence$,grabber,15
+arms.execute_sequence$,left,1
+arms.execute_sequence,right,0
+arms.execute_sequence,right,4
+arms.execute_sequence,bascule,11
+arms.execute_sequence$,right,5
+delay,1000
+arms.execute_sequence,grabber,16
+arms.execute_sequence,bascule,11
+arms.execute_sequence,left,2
+arms.execute_sequence$,bascule,11
+arms.execute_sequence,left,3
+delay,2000
+arms.execute_sequence,colonnes,19
 #end
 
-#begin test
-arms.go_to_position,left,0
-//arms.go_to_position$,right,0
-arms.execute_sequence,left,0
-arms.execute_sequence$,grabber,3
-arms.go_to_position,bascule,1
-arms.execute_sequence,left,1
-arms.go_to_position,bascule,3
-arms.go_to_position,bascule,2
+#begin init_arms
+arms.go_to_position$,left,0
+arms.go_to_position$,right,0
+arms.go_to_position$,grabber,0
+arms.go_to_position$,bascule,0
+arms.go_to_position$,colonnes,0
+arms.execute_sequence,colonnes,18
+//arms.go_to_position$,cubibox,0
+#end
+
+#begin prise_cube_pince
+arms.execute_sequence$,grabber,13
+delay,1000
+arms.execute_sequence$,grabber,14
+delay,4000
+//placer le cube maintenant
+arms.execute_sequence$,grabber,15
+delay,3000
+arms.execute_sequence,grabber,16
 #end
 
 #begin calibrate_odometry
@@ -91,7 +161,7 @@ propulsion.rotation,1800
 #end
 
 //7 traversée de table pour voir la rectitude
-#begin foo
+#begin traverser_table
 propulsion.set_pose,calibration_reposition,0
 propulsion.reposition,0,170
 propulsion.trajectory,0,calibration_reposition,calibration_origin
