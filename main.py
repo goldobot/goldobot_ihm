@@ -8,7 +8,7 @@ from optparse import OptionParser
 from PyQt5.QtWidgets import QMainWindow, QApplication, QWidget, QLabel, QLineEdit, QGridLayout, QFrame, QPushButton, QSpinBox, QSizePolicy
 from PyQt5.QtCore import QObject, pyqtSignal, QSize, QRectF, QPointF, Qt, QTimer
 from PyQt5.QtWidgets import QTabWidget, QAction, QDialog, QVBoxLayout, QCheckBox
-from PyQt5.QtWidgets import  QHBoxLayout
+from PyQt5.QtWidgets import  QHBoxLayout, QComboBox
 
 from widgets.table_view import TableViewWidget
 
@@ -36,16 +36,16 @@ class TestSequencesDialog(QDialog):
         self._client = None
         self._button_upload = QPushButton('upload')
         self._button_execute = QPushButton('execute')
-        self._spinbox_sequence_id = QSpinBox()
-        self._spinbox_sequence_id.setRange(0,16)
+        self._combobox_sequence_id = QComboBox()
         
         layout = QGridLayout()        
         layout.addWidget(self._button_upload, 0, 0)
-        layout.addWidget(self._spinbox_sequence_id, 1, 0)
+        layout.addWidget(self._combobox_sequence_id, 1, 0)
         layout.addWidget(self._button_execute, 1, 1)
         self.setLayout(layout)
         self._button_upload.clicked.connect(self._upload)
-        self._button_execute.clicked.connect(self._execute)        
+        self._button_execute.clicked.connect(self._execute)
+        self._sequence_ids = []       
 
     def set_client(self, client):
         self._client = client
@@ -53,6 +53,11 @@ class TestSequencesDialog(QDialog):
     def _upload(self):
         sc = StrategyCompiler()
         sc.compile_strategy()
+        self._combobox_sequence_id.clear()
+        self._sequence_ids = []
+        for k,v in sc._sequence_ids.items():
+            self._combobox_sequence_id.addItem(k)
+            self._sequence_ids.append(v)
         for i in range(len(sc._points)):
             p = sc._points[i]
             self._client.send_message(message_types.DbgRobotSetPoint, struct.pack('<Hff',i,p[0],p[1]))
@@ -63,8 +68,11 @@ class TestSequencesDialog(QDialog):
         for i in range(len(sc._sequences)):
             seq = sc._sequences[i]
             self._client.send_message(message_types.DbgRobotSetSequence, struct.pack('<HHH', i, seq[0], seq[1])) 
+
     def _execute(self):
-        self._client.send_message(message_types.DbgRobotExecuteSequence, struct.pack('<B', self._spinbox_sequence_id.value()))
+        seq_id = self._sequence_ids[self._combobox_sequence_id.currentIndex()]
+        print(seq_id)
+        self._client.send_message(message_types.DbgRobotExecuteSequence, struct.pack('<B', seq_id))
 
    
 class ServoWidget(QWidget):
@@ -91,6 +99,7 @@ class MainWindow(QMainWindow):
         self._action_dynamixel_ax12_test = QAction("Test dynamixel AX12")
         self._action_actuators_test = QAction("Test actionneurs")
         self._action_sequences_test = QAction("Test sequences")
+        self._action_reset = QAction("Reset")
 
         # Add menu
         tools_menu = self.menuBar().addMenu("Tools")
@@ -101,6 +110,7 @@ class MainWindow(QMainWindow):
         tools_menu.addAction(self._action_dynamixel_ax12_test)
         tools_menu.addAction(self._action_actuators_test)
         tools_menu.addAction(self._action_sequences_test)
+        tools_menu.addAction(self._action_reset)
 
         self._main_widget = QWidget()
         self._table_view = TableViewWidget()
@@ -124,6 +134,8 @@ class MainWindow(QMainWindow):
         self._action_dynamixel_ax12_test.triggered.connect(self._open_dynamixel_ax12_test)
         self._action_actuators_test.triggered.connect(self._open_actuators_test)
         self._action_sequences_test.triggered.connect(self._open_sequences_test)
+
+        self._action_reset.triggered.connect(self._send_reset)
 
         self._dialog_odometry_config = OdometryConfigDialog(self)
         self._dialog_propulsion_controller_config = PropulsionControllerConfigDialog(self)
@@ -167,6 +179,9 @@ class MainWindow(QMainWindow):
 
     def _open_sequences_test(self):
         self._dialog_sequences_test.show()
+
+    def _send_reset(self):
+        self._client.send_message(message_types.DbgReset, b'')
 
 
 

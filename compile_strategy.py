@@ -101,6 +101,7 @@ _arm_ids = {
 	'right': 1,
 	'grabber': 2,
 	'bascule': 3,
+	'colonnes': 4,
 }
 class StrategyCompiler:
 	def __init__(self):
@@ -143,11 +144,25 @@ class StrategyCompiler:
 			
 		self._commands = []
 		self._sequences = []
+		self._sequence_ids = sequence_ids
 		for s in sequences:
 			beg = len(self._commands)
 			for c in s:
 				self._commands.append(c)
 			self._sequences.append((beg, len(self._commands)))
+
+
+class ArmsStrategyCompiler:
+	def __init__(self):
+		pass
+	def _load_sequences(self, file_path):
+		for l in open(file_path):
+			f = l.find('//')
+			if f >= 0:
+				l = l[:f]
+			fields = l.strip('')
+			pos_name = l[0]
+		lines = [[int(e) for e in l.strip().split(',')] for l in open('robot_config/{}_positions.txt'.format(name)) if not l.startswith('//')]
 
 
 sc = StrategyCompiler()

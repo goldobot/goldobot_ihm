@@ -227,12 +227,34 @@ class TestArmsDialog(QDialog):
         tab_widget.addTab(self._left_arm_values, "Left arm")
         tab_widget.addTab(self._right_arm_values, "Right arm")
         tab_widget.addTab(self._other_values, "Others")
-        layout.addWidget(tab_widget)
-        layout.addWidget(self._button_reset)
-        layout.addWidget(self._button_send_config)
+        layout.addWidget(tab_widget,0,0,1,4)
+        layout.addWidget(self._button_reset,1,0)
+        layout.addWidget(self._button_send_config,1,1)
+
+        self._spinbox_arm_id = QSpinBox()
+        self._spinbox_arm_id.setRange(0,5)
+
+        self._spinbox_position = QSpinBox()
+        self._spinbox_position.setRange(0,32)
+
+        self._spinbox_sequence = QSpinBox()
+        self._spinbox_sequence.setRange(0,32)
+
+        self._button_execute_sequence = QPushButton('execute sequence')
+        self._button_go_position = QPushButton('go to position')
+
+        layout.addWidget(self._spinbox_arm_id)
+        layout.addWidget(self._spinbox_position)
+        layout.addWidget(self._spinbox_sequence)
+        layout.addWidget(self._button_go_position)
+        layout.addWidget(self._button_execute_sequence)
+        
         self.setLayout(layout)
         self._button_reset.clicked.connect(self._reset)
         self._button_send_config.clicked.connect(self._send_config)
+
+        self._button_go_position.clicked.connect(self._go_position)
+        self._button_execute_sequence.clicked.connect(self._execute_sequence)
         
 
     def set_client(self, client):
@@ -254,12 +276,21 @@ class TestArmsDialog(QDialog):
             print(msg)
             self._client.send_message(message_types.DbgArmsSetPose,msg)
 
+    def _go_position(self):
+        self._client.send_message(message_types.DbgArmsGoToPosition,
+            struct.pack('<BB', self._spinbox_arm_id.value(), self._spinbox_position.value()))
+
+    def _execute_sequence(self):
+        self._client.send_message(message_types.DbgArmsExecuteSequence,
+            struct.pack('<BB', self._spinbox_arm_id.value(), self._spinbox_sequence.value()))
+
 
     def _send_config(self):
         self._send_config_positions(0, 'left_arm')
         self._send_config_positions(1, 'right_arm')
         self._send_config_positions(2, 'grabber')
         self._send_config_positions(3, 'bascule')
+        self._send_config_positions(4, 'colonne')
         
         #set sequences
         commands = []
