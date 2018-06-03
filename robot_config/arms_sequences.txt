@@ -1,41 +1,100 @@
-//prise cube droite
+﻿//---- Ce fichier contient l'ensemble des séquences d'actionneur. ----
+//commande:
+//mouvements: "move,position_id, torque_setting, time_ms"
+//temporisation: "delay,time_ms"
+//pompes: "pump,pwm,time_ms". utiliser une valeur négative pour l'aspiration [-511,+511], 0 pour arreter
+//tapis: "belt,pwm,time_ms" . utiliser une valeur négative pour gober les cubes [-200,-511], 0 pour arreter
+
+
+//#######-Bras-#######
+
+//prise cube droit - initial_pos:0
 #begin 0,0,1
-//move,position_id, torque_setting, time_ms
 move,1,0,500
-move,2,0,500
+move,2,0,400
 pump,-511,0
 move,3,0,0
 move,4,0,500
-pump,-200,500
-move,5,0,1000
-move,0,0,1000
-
-//delay,time_ms
-//delay,1000
-//pump,pwm,time_ms
-//pump,-511,500
-//pump,0,0
-//belt,pwm,time_ms
-//belt,-256,1000
-//belt,0,0
-#end
-
-#begin 1,0,1
-move,21,0,1000
-move,22,0,1000
+delay,800
+move,5,0,540
 pump,-400,0
-move,23,0,1000
-belt,-256,0
-move,24,0,1000
-pump,0,0
-move,25,0,1000
-belt,0,0
-move,26,0,1000
-move,27,0,1000
-move,0,0,1000
+move,0,0,800
+pump,-300,0
 #end
 
+//prise cube diagonal - initial_pos:0
+#begin 1,0,1
+move,11,0,600
+move,12,0,400
+pump,-511,0
+move,13,0,0
+move,14,0,500
+delay,300
+move,15,0,540
+pump,-400,0
+move,0,0,800
+pump,-300,0
+#end
+
+//depose tapis 1 - initial_pos:0, pompe active
 #begin 2,0,1
+move,21,0,500
+pump,-400,0
+move,22,0,300
+move,23,0,500
+belt,-256,0
+move,24,0,600
+pump,0,30
+pump,200,0
+move,25,0,0
+delay,500
+pump,0,0
+belt,0,0
+#end
+
+//retour garage post-depose tapis 1 - initial_pos:25
+#begin 3,0,1
+move,26,0,600
+move,27,0,300
+move,0,0,300
+#end
+
+//depose tapis 2 - initial_pos:0, pompe active
+#begin 4,0,1
+move,31,0,500
+pump,-400,0
+move,32,0,300
+move,33,0,500
+belt,-256,0
+move,34,0,600
+pump,0,30
+pump,200,0
+move,35,0,0
+delay,500
+pump,0,0
+belt,0,0
+#end
+
+//retour garage post-depose tapis 2 - initial_pos:35
+#begin 5,0,1
+move,36,0,600
+move,37,0,300
+move,0,0,300
+#end
+
+//declechement interrupteur - initial_pos:0
+#begin 6,0,1
+move,41,0,600
+delay,200
+move,42,0,400
+move,43,0,600
+move,44,0,400
+move,0,0,300
+#end
+
+
+//TEST_pompe - initial_pos:0
+#begin 7,0,1
 move,0,0,500
 delay,1000
 delay,1000
@@ -43,9 +102,15 @@ pump,-511,500
 pump,0,0
 #end
 
-#begin 3,0,1
+//#######-Pince-#######
+
+//#######-Bascule-#######
+
+//lever bascule
+#begin 8,0,1
 move,0,0,500
 move,1,0,500
 move,2,0,500
 move,3,0,500
 #end
+

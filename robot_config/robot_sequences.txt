@@ -1,19 +1,22 @@
-// Recalage vert
 #begin prematch_green
-//propulsion.set_pose,start_green,0
-//propulsion.reposition,0,1000
-//propulsion.rotation,90
-//propulsion.reposition,90,0
-arms.go_to_position,grabber,0
+propulsion.set_pose,green_start,90
 arms.go_to_position$,left,0
-//arms.go_to_position$,right,0
+arms.go_to_position$,right,0
+arms.go_to_position$,grabber,0
 arms.go_to_position$,bascule,0
+delay,1000
+propulsion.rotation,90,0
+propulsion.reposition,180,0
+propulsion.trajectory,0,green_reposition_1,green_start
+propulsion.rotation,-90,0
+propulsion.reposition,-90,1500
+propulsion.trajectory,0,green_reposition_2,green_start
 #end
 
 #begin prematch_yellow
 propulsion.set_pose,yellow_start,-90
 arms.go_to_position$,left,0
-//arms.go_to_position$,right,0
+arms.go_to_position$,right,0
 arms.go_to_position$,grabber,0
 arms.go_to_position$,bascule,0
 delay,1000
@@ -30,11 +33,30 @@ propulsion.trajectory,0,yellow_reposition_2,yellow_start
 
 // Match vert
 #begin match_green
-propulsion.trajectory,0,start_green,pos1,pos2
+arms.execute_sequence$,left,0
+arms.execute_sequence,right,1
+arms.execute_sequence,right,6
 #end
 
 #begin match_yellow
 propulsion.trajectory,0,yellow_start,yellow_switch
+arms.execute_sequence,right,6
+propulsion.trajectory,0,yellow_switch,yellow_1
+propulsion.rotation,90,0
+delay,5000
+propulsion.trajectory,1,yellow_1,yellow_prise_cube_1
+delay,5000
+arms.execute_sequence$,left,1
+arms.execute_sequence,right,0
+propulsion.trajectory,1,yellow_prise_cube_1,yellow_recalage_1
+propulsion.trajectory,1,yellow_recalage_1,yellow_depose_colonne
+//propulsion.reposition,-180,0
+#end
+
+#begin testa
+propulsion.set_pose,yellow_2,0
+propulsion.reposition,-180,0
+propulsion.trajectory,1,yellow_recalage_1,yellow_depose_colonne
 #end
 
 #begin test
