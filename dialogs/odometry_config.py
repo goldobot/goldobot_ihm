@@ -60,9 +60,9 @@ class OdometryConfigDialog(QDialog):
             self._client.send_message(message_types.DbgGetOdometryConfig,b'')
 
     def on_set_button_clicked(self):
-        print(self._properties.get_value().__dict__)
+        props = self._properties.get_value()
         if self._client is not None:
-            self._client.send_message(message_types.DbgSetOdometryConfig,b'')
+            self._client.send_message(message_types.DbgSetOdometryConfig,props.serialize())
 
     def _on_telemetry(self, telemetry):
         diff_left = telemetry.left_encoder - self._encoder_left_prev

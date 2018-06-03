@@ -20,7 +20,7 @@ class PropulsionTelemetry:
 
 class PropulsionTelemetryEx:
     def __init__(self, data):
-        unpacked = struct.unpack('<hhhhhhhii', data[:22])
+        unpacked = struct.unpack('<hhhhhhhhhhii', data)
         self.target_x = unpacked[0] * 0.25e-3
         self.target_y = unpacked[1] * 0.25e-3
         self.target_yaw = unpacked[2] * math.pi / 32767
@@ -28,8 +28,8 @@ class PropulsionTelemetryEx:
         self.target_yaw_rate = unpacked[4] * 1e-3
         self.longitudinal_error = unpacked[5] * 0.25e-3
         self.lateral_error = unpacked[6] * 0.25e-3
-        self.left_encoder_acc = unpacked[7]
-        self.right_encoder_acc = unpacked[8]
+        self.left_encoder_acc = unpacked[10]
+        self.right_encoder_acc = unpacked[11]
 
 
 class OdometryConfig:
@@ -51,7 +51,15 @@ class OdometryConfig:
             self.encoder_period = 0
 
     def serialize(self):
-        pass
+        return struct.pack('<fffffHH',
+            self.dist_per_count_left,
+            self.dist_per_count_right,
+            self.wheel_spacing,
+            self.update_period,
+            self.speed_filter_period,
+            int(self.encoder_period),
+            0
+            )
 
 class PIDConfig:
     def __init__(self, data=None):

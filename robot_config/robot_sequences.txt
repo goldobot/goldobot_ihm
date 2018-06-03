@@ -9,9 +9,32 @@ arms.go_to_position$,left,0
 //arms.go_to_position$,right,0
 arms.go_to_position$,bascule,0
 #end
+
+#begin prematch_yellow
+propulsion.set_pose,yellow_start,-90
+arms.go_to_position$,left,0
+//arms.go_to_position$,right,0
+arms.go_to_position$,grabber,0
+arms.go_to_position$,bascule,0
+delay,1000
+propulsion.rotation,-90,0
+propulsion.reposition,180,0
+propulsion.trajectory,0,yellow_reposition_1,yellow_start
+propulsion.rotation,90,0
+propulsion.reposition,90,1500
+propulsion.trajectory,0,yellow_reposition_2,yellow_start
+#end
+
+
+
+
 // Match vert
 #begin match_green
 propulsion.trajectory,0,start_green,pos1,pos2
+#end
+
+#begin match_yellow
+propulsion.trajectory,0,yellow_start,yellow_switch
 #end
 
 #begin test
@@ -29,8 +52,27 @@ arms.go_to_position,bascule,2
 propulsion.set_pose,calibration_reposition,0
 propulsion.reposition,0,170
 propulsion.trajectory,0,calibration_reposition,calibration_origin
-propulsion.rotation,360
-//propulsion.trajectory,0,calibration_origin,p1
-//propulsion.trajectory,0,p1,calibration_origin
-//propulsion.rotation,-90
+#end
+
+#begin calibrate_odometry
+propulsion.trajectory,0,calibration_origin,calibration_reposition
+propulsion.reposition,0,170
+propulsion.trajectory,0,calibration_reposition,calibration_origin
+#end
+
+#begin calibrate_odometry
+propulsion.rotation,-1800
+#end
+
+#begin calibrate_odometry
+propulsion.rotation,1800
+#end
+
+//7 traversée de table pour voir la rectitude
+#begin foo
+propulsion.set_pose,calibration_reposition,0
+propulsion.reposition,0,170
+propulsion.trajectory,0,calibration_reposition,calibration_origin
+propulsion.rotation,-180
+propulsion.trajectory,0,calibration_origin,p_bout
 #end

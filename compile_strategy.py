@@ -1,5 +1,16 @@
 import struct
 
+class RobotCommandDelay:
+	def __init__(self,compiler,args,blocking):
+		self._delay_ms = int(args[0])		
+		self._blocking = blocking
+
+	def serialize(self):
+		return struct.pack('<BBH', 8, self._blocking, self._delay_ms)
+
+	def __repr__(self):
+		return '<Delay {} ms>'.format(self._delay_ms)
+
 class RobotCommandSetPose:
 	def __init__(self,compiler,args,blocking):
 		self._point_id = args[0]
@@ -82,6 +93,7 @@ _commands_dict ={
 	'propulsion.trajectory': RobotCommandTrajectory,
 	'arms.go_to_position':RobotCommandArmsGoToPosition,
 	'arms.execute_sequence':RobotCommandArmsExecuteSequence,
+	'delay':RobotCommandDelay
 }
 
 _arm_ids = {

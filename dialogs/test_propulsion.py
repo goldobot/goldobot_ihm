@@ -36,6 +36,7 @@ class PropulsionTestDialog(QDialog):
         self._position_steps_button = QPushButton('position steps')
         self._speed_steps_button = QPushButton('speed steps')
         self._yaw_rate_steps_button = QPushButton('yaw rate steps')
+        self._yaw_steps_button = QPushButton('yaw steps')
         self._execute_trajectory_button = QPushButton('trajectory')
 
         self._pose_x_edit = QLineEdit('0')
@@ -63,17 +64,19 @@ class PropulsionTestDialog(QDialog):
         #layout.addWidget(self._set_pwm_button,5,0)
         layout.addWidget(self._speed_steps_button,5,0)
         layout.addWidget(self._yaw_rate_steps_button,5,1)
+        layout.addWidget(self._yaw_steps_button,6,1)
+        layout.addWidget(self._position_steps_button,6,0)
 
-        layout.addWidget(QLabel('x(mm)'),6,0)
-        layout.addWidget(self._pose_x_edit,6,1)
+        layout.addWidget(QLabel('x(mm)'),7,0)
+        layout.addWidget(self._pose_x_edit,7,1)
 
-        layout.addWidget(QLabel('y(mm)'),7,0)
-        layout.addWidget(self._pose_y_edit,7,1)
+        layout.addWidget(QLabel('y(mm)'),8,0)
+        layout.addWidget(self._pose_y_edit,8,1)
         
-        layout.addWidget(QLabel('yaw(deg'),8,0)
-        layout.addWidget(self._pose_yaw_edit,8,1)
+        layout.addWidget(QLabel('yaw(deg'),9,0)
+        layout.addWidget(self._pose_yaw_edit,9,1)
 
-        layout.addWidget(self._button_set_pose, 9,0)
+        layout.addWidget(self._button_set_pose, 10,0)
         layout.addWidget(self._button_reposition, 11,0)
         layout.addWidget(self._execute_trajectory_button, 10,0)
 
@@ -86,8 +89,10 @@ class PropulsionTestDialog(QDialog):
         self._set_pwm_button.clicked.connect(self._set_pwm)
         self._zero_pwm_button.clicked.connect(self._zero_pwm)
 
+        self._position_steps_button.clicked.connect(self._position_steps)
         self._speed_steps_button.clicked.connect(self._speed_steps)
         self._yaw_rate_steps_button.clicked.connect(self._yaw_rate_steps)
+        self._yaw_steps_button.clicked.connect(self._yaw_steps)
 
         self._button_set_pose.clicked.connect(self._set_pose)
         self._button_reposition.clicked.connect(self._reposition_forward)
@@ -143,10 +148,20 @@ class PropulsionTestDialog(QDialog):
         self._telemetry_buffer = []
         QTimer.singleShot(5000, self.foo)
 
+    def _position_steps(self):
+        self._client.send_message(message_types.DbgPropulsionTest, struct.pack('<B',2))
+        self._telemetry_buffer = []
+        QTimer.singleShot(9000, self.foo)
+
     def _yaw_rate_steps(self):
         self._client.send_message(message_types.DbgPropulsionTest, struct.pack('<B',1))
         self._telemetry_buffer = []
         QTimer.singleShot(5000, self.foo)
+
+    def _yaw_steps(self):
+        self._client.send_message(message_types.DbgPropulsionTest, struct.pack('<B',3))
+        self._telemetry_buffer = []
+        QTimer.singleShot(10000, self.foo)
 
     def _test_trajectory(self):
         self._client.send_message(message_types.DbgPropulsionExecuteTrajectory, struct.pack('<Bfff',0, 0.2,0.2,0.2))
