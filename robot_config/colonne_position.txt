@@ -1,4 +1,3 @@
-//position_id, gache gauche, gache droite, porte gauche, porte droite
 0,21000,21000,46500,49500
 1,49000,49000,22000,25000
 2,21000,21000,22000,25000

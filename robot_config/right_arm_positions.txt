@@ -1,4 +1,3 @@
-//position_id, slider, rotation, shoulder, elbow, head
 0,244,1996,2776,264,669
 1,264,2116,2206,167,384
 2,264,2216,2126,167,404

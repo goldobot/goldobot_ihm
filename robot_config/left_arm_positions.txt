@@ -1,4 +1,3 @@
-//position_id, slider, rotation, shoulder, elbow, head
 0,780,2100,1320,760,355
 1,760,1980,1890,857,640
 2,760,1880,1970,857,620
