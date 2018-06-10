@@ -66,7 +66,8 @@ class ZmqClient(QObject):
             self.start_of_match.emit(timestamp)
 
         if msg_type == message_types.CommStats:
-            print(struct.unpack('<HH', msg[2:]))
+            #servo_descr.servo_idassprint(struct.unpack('<HH', msg[2:]))
+            pass
 
         if msg_type == message_types.DbgGetOdometryConfig:
             self.odometry_config.emit(OdometryConfig(msg[2:]))
