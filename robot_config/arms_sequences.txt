@@ -61,15 +61,15 @@ move,0,0,300
 
 //depose tapis 2 - initial_pos:0, pompe active
 #begin 4,0,1
-move,31,0,500
+move,21,0,500
 pump,-400,0
-move,32,0,300
-move,33,0,500
+move,31,0,300
+move,32,0,500
 belt,-256,0
-move,34,0,600
+move,33,0,600
 pump,0,30
 pump,200,0
-move,35,0,200
+move,34,0,200
 delay,500
 pump,0,0
 belt,0,0
@@ -77,8 +77,8 @@ belt,0,0
 
 //retour garage post-depose tapis 2 - initial_pos:35
 #begin 5,0,1
-move,36,0,600
-move,37,0,300
+move,35,0,600
+move,36,0,300
 move,0,0,300
 #end
 
@@ -96,8 +96,8 @@ move,0,0,300
 #begin 7,0,1
 move,0,0,500
 delay,1000
-delay,1000
 pump,-511,500
+delay,3000
 pump,0,0
 #end
 
@@ -177,14 +177,15 @@ move,2,0,100
 #begin 16,0,1
 belt,0,0
 move,2,0,100
-delay,300
-move,3,0,600
-belt,-256,200
-move,4,0,200
-delay,800
-move,5,0,500
-delay,300
-//fin en position garage
+delay,50
+move,3,0,300
+delay,1000
+belt,-256,0
+move,4,0,100
+delay,100
+move,5,0,200
+//delay,100
+//fin en position garage:
 move,0,0,200
 belt,0,0
 #end

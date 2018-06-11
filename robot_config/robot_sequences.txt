@@ -102,7 +102,8 @@ propulsion.trajectory,1,yellow_recalage_1,yellow_depose_colonne
 //propulsion.reposition,-180,0
 #end
 
-#begin prise1_Gdroit_Ddiag
+#begin prise1_Gdiag_Ddroit
+arms.execute_sequence,colonnes,18
 arms.execute_sequence$,grabber,15
 arms.execute_sequence$,left,1
 arms.execute_sequence,right,0
@@ -112,9 +113,9 @@ arms.execute_sequence$,right,5
 delay,1000
 arms.execute_sequence,grabber,16
 arms.execute_sequence,bascule,11
-arms.execute_sequence,left,2
+arms.execute_sequence,left,4
 arms.execute_sequence$,bascule,11
-arms.execute_sequence,left,3
+arms.execute_sequence,left,5
 delay,2000
 arms.execute_sequence,colonnes,19
 #end
@@ -129,14 +130,14 @@ arms.execute_sequence,colonnes,18
 //arms.go_to_position$,cubibox,0
 #end
 
-#begin prise_cube_pince
-arms.execute_sequence$,grabber,13
-delay,1000
-arms.execute_sequence$,grabber,14
-delay,4000
-//placer le cube maintenant
-arms.execute_sequence$,grabber,15
+#begin TEST_prise_pince
+arms.execute_sequence,grabber,13
+delay,500
+arms.execute_sequence,grabber,14
 delay,3000
+//placer le cube maintenant
+arms.execute_sequence,grabber,15
+delay,500
 arms.execute_sequence,grabber,16
 #end
 
