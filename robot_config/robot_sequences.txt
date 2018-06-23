@@ -161,7 +161,7 @@ propulsion.rotation,-1800
 propulsion.rotation,1800
 #end
 
-//7 traversée de table pour voir la rectitude
+//7 traversee de table pour voir la rectitude
 #begin traverser_table
 propulsion.set_pose,calibration_reposition,0
 propulsion.reposition,0,170

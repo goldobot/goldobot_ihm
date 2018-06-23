@@ -39,7 +39,7 @@ class ActuatorValuesWidget(QWidget):
             i += 1
 
         self._button_read_state = QPushButton('Lecture')
-        self._button_send_state = QPushButton('Écriture')
+        self._button_send_state = QPushButton('Ecriture')
         layout.addWidget(self._button_read_state, i, 0)
         layout.addWidget(self._button_send_state, i, 1)
 
@@ -49,7 +49,7 @@ class ActuatorValuesWidget(QWidget):
         self._button_read_state.clicked.connect(self._send_data)
 
 
-# Création des fonctions vides qui, pour l'instant, ne renvoient rien.
+# Creation des fonctions vides qui, pour l'instant, ne renvoient rien.
     def _read_actuators(self):
         pass
 
