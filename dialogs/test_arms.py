@@ -242,12 +242,14 @@ class TestArmsDialog(QDialog):
 
         self._button_execute_sequence = QPushButton('execute sequence')
         self._button_go_position = QPushButton('go to position')
+        self._button_calibrate_columns = QPushButton('calibrate columns')
 
         layout.addWidget(self._spinbox_arm_id)
         layout.addWidget(self._spinbox_position)
         layout.addWidget(self._spinbox_sequence)
         layout.addWidget(self._button_go_position)
         layout.addWidget(self._button_execute_sequence)
+        layout.addWidget(self._button_calibrate_columns)
         
         self.setLayout(layout)
         self._button_reset.clicked.connect(self._reset)
@@ -255,6 +257,7 @@ class TestArmsDialog(QDialog):
 
         self._button_go_position.clicked.connect(self._go_position)
         self._button_execute_sequence.clicked.connect(self._execute_sequence)
+        self._button_calibrate_columns.clicked.connect(self._calibrate_columns)
         
 
     def set_client(self, client):
@@ -284,6 +287,9 @@ class TestArmsDialog(QDialog):
         self._client.send_message(message_types.DbgArmsExecuteSequence,
             struct.pack('<BB', self._spinbox_arm_id.value(), self._spinbox_sequence.value()))
 
+    def _calibrate_columns(self):
+        self._client.send_message(message_types.FpgaColumnsCalib,
+            struct.pack('<B', 0))
 
     def _send_config(self):
         self._send_config_positions(0, 'left_arm')

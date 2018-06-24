@@ -117,10 +117,14 @@ move,0,0,300
 
 //abaisser gache avec tapis activé
 #begin 9,0,1
-belt,-256,0
 move,4,0,100
-delay,1000
+delay,100
+//tapis rapide
+belt,-500,0
+delay,600
 belt,0,0
+//retour en position normale de la gache
+move,0,0,100
 #end
 
 //monter gache + arret tapis
@@ -132,17 +136,22 @@ belt,0,0
 //lever sans gache (debute par un retrait de la gache, fini avec gache relevé)
 #begin 11,0,1
 belt,0,0
-move,4,0,500
-move,2,0,800
-delay,500
-move,4,0,700
-move,0,0,300
+move,4,0,50
+delay,50
+move,3,0,300
+delay,300
+move,4,0,300
+delay,300
+move,0,0,150
 #end
 
 //chargement avec debourage
 #begin 12,0,1
-belt,-256,0
+//debourage
+//belt,180,0
+//delay,100
 move,4,0,100
+belt,-256,0
 delay,300
 belt,0,0
 move,0,0,100

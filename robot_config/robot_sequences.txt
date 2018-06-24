@@ -125,9 +125,13 @@ arms.go_to_position$,left,0
 arms.go_to_position$,right,0
 arms.go_to_position$,grabber,0
 arms.go_to_position$,bascule,0
-arms.go_to_position$,colonnes,0
+//arms.go_to_position$,colonnes,0
 arms.execute_sequence,colonnes,18
 //arms.go_to_position$,cubibox,0
+#end
+
+#begin TEST_bascule
+arms.execute_sequence,bascule,11
 #end
 
 #begin TEST_prise_pince
