@@ -14,11 +14,11 @@ move,1,0,500
 move,2,0,400
 pump,-511,0
 move,3,0,0
-move,4,0,500
-delay,800
+move,4,0,400
+delay,600
 move,5,0,540
 pump,-400,0
-move,0,0,800
+move,0,0,500
 pump,-300,0
 #end
 
@@ -28,11 +28,11 @@ move,11,0,600
 move,12,0,400
 pump,-511,0
 move,13,0,200
-move,14,0,500
-delay,300
+move,14,0,400
+delay,100
 move,15,0,540
 pump,-400,0
-move,0,0,800
+move,0,0,500
 pump,-300,0
 #end
 
@@ -111,6 +111,8 @@ move,1,0,500
 belt,0,0
 move,2,0,1000
 move,3,0,500
+//pour bien laisser le tassage se faire
+delay,100
 move,4,0,700
 move,0,0,300
 #end
@@ -218,6 +220,7 @@ move,1,0,500
 //depose colonne (reste ouverte)
 #begin 19,0,1
 move,2,0,500
-delay,800
+delay,600
+move,4,0,500
 move,3,0,500
 #end
