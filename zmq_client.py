@@ -17,6 +17,7 @@ class ZmqClient(QObject):
     odometry_config = pyqtSignal(object)
     propulsion_controller_config = pyqtSignal(object)
     dynamixel_registers = pyqtSignal(int, int, object)
+    fpga_registers = pyqtSignal(int, int)
 
     def __init__(self, ip=None, parent = None):
         super(ZmqClient, self).__init__(None)
@@ -77,3 +78,8 @@ class ZmqClient(QObject):
         if msg_type == message_types.DbgDynamixelGetRegisters:
             id_, address = struct.unpack('<BB', msg[2:4])
             self.dynamixel_registers.emit(id_, address, msg[4:])
+
+        if msg_type == message_types.FpgaDbgReadReg:
+            apb_addr, apb_data = struct.unpack('<II', msg[2:])
+            self.fpga_registers.emit(apb_addr, apb_data)
+

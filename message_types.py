@@ -55,6 +55,8 @@ DbgRobotExecuteSequence=179
 DbgRobotSetTrajectoryPoint=180
 
 FpgaGetVersion=256
+FpgaDbgReadReg=257
+FpgaDbgWriteReg=258
 FpgaCmdServo=272
 FpgaCmdDCMotor=288
 FpgaCmdPumpR=289
