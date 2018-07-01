@@ -227,9 +227,12 @@ class TestArmsDialog(QDialog):
         tab_widget.addTab(self._left_arm_values, "Left arm")
         tab_widget.addTab(self._right_arm_values, "Right arm")
         tab_widget.addTab(self._other_values, "Others")
-        layout.addWidget(tab_widget,0,0,1,4)
-        layout.addWidget(self._button_reset,1,0)
-        layout.addWidget(self._button_send_config,1,1)
+#        layout.addWidget(tab_widget,0,0,1,4)
+        layout.addWidget(tab_widget,0,0,1,7)
+
+        layout.addWidget(QLabel("General"),1,0)
+        layout.addWidget(self._button_reset,1,1)
+        layout.addWidget(self._button_send_config,1,2)
 
         self._spinbox_arm_id = QSpinBox()
         self._spinbox_arm_id.setRange(0,5)
@@ -242,14 +245,44 @@ class TestArmsDialog(QDialog):
 
         self._button_execute_sequence = QPushButton('execute sequence')
         self._button_go_position = QPushButton('go to position')
-        self._button_calibrate_columns = QPushButton('calibrate columns')
 
-        layout.addWidget(self._spinbox_arm_id)
-        layout.addWidget(self._spinbox_position)
-        layout.addWidget(self._spinbox_sequence)
-        layout.addWidget(self._button_go_position)
-        layout.addWidget(self._button_execute_sequence)
-        layout.addWidget(self._button_calibrate_columns)
+        self._button_calibrate_columns = QPushButton('calibrate columns')
+        self._spinbox_columns_pos = QSpinBox()
+        self._spinbox_columns_pos.setRange(1,3)
+        self._button_columns_go_position = QPushButton('go to position')
+
+        self._line_edit_columns_off_l = QLineEdit()
+        self._line_edit_columns_off_l.setText("0")
+        self._button_columns_set_off_l = QPushButton('set offset L')
+        self._line_edit_columns_off_c = QLineEdit()
+        self._line_edit_columns_off_c.setText("0")
+        self._button_columns_set_off_c = QPushButton('set offset C')
+        self._line_edit_columns_off_r = QLineEdit()
+        self._line_edit_columns_off_r.setText("0")
+        self._button_columns_set_off_r = QPushButton('set offset R')
+
+        layout.addWidget(QLabel("Arms:"),2,0)
+        layout.addWidget(QLabel("id:"),2,1)
+        layout.addWidget(self._spinbox_arm_id,2,2)
+        layout.addWidget(QLabel("pos:"),2,3)
+        layout.addWidget(self._spinbox_position,2,4)
+        layout.addWidget(self._button_go_position,2,5)
+        layout.addWidget(QLabel("seq:"),3,1)
+        layout.addWidget(self._spinbox_sequence,3,2)
+        layout.addWidget(self._button_execute_sequence,3,3)
+
+        layout.addWidget(QLabel("Columns:"),4,0)
+        layout.addWidget(self._button_calibrate_columns,4,1)
+        layout.addWidget(QLabel("pos:"),4,2)
+        layout.addWidget(self._spinbox_columns_pos,4,3)
+        layout.addWidget(self._button_columns_go_position,4,4)
+
+        layout.addWidget(self._button_columns_set_off_l,5,1)
+        layout.addWidget(self._button_columns_set_off_c,5,2)
+        layout.addWidget(self._button_columns_set_off_r,5,3)
+        layout.addWidget(self._line_edit_columns_off_l,6,1)
+        layout.addWidget(self._line_edit_columns_off_c,6,2)
+        layout.addWidget(self._line_edit_columns_off_r,6,3)
         
         self.setLayout(layout)
         self._button_reset.clicked.connect(self._reset)
@@ -258,6 +291,11 @@ class TestArmsDialog(QDialog):
         self._button_go_position.clicked.connect(self._go_position)
         self._button_execute_sequence.clicked.connect(self._execute_sequence)
         self._button_calibrate_columns.clicked.connect(self._calibrate_columns)
+        self._button_columns_go_position.clicked.connect(self._columns_go_position)
+
+        self._button_columns_set_off_l.clicked.connect(self._columns_set_off_l)
+        self._button_columns_set_off_c.clicked.connect(self._columns_set_off_c)
+        self._button_columns_set_off_r.clicked.connect(self._columns_set_off_r)
         
 
     def set_client(self, client):
@@ -290,6 +328,25 @@ class TestArmsDialog(QDialog):
     def _calibrate_columns(self):
         self._client.send_message(message_types.FpgaColumnsCalib,
             struct.pack('<B', 0))
+
+    def _columns_go_position(self):
+        self._client.send_message(message_types.FpgaColumnsMove,
+            struct.pack('<B', self._spinbox_columns_pos.value()))
+
+    def _columns_set_off_l(self):
+        val = int(self._line_edit_columns_off_l.text())
+        self._client.send_message(message_types.FpgaColumnsSetOffset,
+                                  struct.pack('<Bi', 3, val))
+
+    def _columns_set_off_c(self):
+        val = int(self._line_edit_columns_off_c.text())
+        self._client.send_message(message_types.FpgaColumnsSetOffset,
+                                  struct.pack('<Bi', 2, val))
+
+    def _columns_set_off_r(self):
+        val = int(self._line_edit_columns_off_r.text())
+        self._client.send_message(message_types.FpgaColumnsSetOffset,
+                                  struct.pack('<Bi', 1, val))
 
     def _send_config(self):
         self._send_config_positions(0, 'left_arm')

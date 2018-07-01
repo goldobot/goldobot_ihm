@@ -102,7 +102,10 @@ _arm_ids = {
 	'grabber': 2,
 	'bascule': 3,
 	'colonnes': 4,
+	'cubibox': 5,
+	'rack_colonnes': 6,
 }
+
 class StrategyCompiler:
 	def __init__(self):
 		self._points = []

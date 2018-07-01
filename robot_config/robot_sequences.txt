@@ -7,7 +7,8 @@ arms.go_to_position$,grabber,0
 arms.go_to_position$,bascule,0
 arms.go_to_position$,colonnes,0
 //arms.go_to_position$,cubibox,0
-delay,2000
+arms.go_to_position$,rack_colonnes,0
+delay,20000
 propulsion.rotation,90,0
 propulsion.reposition,180,0
 propulsion.trajectory,0,green_reposition_1,green_start
@@ -25,7 +26,8 @@ arms.go_to_position$,grabber,0
 arms.go_to_position$,bascule,0
 arms.go_to_position$,colonnes,0
 //arms.go_to_position$,cubibox,0
-delay,2000
+arms.go_to_position$,rack_colonnes,0
+delay,20000
 propulsion.rotation,-90,0
 propulsion.reposition,180,0
 propulsion.trajectory,0,yellow_reposition_1,yellow_start
@@ -40,6 +42,8 @@ propulsion.trajectory,0,yellow_reposition_2,yellow_start
 // Match vert
 #begin match_green
 arms.execute_sequence$,colonnes,18
+arms.go_to_position$,rack_colonnes,1
+delay,8000
 propulsion.trajectory,0,green_start,green_switch
 arms.execute_sequence,left,6
 propulsion.trajectory,0,green_switch,green_1
@@ -69,6 +73,8 @@ propulsion.trajectory,1,green_depose_colonne,green_recalage_1
 
 #begin match_yellow
 arms.execute_sequence$,colonnes,18
+arms.go_to_position$,rack_colonnes,3
+delay,8000
 propulsion.trajectory,0,yellow_start,yellow_switch
 arms.execute_sequence,right,6
 propulsion.trajectory,0,yellow_switch,yellow_1
