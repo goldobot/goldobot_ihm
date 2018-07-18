@@ -3,6 +3,8 @@ Heartbeat=1
 Reset=2
 CommStats=3
 DbgPrintf=4
+DbgGPIO=5
+DbgEvent=6
 
 PropulsionTelemetry=8
 PropulsionTelemetryEx=9
@@ -54,6 +56,9 @@ DbgRobotSetSequence=178
 DbgRobotExecuteSequence=179
 DbgRobotSetTrajectoryPoint=180
 
+DbgRobotEnterManualMode=192
+DbgRobotExitManualMode=193
+
 FpgaGetVersion=256
 FpgaDbgReadReg=257
 FpgaDbgWriteReg=258
@@ -69,5 +74,11 @@ FpgaColumnsMove=321
 FpgaColumnsSetOffset=322
 
 
+# Debug event types
 
+DbgEventRobotHoming=0
+DbgEventStartMatch=1
+DbgEventStartSequence=2
+DbgEventExecuteCommand=3
+DbgEventGoWaypoint=4
 

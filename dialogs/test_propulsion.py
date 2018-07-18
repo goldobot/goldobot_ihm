@@ -78,7 +78,7 @@ class PropulsionTestDialog(QDialog):
 
         layout.addWidget(self._button_set_pose, 10,0)
         layout.addWidget(self._button_reposition, 11,0)
-        layout.addWidget(self._execute_trajectory_button, 10,0)
+        layout.addWidget(self._execute_trajectory_button, 12,0)
 
         self.setLayout(layout)
         

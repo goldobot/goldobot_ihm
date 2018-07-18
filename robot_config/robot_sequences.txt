@@ -17,7 +17,7 @@ propulsion.reposition,-90,1500
 propulsion.trajectory,0,green_reposition_2,green_start
 delay,1000
 //recallage colonnes
-arms.go_to_position$,rack_colonnes,0
+//arms.go_to_position$,rack_colonnes,0
 #end
 
 #begin prematch_yellow
@@ -39,7 +39,7 @@ propulsion.reposition,90,1500
 propulsion.trajectory,0,yellow_reposition_2,yellow_start
 delay,1000
 //recallage colonnes
-arms.go_to_position$,rack_colonnes,0
+//arms.go_to_position$,rack_colonnes,0
 #end
 
 
@@ -48,7 +48,7 @@ arms.go_to_position$,rack_colonnes,0
 // Match vert
 #begin match_green
 arms.execute_sequence$,colonnes,18
-arms.go_to_position$,rack_colonnes,3
+//arms.go_to_position$,rack_colonnes,3
 delay,300
 propulsion.trajectory,0,green_start,green_switch
 //declenchement interrupteur
@@ -85,7 +85,7 @@ arms.execute_sequence,left,5
 
 #begin match_yellow
 arms.execute_sequence$,colonnes,18
-arms.go_to_position$,rack_colonnes,3
+//arms.go_to_position$,rack_colonnes,3
 delay,300
 propulsion.trajectory,0,yellow_start,yellow_switch
 //declenchement interrupteur

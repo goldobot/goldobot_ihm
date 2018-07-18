@@ -11,6 +11,7 @@ import message_types
 
 class ZmqClient(QObject):
     heartbeat = pyqtSignal(int)
+    debug_gpio = pyqtSignal(int)
     start_of_match = pyqtSignal(int)
     propulsion_telemetry = pyqtSignal(object)
     propulsion_telemetry_ex = pyqtSignal(object)
@@ -54,6 +55,10 @@ class ZmqClient(QObject):
             timestamp = struct.unpack('<I', msg[2:6])[0]
             self.heartbeat.emit(timestamp)
 
+        if msg_type == message_types.DbgGPIO:
+            gpio_mask = struct.unpack('<I', msg[2:6])[0]
+            self.debug_gpio.emit(gpio_mask)
+
         if msg_type == message_types.PropulsionTelemetry:
             telemetry = PropulsionTelemetry(msg[2:])
             self.propulsion_telemetry.emit(telemetry)
@@ -66,8 +71,46 @@ class ZmqClient(QObject):
             timestamp = struct.unpack('<I', msg[2:6])[0]
             self.start_of_match.emit(timestamp)
 
-        if msg_type == message_types.CommStats:
-            print(struct.unpack('<HH', msg[2:]))
+# FIXME : DEBUG : GOLDO
+#        if msg_type == message_types.CommStats:
+#            print(struct.unpack('<HH', msg[2:]))
+        if msg_type == message_types.DbgEvent:
+            event_type, event_arg1, event_arg2, event_arg3 = struct.unpack('<Iiii', msg[2:])
+            if event_type == message_types.DbgEventRobotHoming:
+                my_color = "??"
+                if event_arg1 == 1:
+                    my_color = "Green"
+                if event_arg1 == 2:
+                    my_color = "Orange"
+                print("RobotHoming: " + str(my_color))
+            if event_type == message_types.DbgEventStartMatch:
+                my_color = "??"
+                if event_arg1 == 1:
+                    my_color = "Green"
+                if event_arg1 == 2:
+                    my_color = "Orange"
+                print("StartMatch: " + str(my_color))
+            if event_type == message_types.DbgEventStartSequence:
+                print("StartSequence: " + str(event_arg1))
+            if event_type == message_types.DbgEventExecuteCommand:
+                if event_arg1 == 8:
+                    print("ExecuteCommand: Delay: " + str(event_arg2))
+                if event_arg1 == 1:
+                    print("ExecuteCommand: SetPose: (%d,%d)"%(event_arg2,event_arg3))
+                if event_arg1 == 2:
+                    print("ExecuteCommand: Rotation: " + str(event_arg2))
+                if event_arg1 == 3:
+                    print("ExecuteCommand: PointTo: ??")
+                if event_arg1 == 4:
+                    print("ExecuteCommand: Trajectory: " + str(event_arg2))
+                if event_arg1 == 5:
+                    print("ExecuteCommand: Reposition: " + str(event_arg2))
+                if event_arg1 == 6:
+                    print("ExecuteCommand: ArmsGoToPosition: (id=%d,pos=%d)"%(event_arg2,event_arg3))
+                if event_arg1 == 7:
+                    print("ExecuteCommand: ArmsExecuteSequence: (id=%d,pos=%d)"%(event_arg2,event_arg3))
+            if event_type == message_types.DbgEventGoWaypoint:
+                print("  WayPoint: (%d,%d)"%(event_arg1,event_arg2))
 
         if msg_type == message_types.DbgGetOdometryConfig:
             self.odometry_config.emit(OdometryConfig(msg[2:]))

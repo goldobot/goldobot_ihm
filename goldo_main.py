@@ -46,15 +46,21 @@ class TestSequencesDialog(QDialog):
         self._client = None
         self._button_upload = QPushButton('upload')
         self._button_execute = QPushButton('execute')
+        self._button_enter_manual = QPushButton('Enter manual')
+        self._button_exit_manual = QPushButton('Exit manual')
         self._combobox_sequence_id = QComboBox()
         
         layout = QGridLayout()        
         layout.addWidget(self._button_upload, 0, 0)
         layout.addWidget(self._combobox_sequence_id, 1, 0)
         layout.addWidget(self._button_execute, 1, 1)
+        layout.addWidget(self._button_enter_manual, 2, 0)
+        layout.addWidget(self._button_exit_manual, 2, 1)
         self.setLayout(layout)
         self._button_upload.clicked.connect(self._upload)
         self._button_execute.clicked.connect(self._execute)
+        self._button_enter_manual.clicked.connect(self._enter_manual)
+        self._button_exit_manual.clicked.connect(self._exit_manual)
         self._sequence_ids = []       
 
     def set_client(self, client):
@@ -83,6 +89,12 @@ class TestSequencesDialog(QDialog):
         seq_id = self._sequence_ids[self._combobox_sequence_id.currentIndex()]
         print(seq_id)
         self._client.send_message(message_types.DbgRobotExecuteSequence, struct.pack('<B', seq_id))
+
+    def _enter_manual(self):
+        self._client.send_message(message_types.DbgRobotEnterManualMode,b'')
+
+    def _exit_manual(self):
+        self._client.send_message(message_types.DbgRobotExitManualMode,b'')
 
    
 class ServoWidget(QWidget):
