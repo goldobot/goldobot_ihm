@@ -8,8 +8,8 @@ yellow_prise_cube_1,345,655
 yellow_approche_depose_1,205,655
 yellow_recalage_1,145,655
 yellow_depose_colonne,350,655
-yellow_approche_cube_2,1025,905
-yellow_prise_cube_2,1165,905
+yellow_approche_cube_2,1225,405
+yellow_prise_cube_2,1325,405
 green_start,205,-1285
 green_reposition_1,170,-1285
 green_reposition_2,205,-1365

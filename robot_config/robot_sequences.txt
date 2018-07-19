@@ -8,21 +8,22 @@ arms.go_to_position$,grabber,0
 arms.go_to_position$,bascule,0
 arms.go_to_position$,colonnes,0
 //arms.go_to_position$,cubibox,0
-delay,2000
+delay,1000
 propulsion.rotation,90,0
+//recallage colonnes
+//arms.go_to_position$,rack_colonnes,0
+delay,500
 propulsion.reposition,180,0
 propulsion.trajectory,0,green_reposition_1,green_start
 propulsion.rotation,-90,0
 propulsion.reposition,-90,1500
 propulsion.trajectory,0,green_reposition_2,green_start
 delay,1000
-//recallage colonnes
-//arms.go_to_position$,rack_colonnes,0
 #end
 
 #begin prematch_yellow
 delay,2000
-//initialisation actionneur
+//#initialisation actionneur
 propulsion.set_pose,yellow_start,-90
 arms.go_to_position$,left,0
 arms.go_to_position$,right,0
@@ -32,16 +33,16 @@ arms.go_to_position$,colonnes,0
 //arms.go_to_position$,cubibox,0
 delay,1000
 propulsion.rotation,-90,0
+//#recallage colonnes
+//arms.go_to_position$,rack_colonnes,0
+delay,500
 propulsion.reposition,180,0
 propulsion.trajectory,0,yellow_reposition_1,yellow_start
 propulsion.rotation,90,0
 propulsion.reposition,90,1500
 propulsion.trajectory,0,yellow_reposition_2,yellow_start
 delay,1000
-//recallage colonnes
-//arms.go_to_position$,rack_colonnes,0
 #end
-
 
 
 
@@ -84,41 +85,55 @@ arms.execute_sequence,left,5
 #end
 
 #begin match_yellow
+//#mise en position centrale colonne
+arms.go_to_position$,rack_colonnes,2
 arms.execute_sequence$,colonnes,18
-//arms.go_to_position$,rack_colonnes,3
 delay,300
-propulsion.trajectory,0,yellow_start,yellow_switch
-//declenchement interrupteur
+//#declenchement interrupteur
+//propulsion.trajectory,0,yellow_start,yellow_switch
+propulsion.trajectory,0,yellow_start,yellow_approche_cube_1
 arms.execute_sequence,right,6
-propulsion.trajectory,0,yellow_switch,yellow_approche_cube_1
+//propulsion.trajectory,0,yellow_switch,yellow_approche_cube_1
 propulsion.rotation,90,0
-//préparation prise cube 1
-arms.go_to_position$,rack_colonnes,1
+//#préparation prise cube 1
+//arms.go_to_position$,rack_colonnes,1
 arms.execute_sequence$,grabber,14
-delay,2000
+delay,1000
 propulsion.trajectory,1,yellow_approche_cube_1,yellow_prise_cube_1
-delay,2000
-//debut prise cube 1
-arms.execute_sequence$,grabber,15
-arms.execute_sequence$,left,1
-arms.execute_sequence,right,0
-arms.execute_sequence,right,4
-arms.execute_sequence$,bascule,11
-arms.execute_sequence$,right,5
-delay,500
-arms.execute_sequence,grabber,16
-arms.execute_sequence,bascule,11
-arms.execute_sequence,left,4
-arms.execute_sequence$,bascule,11
-arms.execute_sequence,left,5
-//fin prise cube 1
-//depose cube
+delay,1000
+//#debut prise cube 1
+//arms.execute_sequence$,grabber,15
+//arms.execute_sequence$,left,1
+//arms.execute_sequence,right,0
+//arms.execute_sequence,right,4
+//arms.execute_sequence$,bascule,11
+//arms.execute_sequence$,right,5
+//delay,500
+//arms.execute_sequence,grabber,16
+//arms.execute_sequence,bascule,11
+//arms.execute_sequence,left,4
+//arms.execute_sequence$,bascule,11
+//arms.execute_sequence,left,5
+//#fin prise cube 1
+//#depose cube
 //propulsion.trajectory,1,yellow_prise_cube_1,yellow_recalage_1
 //delay,2000
 //arms.execute_sequence,colonnes,19
 //delay,2000
 //propulsion.trajectory,1,yellow_recalage_1,yellow_depose_colonne
 //fin depose cube
+#end
+
+#begin prise2
+arms.execute_sequence$,grabber,14
+delay,1000
+propulsion.rotation,-15,0
+delay,1000
+propulsion.trajectory,1,yellow_prise_cube_1,yellow_approche_cube_2
+delay,1000
+propulsion.rotation,15,0
+delay,1000
+propulsion.trajectory,1,yellow_approche_cube_2,yellow_prise_cube_2
 #end
 
 #begin prise1_Gdiag_Ddroit
