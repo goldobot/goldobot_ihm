@@ -81,7 +81,7 @@ arms.execute_sequence,left,5
 //delay,2000
 //arms.execute_sequence,colonnes,19
 //delay,2000
-//propulsion.trajectory,1,green_recalage_1,green_depose_colonne
+//propulsion.trajectory,1,green_recalage_1,green_depose_colonne_1
 #end
 
 #begin match_yellow
@@ -94,7 +94,7 @@ delay,300
 propulsion.trajectory,0,yellow_start,yellow_approche_cube_1
 arms.execute_sequence,right,6
 //propulsion.trajectory,0,yellow_switch,yellow_approche_cube_1
-propulsion.rotation,90,0
+propulsion.rotation,93,0
 //#préparation prise cube 1
 //arms.go_to_position$,rack_colonnes,1
 arms.execute_sequence$,grabber,14
@@ -120,8 +120,20 @@ delay,1000
 //delay,2000
 //arms.execute_sequence,colonnes,19
 //delay,2000
-//propulsion.trajectory,1,yellow_recalage_1,yellow_depose_colonne
+//propulsion.trajectory,1,yellow_recalage_1,yellow_depose_colonne_1
 //fin depose cube
+delay,2000
+//#debut prise cube 2
+arms.execute_sequence$,grabber,14
+delay,500
+propulsion.rotation,-15,0
+delay,500
+propulsion.trajectory,1,yellow_prise_cube_1,yellow_approche_cube_2
+delay,500
+propulsion.rotation,18,0
+delay,500
+propulsion.trajectory,1,yellow_approche_cube_2,yellow_prise_cube_2
+//#fin prise cube 2
 #end
 
 #begin prise2
@@ -131,9 +143,29 @@ propulsion.rotation,-15,0
 delay,1000
 propulsion.trajectory,1,yellow_prise_cube_1,yellow_approche_cube_2
 delay,1000
-propulsion.rotation,15,0
+propulsion.rotation,18,0
 delay,1000
 propulsion.trajectory,1,yellow_approche_cube_2,yellow_prise_cube_2
+#end
+
+#begin prise3
+arms.execute_sequence$,grabber,14
+delay,500
+propulsion.rotation,105,0
+delay,500
+propulsion.trajectory,1,yellow_prise_cube_2,yellow_approche_cube_3
+delay,500
+propulsion.rotation,-10,0
+delay,500
+propulsion.trajectory,1,yellow_approche_cube_3,yellow_prise_cube_3
+delay,2000
+propulsion.rotation,-85,0
+delay,500
+propulsion.trajectory,1,yellow_prise_cube_3,yellow_approche_depose_2
+delay,500
+propulsion.rotation,10,0
+delay,1000
+propulsion.trajectory,1,yellow_approche_depose_2,yellow_depose_colonne_2
 #end
 
 #begin prise1_Gdiag_Ddroit
