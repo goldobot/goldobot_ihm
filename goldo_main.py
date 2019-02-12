@@ -32,11 +32,12 @@ from test_arms import TestArmsDialog
 from test_actuators import TestActuatorsDialog
 from test_dynamixels import TestDynamixelAx12Dialog
 from debug_fpga import DebugFpgaDialog
+from debug_gyro import DebugGyroDialog
 
 import message_types
 from compile_strategy import StrategyCompiler
 
-       
+
 
 
 
@@ -49,8 +50,8 @@ class TestSequencesDialog(QDialog):
         self._button_enter_manual = QPushButton('Enter manual')
         self._button_exit_manual = QPushButton('Exit manual')
         self._combobox_sequence_id = QComboBox()
-        
-        layout = QGridLayout()        
+
+        layout = QGridLayout()
         layout.addWidget(self._button_upload, 0, 0)
         layout.addWidget(self._combobox_sequence_id, 1, 0)
         layout.addWidget(self._button_execute, 1, 1)
@@ -61,11 +62,11 @@ class TestSequencesDialog(QDialog):
         self._button_execute.clicked.connect(self._execute)
         self._button_enter_manual.clicked.connect(self._enter_manual)
         self._button_exit_manual.clicked.connect(self._exit_manual)
-        self._sequence_ids = []       
+        self._sequence_ids = []
 
     def set_client(self, client):
         self._client = client
-        
+
     def _upload(self):
         sc = StrategyCompiler()
         sc.compile_strategy()
@@ -83,7 +84,7 @@ class TestSequencesDialog(QDialog):
             self._client.send_message(message_types.DbgRobotSetTrajectoryPoint, struct.pack('<BB', i,sc._trajectory_buffer[i]))
         for i in range(len(sc._sequences)):
             seq = sc._sequences[i]
-            self._client.send_message(message_types.DbgRobotSetSequence, struct.pack('<HHH', i, seq[0], seq[1])) 
+            self._client.send_message(message_types.DbgRobotSetSequence, struct.pack('<HHH', i, seq[0], seq[1]))
 
     def _execute(self):
         seq_id = self._sequence_ids[self._combobox_sequence_id.currentIndex()]
@@ -96,7 +97,7 @@ class TestSequencesDialog(QDialog):
     def _exit_manual(self):
         self._client.send_message(message_types.DbgRobotExitManualMode,b'')
 
-   
+
 class ServoWidget(QWidget):
     def __init__(self, parent = None):
         super(ServoWidgetWidget, self).__init__(None)
@@ -122,6 +123,7 @@ class MainWindow(QMainWindow):
         self._action_actuators_test = QAction("Test actionneurs",self)
         self._action_sequences_test = QAction("Test sequences",self)
         self._action_debug_fpga = QAction("Debug FPGA",self)
+        self._action_debug_gyro = QAction("Debug Gyro",self)
         self._action_reset = QAction("Reset",self)
 
         # Add menu
@@ -134,6 +136,7 @@ class MainWindow(QMainWindow):
         tools_menu.addAction(self._action_actuators_test)
         tools_menu.addAction(self._action_sequences_test)
         tools_menu.addAction(self._action_debug_fpga)
+        tools_menu.addAction(self._action_debug_gyro)
         tools_menu.addAction(self._action_reset)
 
         self._main_widget = QWidget()
@@ -159,6 +162,7 @@ class MainWindow(QMainWindow):
         self._action_actuators_test.triggered.connect(self._open_actuators_test)
         self._action_sequences_test.triggered.connect(self._open_sequences_test)
         self._action_debug_fpga.triggered.connect(self._open_debug_fpga)
+        self._action_debug_gyro.triggered.connect(self._open_debug_gyro)
 
         self._action_reset.triggered.connect(self._send_reset)
 
@@ -170,6 +174,7 @@ class MainWindow(QMainWindow):
         self._dialog_actuators_test = TestActuatorsDialog()
         self._dialog_sequences_test = TestSequencesDialog()
         self._dialog_debug_fpga = DebugFpgaDialog()
+        self._dialog_debug_gyro = DebugGyroDialog()
 
         #Dirty
         parser = OptionParser()
@@ -183,6 +188,7 @@ class MainWindow(QMainWindow):
         self._dialog_dynamixel_ax12_test.set_client(self._client)
         self._dialog_sequences_test.set_client(self._client)
         self._dialog_debug_fpga.set_client(self._client)
+        self._dialog_debug_gyro.set_client(self._client)
         self._widget_robot_status.set_client(self._client)
         self._table_view.set_client(self._client)
 
@@ -193,7 +199,7 @@ class MainWindow(QMainWindow):
         self._dialog_propulsion_controller_config.show()
 
     def _open_propulsion_test(self):
-        self._dialog_propulsion_test.show()  
+        self._dialog_propulsion_test.show()
 
     def _open_arms_test(self):
         self._dialog_arms_test.show()
@@ -209,6 +215,9 @@ class MainWindow(QMainWindow):
 
     def _open_debug_fpga(self):
         self._dialog_debug_fpga.show()
+
+    def _open_debug_gyro(self):
+        self._dialog_debug_gyro.show()
 
     def _send_reset(self):
         self._client.send_message(message_types.DbgReset, b'')
@@ -228,9 +237,9 @@ if __name__ == '__main__':
     #wid5.set_client(c)
     #wid5.show()
 
-    
 
-    
+
+
     # Ensure that the application quits using CTRL-C
     signal.signal(signal.SIGINT, signal.SIG_DFL)
 

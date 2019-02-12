@@ -19,6 +19,8 @@ class ZmqClient(QObject):
     propulsion_controller_config = pyqtSignal(object)
     dynamixel_registers = pyqtSignal(int, int, object)
     fpga_registers = pyqtSignal(int, int)
+    gyro_registers = pyqtSignal(int, int)
+    update_gyro = pyqtSignal(float)
 
     def __init__(self, ip=None, parent = None):
         super(ZmqClient, self).__init__(None)
@@ -37,7 +39,7 @@ class ZmqClient(QObject):
     def send_message(self, message_type, message_body):
         self._push_socket.send_multipart([struct.pack('<H',message_type), message_body])
 
-    def _on_sub_socket_event(self):        
+    def _on_sub_socket_event(self):
         self._notifier.setEnabled(False)
 
         flags = self._sub_socket.getsockopt(zmq.EVENTS)
@@ -126,3 +128,10 @@ class ZmqClient(QObject):
             apb_addr, apb_data = struct.unpack('<II', msg[2:])
             self.fpga_registers.emit(apb_addr, apb_data)
 
+        if msg_type == message_types.GyroDbgReadReg:
+            reg_addr,reg_data = struct.unpack('<II', msg[2:])
+            self.gyro_registers.emit(reg_addr, reg_data)
+
+        if msg_type == message_types.GyroGetAngle:
+            angle = struct.unpack('<I', msg[2:])
+            self.update_gyro.emit(angle)

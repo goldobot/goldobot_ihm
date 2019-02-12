@@ -73,6 +73,9 @@ FpgaColumnsCalib=320
 FpgaColumnsMove=321
 FpgaColumnsSetOffset=322
 
+GyroDbgReadReg=342
+GyroGetAngle=344
+GyroDbgWriteReg=376
 
 # Debug event types
 
@@ -81,4 +84,3 @@ DbgEventStartMatch=1
 DbgEventStartSequence=2
 DbgEventExecuteCommand=3
 DbgEventGoWaypoint=4
-
