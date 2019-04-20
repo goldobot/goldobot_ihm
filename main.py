@@ -22,6 +22,7 @@ from dialogs.test_propulsion import PropulsionTestDialog
 from dialogs.test_arms import TestArmsDialog
 from dialogs.test_actuators import TestActuatorsDialog
 from dialogs.test_dynamixels import TestDynamixelAx12Dialog
+from dialogs.debug_fpga import DebugFpgaDialog
 
 import message_types
 from compile_strategy import StrategyCompiler
@@ -99,6 +100,7 @@ class MainWindow(QMainWindow):
         self._action_dynamixel_ax12_test = QAction("Test dynamixel AX12")
         self._action_actuators_test = QAction("Test actionneurs")
         self._action_sequences_test = QAction("Test sequences")
+        self._action_debug_fpga = QAction("Debug FPGA")
         self._action_reset = QAction("Reset")
 
         # Add menu
@@ -111,6 +113,7 @@ class MainWindow(QMainWindow):
         tools_menu.addAction(self._action_actuators_test)
         tools_menu.addAction(self._action_sequences_test)
         tools_menu.addAction(self._action_reset)
+        tools_menu.addAction(self._action_debug_fpga)
 
         self._main_widget = QWidget()
         self._table_view = TableViewWidget()
@@ -134,6 +137,7 @@ class MainWindow(QMainWindow):
         self._action_dynamixel_ax12_test.triggered.connect(self._open_dynamixel_ax12_test)
         self._action_actuators_test.triggered.connect(self._open_actuators_test)
         self._action_sequences_test.triggered.connect(self._open_sequences_test)
+        self._action_debug_fpga.triggered.connect(self._open_debug_fpga)
 
         self._action_reset.triggered.connect(self._send_reset)
 
@@ -144,6 +148,7 @@ class MainWindow(QMainWindow):
         self._dialog_dynamixel_ax12_test = TestDynamixelAx12Dialog()
         self._dialog_actuators_test = TestActuatorsDialog()
         self._dialog_sequences_test = TestSequencesDialog()
+        self._dialog_debug_fpga = DebugFpgaDialog()
 
         #Dirty
         parser = OptionParser()
@@ -158,6 +163,7 @@ class MainWindow(QMainWindow):
         self._dialog_sequences_test.set_client(self._client)
         self._widget_robot_status.set_client(self._client)
         self._table_view.set_client(self._client)
+        self._dialog_debug_fpga.set_client(self._client)
 
     def _open_odometry_config(self):
         self._dialog_odometry_config.show()
@@ -179,6 +185,9 @@ class MainWindow(QMainWindow):
 
     def _open_sequences_test(self):
         self._dialog_sequences_test.show()
+        
+    def _open_debug_fpga(self):
+        self._dialog_debug_fpga.show()
 
     def _send_reset(self):
         self._client.send_message(message_types.DbgReset, b'')
