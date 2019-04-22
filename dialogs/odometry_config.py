@@ -52,7 +52,7 @@ class OdometryConfigDialog(QDialog):
     def set_client(self, client):
         self._client = client
         self._client.odometry_config.connect(self.update_odometry_config)
-        #self._client.propulsion_telemetry.connect(self._on_telemetry)
+        self._client.propulsion_telemetry.connect(self._on_telemetry)
         self._client.propulsion_telemetry_ex.connect(self._on_telemetry_ex)
 
     def on_get_button_clicked(self):
