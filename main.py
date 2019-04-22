@@ -164,6 +164,11 @@ class MainWindow(QMainWindow):
         self._widget_robot_status.set_client(self._client)
         self._table_view.set_client(self._client)
         self._dialog_debug_fpga.set_client(self._client)
+        
+        # Add status bar
+        self._status_link_state = QLabel('')
+        self.statusBar().addWidget(self._status_link_state)        
+        self._client.comm_stats.connect(self._on_comm_stats)
 
     def _open_odometry_config(self):
         self._dialog_odometry_config.show()
@@ -191,6 +196,9 @@ class MainWindow(QMainWindow):
 
     def _send_reset(self):
         self._client.send_message(message_types.DbgReset, b'')
+        
+    def _on_comm_stats(self, stats):
+        print(stats)
 
 
 

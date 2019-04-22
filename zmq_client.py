@@ -12,6 +12,7 @@ import message_types
 class ZmqClient(QObject):
     heartbeat = pyqtSignal(int)
     start_of_match = pyqtSignal(int)
+    comm_stats = pyqtSignal(object)
     propulsion_telemetry = pyqtSignal(object)
     propulsion_telemetry_ex = pyqtSignal(object)
     odometry_config = pyqtSignal(object)
@@ -69,7 +70,7 @@ class ZmqClient(QObject):
             self.start_of_match.emit(timestamp)
 
         if msg_type == message_types.CommStats:
-            #servo_descr.servo_idassprint(struct.unpack('<HH', msg[2:]))
+            self.comm_stats.emit(struct.unpack('<HH', msg[2:]))
             pass
 
         if msg_type == message_types.DbgGetOdometryConfig:
