@@ -10,6 +10,7 @@ from PyQt5.QtWidgets import QTabWidget
 
 import struct
 import message_types
+from config import robot_config
 
 class ArmValuesWidget(QWidget):
     def __init__(self, servos, motor_id):
@@ -21,13 +22,12 @@ class ArmValuesWidget(QWidget):
 
         i = 1
         layout.addWidget(QLabel('Goal position'),0,1)
-        layout.addWidget(QLabel('Torque enable'),0,2)
+        layout.addWidget(QLabel('Enable'),0,2)
         layout.addWidget(QLabel('Torque limit'),0,3)
-        layout.addWidget(QLabel('Current position'),0,4)
-        layout.addWidget(QLabel('Current speed'),0,5)
-        layout.addWidget(QLabel('Current load'),0,6)
-        layout.addWidget(QLabel('Voltage'),0,7)
-        layout.addWidget(QLabel('Temperature'),0,8)
+        layout.addWidget(QLabel('Position'),0,4)
+        layout.addWidget(QLabel('Speed'),0,5)
+        layout.addWidget(QLabel('Load'),0,6)
+
         for k, id_ in servos:
             wid_goal_pos = QSpinBox()
             wid_goal_pos.setRange(0,4096)
@@ -52,13 +52,6 @@ class ArmValuesWidget(QWidget):
             wid_current_load = QLineEdit()
             wid_current_load.setReadOnly(True)
 
-            wid_current_voltage = QLineEdit()
-            wid_current_voltage.setReadOnly(True)
-
-            wid_current_temp = QLineEdit()
-            wid_current_temp.setReadOnly(True)
-
-
             layout.addWidget(QLabel(k),i,0)
             layout.addWidget(wid_goal_pos,i,1)
             layout.addWidget(wid_torque_enable,i,2)
@@ -66,10 +59,8 @@ class ArmValuesWidget(QWidget):
             layout.addWidget(wid_current_pos,i,4)
             layout.addWidget(wid_current_speed,i,5)
             layout.addWidget(wid_current_load,i,6)
-            layout.addWidget(wid_current_voltage,i,7)
-            layout.addWidget(wid_current_temp,i,8)
             self._widgets[id_] = (wid_goal_pos, wid_torque_enable, wid_torque_limit, wid_current_pos, wid_current_speed,
-             wid_current_load, wid_current_voltage, wid_current_temp)
+             wid_current_load)
             i+=1
         self._button_read_state = QPushButton('Read')
         self._button_copy_pos = QPushButton('Copy')
@@ -201,108 +192,25 @@ class TestArmsDialog(QDialog):
         self._button = QPushButton('set pwm')
         self._left_pwm_spinbox = QSpinBox()
         self._left_pwm_spinbox.setRange(0,1024)
-        self._left_arm_values = ArmValuesWidget([
-            ('slider',4),
-            ('rotation', 83),
-            ('shoulder', 84),
-            ('elbow', 5),
-            ('head', 6)], 0)
-        self._right_arm_values = ArmValuesWidget([
-            ('slider',1),
-            ('rotation', 81),
-            ('shoulder', 82),
-            ('elbow', 2),
-            ('head', 3)], 1)
-
-        self._other_values = ArmValuesWidget([
-            ('pince',101),
-            ('bascule', 7),
-            ('gache', 8)
-           ], 2)
-
+        self._left_arm_values = ArmValuesWidget([(d['name'], d['id']) for d in robot_config['dynamixels']], 0)
         self._button_reset = QPushButton('Reset')
         self._button_send_config = QPushButton('send config')
-        layout = QGridLayout()
-        tab_widget = QTabWidget()
-        tab_widget.addTab(self._left_arm_values, "Left arm")
-        tab_widget.addTab(self._right_arm_values, "Right arm")
-        tab_widget.addTab(self._other_values, "Others")
-#        layout.addWidget(tab_widget,0,0,1,4)
-        layout.addWidget(tab_widget,0,0,1,7)
+        layout = QGridLayout()      
+        layout.addWidget(self._left_arm_values,0,0,1,7)
 
         layout.addWidget(QLabel("General"),1,0)
         layout.addWidget(self._button_reset,1,1)
         layout.addWidget(self._button_send_config,1,2)
 
-        self._spinbox_arm_id = QSpinBox()
-        self._spinbox_arm_id.setRange(0,5)
-
-        self._spinbox_position = QSpinBox()
-        self._spinbox_position.setRange(0,32)
-
-        self._spinbox_sequence = QSpinBox()
-        self._spinbox_sequence.setRange(0,32)
-
-        self._button_execute_sequence = QPushButton('execute sequence')
-        self._button_go_position = QPushButton('go to position')
-
-        self._button_calibrate_columns = QPushButton('calibrate columns')
-        self._spinbox_columns_pos = QSpinBox()
-        self._spinbox_columns_pos.setRange(1,3)
-        self._button_columns_go_position = QPushButton('go to position')
-
-        self._line_edit_columns_off_l = QLineEdit()
-        self._line_edit_columns_off_l.setText("0")
-        self._button_columns_set_off_l = QPushButton('set offset L')
-        self._line_edit_columns_off_c = QLineEdit()
-        self._line_edit_columns_off_c.setText("0")
-        self._button_columns_set_off_c = QPushButton('set offset C')
-        self._line_edit_columns_off_r = QLineEdit()
-        self._line_edit_columns_off_r.setText("0")
-        self._button_columns_set_off_r = QPushButton('set offset R')
-
-        layout.addWidget(QLabel("Arms:"),2,0)
-        layout.addWidget(QLabel("id:"),2,1)
-        layout.addWidget(self._spinbox_arm_id,2,2)
-        layout.addWidget(QLabel("pos:"),2,3)
-        layout.addWidget(self._spinbox_position,2,4)
-        layout.addWidget(self._button_go_position,2,5)
-        layout.addWidget(QLabel("seq:"),3,1)
-        layout.addWidget(self._spinbox_sequence,3,2)
-        layout.addWidget(self._button_execute_sequence,3,3)
-
-        layout.addWidget(QLabel("Columns:"),4,0)
-        layout.addWidget(self._button_calibrate_columns,4,1)
-        layout.addWidget(QLabel("pos:"),4,2)
-        layout.addWidget(self._spinbox_columns_pos,4,3)
-        layout.addWidget(self._button_columns_go_position,4,4)
-
-        layout.addWidget(self._button_columns_set_off_l,5,1)
-        layout.addWidget(self._button_columns_set_off_c,5,2)
-        layout.addWidget(self._button_columns_set_off_r,5,3)
-        layout.addWidget(self._line_edit_columns_off_l,6,1)
-        layout.addWidget(self._line_edit_columns_off_c,6,2)
-        layout.addWidget(self._line_edit_columns_off_r,6,3)
+       
         
         self.setLayout(layout)
         self._button_reset.clicked.connect(self._reset)
         self._button_send_config.clicked.connect(self._send_config)
 
-        self._button_go_position.clicked.connect(self._go_position)
-        self._button_execute_sequence.clicked.connect(self._execute_sequence)
-        self._button_calibrate_columns.clicked.connect(self._calibrate_columns)
-        self._button_columns_go_position.clicked.connect(self._columns_go_position)
-
-        self._button_columns_set_off_l.clicked.connect(self._columns_set_off_l)
-        self._button_columns_set_off_c.clicked.connect(self._columns_set_off_c)
-        self._button_columns_set_off_r.clicked.connect(self._columns_set_off_r)
-        
-
     def set_client(self, client):
         self._client = client
         self._left_arm_values.set_client(client)
-        self._right_arm_values.set_client(client)
-        self._other_values.set_client(client)
 
     def _reset(self):
         self._client.send_message(79,b'')
