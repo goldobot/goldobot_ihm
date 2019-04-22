@@ -1,2 +1,3 @@
-name,slider,arm,wrist
-repos,4000,2000,3000
+name,rail,coude,tete
+repos,1000,3080,510
+prise,1000,1040,825
