@@ -38,6 +38,7 @@ class PropulsionTestDialog(QDialog):
         self._yaw_rate_steps_button = QPushButton('yaw rate steps')
         self._yaw_steps_button = QPushButton('yaw steps')
         self._execute_trajectory_button = QPushButton('trajectory')
+        self._execute_rotation_button = QPushButton('rotation')
 
         self._pose_x_edit = QLineEdit('0')
         self._pose_y_edit = QLineEdit('0')
@@ -73,12 +74,12 @@ class PropulsionTestDialog(QDialog):
         layout.addWidget(QLabel('y(mm)'),8,0)
         layout.addWidget(self._pose_y_edit,8,1)
         
-        layout.addWidget(QLabel('yaw(deg'),9,0)
+        layout.addWidget(QLabel('yaw(deg)'),9,0)
         layout.addWidget(self._pose_yaw_edit,9,1)
 
         layout.addWidget(self._button_set_pose, 10,0)
         layout.addWidget(self._button_reposition, 11,0)
-        layout.addWidget(self._execute_trajectory_button, 10,0)
+        layout.addWidget(self._execute_trajectory_button, 12,0)
 
         self.setLayout(layout)
         
@@ -164,7 +165,9 @@ class PropulsionTestDialog(QDialog):
         QTimer.singleShot(10000, self.foo)
 
     def _test_trajectory(self):
-        self._client.send_message(message_types.DbgPropulsionExecuteTrajectory, struct.pack('<Bfff',0, 0.2,0.2,0.2))
+        points = [(0,0), (500, 0)]
+        msg = b''.join([struct.pack('<fff',0.2,0.2,0.2)] + [struct.pack('<ff', p[0]*1e-3, p[1] * 1e-3) for p in points])
+        self._client.send_message(message_types.DbgPropulsionExecuteTrajectory, msg)
         self._telemetry_buffer = []
         QTimer.singleShot(5000, self.foo)
 

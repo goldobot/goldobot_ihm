@@ -82,6 +82,9 @@ class TestDynamixelAx12Dialog(QDialog):
             if 'w' in r and 'p' not in r:
                 if s == 1:
                     self._client.send_message(78,struct.pack('<BBB',id_, a, int(self._widgets[k].text())))
+                else:
+                    self._client.send_message(78,struct.pack('<BBH',id_, a, int(self._widgets[k].text())))
+                    
 
 
     def _on_dynamixel_registers(self, id_, address, data):

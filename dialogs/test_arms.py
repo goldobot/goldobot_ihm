@@ -119,8 +119,8 @@ class ArmValuesWidget(QWidget):
             if values[2] & (1 << 10):
                 load = -load
             wids[5].setText(str(load))
-            wids[6].setText(str(values[3]))
-            wids[7].setText(str(values[4]))
+            #wids[6].setText(str(values[3]))
+            #wids[7].setText(str(values[4]))
 
     def set_client(self, client):
         self._client = client

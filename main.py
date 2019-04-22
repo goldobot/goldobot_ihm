@@ -191,7 +191,7 @@ class MainWindow(QMainWindow):
         self._client.send_message(message_types.DbgReset, b'')
         
     def _on_comm_stats(self, stats):
-        print(stats)
+        self._status_link_state.setText('download {} {}'.format(*stats))
 
 
 

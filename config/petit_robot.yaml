@@ -1,14 +1,15 @@
 geometry:
-  front_length: 200
-  back_length: 200
+  front_length: 106.5
+  back_length: 101.5
   outline:
-    - [0,10]
+    - [0,116.5]
     - [10,20]
 odometry:
   dist_per_count_left: 1.9e-05
-  encoder_period: 512
+  encoder_period: 8192
   update_period: 1e-3
-  wheels_spacing: 0.5
+  wheels_spacing: 187.8e-3
+  speed_filter_period: 5e-3
 propulsion:
   pid_speed:
     period: 10
@@ -23,23 +24,25 @@ propulsion:
   lookahead_time: 1
   lookahead_distance: 0.5
 dynamixels:
-  - name: slider
-    id: 2
-    cw_limit: 4095
-    ccw_limit: 0    
+  - name: rail
+    type: mx28
+    id: 81
+    cw_limit: 850
+    ccw_limit: 1850    
     torque_limit: 512
-  - name: arm
+  - name: coude
     id: 82
-    cw_limit: 4095
-    ccw_limit: 0    
+    type: mx28
+    cw_limit: 800
+    ccw_limit: 3150   
     torque_limit: 512
-  - name: wrist
-    id: 83
-    cw_limit: 4095
-    ccw_limit: 0    
+  - name: tete
+    id: 1
+    type: ax12
+    cw_limit: 250
+    ccw_limit: 850    
     torque_limit: 512
 servos:
   - name: pince_bas
     cw_limit: 1000
     ccw_limit: 5000
-    
