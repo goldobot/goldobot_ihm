@@ -71,4 +71,4 @@ class DebugGyroDialog(QDialog):
         self._line_edit_reg_data.setText('%x'%(reg_data&0xffffffff))
 
     def _on_update_gyro(self, angle):
-        self._line_edit_angle.setText('%i'%angle)
+        self._line_edit_angle.setText('%f'%(angle))

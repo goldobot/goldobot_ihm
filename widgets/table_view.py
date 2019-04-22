@@ -17,7 +17,13 @@ class TableViewWidget(QGraphicsView):
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
 
-
+        redium = QColor.fromCmykF(0,1,1,0.1)
+        greenium = QColor.fromCmykF(0.7,0,0.9,0)
+        blueium = QColor.fromCmykF(0.9,0.4,0,0)
+        yellow = QColor.fromCmykF(0,0.25,1,0)
+        purple = QColor.fromCmykF(0.5,0.9,0,0.05)
+        background = QColor(40,40,40)
+        darker = QColor(20,20,20)
 
         big_robot_poly = QPolygonF([
             QPointF(-135,-151),
@@ -35,46 +41,55 @@ class TableViewWidget(QGraphicsView):
         self._big_robot = self._scene.addPolygon(big_robot_poly, QPen(), QBrush(QColor('red')))
         self._big_robot.setZValue(1)
         self.setScene(self._scene)
-        
+
         self.rotate(90)
         self.scale(0.4, -0.4)
 
-        self._scene.addRect(QRectF(0,-1500,2000,3000))
-        self._scene.addRect(QRectF(0,1100,650,400),QPen(), QBrush(QColor('orange')))
-        self._scene.addRect(QRectF(0,-1500,650,400),QPen(), QBrush(QColor('green')))
+        self._scene.addRect(QRectF(0,-1500,2000,3000),QPen(), QBrush(background))
 
-        pen = QPen(QColor('orange'))
-        pen.setWidth(8)
-        self._scene.addRect(QRectF(0,540,180,560),pen, QBrush())
+        #Zones gauche
+        self._scene.addRect(QRectF(300,-1500,300,450),QPen(), QBrush(redium))
+        self._scene.addRect(QRectF(600,-1500,300,450),QPen(), QBrush(greenium))
+        self._scene.addRect(QRectF(900,-1500,300,450),QPen(), QBrush(blueium))
+        self._scene.addRect(QRectF(850,-1050,100,100),QPen(), QBrush(QColor('white')))
+        self._scene.addRect(QRectF(320,-1480,260,410),QPen(), QBrush(background))
+        self._scene.addRect(QRectF(620,-1480,260,410),QPen(), QBrush(background))
+        self._scene.addRect(QRectF(920,-1480,260,410),QPen(), QBrush(background))
+        self._scene.addRect(QRectF(870,-1030,60,60),QPen(), QBrush(background))
 
-        pen = QPen(QColor('green'))
-        pen.setWidth(8)
-        self._scene.addRect(QRectF(0,-1100,180,560),pen, QBrush())
+        #Zones droite
+        self._scene.addRect(QRectF(300,1050,300,450),QPen(), QBrush(redium))
+        self._scene.addRect(QRectF(600,1050,300,450),QPen(), QBrush(greenium))
+        self._scene.addRect(QRectF(900,1050,300,450),QPen(), QBrush(blueium))
+        self._scene.addRect(QRectF(850,950,100,100),QPen(), QBrush(QColor('white')))
+        self._scene.addRect(QRectF(320,1070,260,410),QPen(), QBrush(background))
+        self._scene.addRect(QRectF(620,1070,260,410),QPen(), QBrush(background))
+        self._scene.addRect(QRectF(920,1070,260,410),QPen(), QBrush(background))
+        self._scene.addRect(QRectF(870,970,60,60),QPen(), QBrush(background))
 
-        self._add_cubes(540,-1500+850)
-        self._add_cubes(540,1500-850)
-        self._add_cubes(1190,-1500+300)
-        self._add_cubes(1190,1500-300)
-        self._add_cubes(1500,-1500+1100)
-        self._add_cubes(1500,1500-1100)
+        #Zones de chaos
+        self._scene.addEllipse(QRectF(785,-715,430,430),QPen(), QBrush(darker))
+        self._scene.addEllipse(QRectF(785,285,430,430),QPen(), QBrush(darker))
+        self._scene.addEllipse(QRectF(825,-675,350,350),QPen(), QBrush(background))
+        self._scene.addEllipse(QRectF(825,325,350,350),QPen(), QBrush(background))
+
+        #Balance
+        self._scene.addRect(QRectF(1600,-272,400,252),QPen(), QBrush(yellow))
+        self._scene.addRect(QRectF(1400,-20,600,40),QPen(), QBrush(background))
+        self._scene.addRect(QRectF(1600,20,400,252),QPen(), QBrush(purple))
+
+        #Palets
+        self._scene.addEllipse(QRectF(412,-1038,76,76),QPen(), QBrush(redium))
+        self._scene.addEllipse(QRectF(712,-1038,76,76),QPen(), QBrush(redium))
+        self._scene.addEllipse(QRectF(1012,-1038,76,76),QPen(), QBrush(greenium))
+        self._scene.addEllipse(QRectF(412,962,76,76),QPen(), QBrush(redium))
+        self._scene.addEllipse(QRectF(712,962,76,76),QPen(), QBrush(redium))
+        self._scene.addEllipse(QRectF(1012,962,76,76),QPen(), QBrush(greenium))
+
 
         self._points = []
 
-        points = [(240, -1320)]
-        self.add_points( [(240, -1280), (240, 1280)])
 
-        self.add_points_for_cubes(540,-1500+850,110)
-        self.add_points_for_cubes_2(540,-1500+850,220)
-
-        self.add_points_for_cubes(1190,-1500+300,110)
-        self.add_points_for_cubes(1190,-1500+300,220)
-
-        self.add_points_for_cubes(1500,-1500+1100,110)
-        self.add_points_for_cubes(1500,-1500+1100,220)
-
-        # add points
-
-        
 
     def _add_cubes(self, x, y):
         self._scene.addRect(QRectF(x-29, y-29,58,58))
@@ -102,7 +117,7 @@ class TableViewWidget(QGraphicsView):
         self.add_points(points)
 
 
-    def add_points(self, points):        
+    def add_points(self, points):
         for p in points:
             pt = self._scene.addEllipse(p[0]-10, p[1]-10, 20, 20,  QPen(), QBrush(QColor('grey')))
             pt.setZValue(1)

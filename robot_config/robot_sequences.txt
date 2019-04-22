@@ -56,7 +56,7 @@ propulsion.trajectory,0,green_start,green_switch
 arms.execute_sequence,left,6
 propulsion.trajectory,0,green_switch,green_approche_cube_1
 propulsion.rotation,-90,0
-//préparation prise cube 1
+//preparation prise cube 1
 arms.go_to_position$,rack_colonnes,1
 arms.execute_sequence$,grabber,14
 delay,2000
@@ -96,7 +96,7 @@ propulsion.trajectory,0,yellow_start,yellow_approche_cube_1
 arms.execute_sequence,right,6
 propulsion.rotation,93,0
 
-//#préparation prise cube 1
+//#preparation prise cube 1
 arms.go_to_position$,rack_colonnes,1
 arms.execute_sequence$,grabber,14
 delay,500
@@ -117,7 +117,7 @@ arms.execute_sequence$,bascule,11
 arms.execute_sequence,left,5
 //#fin prise cube 1
 
-//#préparation prise cube 2
+//#preparation prise cube 2
 arms.go_to_position,rack_colonnes,3
 arms.execute_sequence$,grabber,14
 propulsion.rotation,-15,0
@@ -142,7 +142,7 @@ arms.execute_sequence$,bascule,11
 arms.execute_sequence,left,5
 //#fin prise cube 2
 
-//#préparation prise cube 3
+//#preparation prise cube 3
 arms.go_to_position,rack_colonnes,2
 arms.execute_sequence$,grabber,14
 propulsion.rotation,105,0
@@ -167,7 +167,7 @@ arms.execute_sequence$,bascule,11
 arms.execute_sequence,left,5
 //#fin prise cube 3
 
-//#déplacement_depose
+//#deplacement_depose
 propulsion.rotation,-85,0
 delay,500
 propulsion.trajectory,1,yellow_prise_cube_3,yellow_depose_colonne_2

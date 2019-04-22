@@ -133,5 +133,5 @@ class ZmqClient(QObject):
             self.gyro_registers.emit(reg_addr, reg_data)
 
         if msg_type == message_types.GyroGetAngle:
-            angle = struct.unpack('<I', msg[2:])
+            angle = struct.unpack('<f', msg[2:])[0]
             self.update_gyro.emit(angle)
