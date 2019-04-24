@@ -25,57 +25,7 @@ from dialogs.test_dynamixels import TestDynamixelAx12Dialog
 from dialogs.debug_fpga import DebugFpgaDialog
 
 import message_types
-from compile_strategy import StrategyCompiler
 
-       
-
-
-
-class TestSequencesDialog(QDialog):
-    def __init__(self, parent = None):
-        super(TestSequencesDialog, self).__init__(None)
-        self._client = None
-        self._button_upload = QPushButton('upload')
-        self._button_execute = QPushButton('execute')
-        self._combobox_sequence_id = QComboBox()
-        
-        layout = QGridLayout()        
-        layout.addWidget(self._button_upload, 0, 0)
-        layout.addWidget(self._combobox_sequence_id, 1, 0)
-        layout.addWidget(self._button_execute, 1, 1)
-        self.setLayout(layout)
-        self._button_upload.clicked.connect(self._upload)
-        self._button_execute.clicked.connect(self._execute)
-        self._sequence_ids = []       
-
-    def set_client(self, client):
-        self._client = client
-        
-    def _upload(self):
-        sc = StrategyCompiler()
-        sc.compile_strategy()
-        self._combobox_sequence_id.clear()
-        self._sequence_ids = []
-        for k,v in sc._sequence_ids.items():
-            self._combobox_sequence_id.addItem(k)
-            self._sequence_ids.append(v)
-        for i in range(len(sc._points)):
-            p = sc._points[i]
-            self._client.send_message(message_types.DbgRobotSetPoint, struct.pack('<Hff',i,p[0],p[1]))
-        for i in range(len(sc._commands)):
-            self._client.send_message(message_types.DbgRobotSetCommand, struct.pack('<H', i) + sc._commands[i].serialize())
-        for i in range(len(sc._trajectory_buffer)):
-            self._client.send_message(message_types.DbgRobotSetTrajectoryPoint, struct.pack('<BB', i,sc._trajectory_buffer[i]))
-        for i in range(len(sc._sequences)):
-            seq = sc._sequences[i]
-            self._client.send_message(message_types.DbgRobotSetSequence, struct.pack('<HHH', i, seq[0], seq[1])) 
-
-    def _execute(self):
-        seq_id = self._sequence_ids[self._combobox_sequence_id.currentIndex()]
-        print(seq_id)
-        self._client.send_message(message_types.DbgRobotExecuteSequence, struct.pack('<B', seq_id))
-
-   
 class ServoWidget(QWidget):
     def __init__(self, parent = None):
         super(ServoWidgetWidget, self).__init__(None)
@@ -99,7 +49,6 @@ class MainWindow(QMainWindow):
         self._action_arms_test = QAction("Test arms")
         self._action_dynamixel_ax12_test = QAction("Test dynamixel AX12")
         self._action_actuators_test = QAction("Test actionneurs")
-        self._action_sequences_test = QAction("Test sequences")
         self._action_debug_fpga = QAction("Debug FPGA")
         self._action_reset = QAction("Reset")
 
@@ -111,7 +60,6 @@ class MainWindow(QMainWindow):
         tools_menu.addAction(self._action_arms_test)
         tools_menu.addAction(self._action_dynamixel_ax12_test)
         tools_menu.addAction(self._action_actuators_test)
-        tools_menu.addAction(self._action_sequences_test)
         tools_menu.addAction(self._action_reset)
         tools_menu.addAction(self._action_debug_fpga)
 
@@ -136,7 +84,6 @@ class MainWindow(QMainWindow):
         self._action_arms_test.triggered.connect(self._open_arms_test)
         self._action_dynamixel_ax12_test.triggered.connect(self._open_dynamixel_ax12_test)
         self._action_actuators_test.triggered.connect(self._open_actuators_test)
-        self._action_sequences_test.triggered.connect(self._open_sequences_test)
         self._action_debug_fpga.triggered.connect(self._open_debug_fpga)
 
         self._action_reset.triggered.connect(self._send_reset)
@@ -147,7 +94,6 @@ class MainWindow(QMainWindow):
         self._dialog_arms_test = TestArmsDialog()
         self._dialog_dynamixel_ax12_test = TestDynamixelAx12Dialog()
         self._dialog_actuators_test = TestActuatorsDialog()
-        self._dialog_sequences_test = TestSequencesDialog()
         self._dialog_debug_fpga = DebugFpgaDialog()
 
         #Dirty
@@ -160,7 +106,6 @@ class MainWindow(QMainWindow):
         self._dialog_propulsion_test.set_client(self._client)
         self._dialog_arms_test.set_client(self._client)
         self._dialog_dynamixel_ax12_test.set_client(self._client)
-        self._dialog_sequences_test.set_client(self._client)
         self._widget_robot_status.set_client(self._client)
         self._table_view.set_client(self._client)
         

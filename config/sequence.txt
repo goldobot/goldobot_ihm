@@ -1,0 +1,55 @@
+var int side=0
+var float angle=90deg
+var float distance=100mm
+var start_point=(100mm,100mm)
+
+#coordinates in mm
+#var vec2=(100,100)
+#coordinates in mm,yaw in degrees
+#var pose=(10,10,90deg)
+
+begin sequence seq
+syscall propulsion.do_rotation angle
+delay 2000
+arm.set_position attrape_atome
+return
+end sequence
+
+
+
+begin sequence test
+var int i=0
+label beg_loop
+mov side,points[i]
+add i,i,1
+label truc
+cmp i,10
+jne beg_loop
+call prend_atome
+call charge_atome
+#yaw rate, yaw_accel, yaw_deccel
+set_yaw_params 0.9,0.3,0.1
+
+#set speed, acceleration, decceleration
+set_speed_setting 1,1,1
+
+
+do_rotation 90
+point_to (10,10)
+
+wait move_end
+
+
+#do thing
+go_to_position r1,0.2,0.3
+subsequence do_thing
+inc r1
+jmp start
+do_rotation 90
+move_forward 200
+point_to target
+
+#get current pose
+load_current_pose current_pose
+transform_point current_pose,point_in,point_out
+end sequence
