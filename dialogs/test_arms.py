@@ -194,19 +194,28 @@ class TestArmsDialog(QDialog):
         self._left_pwm_spinbox.setRange(0,1024)
         self._left_arm_values = ArmValuesWidget([(d['name'], d['id']) for d in robot_config['dynamixels']], 0)
         self._button_reset = QPushButton('Reset')
-        self._button_send_config = QPushButton('send config')
-        layout = QGridLayout()      
+        self._button_send_config = QPushButton('send config')       
+
+        layout = QGridLayout()        
         layout.addWidget(self._left_arm_values,0,0,1,7)
 
         layout.addWidget(QLabel("General"),1,0)
         layout.addWidget(self._button_reset,1,1)
         layout.addWidget(self._button_send_config,1,2)
 
-       
+        self._spinbox_arm_id = QSpinBox()
+        self._spinbox_arm_id.setRange(0,5)
+
+        self._spinbox_position = QSpinBox()
+        self._spinbox_position.setRange(0,32)
+
+        self._spinbox_sequence = QSpinBox()
+        self._spinbox_sequence.setRange(0,32)
         
         self.setLayout(layout)
         self._button_reset.clicked.connect(self._reset)
         self._button_send_config.clicked.connect(self._send_config)
+
 
     def set_client(self, client):
         self._client = client
