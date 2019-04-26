@@ -1,3 +1,4 @@
 name,rail,coude,tete
 repos,1000,3080,510
-prise,1000,1040,825
+prise,850,830,890
+chargement1,1000,1040,825
