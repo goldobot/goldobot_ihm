@@ -1,0 +1,20 @@
+var int side=0
+var float angle=90deg
+var float distance=100mm
+var vec2 start_point=(100mm,100mm)
+var vec3 pose=(10mm,10mm,90deg)
+var vec2 point3=(100mm,200mm)
+
+begin sequence prematch_yellow
+end sequence
+
+
+begin_sequence match_yellow
+propulsion.do_rotation angle
+arm.set_position attrape_atome
+propulsion.point_to 100mm
+end sequence
+
+begin sequence attrape_atome
+
+end sequence

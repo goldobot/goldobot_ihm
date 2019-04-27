@@ -1,8 +1,25 @@
 from collections import OrderedDict
 import re
+import math
+
+units = {'': 1, 'mm' : 1e-3, 'deg' : math.pi/180 }
+
 
 def parse_literal(val):
+    #try int with unit
+    m = re.match('(-?[\d]+)([a-z]*)', val)
+    if m:
+        return int(m.group(1)) * units[m.group(2)]
+    #try vec2
+    m = re.match('\(([\w]+),([\w]+)\)', val)
+    if m:
+        return (parse_literal(m.group(1)), parse_literal(m.group(2)))
+    m = re.match('\(([\w]+),([\w]+),([\w]+)\)', val)
+    if m:
+        return (parse_literal(m.group(1)), parse_literal(m.group(2)), parse_literal(m.group(2)))
     return int(val)
+    
+    
 opcodes = {
     'mov',
     'add',
@@ -36,10 +53,14 @@ class Variable:
         
 class Arg:
     def __init__(self, arg):
-        self.type = 'var'# var_idx, cst
-        self.val_type = 0
-        self.val = None
-        print(arg)
+        if re.match('^[a-z][\w]+$', arg):
+            self.type = 'var'# var_idx, cst
+            self.name = arg
+        else:
+            self.type = 'cst'
+            self.value = parse_literal(arg)
+    def __repr__(self):
+        return '<Arg {}>'.format(self.__dict__)
         
 class Op:
     def __init__(self, op, args):
@@ -98,3 +119,4 @@ class SequenceParser:
 
                 
 parser = SequenceParser()
+parser.parse_file('sequence.txt')
