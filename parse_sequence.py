@@ -1,9 +1,9 @@
 from collections import OrderedDict
 import re
 import math
+import struct
 
 units = {'': 1, 'mm' : 1e-3, 'deg' : math.pi/180 }
-
 
 def parse_literal(val):
     #try int with unit
@@ -11,12 +11,13 @@ def parse_literal(val):
     if m:
         return int(m.group(1)) * units[m.group(2)]
     #try vec2
-    m = re.match('\(([\w]+),([\w]+)\)', val)
+    m = re.match('\((-?[\w]+),(-?[\w]+)\)', val)
     if m:
         return (parse_literal(m.group(1)), parse_literal(m.group(2)))
-    m = re.match('\(([\w]+),([\w]+),([\w]+)\)', val)
+    #try vec3
+    m = re.match('\((-?[\w]+),(-?[\w]+),(-?[\w]+)\)', val)
     if m:
-        return (parse_literal(m.group(1)), parse_literal(m.group(2)), parse_literal(m.group(2)))
+        return (parse_literal(m.group(1)), parse_literal(m.group(2)), parse_literal(m.group(3)))
     return int(val)
     
     
@@ -32,6 +33,15 @@ opcodes = {
     'jge',
     'call'
 }
+
+opcodes = {
+    'wait_movement_finished': 126,
+    'propulsion.set_pose':127,
+    'propulsion.point_to':128,
+    'propulsion.move_to': 129,
+    'pump.set_pwm': 140,
+    'ret':130
+    }
 
 #format: op,a1,a2;a3
 #a1 = output address
@@ -51,6 +61,15 @@ class Variable:
         self.default = parse_literal(nd[1]) if len(nd) == 2 else None
         self.index = None
         
+    def encode(self):
+        if self.type == 'int':
+            return struct.pack('<i', self.default)
+        if self.type == 'vec2':
+            return struct.pack('<ff', self.default[0], self.default[1])
+        if self.type == 'vec3':
+            return struct.pack('<fff', self.default[0], self.default[1], self.default[2])
+        
+        
 class Arg:
     def __init__(self, arg):
         if re.match('^[a-z][\w]+$', arg):
@@ -68,7 +87,11 @@ class Op:
         self.args = [Arg(a) for a in args.split(',')]
         
     def encode(self, parser):
-        pass
+        if len(self.args) == 1:
+            return struct.pack('BBBB', opcodes[self.op], parser.variables[self.args[0].name].index,0,0)
+        
+    def __repr__(self):
+        return '<Op {} {}>'.format(self.op, self.args)
 
 class Sequence:
     def __init__(self, name):
@@ -76,7 +99,7 @@ class Sequence:
         self.start_index = 0
         self.variables = OrderedDict()
         self.labels = {}
-        self.instructions = []
+        self.ops = []
         
 class SequenceParser:
     def __init__(self):
@@ -112,8 +135,37 @@ class SequenceParser:
                 self.current_sequence.labels[args] = self.current_index
             else:
                 op = Op(op,args)
-                print(op.__dict__)
-                self.current_index += 1
+                self.current_sequence.ops.append(op)
+                
+    def compile(self):
+        #allocate global variables
+        vars_buffer = b''        
+        for v in self.variables.values():
+            v.index = len(vars_buffer)//4
+            vars_buffer += v.encode()
+        print(vars_buffer)
+        #allocate sequence variable
+        
+        #encode sequences
+        seqs_table = []
+        seqs_buffer = b''
+        for s in self.sequences.values():
+            seqs_table.append(len(seqs_buffer) // 4)          
+            for op in s.ops:
+                seqs_buffer+=op.encode(self)
+        #encode buffer
+        #header
+        buff = struct.pack('HHbbbb', 0,0, len(vars_buffer)//4, len(self.sequences), 0, 0)
+        #variables
+        buff += vars_buffer
+        for si in seqs_table:
+            buff += struct.pack('<H', si)
+        buff += seqs_buffer
+        return buff
+            
+        
+        
+        
 
                 
 

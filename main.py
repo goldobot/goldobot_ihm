@@ -24,6 +24,8 @@ from dialogs.test_actuators import TestActuatorsDialog
 from dialogs.test_dynamixels import TestDynamixelAx12Dialog
 from dialogs.debug_fpga import DebugFpgaDialog
 
+from parse_sequence import SequenceParser
+
 import message_types
 
 class ServoWidget(QWidget):
@@ -51,7 +53,9 @@ class MainWindow(QMainWindow):
         self._action_actuators_test = QAction("Test actionneurs")
         self._action_debug_fpga = QAction("Debug FPGA")
         self._action_reset = QAction("Reset")
-
+        self._action_upload_sequence = QAction('Upload sequence')
+        self._action_start_sequence = QAction('Start sequence')
+        
         # Add menu
         tools_menu = self.menuBar().addMenu("Tools")
         tools_menu.addAction(self._action_open_odometry_config)
@@ -62,6 +66,8 @@ class MainWindow(QMainWindow):
         tools_menu.addAction(self._action_actuators_test)
         tools_menu.addAction(self._action_reset)
         tools_menu.addAction(self._action_debug_fpga)
+        tools_menu.addAction(self._action_upload_sequence)
+        tools_menu.addAction(self._action_start_sequence)
 
         self._main_widget = QWidget()
         self._table_view = TableViewWidget()
@@ -85,6 +91,8 @@ class MainWindow(QMainWindow):
         self._action_dynamixel_ax12_test.triggered.connect(self._open_dynamixel_ax12_test)
         self._action_actuators_test.triggered.connect(self._open_actuators_test)
         self._action_debug_fpga.triggered.connect(self._open_debug_fpga)
+        self._action_upload_sequence.triggered.connect(self._upload_sequence)
+        self._action_start_sequence.triggered.connect(self._start_sequence)
 
         self._action_reset.triggered.connect(self._send_reset)
 
@@ -112,8 +120,11 @@ class MainWindow(QMainWindow):
         # Add status bar
         self._status_link_state = QLabel('')
         self.statusBar().addWidget(self._status_link_state)
+        self._status_match_state = QLabel('')
+        self.statusBar().addWidget(self._status_match_state)
         
         self._client.comm_stats.connect(self._on_comm_stats)
+        self._client.match_state_change.connect(self._on_match_state_change)
         
     def _open_odometry_config(self):
         self._dialog_odometry_config.show()
@@ -144,8 +155,23 @@ class MainWindow(QMainWindow):
         
     def _on_comm_stats(self, stats):
         self._status_link_state.setText('download {} {}'.format(*stats))
+        
+    def _on_match_state_change(self, state,side):
+        self._status_match_state.setText('{} {}'.format(state, side))
+        
+    def _upload_sequence(self):
+        parser = SequenceParser()
+        parser.parse_file('sequence.txt')
+        buff = parser.compile()
+        self._client.send_message(40, b'')
+        while len(buff) >32:
+            self._client.send_message(42, buff[0:32])
+            buff = buff[32:]
+        self._client.send_message(42, buff)
+        self._client.send_message(41, b'')
 
-
+    def _start_sequence(self):
+        self._client.send_message(43, struct.pack('<H',1))
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)

@@ -8,6 +8,7 @@ PropulsionTelemetry=8
 PropulsionTelemetryEx=9
 PropulsionStateChange=10
 
+MatchStateChange=15
 StartOfMatch=16
 EndOfMatch=17
 

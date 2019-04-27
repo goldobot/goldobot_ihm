@@ -12,6 +12,7 @@ import message_types
 class ZmqClient(QObject):
     heartbeat = pyqtSignal(int)
     start_of_match = pyqtSignal(int)
+    match_state_change = pyqtSignal(int,int)
     comm_stats = pyqtSignal(object)
     propulsion_telemetry = pyqtSignal(object)
     propulsion_telemetry_ex = pyqtSignal(object)
@@ -56,6 +57,11 @@ class ZmqClient(QObject):
         if msg_type == message_types.Heartbeat:
             timestamp = struct.unpack('<I', msg[2:6])[0]
             self.heartbeat.emit(timestamp)
+            
+        if msg_type == message_types.MatchStateChange:
+            state,side = struct.unpack('<BB', msg[2:4])
+            print(state,side)
+            self.match_state_change.emit(state,side)
 
         if msg_type == message_types.PropulsionTelemetry:
             telemetry = PropulsionTelemetry(msg[2:])

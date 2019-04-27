@@ -1,20 +1,40 @@
-var int side=0
-var float angle=90deg
-var float distance=100mm
-var vec2 start_point=(100mm,100mm)
-var vec3 pose=(10mm,10mm,90deg)
-var vec2 point3=(100mm,200mm)
+#var int side=0
+#var float angle=90deg
+#var float distance=100mm
+#var vec2 start_point=(100mm,100mm)
+var vec3 start_pose=(0mm,0mm,00deg)
+#var vec2 point3=(100mm,200mm)
+
+var vec2 start=(0,0)
+var vec2 pt1=(0,-200mm)
+var vec2 pt2=(200mm,-200mm)
+var vec2 pt3=(200mm,0)
+
+var int pwm_pump_activated=512
 
 begin sequence prematch_yellow
+pump.set_pwm pwm_pump_activated
+ret start
 end sequence
 
 
-begin_sequence match_yellow
-propulsion.do_rotation angle
-arm.set_position attrape_atome
-propulsion.point_to 100mm
+begin sequence match_yellow
+#propulsion.set_pose start_pose
+propulsion.point_to pt1
+wait_movement_finished pt1
+propulsion.move_to pt1
+wait_movement_finished pt1
+propulsion.point_to pt2
+wait_movement_finished pt1
+propulsion.move_to pt2
+#addvec2 pt1,pt1,pt2
+ret start
 end sequence
 
 begin sequence attrape_atome
+ret start
+end sequence
 
+begin sequence pad
+ret start
 end sequence
