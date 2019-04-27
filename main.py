@@ -2,6 +2,7 @@ import sys
 import signal
 import math
 import struct
+import config
 
 from optparse import OptionParser
 
@@ -117,6 +118,8 @@ class MainWindow(QMainWindow):
         self._widget_robot_status.set_client(self._client)
         self._table_view.set_client(self._client)
         
+        self._dialog_actuators_test._servo_values._client = self._client
+        
         # Add status bar
         self._status_link_state = QLabel('')
         self.statusBar().addWidget(self._status_link_state)
@@ -160,6 +163,7 @@ class MainWindow(QMainWindow):
         self._status_match_state.setText('{} {}'.format(state, side))
         
     def _upload_sequence(self):
+        config.load_dynamixels_config()
         parser = SequenceParser()
         parser.parse_file('sequence.txt')
         buff = parser.compile()
@@ -169,6 +173,14 @@ class MainWindow(QMainWindow):
             buff = buff[32:]
         self._client.send_message(42, buff)
         self._client.send_message(41, b'')
+        #upload arms positions
+        i = 0
+        for n,pos in config.dynamixels_positions.items():
+            print(n,pos)
+            msg = struct.pack('<BB', 0, i)
+            msg = msg + b''.join([struct.pack('<H', v) for v in pos])
+            self._client.send_message(message_types.DbgArmsSetPose,msg)
+            i += 1
 
     def _start_sequence(self):
         self._client.send_message(43, struct.pack('<H',1))

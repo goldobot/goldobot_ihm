@@ -4,17 +4,28 @@
 #var vec2 start_point=(100mm,100mm)
 var vec3 start_pose=(0mm,0mm,00deg)
 #var vec2 point3=(100mm,200mm)
+var int delay1=1000
+var int delay2=5000
 
 var vec2 start=(0,0)
 var vec2 pt1=(0,-200mm)
 var vec2 pt2=(200mm,-200mm)
 var vec2 pt3=(200mm,0)
 
-var int pwm_pump_activated=512
+var int pwm_pump_activated=300
+var int pwm_pump_zero=0
+
+begin sequence s
+end sequence
 
 begin sequence prematch_yellow
-pump.set_pwm pwm_pump_activated
-ret start
+#pump.set_pwm pwm_pump_activated
+#arm.go_to_position repos
+#delay delay1
+#pump.set_pwm pwm_pump_zero
+#arm.go_to_position prise
+#sensors.check microswitch
+call pump_temp
 end sequence
 
 
@@ -28,13 +39,29 @@ propulsion.point_to pt2
 wait_movement_finished pt1
 propulsion.move_to pt2
 #addvec2 pt1,pt1,pt2
-ret start
 end sequence
 
 begin sequence attrape_atome
-ret start
 end sequence
 
 begin sequence pad
-ret start
+end sequence
+
+begin sequence pump_temp
+arm.go_to_position sol_preprise
+delay delay1
+arm.go_to_position sol_prise
+pump.set_pwm pwm_pump_activated
+delay delay2
+arm.go_to_position sol_preprise
+delay delay1
+arm.go_to_position stk_av_retrait
+delay delay1
+arm.go_to_position acc_depose
+delay delay1
+pump.set_pwm pwm_pump_zero
+end sequence
+
+begin sequence attrape_palet
+
 end sequence

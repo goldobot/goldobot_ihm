@@ -2,6 +2,7 @@ from collections import OrderedDict
 import re
 import math
 import struct
+import config
 
 units = {'': 1, 'mm' : 1e-3, 'deg' : math.pi/180 }
 
@@ -20,7 +21,8 @@ def parse_literal(val):
         return (parse_literal(m.group(1)), parse_literal(m.group(2)), parse_literal(m.group(3)))
     return int(val)
     
-    
+sensor_shifts = {'microswitch':0}
+
 opcodes = {
     'mov',
     'add',
@@ -40,7 +42,10 @@ opcodes = {
     'propulsion.point_to':128,
     'propulsion.move_to': 129,
     'pump.set_pwm': 140,
-    'ret':130
+    'arm.go_to_position': 141,
+    'ret':30,
+    'call': 31,
+    'delay': 32    
     }
 
 #format: op,a1,a2;a3
@@ -82,11 +87,19 @@ class Arg:
         return '<Arg {}>'.format(self.__dict__)
         
 class Op:
-    def __init__(self, op, args):
+    def __init__(self, op, args):        
         self.op = op
-        self.args = [Arg(a) for a in args.split(',')]
+        self.args = [Arg(a) for a in args.split(',')] if args != '' else []
         
     def encode(self, parser):
+        if self.op == 'call':
+            seq_index = list(parser.sequences.keys()).index(self.args[0].name)
+            return struct.pack('BBBB', opcodes[self.op], seq_index,0,0)
+        if self.op == 'arm.go_to_position':
+            pos_index = list(config.dynamixels_positions.keys()).index(self.args[0].name)
+            return struct.pack('BBBB', opcodes[self.op], pos_index,0,0)
+        if len(self.args) == 0:
+            return struct.pack('BBBB', opcodes[self.op], 0,0,0)
         if len(self.args) == 1:
             return struct.pack('BBBB', opcodes[self.op], parser.variables[self.args[0].name].index,0,0)
         
@@ -117,6 +130,7 @@ class SequenceParser:
             #comment line and empty lines
             if line == '':
                 continue
+            
             op, args = line.split(' ', 1)
             if op == 'begin' and args.split(' ')[0] == 'sequence':
                 if self.current_block is None:
@@ -124,6 +138,7 @@ class SequenceParser:
                     self.current_index = 0
                     self.sequences[self.current_sequence.name] = self.current_sequence
             elif op == 'end' and args.split(' ')[0] == 'sequence':
+                self.current_sequence.ops.append(Op('ret',''))
                 self.current_sequence = None
             elif op == 'var':
                 var = Variable(args)
@@ -143,8 +158,7 @@ class SequenceParser:
         for v in self.variables.values():
             v.index = len(vars_buffer)//4
             vars_buffer += v.encode()
-        print(vars_buffer)
-        #allocate sequence variable
+        #allocate sequence variables
         
         #encode sequences
         seqs_table = []

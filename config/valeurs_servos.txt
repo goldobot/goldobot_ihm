@@ -1,0 +1,11 @@
+1:griffe droite
+2:griffe gauche
+0:chargeur droit
+
+range 12000-62000
+
+avant droit 15500 retracté 46000 deployé
+avant gauche: 50500 retracté 19500 deployé
+bras devant: 32600 gauche 45600 droite
+
+chrgeur droit: 32000 chargé 51500 coté

@@ -20,6 +20,7 @@ class ActuatorValuesWidget(QWidget):
     def __init__(self, actuators):
         super(ActuatorValuesWidget, self).__init__()
         self._widgets = {}
+        self._actuators = actuators
         layout = QGridLayout()
 
         layout.addWidget(QLabel('PWM'), 0, 1)
@@ -46,7 +47,7 @@ class ActuatorValuesWidget(QWidget):
         self.setLayout(layout)
 
         self._button_read_state.clicked.connect(self._read_actuators)
-        self._button_read_state.clicked.connect(self._send_data)
+        self._button_send_state.clicked.connect(self._send_data)
 
 
 # Creation des fonctions vides qui, pour l'instant, ne renvoient rien.
@@ -54,7 +55,11 @@ class ActuatorValuesWidget(QWidget):
         pass
 
     def _send_data(self, id_):
-        pass
+        print('send data')
+        for k, id_ in self._actuators:
+            self._client.send_message(message_types.FpgaCmdServo,
+            struct.pack('<BH', id_, self._widgets[id_][0].value()))
+            
 
 class TestActuatorsDialog(QDialog):
     def __init__(self, parent = None):
@@ -62,11 +67,12 @@ class TestActuatorsDialog(QDialog):
         self._client = None
         self._button = QPushButton('set actuator')
         self._servo_values = ActuatorValuesWidget([
-            ('Servomoteur 1 :', 1),
-            ('Servomoteur 2 :', 2),
-            ('Servomoteur 3 :', 3),
-            ('Servomoteur 4 :', 4),
-            ('Servomoteur 5 :', 5)])
+            ('avant droit:', 1),
+            ('avant gauche :', 2),
+            ('chargeur droit :', 0),
+            ('bras devant :', 10),
+            ('chargeur gauche :', 11),
+            ('Servomoteur 9 :', 9)])
 
         self._button_reset = QPushButton('Reset')
 
