@@ -43,6 +43,9 @@ dynamixels:
     ccw_limit: 850    
     torque_limit: 512
 servos:
-  - name: pince_bas
+  - name: pince_bas_droit
+    id: 1
     cw_limit: 1000
     ccw_limit: 5000
+  - name: devant
+    id: 10

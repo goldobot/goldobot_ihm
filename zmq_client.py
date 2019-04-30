@@ -20,6 +20,8 @@ class ZmqClient(QObject):
     propulsion_controller_config = pyqtSignal(object)
     dynamixel_registers = pyqtSignal(int, int, object)
     fpga_registers = pyqtSignal(int, int)
+    sensors = pyqtSignal(int)
+    gpio = pyqtSignal(int)
 
     def __init__(self, ip=None, parent = None):
         super(ZmqClient, self).__init__(None)
@@ -53,7 +55,10 @@ class ZmqClient(QObject):
         msg_type = struct.unpack('<H', msg[0:2])[0]
 
         if msg_type == 20:
-            print(msg[2:])
+            self.sensors.emit(struct.unpack('<I',msg[2:])[0])
+        if msg_type == 21:
+            self.gpio.emit(struct.unpack('<I',msg[2:])[0])
+            
         if msg_type == message_types.Heartbeat:
             timestamp = struct.unpack('<I', msg[2:6])[0]
             self.heartbeat.emit(timestamp)

@@ -7,8 +7,7 @@ stk_av_tasse,1000,3075,510
 stk_ar_retrait,1845,3075,570
 stk_ar_prise,1845,3075,510
 stk_ar_tasse,1805,3075,510
-acc_depose,1040,2163,815
+acc_depose,1040,2275,750
 acc_predepose,1040,2300,790
-acc_tasse,975,2163,787
-goldenium,1040,2163,775
+acc_tasse,850,2275,750
 acc_tae,850,2275,750

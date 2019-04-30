@@ -5,11 +5,13 @@
 var vec3 start_pose=(0mm,0mm,00deg)
 #var vec2 point3=(100mm,200mm)
 var int delay1=1000
-var int delay2=5000
+var int delay2=2000
+var int dvt_1=40000
+var int dvt_2=35000
 
 var vec2 start=(0,0)
-var vec2 pt1=(0,-200mm)
-var vec2 pt2=(200mm,-200mm)
+var vec2 pt1=(200mm,0mm)
+var vec2 pt2=(0mm,-200mm)
 var vec2 pt3=(200mm,0)
 
 var int pwm_pump_activated=300
@@ -19,13 +21,21 @@ begin sequence s
 end sequence
 
 begin sequence prematch_yellow
-#pump.set_pwm pwm_pump_activated
+propulsion.set_pose start_pose
+propulsion.move_to pt1
+wait_movement_finished pt1
+call attrape_palet
+propulsion.move_to start
+wait_movement_finished start
+propulsion.point_to pt2
+wait_movement_finished start
+pump.set_pwm pwm_pump_zero
 #arm.go_to_position repos
 #delay delay1
 #pump.set_pwm pwm_pump_zero
 #arm.go_to_position prise
 #sensors.check microswitch
-call pump_temp
+#call pump_temp
 end sequence
 
 
@@ -60,8 +70,24 @@ delay delay1
 arm.go_to_position acc_depose
 delay delay1
 pump.set_pwm pwm_pump_zero
+set_servo devant,dvt_1
+delay delay1
+set_servo devant,dvt_2
 end sequence
 
 begin sequence attrape_palet
+arm.go_to_position sol_preprise
+delay delay1
+arm.go_to_position sol_prise
+pump.set_pwm pwm_pump_activated
+delay delay2
+arm.go_to_position sol_preprise
+delay delay1
+end sequence
+
+#depose l'atome present dans la pince dans la balance
+begin sequence depose_balance
+arm.go_to_position acc_predepose
+delay delay1
 
 end sequence

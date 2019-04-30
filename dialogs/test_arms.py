@@ -69,6 +69,7 @@ class ArmValuesWidget(QWidget):
         self._combobox_position = QComboBox()
 
         self._button_go_position = QPushButton('go')
+        self._button_reload = QPushButton('reload')
         self._button_set_position = QPushButton('set')
         self._button_get_position = QPushButton('get')
 
@@ -78,10 +79,13 @@ class ArmValuesWidget(QWidget):
         layout.addWidget(self._button_set_position, i, 3)
         layout.addWidget(self._combobox_position, i, 4)
         layout.addWidget(self._button_go_position, i, 5)
+        layout.addWidget(self._button_reload, i, 6)
  
         self.setLayout(layout)
+        self._button_get_position.clicked.connect(self._get_position)
         self._button_read_state.clicked.connect(self.read_dynamixels_state)
         self._button_go_position.clicked.connect(self._go_position)
+        self._button_reload.clicked.connect(self.reload_positions)
         self.reload_positions()
 
     def update_dynamixel_state(self, id_, values):
@@ -108,6 +112,7 @@ class ArmValuesWidget(QWidget):
             self._client.send_message(message_types.DbgDynamixelGetRegisters,struct.pack('<BBB',id_, 0x24, 8))
 
     def reload_positions(self):
+        cfg.load_dynamixels_config()
         self._combobox_position.clear()
         for k,v in cfg.dynamixels_positions.items():
             self._combobox_position.addItem(k)
@@ -120,6 +125,12 @@ class ArmValuesWidget(QWidget):
     def _copy_pos(self):
         for wids in self._widgets.values():
             wids[0].setValue(int(wids[3].text()))
+            
+    def _get_position(self):
+        pos_index = self._combobox_position.currentIndex()
+        pos = list(cfg.dynamixels_positions.items())[pos_index][1]
+        for i in range(len(pos)):
+            self._widgets[self.ids[i]][0].setValue(pos[i])
 
     def _on_goal_position_changed(self, id_):
         wids = self._widgets[id_]
@@ -154,7 +165,7 @@ class ArmValuesWidget(QWidget):
         self._client.send_message(message_types.DbgArmsSetPose,msg)            
        
         self._client.send_message(message_types.DbgArmsGoToPosition,
-            struct.pack('<BB', 0, pos_index ))
+            struct.pack('<BB', pos_index, pos_index ))
 
     def update_values(self, values):
         for k, v in values.items():
@@ -171,6 +182,8 @@ class TestArmsDialog(QDialog):
         self._left_pwm_spinbox.setRange(0,1024)
         self._left_arm_values = ArmValuesWidget([(d['name'], d['id']) for d in robot_config['dynamixels']])
         self._button_reset = QPushButton('Reset')
+        self._button_pump = QPushButton('Pompe On')
+        self._pump_state = False
         self._button_send_config = QPushButton('send config')       
 
         layout = QGridLayout()        
@@ -178,6 +191,7 @@ class TestArmsDialog(QDialog):
 
         layout.addWidget(self._button_reset,1,1)
         layout.addWidget(self._button_send_config,1,2)
+        layout.addWidget(self._button_pump,1,3)
 
         self._spinbox_arm_id = QSpinBox()
         self._spinbox_arm_id.setRange(0,5)
@@ -190,6 +204,7 @@ class TestArmsDialog(QDialog):
         
         self.setLayout(layout)
         self._button_reset.clicked.connect(self._reset)
+        self._button_pump.clicked.connect(self._switch_pump)
         #self._button_send_config.clicked.connect(self._send_config)
 
 
@@ -212,6 +227,13 @@ class TestArmsDialog(QDialog):
         self._client.send_message(message_types.DbgArmsGoToPosition,
             struct.pack('<BB', self._spinbox_arm_id.value(), self._spinbox_position.value()))
 
- 
+    def _switch_pump(self):
+        self._pump_state = not self._pump_state
+        if self._pump_state:
+            self._button_pump.setText('Pompe Off')
+            self._client.send_message(288,struct.pack('<Bh',0,400))
+        else:
+            self._button_pump.setText('Pompe On')
+            self._client.send_message(288,struct.pack('<Bh',0,000))
 
 

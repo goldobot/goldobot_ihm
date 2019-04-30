@@ -43,6 +43,7 @@ opcodes = {
     'propulsion.move_to': 129,
     'pump.set_pwm': 140,
     'arm.go_to_position': 141,
+    'set_servo': 142,
     'ret':30,
     'call': 31,
     'delay': 32    
@@ -97,11 +98,15 @@ class Op:
             return struct.pack('BBBB', opcodes[self.op], seq_index,0,0)
         if self.op == 'arm.go_to_position':
             pos_index = list(config.dynamixels_positions.keys()).index(self.args[0].name)
-            return struct.pack('BBBB', opcodes[self.op], pos_index,0,0)
+            return struct.pack('BBBB', opcodes[self.op], pos_index,0, 0)
+            
+        if self.op == 'set_servo':
+            pos_index = config.servos[self.args[0].name]
+            return struct.pack('BBBB', opcodes[self.op], pos_index,parser.variable_index(self.args[1].name),0)
         if len(self.args) == 0:
             return struct.pack('BBBB', opcodes[self.op], 0,0,0)
         if len(self.args) == 1:
-            return struct.pack('BBBB', opcodes[self.op], parser.variables[self.args[0].name].index,0,0)
+            return struct.pack('BBBB', opcodes[self.op], parser.variable_index(self.args[0].name),0,0)
         
     def __repr__(self):
         return '<Op {} {}>'.format(self.op, self.args)
@@ -122,6 +127,9 @@ class SequenceParser:
         self.current_block = None
         self.current_sequence = None
         self.current_index = 0
+        
+    def variable_index(self, name):
+        return self.variables[name].index
         
     def parse_file(self, path):
         for line in open(path):
