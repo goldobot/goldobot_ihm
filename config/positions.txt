@@ -1,0 +1,6 @@
+redium_jaune,450,-1000
+greenium_jaune,750,-1000
+blueium_jaune,1050,-1000
+accelerateur_jaune,200,-200
+goldenium_jaune,200,-750
+balance_jaune,1300,-200

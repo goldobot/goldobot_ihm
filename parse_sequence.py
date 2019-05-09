@@ -36,17 +36,24 @@ opcodes = {
     'call'
 }
 
+
+#im: immediate, encoded as uint8
+#var: variable id
+
+
 opcodes = {
-    'wait_movement_finished': 126,
-    'propulsion.set_pose':127,
-    'propulsion.point_to':128,
-    'propulsion.move_to': 129,
-    'pump.set_pwm': 140,
-    'arm.go_to_position': 141,
-    'set_servo': 142,
-    'ret':30,
-    'call': 31,
-    'delay': 32    
+    'nop': (0,None,None,None),
+    'mov': (1,var,var,'im'),
+    'wait_movement_finished': (126,None,None,None),
+    'propulsion.set_pose':(127,None,None,None)
+    'propulsion.point_to':(128,None,None,None)
+    'propulsion.move_to': (129,None,None,None)
+    'pump.set_pwm': (140,None,None,None)
+    'arm.go_to_position': (141,None,None,None)
+    'set_servo': (142,'var', None, None),
+    'ret': (30,None, None),
+    'call': (31,'sequence', None, None),
+    'delay': (32, 'var', None, None)
     }
 
 #format: op,a1,a2;a3
@@ -58,6 +65,7 @@ opcodes = {
 #has 2 forms: input or output indexed
 # re.match('^-?[\d+]*$', '-1000')
 # re.match('^-?[\d+]*\.[\d+]*$', '-1000.0')
+
 class Variable:
     def __init__(self, args):
         args = args.split(' ')        
@@ -84,6 +92,7 @@ class Arg:
         else:
             self.type = 'cst'
             self.value = parse_literal(arg)
+            
     def __repr__(self):
         return '<Arg {}>'.format(self.__dict__)
         
@@ -107,6 +116,9 @@ class Op:
             return struct.pack('BBBB', opcodes[self.op], 0,0,0)
         if len(self.args) == 1:
             return struct.pack('BBBB', opcodes[self.op], parser.variable_index(self.args[0].name),0,0)
+            
+    def _get_arg(self,type , parser):
+        
         
     def __repr__(self):
         return '<Op {} {}>'.format(self.op, self.args)
@@ -118,6 +130,12 @@ class Sequence:
         self.variables = OrderedDict()
         self.labels = {}
         self.ops = []
+        
+class CompiledSequences:
+    def __init__(self):
+        self.variables = OrderedDict()
+        self.sequences = OrderedDict()
+        self.binary = b''
         
 class SequenceParser:
     def __init__(self):
