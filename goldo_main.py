@@ -40,23 +40,29 @@ from compile_strategy import StrategyCompiler
 
 
 
-class TestSequencesDialog(QDialog):
+#class TestSequencesDialog(QDialog):
+class TestSequencesWidget(QWidget):
     def __init__(self, parent = None):
-        super(TestSequencesDialog, self).__init__(None)
+#        super(TestSequencesDialog, self).__init__(None)
+        super(TestSequencesWidget, self).__init__(None)
         self._client = None
         self._button_upload = QPushButton('upload')
         self._button_execute = QPushButton('execute')
-        self._button_enter_manual = QPushButton('Enter manual')
-        self._button_exit_manual = QPushButton('Exit manual')
+        self._button_enter_manual = QPushButton('Enter \nmanual')
+        self._button_exit_manual = QPushButton('Exit \nmanual')
         self._combobox_sequence_id = QComboBox()
         
         layout = QGridLayout()        
-        layout.addWidget(self._button_upload, 0, 0)
-        layout.addWidget(self._combobox_sequence_id, 1, 0)
-        layout.addWidget(self._button_execute, 1, 1)
-        layout.addWidget(self._button_enter_manual, 2, 0)
-        layout.addWidget(self._button_exit_manual, 2, 1)
+        frame = QFrame()
+        frame.setFrameShape(QFrame.HLine)
+        layout.addWidget(frame,0,0,1,2)
+        layout.addWidget(self._button_upload, 1, 0)
+        layout.addWidget(self._combobox_sequence_id, 2, 0)
+        layout.addWidget(self._button_execute, 2, 1)
+        layout.addWidget(self._button_enter_manual, 3, 0)
+        layout.addWidget(self._button_exit_manual, 3, 1)
         self.setLayout(layout)
+        self.setFixedWidth(160)
         self._button_upload.clicked.connect(self._upload)
         self._button_execute.clicked.connect(self._execute)
         self._button_enter_manual.clicked.connect(self._enter_manual)
@@ -65,6 +71,9 @@ class TestSequencesDialog(QDialog):
 
     def set_client(self, client):
         self._client = client
+        
+    def set_arms_client(self, arms_client):
+        self._arms_client = arms_client
         
     def _upload(self):
         sc = StrategyCompiler()
@@ -84,6 +93,7 @@ class TestSequencesDialog(QDialog):
         for i in range(len(sc._sequences)):
             seq = sc._sequences[i]
             self._client.send_message(message_types.DbgRobotSetSequence, struct.pack('<HHH', i, seq[0], seq[1])) 
+        #self._arms_client._send_config()
 
     def _execute(self):
         seq_id = self._sequence_ids[self._combobox_sequence_id.currentIndex()]
@@ -120,7 +130,7 @@ class MainWindow(QMainWindow):
         self._action_arms_test = QAction("Test arms",self)
         self._action_dynamixel_ax12_test = QAction("Test dynamixel AX12",self)
         self._action_actuators_test = QAction("Test actionneurs",self)
-        self._action_sequences_test = QAction("Test sequences",self)
+#        self._action_sequences_test = QAction("Test sequences",self)
         self._action_debug_fpga = QAction("Debug FPGA",self)
         self._action_reset = QAction("Reset",self)
 
@@ -132,18 +142,20 @@ class MainWindow(QMainWindow):
         tools_menu.addAction(self._action_arms_test)
         tools_menu.addAction(self._action_dynamixel_ax12_test)
         tools_menu.addAction(self._action_actuators_test)
-        tools_menu.addAction(self._action_sequences_test)
+#        tools_menu.addAction(self._action_sequences_test)
         tools_menu.addAction(self._action_debug_fpga)
         tools_menu.addAction(self._action_reset)
 
         self._main_widget = QWidget()
         self._table_view = TableViewWidget()
         self._widget_robot_status = RobotStatusWidget()
+        self._widget_sequences_test = TestSequencesWidget()
 
         layout1 = QHBoxLayout()
         layout2 = QVBoxLayout()
         self.setCentralWidget(self._main_widget)
         layout1.addWidget(self._widget_robot_status)
+        layout1.addWidget(self._widget_sequences_test)
         layout1.addLayout(layout2)
         layout2.addWidget(self._table_view)
         layout2.addStretch(1)
@@ -157,7 +169,7 @@ class MainWindow(QMainWindow):
         self._action_arms_test.triggered.connect(self._open_arms_test)
         self._action_dynamixel_ax12_test.triggered.connect(self._open_dynamixel_ax12_test)
         self._action_actuators_test.triggered.connect(self._open_actuators_test)
-        self._action_sequences_test.triggered.connect(self._open_sequences_test)
+#        self._action_sequences_test.triggered.connect(self._open_sequences_test)
         self._action_debug_fpga.triggered.connect(self._open_debug_fpga)
 
         self._action_reset.triggered.connect(self._send_reset)
@@ -168,7 +180,7 @@ class MainWindow(QMainWindow):
         self._dialog_arms_test = TestArmsDialog()
         self._dialog_dynamixel_ax12_test = TestDynamixelAx12Dialog()
         self._dialog_actuators_test = TestActuatorsDialog()
-        self._dialog_sequences_test = TestSequencesDialog()
+#        self._dialog_sequences_test = TestSequencesDialog()
         self._dialog_debug_fpga = DebugFpgaDialog()
 
         #Dirty
@@ -181,9 +193,11 @@ class MainWindow(QMainWindow):
         self._dialog_propulsion_test.set_client(self._client)
         self._dialog_arms_test.set_client(self._client)
         self._dialog_dynamixel_ax12_test.set_client(self._client)
-        self._dialog_sequences_test.set_client(self._client)
+#        self._dialog_sequences_test.set_client(self._client)
         self._dialog_debug_fpga.set_client(self._client)
         self._widget_robot_status.set_client(self._client)
+        self._widget_sequences_test.set_client(self._client)
+        self._widget_sequences_test.set_arms_client(self._dialog_arms_test)
         self._table_view.set_client(self._client)
 
     def _open_odometry_config(self):
@@ -204,8 +218,8 @@ class MainWindow(QMainWindow):
     def _open_actuators_test(self):
         self._dialog_actuators_test.show()
 
-    def _open_sequences_test(self):
-        self._dialog_sequences_test.show()
+#    def _open_sequences_test(self):
+#        self._dialog_sequences_test.show()
 
     def _open_debug_fpga(self):
         self._dialog_debug_fpga.show()

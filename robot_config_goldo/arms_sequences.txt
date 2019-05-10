@@ -1,0 +1,226 @@
+﻿//---- Ce fichier contient l'ensemble des séquences d'actionneur. ----
+//commande:
+//mouvements: "move,position_id, torque_setting, time_ms"
+//temporisation: "delay,time_ms"
+//pompes: "pump,pwm,time_ms". utiliser une valeur négative pour l'aspiration [-511,+511], 0 pour arreter
+//tapis: "belt,pwm,time_ms" . utiliser une valeur négative pour gober les cubes [-200,-511], 0 pour arreter
+
+
+//#######-Bras-#######
+
+//prise cube droit - initial_pos:0
+#begin 0,0,1
+move,1,0,500
+move,2,0,400
+pump,-511,0
+move,3,0,0
+move,4,0,400
+delay,600
+move,5,0,540
+pump,-400,0
+move,0,0,500
+pump,-300,0
+#end
+
+//prise cube diagonal - initial_pos:0
+#begin 1,0,1
+move,11,0,600
+move,12,0,400
+pump,-511,0
+move,13,0,200
+move,14,0,400
+delay,100
+move,15,0,540
+pump,-400,0
+move,0,0,500
+pump,-300,0
+#end
+
+//depose tapis 1 - initial_pos:0, pompe active
+#begin 2,0,1
+move,21,0,500
+pump,-400,0
+move,22,0,300
+move,23,0,500
+belt,-256,0
+move,24,0,600
+pump,0,30
+pump,200,0
+move,25,0,200
+delay,500
+pump,0,0
+belt,0,0
+#end
+
+//retour garage post-depose tapis 1 - initial_pos:25
+#begin 3,0,1
+move,26,0,600
+move,27,0,300
+move,0,0,300
+#end
+
+//depose tapis 2 - initial_pos:0, pompe active
+#begin 4,0,1
+move,21,0,500
+pump,-400,0
+move,31,0,300
+move,32,0,500
+belt,-256,0
+move,33,0,600
+pump,0,30
+pump,200,0
+move,34,0,200
+delay,500
+pump,0,0
+belt,0,0
+#end
+
+//retour garage post-depose tapis 2 - initial_pos:35
+#begin 5,0,1
+move,35,0,600
+move,36,0,300
+move,0,0,300
+#end
+
+//declechement interrupteur - initial_pos:0
+#begin 6,0,1
+move,41,0,600
+delay,200
+move,42,0,400
+move,43,0,600
+move,44,0,400
+move,0,0,300
+#end
+
+//TEST_pompe - initial_pos:0
+#begin 7,0,1
+move,0,0,500
+delay,1000
+pump,-511,500
+delay,3000
+pump,0,0
+#end
+
+//#######-Bascule-#######
+
+//lever bascule
+#begin 8,0,1
+belt,-256,0
+move,0,0,500
+move,1,0,500
+belt,0,0
+move,2,0,1000
+move,3,0,500
+//pour bien laisser le tassage se faire
+delay,100
+move,4,0,700
+move,0,0,300
+#end
+
+//abaisser gache avec tapis activé
+#begin 9,0,1
+move,4,0,100
+delay,100
+//tapis rapide
+belt,-500,0
+delay,600
+belt,0,0
+//retour en position normale de la gache
+move,0,0,100
+#end
+
+//monter gache + arret tapis
+#begin 10,0,1
+move,0,0,500
+belt,0,0
+#end
+
+//lever sans gache (debute par un retrait de la gache, fini avec gache relevé)
+#begin 11,0,1
+belt,0,0
+move,4,0,50
+delay,50
+move,3,0,300
+delay,300
+move,4,0,300
+delay,300
+move,0,0,150
+#end
+
+//chargement avec debourage
+#begin 12,0,1
+//debourage
+//belt,180,0
+//delay,100
+move,4,0,100
+belt,-256,0
+delay,300
+belt,0,0
+move,0,0,100
+move,4,0,100
+move,0,0,100
+move,4,0,100
+move,0,0,100
+belt,-256,500
+belt,0,0
+#end
+
+//#######-Pince-#######
+
+//position garage
+#begin 13,0,1
+move,0,0,100
+delay,300
+#end
+
+//position prise cube
+#begin 14,0,1
+move,1,0,100
+delay,300
+#end
+
+//saisie cube
+#begin 15,0,1
+move,2,0,100
+#end
+
+//monté et dépose cube
+#begin 16,0,1
+belt,0,0
+move,2,0,100
+delay,50
+move,3,0,300
+delay,1000
+belt,-256,0
+move,4,0,100
+delay,100
+move,5,0,200
+//delay,100
+//fin en position garage:
+move,0,0,200
+belt,0,0
+#end
+
+//mise en position buté tapis
+#begin 17,0,1
+move,10,0,300
+delay,200
+move,6,0,300
+delay,500
+move,7,0,300
+#end
+
+//#######-Colonnes-#######
+
+//fermeture colonne
+#begin 18,0,1
+move,1,0,500
+#end
+
+//depose colonne (reste ouverte)
+#begin 19,0,1
+move,2,0,500
+delay,600
+move,4,0,500
+move,3,0,500
+#end

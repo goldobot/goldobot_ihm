@@ -252,13 +252,13 @@ class TestArmsDialog(QDialog):
         self._button_columns_go_position = QPushButton('go to position')
 
         self._line_edit_columns_off_l = QLineEdit()
-        self._line_edit_columns_off_l.setText("0")
+        self._line_edit_columns_off_l.setText("20")
         self._button_columns_set_off_l = QPushButton('set offset L')
         self._line_edit_columns_off_c = QLineEdit()
-        self._line_edit_columns_off_c.setText("0")
+        self._line_edit_columns_off_c.setText("-18")
         self._button_columns_set_off_c = QPushButton('set offset C')
         self._line_edit_columns_off_r = QLineEdit()
-        self._line_edit_columns_off_r.setText("0")
+        self._line_edit_columns_off_r.setText("-75")
         self._button_columns_set_off_r = QPushButton('set offset R')
 
         layout.addWidget(QLabel("Arms:"),2,0)

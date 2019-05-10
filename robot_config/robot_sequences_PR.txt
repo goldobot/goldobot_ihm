@@ -15,10 +15,6 @@ delay,1000
 propulsion.trajectory,0,green_start,green_1
 propulsion.rotation,90,0
 propulsion.trajectory,0,green_1,green_2
-delay,15000
-propulsion.trajectory,0,green_2,green_3
-propulsion.rotation,96,0
-propulsion.trajectory,0,green_3,green_4
 #end
 
 
@@ -27,10 +23,6 @@ propulsion.trajectory,0,green_3,green_4
 propulsion.trajectory,0,yellow_start,yellow_1
 propulsion.rotation,-90,0
 propulsion.trajectory,0,yellow_1,yellow_2
-delay,15000
-propulsion.trajectory,0,yellow_2,yellow_3
-propulsion.rotation,-96,0
-propulsion.trajectory,0,yellow_3,yellow_4
 #end
 
 

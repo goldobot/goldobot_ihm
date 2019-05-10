@@ -13,24 +13,66 @@ delay,1000
 // Match vert
 #begin match_green
 propulsion.trajectory,0,green_start,green_1
-propulsion.rotation,90,0
+propulsion.rotation,-90,0
 propulsion.trajectory,0,green_1,green_2
-delay,15000
+propulsion.rotation,-90,0
 propulsion.trajectory,0,green_2,green_3
-propulsion.rotation,96,0
 propulsion.trajectory,0,green_3,green_4
+propulsion.rotation,90,0
+propulsion.trajectory,0,green_4,green_5
+#propulsion.rotation,-90,0
+#propulsion.trajectory,0,green_5,green_6
+#propulsion.trajectory,0,green_6,green_7
+#propulsion.rotation,90,0
+#propulsion.trajectory,0,green_7,green_8
+#propulsion.rotation,-90,0
+#propulsion.trajectory,0,green_8,green_9
+#propulsion.trajectory,0,green_9,green_10
+#propulsion.rotation,90,0
+#propulsion.trajectory,0,green_10,green_11
+#propulsion.rotation,-90,0
+#propulsion.trajectory,0,green_11,green_12
+#propulsion.trajectory,0,green_12,green_13
+#propulsion.rotation,90,0
+#propulsion.trajectory,0,green_13,green_14
+#propulsion.rotation,-90,0
+#propulsion.trajectory,0,green_14,green_15
+#propulsion.trajectory,0,green_15,green_16
+#propulsion.rotation,90,0
+#propulsion.trajectory,0,green_16,green_17
 #end
 
 
 
 #begin match_yellow
 propulsion.trajectory,0,yellow_start,yellow_1
-propulsion.rotation,-90,0
+propulsion.rotation,90,0
 propulsion.trajectory,0,yellow_1,yellow_2
-delay,15000
+propulsion.rotation,90,0
 propulsion.trajectory,0,yellow_2,yellow_3
-propulsion.rotation,-96,0
 propulsion.trajectory,0,yellow_3,yellow_4
+propulsion.rotation,-90,0
+propulsion.trajectory,0,yellow_4,yellow_5
+#propulsion.rotation,90,0
+#propulsion.trajectory,0,yellow_5,yellow_6
+#propulsion.trajectory,0,yellow_6,yellow_7
+#propulsion.rotation,-90,0
+#propulsion.trajectory,0,yellow_7,yellow_8
+#propulsion.rotation,90,0
+#propulsion.trajectory,0,yellow_8,yellow_9
+#propulsion.trajectory,0,yellow_9,yellow_10
+#propulsion.rotation,-90,0
+#propulsion.trajectory,0,yellow_10,yellow_11
+#propulsion.rotation,90,0
+#propulsion.trajectory,0,yellow_11,yellow_12
+#propulsion.trajectory,0,yellow_12,yellow_13
+#propulsion.rotation,-90,0
+#propulsion.trajectory,0,yellow_13,yellow_14
+#propulsion.rotation,90,0
+#propulsion.trajectory,0,yellow_14,yellow_15
+#propulsion.trajectory,0,yellow_15,yellow_16
+#propulsion.rotation,-90,0
+#propulsion.trajectory,0,yellow_16,yellow_17
 #end
 
 

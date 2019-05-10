@@ -1,8 +1,6 @@
 yellow_start,750,1220
 yellow_1,750,-150
 yellow_2,120,-150
-yellow_3,300,-150
-yellow_4,450,1220
 yellow_reposition_1,170,1285
 yellow_reposition_2,205,1365
 yellow_switch,205,625
@@ -21,8 +19,6 @@ yellow_position_finale_goldo,350,300
 green_start,750,-1220
 green_1,750,150
 green_2,120,150
-green_3,300,150
-green_4,450,-1220
 green_reposition_1,170,-1285
 green_reposition_2,205,-1365
 green_switch,205,-625

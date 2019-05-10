@@ -38,7 +38,7 @@ class RobotStatusWidget(QWidget):
             ('speed', float,),
             ('yaw_rate', float,),
             ('acceleration', float),
-            ('angular_acceleration', float),
+            ('angular_\nacceleration', float),
             ('left_encoder', float,),
             ('right_encoder', float,),
             ('left_pwm', float,),
@@ -53,8 +53,8 @@ class RobotStatusWidget(QWidget):
             ('target_y', float,),
             ('target_yaw', float,),
             ('target_speed', float,),
-            ('target_yaw_rate', float,),
-            ('longitudinal_error', float,),
+            ('target_yaw_\nrate', float,),
+            ('longitudinal_\nerror', float,),
             ('lateral_error', float,)  
             ],True)
 
@@ -97,11 +97,11 @@ class RobotStatusWidget(QWidget):
         if ((gpio_mask&0x07000000) == 0x07000000):
             self._robot_state_wid.setText('??')
         if ((gpio_mask&0x00000002) == 0x00000002):
-            self._color_gpio_wid.setStyleSheet("background-color: orange")
-            self._color_gpio_wid.setText('orange')
-        else:
             self._color_gpio_wid.setStyleSheet("background-color: green")
             self._color_gpio_wid.setText('green')
+        else:
+            self._color_gpio_wid.setStyleSheet("background-color: orange")
+            self._color_gpio_wid.setText('orange')
 
     def update_telemetry(self, telemetry):
         self._telemetry_props.set_value(telemetry)

@@ -12,6 +12,7 @@ class PropertiesEditorWidget(QWidget):
         for k, t in self._properties:
             wid = QLineEdit(str(t()))
             wid.setReadOnly(readonly)       
+            wid.setFixedWidth(80)
             layout.addWidget(QLabel(k),i,0)
             layout.addWidget(wid,i,1)
             self._widgets.append(wid)
@@ -22,12 +23,12 @@ class PropertiesEditorWidget(QWidget):
     def set_value(self, obj):
         for i in range(len(self._properties)):
             k, t = self._properties[i]
-            self._widgets[i].setText(str(getattr(obj,k)))
+            self._widgets[i].setText(str(getattr(obj,k.replace("\n",""))))
 
     def get_value(self):
         val = self._class()
         for i in range(len(self._properties)):
             k, t = self._properties[i]
             fv = t(self._widgets[i].text())
-            setattr(val,k,fv)
+            setattr(val,k.replace("\n",""),fv)
         return val
