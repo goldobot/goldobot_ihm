@@ -1,0 +1,54 @@
+geometry:
+  front_length: 106.5
+  back_length: 101.5
+  outline:
+    - [0,116.5]
+    - [10,20]
+odometry:
+  dist_per_count_left: 1.9e-05
+  encoder_period: 8192
+  update_period: 1e-3
+  wheels_spacing: 187.8e-3
+  speed_filter_period: 5e-3
+propulsion:
+  pid_speed:
+    period: 10
+    kp: 1
+    ki: 1
+    kd: 1
+    feed_forward: 1
+    lim_iterm: 0
+    lim_determ: 0
+    min_out: 0
+    max_out: 0
+  lookahead_time: 1
+  lookahead_distance: 0.5
+dynamixels:
+  - name: rail
+    type: mx28
+    id: 81
+    cw_limit: 850
+    ccw_limit: 1850    
+    torque_limit: 512
+  - name: coude
+    id: 82
+    type: mx28
+    cw_limit: 800
+    ccw_limit: 3150   
+    torque_limit: 512
+  - name: tete
+    id: 1
+    type: ax12
+    cw_limit: 250
+    ccw_limit: 850    
+    torque_limit: 512
+servos:
+  - name: griffe_gauche
+    id: 2
+  - name: griffe_droit
+    id: 1
+  - name: devant
+    id: 10
+sequence_files:
+  - pos.txt
+  - sequences.txt
