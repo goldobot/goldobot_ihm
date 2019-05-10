@@ -19,6 +19,7 @@ def parse_literal(val):
     m = re.match('\((-?[\w]+),(-?[\w]+),(-?[\w]+)\)', val)
     if m:
         return (parse_literal(m.group(1)), parse_literal(m.group(2)), parse_literal(m.group(3)))
+    print(val)
     return int(val)
     
 sensor_shifts = {'microswitch':0}
@@ -127,7 +128,10 @@ class Sequence:
         self.variables = OrderedDict()
         self.labels = {}
         self.ops = []
-        
+
+class CompiledSequences:
+    pass
+    
 class SequenceParser:
     def __init__(self):
         self.constants = {}
@@ -149,6 +153,8 @@ class SequenceParser:
                 continue
             
             op, args = line.split(' ', 1)
+            if op == 'include':
+                pass
             if op == 'begin' and args.split(' ')[0] == 'sequence':
                 if self.current_block is None:
                     self.current_sequence = Sequence(args.split(' ')[1])
@@ -192,8 +198,12 @@ class SequenceParser:
         for si in seqs_table:
             buff += struct.pack('<H', si)
         buff += seqs_buffer
-        return buff
+        retval = CompiledSequences()
+        retval.binary = buff
+        retval.variables = self.variables
+        retval.sequence_names = [s.name for s in self.sequences.values()]
+        return retval
 
-parser = SequenceParser()
-parser.parse_file('sequence.txt')
-print(len(parser.compile()))
+#parser = SequenceParser()
+#parser.parse_file('sequence.txt')
+#print(len(parser.compile()))

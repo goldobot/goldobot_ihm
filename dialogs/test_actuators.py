@@ -86,3 +86,6 @@ class TestActuatorsDialog(QDialog):
 
     def _reset(self):
         pass
+        
+    def set_client(self, client):
+        self._client = client

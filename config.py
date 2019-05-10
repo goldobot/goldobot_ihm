@@ -1,5 +1,6 @@
 import yaml
 from collections import OrderedDict
+from parse_sequence import SequenceParser
 
 robot_config = yaml.load(open('config/petit_robot.yaml'))
 dynamixels_positions = OrderedDict()
@@ -15,7 +16,11 @@ def load_dynamixels_config():
         dynamixels_positions[cols[0]] =  [int(cols[1]), int(cols[2]), int(cols[3])]
         
 def load_sequence():
-    pass
+    global compiled_sequences
+    parser = SequenceParser()
+    parser.parse_file('constants.txt')
+    parser.parse_file('sequence.txt')
+    compiled_sequences = parser.compile()
     
 load_dynamixels_config()
 

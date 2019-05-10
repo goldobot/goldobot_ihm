@@ -4,19 +4,9 @@
 #var vec2 start_point=(100mm,100mm)
 var vec3 start_pose=(0mm,0mm,00deg)
 #var vec2 point3=(100mm,200mm)
-var int delay1=1000
-var int delay2=2000
-var int dvt_1=40000
-var int dvt_2=35000
 
-var vec2 start=(0,0)
-var vec2 pt1=(200mm,0mm)
-var vec2 pt2=(0mm,-200mm)
-var vec2 pt3=(200mm,0)
 
-var int pwm_pump_activated=300
-var int pwm_pump_zero=0
-
+var int servo_devant_gauche=32600
 begin sequence s
 end sequence
 
@@ -25,9 +15,10 @@ propulsion.set_pose start_pose
 propulsion.move_to pt1
 wait_movement_finished pt1
 call attrape_palet
-propulsion.move_to start
+propulsion.move_to pt3
 wait_movement_finished start
-propulsion.point_to pt2
+propulsion.point_to pt1
+propulsion.move_to start
 wait_movement_finished start
 pump.set_pwm pwm_pump_zero
 #arm.go_to_position repos
@@ -89,5 +80,8 @@ end sequence
 begin sequence depose_balance
 arm.go_to_position acc_predepose
 delay delay1
+end sequence
 
+begin sequence load_positions_yellow
+mov3 start_pose,start_pose_yellow
 end sequence
