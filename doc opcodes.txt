@@ -1,0 +1,11 @@
+
+
+# Propulsion
+
+
+propulsion.set_pose, pose
+propulsion.point_to, target
+propulsion.move_to, target
+propulsion.rotate, angle
+propulsion.translate, distance
+propulsion.recalage, speed

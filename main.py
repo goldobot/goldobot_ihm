@@ -112,22 +112,7 @@ class MainWindow(QMainWindow):
         config.load_dynamixels_config()
         config.load_sequence()
         
-        buff = config.compiled_sequences.binary
-        print(config.compiled_sequences.sequence_names)
-        self._client.send_message(40, b'')
-        while len(buff) >32:
-            self._client.send_message(42, buff[0:32])
-            buff = buff[32:]
-        self._client.send_message(42, buff)
-        self._client.send_message(41, b'')
-        #upload arms positions
-        i = 0
-        for n,pos in config.dynamixels_positions.items():
-            print(n,pos)
-            msg = struct.pack('<BB', 0, i)
-            msg = msg + b''.join([struct.pack('<H', v) for v in pos])
-            self._client.send_message(message_types.DbgArmsSetPose,msg)
-            i += 1
+       
 
     def _start_sequence(self):
         self._client.send_message(43, struct.pack('<H',1))

@@ -44,8 +44,10 @@ opcodes = {
     'mov3': (3, 'var', 'var', None), #move three int32 from arg1 into arg0
     'wait_movement_finished': (126, None, None, None),
     'propulsion.set_pose': (127, 'var', None, None),
-    'propulsion.point_to': (128, 'var', None, None),
-    'propulsion.move_to': (129, 'var', None, None),
+    'propulsion.point_to': (128, 'var','var', None),
+    'propulsion.move_to': (129, 'var', 'var', None),
+    'propulsion.rotate': (130, 'var', 'var', None),
+    'propulsion.translate': (131, 'var', 'var', None),
     'pump.set_pwm': (140, 'var', None, None),
     'arm.go_to_position': (141, 'arm_position', None, None),
     'set_servo': (142, 'servo_id', 'var', None),
