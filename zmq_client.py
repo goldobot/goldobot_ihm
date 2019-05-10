@@ -10,6 +10,7 @@ from messages import PropulsionControllerConfig
 import message_types
 
 class ZmqClient(QObject):
+    message_received = pyqtSignal(object)
     heartbeat = pyqtSignal(int)
     start_of_match = pyqtSignal(int)
     match_state_change = pyqtSignal(int,int)
@@ -31,7 +32,7 @@ class ZmqClient(QObject):
         self._sub_socket.connect('tcp://{}:3001'.format(ip))
         self._sub_socket.setsockopt(zmq.SUBSCRIBE,b'')
 
-        self._push_socket = self._context.socket(zmq.PUSH)
+        self._push_socket = self._context.socket(zmq.PUB)
         self._push_socket.connect('tcp://{}:3002'.format(ip))
 
         self._notifier = QSocketNotifier(self._sub_socket.getsockopt(zmq.FD), QSocketNotifier.Read, self)
@@ -52,6 +53,7 @@ class ZmqClient(QObject):
         self._notifier.setEnabled(True)
 
     def _on_message_received(self, msg):
+        self.message_received.emit(msg)
         msg_type = struct.unpack('<H', msg[0:2])[0]
 
         if msg_type == 20:

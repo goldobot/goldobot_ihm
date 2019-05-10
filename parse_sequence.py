@@ -36,26 +36,24 @@ opcodes = {
     'call'
 }
 
-
-#im: immediate, encoded as uint8
-#var: variable id
-
-
 opcodes = {
-    'nop': (0,None,None,None),
-    'mov': (1,var,var,'im'),
-    'wait_movement_finished': (126,None,None,None),
-    'propulsion.set_pose':(127,None,None,None)
-    'propulsion.point_to':(128,None,None,None)
-    'propulsion.move_to': (129,None,None,None)
-    'pump.set_pwm': (140,None,None,None)
-    'arm.go_to_position': (141,None,None,None)
-    'set_servo': (142,'var', None, None),
-    'ret': (30,None, None),
-    'call': (31,'sequence', None, None),
+    'nop': (0, None, None, None),
+    'mov1': (1, 'var', 'var', None), #move one int32 from arg1 into arg0
+    'mov2': (2, 'var', 'var', None), #move two int32 from arg1 into arg0
+    'mov3': (3, 'var', 'var', None), #move three int32 from arg1 into arg0
+    'wait_movement_finished': (126, None, None, None),
+    'propulsion.set_pose': (127, 'var', None, None),
+    'propulsion.point_to': (128, 'var', None, None),
+    'propulsion.move_to': (129, 'var', None, None),
+    'pump.set_pwm': (140, 'var', None, None),
+    'arm.go_to_position': (141, 'arm_position', None, None),
+    'set_servo': (142, 'servo_id', 'var', None),
+    'ret': (30, None, None, None,),
+    'call': (31,'sequence', 0,0),
     'delay': (32, 'var', None, None)
     }
 
+        
 #format: op,a1,a2;a3
 #a1 = output address
 #a2 = input_address
@@ -65,7 +63,6 @@ opcodes = {
 #has 2 forms: input or output indexed
 # re.match('^-?[\d+]*$', '-1000')
 # re.match('^-?[\d+]*\.[\d+]*$', '-1000.0')
-
 class Variable:
     def __init__(self, args):
         args = args.split(' ')        
@@ -93,6 +90,18 @@ class Arg:
             self.type = 'cst'
             self.value = parse_literal(arg)
             
+    def encode(self, typ, parser):
+        if typ is None:
+            return 0
+        if typ == 'var':
+            return parser.variable_index(self.name)
+        if typ == 'arm_position':
+            return list(config.dynamixels_positions.keys()).index(self.name)
+        if typ == 'sequence':
+            return list(parser.sequences.keys()).index(self.name)
+        if typ == 'servo_id':
+            return config.servos[self.name]     
+        
     def __repr__(self):
         return '<Arg {}>'.format(self.__dict__)
         
@@ -102,23 +111,11 @@ class Op:
         self.args = [Arg(a) for a in args.split(',')] if args != '' else []
         
     def encode(self, parser):
-        if self.op == 'call':
-            seq_index = list(parser.sequences.keys()).index(self.args[0].name)
-            return struct.pack('BBBB', opcodes[self.op], seq_index,0,0)
-        if self.op == 'arm.go_to_position':
-            pos_index = list(config.dynamixels_positions.keys()).index(self.args[0].name)
-            return struct.pack('BBBB', opcodes[self.op], pos_index,0, 0)
-            
-        if self.op == 'set_servo':
-            pos_index = config.servos[self.args[0].name]
-            return struct.pack('BBBB', opcodes[self.op], pos_index,parser.variable_index(self.args[1].name),0)
-        if len(self.args) == 0:
-            return struct.pack('BBBB', opcodes[self.op], 0,0,0)
-        if len(self.args) == 1:
-            return struct.pack('BBBB', opcodes[self.op], parser.variable_index(self.args[0].name),0,0)
-            
-    def _get_arg(self,type , parser):
-        
+        args = [0,0,0]
+        opc = opcodes[self.op]
+        for i in range(len(self.args)):
+            args[i] = self.args[i].encode(opc[i+1], parser)
+        return struct.pack('BBBB', opc[0], args[0], args[1], args[2])
         
     def __repr__(self):
         return '<Op {} {}>'.format(self.op, self.args)
@@ -130,12 +127,6 @@ class Sequence:
         self.variables = OrderedDict()
         self.labels = {}
         self.ops = []
-        
-class CompiledSequences:
-    def __init__(self):
-        self.variables = OrderedDict()
-        self.sequences = OrderedDict()
-        self.binary = b''
         
 class SequenceParser:
     def __init__(self):
@@ -202,13 +193,7 @@ class SequenceParser:
             buff += struct.pack('<H', si)
         buff += seqs_buffer
         return buff
-            
-        
-        
-        
 
-                
-
-                
 parser = SequenceParser()
 parser.parse_file('sequence.txt')
+print(len(parser.compile()))
