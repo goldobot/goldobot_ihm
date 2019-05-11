@@ -87,21 +87,36 @@ class PIDConfig:
             self.min_output,
             self.max_output
             )
-
+class PropulsionControllerLowLevelConfig:
+    def __init__(self, data=None):
+        if data is not None:
+            self.speed_pid_config = PIDConfig(data[0:36])        
+            self.translation_pid_config = PIDConfig(data[36:72])
+            self.yaw_rate_pid_config = PIDConfig(data[72:108])
+            self.yaw_pid_config = PIDConfig(data[108:144])
+        
+    def serialize(self):
+        return b''.join([
+            self.speed_pid_config.serialize(),
+            self.translation_pid_config.serialize(),
+            self.yaw_rate_pid_config.serialize(),
+            self.yaw_pid_config.serialize()
+            ])
+        
 class PropulsionControllerConfig:
     def __init__(self, data = None):
         if data is not None:
-            self.speed_pid_config = PIDConfig(data[0:36])
-            self.yaw_rate_pid_config = PIDConfig(data[36:72])
-            self.translation_pid_config = PIDConfig(data[72:108])
-            self.translation_cruise_pid_config = PIDConfig(data[108:144])
-            self.yaw_pid_config = PIDConfig(data[144:180])
-            unpacked = struct.unpack('<fffff', data[180:])
+            self.config_static = PropulsionControllerLowLevelConfig(data[0:144])
+            self.config_cruise = PropulsionControllerLowLevelConfig(data[144:288])
+            self.config_rotate = PropulsionControllerLowLevelConfig(data[288:432])
+            
+            unpacked = struct.unpack('<fffff', data[432:])
             self.lookahead_distance = unpacked[0]
             self.lookahead_time = unpacked[1]
             self.static_pwm_limit = unpacked[2]
             self.moving_pwm_limit = unpacked[3]
             self.repositioning_pwm_limit = unpacked[4]
+            
     def serialize(self):
         dat = struct.pack('<fffff',
             self.lookahead_distance,
@@ -110,11 +125,9 @@ class PropulsionControllerConfig:
             self.moving_pwm_limit,
             self.repositioning_pwm_limit)
         return b''.join(
-            [self.speed_pid_config.serialize(),
-            self.yaw_rate_pid_config.serialize(),
-            self.translation_pid_config.serialize(),
-            self.translation_cruise_pid_config.serialize(),
-            self.yaw_pid_config.serialize(),
+            [self.config_static.serialize(),
+            self.config_cruise.serialize(),
+            self.config_rotate.serialize(),
             dat])
 
 

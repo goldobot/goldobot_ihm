@@ -5,83 +5,93 @@
 var vec3 start_pose=(0mm,0mm,00deg)
 #var vec2 point3=(100mm,200mm)
 
+var float test_distance=100mm
+var float test_angle=90deg
+var vec3 test_yaw_speeds=(500mm,500mm,500mm)
 
-var int servo_devant_gauche=32600
-begin sequence s
-end sequence
+
+
+
 
 begin sequence prematch_yellow
+call prematch_common
+end sequence
+
+begin sequence prematch_purple
+call prematch_common
+end sequence
+
+begin sequence match_yellow
 propulsion.set_pose start_pose
 propulsion.move_to pt1
 wait_movement_finished pt1
-call attrape_palet
+call attrape_devant
 propulsion.move_to pt3
 wait_movement_finished start
 propulsion.point_to pt1
 propulsion.move_to start
 wait_movement_finished start
 pump.set_pwm pwm_pump_zero
-#arm.go_to_position repos
-#delay delay1
-#pump.set_pwm pwm_pump_zero
-#arm.go_to_position prise
-#sensors.check microswitch
-#call pump_temp
 end sequence
 
-
-begin sequence match_yellow
-#propulsion.set_pose start_pose
-propulsion.point_to pt1
-wait_movement_finished pt1
+begin sequence match_purple
+propulsion.set_pose start_pose
 propulsion.move_to pt1
 wait_movement_finished pt1
-propulsion.point_to pt2
-wait_movement_finished pt1
-propulsion.move_to pt2
-#addvec2 pt1,pt1,pt2
-end sequence
-
-begin sequence attrape_atome
-end sequence
-
-begin sequence pad
-end sequence
-
-begin sequence pump_temp
-arm.go_to_position sol_preprise
-delay delay1
-arm.go_to_position sol_prise
-pump.set_pwm pwm_pump_activated
-delay delay2
-arm.go_to_position sol_preprise
-delay delay1
-arm.go_to_position stk_av_retrait
-delay delay1
-arm.go_to_position acc_depose
-delay delay1
+call attrape_devant
+propulsion.move_to pt3
+wait_movement_finished start
+propulsion.point_to pt1
+propulsion.move_to start
+wait_movement_finished start
 pump.set_pwm pwm_pump_zero
-set_servo devant,dvt_1
-delay delay1
-set_servo devant,dvt_2
 end sequence
 
-begin sequence attrape_palet
+begin sequence test
+propulsion.rotate test_angle,test_yaw_speeds
+propulsion.translate test_distance,test_yaw_speeds
+end sequence
+
+# Attrape et depose
+begin sequence attrape_devant
 arm.go_to_position sol_preprise
-delay delay1
+wait_arm_finished foo
 arm.go_to_position sol_prise
 pump.set_pwm pwm_pump_activated
 delay delay2
 arm.go_to_position sol_preprise
+wait_arm_finished foo
+end sequence
+
+begin sequence depose_devant
+arm.go_to_position sol_preprise
+wait_arm_finished foo
+pump.set_pwm pwm_pump_zero
 delay delay1
 end sequence
 
-#depose l'atome present dans la pince dans la balance
 begin sequence depose_balance
 arm.go_to_position acc_predepose
-delay delay1
+wait_arm_finished foo
+pump.set_pwm pwm_pump_zero
 end sequence
+
+# Accelerateur
+
+begin sequence pousse_accel
+end sequence
+
+
+
+
 
 begin sequence load_positions_yellow
 mov3 start_pose,start_pose_yellow
+end sequence
+
+begin sequence prematch_common
+arm.go_to_position stk_av_retrait
+set_servo devant,servo_slider_gauche
+propulsion.motors_enable
+propulsion.enable
 end sequence

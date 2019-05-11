@@ -42,7 +42,10 @@ opcodes = {
     'mov1': (1, 'var', 'var', None), #move one int32 from arg1 into arg0
     'mov2': (2, 'var', 'var', None), #move two int32 from arg1 into arg0
     'mov3': (3, 'var', 'var', None), #move three int32 from arg1 into arg0
+    'propulsion.motors_enable': (64, None, None, None),
+    'propulsion.enable': (65, None, None, None),
     'wait_movement_finished': (126, None, None, None),
+    'wait_arm_finished': (125, None, None, None),
     'propulsion.set_pose': (127, 'var', None, None),
     'propulsion.point_to': (128, 'var','var', None),
     'propulsion.move_to': (129, 'var', 'var', None),
@@ -78,6 +81,8 @@ class Variable:
     def encode(self):
         if self.type == 'int':
             return struct.pack('<i', self.default)
+        if self.type == 'float':
+            return struct.pack('<f', self.default)
         if self.type == 'vec2':
             return struct.pack('<ff', self.default[0], self.default[1])
         if self.type == 'vec3':
@@ -154,7 +159,11 @@ class SequenceParser:
             if line == '':
                 continue
             
-            op, args = line.split(' ', 1)
+            if ' ' in line:
+                op, args = line.split(' ', 1)
+            else:
+                op = line
+                args = ''
             if op == 'include':
                 pass
             if op == 'begin' and args.split(' ')[0] == 'sequence':

@@ -47,6 +47,8 @@ class MainWindow(QMainWindow):
         # Create actions
        
         self._action_reset = QAction("Reset")
+        self._action_enter_debug = QAction("Debug enter")
+        self._action_exit_debug = QAction("Debug exit")
         
         # Add menu
         tools_menu = self.menuBar().addMenu("Tools")
@@ -62,6 +64,8 @@ class MainWindow(QMainWindow):
             self._dialogs.append(widget)
             action.triggered.connect(widget.show)
             
+        tools_menu.addAction(self._action_enter_debug)
+        tools_menu.addAction(self._action_exit_debug)
         tools_menu.addAction(self._action_reset)
 
         self._main_widget = QWidget()
@@ -79,6 +83,8 @@ class MainWindow(QMainWindow):
         self._main_widget.setLayout(layout1)
 
         self._action_reset.triggered.connect(self._send_reset) 
+        self._action_enter_debug.triggered.connect(self._send_enter_debug) 
+        self._action_exit_debug.triggered.connect(self._send_exit_debug) 
 
         #Dirty
         parser = OptionParser()
@@ -97,10 +103,18 @@ class MainWindow(QMainWindow):
         
         self._client.comm_stats.connect(self._on_comm_stats)
         self._client.match_state_change.connect(self._on_match_state_change)
+        self._widget_robot_status.set_client(self._client)
+        self._table_view.set_client(self._client)
         
 
     def _send_reset(self):
         self._client.send_message(message_types.DbgReset, b'')
+        
+    def _send_enter_debug(self):
+        self._client.send_message(message_types.SetMatchState, struct.pack('<B', 6))
+        
+    def _send_exit_debug(self):
+        self._client.send_message(message_types.SetMatchState, struct.pack('<B', 1))
         
     def _on_comm_stats(self, stats):
         self._status_link_state.setText('download {} {}'.format(*stats))

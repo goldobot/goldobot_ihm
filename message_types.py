@@ -17,6 +17,9 @@ CmdSelectSide=33
 CmdEnterDebugMode=34
 CmdExitDebugMode=35
 
+SetMatchState=44
+
+
 DbgGetOdometryConfig=64
 DbgSetOdometryConfig=65
 DbgGetPropulsionConfig=66

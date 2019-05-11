@@ -6,6 +6,7 @@ from widgets.properties_editor import PropertiesEditorWidget
 
 from messages import PropulsionControllerConfig
 from messages import PIDConfig
+from messages import PropulsionControllerLowLevelConfig
 import message_types
 
 class PropulsionControllerConfigDialog(QDialog):
@@ -33,19 +34,29 @@ class PropulsionControllerConfigDialog(QDialog):
         tab_widget = QTabWidget()
 
         self._speed_pid_props = PropertiesEditorWidget(PIDConfig, pid_props)
-        tab_widget.addTab(self._speed_pid_props, "speed")       
+        tab_widget.addTab(self._speed_pid_props, "speed_s")
+        
+        self._translation_pid_props = PropertiesEditorWidget(PIDConfig,pid_props)
+        tab_widget.addTab(self._translation_pid_props, "trans_s")
 
         self._yaw_rate_pid_props = PropertiesEditorWidget(PIDConfig,pid_props)
-        tab_widget.addTab(self._yaw_rate_pid_props, "yaw_rate")
-
-        self._translation_pid_props = PropertiesEditorWidget(PIDConfig,pid_props)
-        tab_widget.addTab(self._translation_pid_props, "translation")
-
-        self._translation_cruise_pid_props = PropertiesEditorWidget(PIDConfig,pid_props)
-        tab_widget.addTab(self._translation_cruise_pid_props, "translation_cuise")
+        tab_widget.addTab(self._yaw_rate_pid_props, "yaw_rate_s")
 
         self._yaw_pid_props = PropertiesEditorWidget(PIDConfig,pid_props)
-        tab_widget.addTab(self._yaw_pid_props, "yaw")
+        tab_widget.addTab(self._yaw_pid_props, "yaw_s")
+        
+        # cruise config
+        self._speed_pid_cruise_props = PropertiesEditorWidget(PIDConfig, pid_props)
+        tab_widget.addTab(self._speed_pid_cruise_props, "speed_c")
+        
+        self._translation_pid_cruise_props = PropertiesEditorWidget(PIDConfig,pid_props)
+        tab_widget.addTab(self._translation_pid_cruise_props, "trans_c")
+
+        self._yaw_rate_pid_cruise_props = PropertiesEditorWidget(PIDConfig,pid_props)
+        tab_widget.addTab(self._yaw_rate_pid_cruise_props, "yaw_rate_c")
+
+        self._yaw_pid_cruise_props = PropertiesEditorWidget(PIDConfig,pid_props)
+        tab_widget.addTab(self._yaw_pid_cruise_props, "yaw_c")
 
         layout.addWidget(tab_widget,0,0,1,2)
 
@@ -71,23 +82,40 @@ class PropulsionControllerConfigDialog(QDialog):
 
     def on_get_button_clicked(self):
         if self._client is not None:
-            print('m')
             self._client.send_message(message_types.DbgGetPropulsionConfig,b'')
 
     def on_set_button_clicked(self):
         config = self._props.get_value()
-        config.speed_pid_config = self._speed_pid_props.get_value()
-        config.yaw_rate_pid_config = self._yaw_rate_pid_props.get_value()
-        config.translation_pid_config = self._translation_pid_props.get_value()
-        config.translation_cruise_pid_config = self._translation_cruise_pid_props.get_value()
-        config.yaw_pid_config = self._yaw_pid_props.get_value()
+        
+        config.config_static = PropulsionControllerLowLevelConfig()
+        config.config_static.speed_pid_config = self._speed_pid_props.get_value()
+        config.config_static.yaw_rate_pid_config = self._yaw_rate_pid_props.get_value()
+        config.config_static.translation_pid_config = self._translation_pid_props.get_value()
+        config.config_static.yaw_pid_config = self._yaw_pid_props.get_value()
+        
+        config.config_cruise = PropulsionControllerLowLevelConfig()
+        config.config_cruise.speed_pid_config = self._speed_pid_cruise_props.get_value()
+        config.config_cruise.yaw_rate_pid_config = self._yaw_rate_pid_cruise_props.get_value()
+        config.config_cruise.translation_pid_config = self._translation_pid_cruise_props.get_value()
+        config.config_cruise.yaw_pid_config = self._yaw_pid_cruise_props.get_value()
+        
+        config.config_rotate = config.config_static
+        
         if self._client is not None:
             self._client.send_message(message_types.DbgSetPropulsionConfig,config.serialize())
 
     def update_propulsion_controller_config(self, config):
-        self._speed_pid_props.set_value(config.speed_pid_config)
-        self._yaw_rate_pid_props.set_value(config.yaw_rate_pid_config)
-        self._translation_pid_props.set_value(config.translation_pid_config)
-        self._translation_cruise_pid_props.set_value(config.translation_cruise_pid_config)
-        self._yaw_pid_props.set_value(config.yaw_pid_config)
+        self._speed_pid_props.set_value(config.config_static.speed_pid_config)
+        self._yaw_rate_pid_props.set_value(config.config_static.yaw_rate_pid_config)
+        self._translation_pid_props.set_value(config.config_static.translation_pid_config)
+        self._yaw_pid_props.set_value(config.config_static.yaw_pid_config)
+        
+        self._speed_pid_cruise_props.set_value(config.config_cruise.speed_pid_config)
+        self._yaw_rate_pid_cruise_props.set_value(config.config_cruise.yaw_rate_pid_config)
+        self._translation_pid_cruise_props.set_value(config.config_cruise.translation_pid_config)
+        self._yaw_pid_cruise_props.set_value(config.config_cruise.yaw_pid_config)
+        
+        
+        
+        
         self._props.set_value(config)

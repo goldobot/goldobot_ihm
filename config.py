@@ -24,4 +24,16 @@ def load_sequence():
     
 load_dynamixels_config()
 
+#Full config format:
+# Offsets table
+# HAL config offset
+# robot_config offset
+# odometry_config offset
+# propulsion_config offset
+# arms_config offset
+# sequences_config offset
+
+def compile_config():
+    pass
+
     
