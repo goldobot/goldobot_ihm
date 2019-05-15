@@ -51,7 +51,8 @@ class ZmqClient(QObject):
         msg_type = struct.unpack('<H', msg[0:2])[0]
 
         if msg_type == 20:
-            print(msg[2:])
+#            print(msg[2:])
+            print('Sensors : %x'%(struct.unpack('<I', msg[2:6])))
         if msg_type == message_types.Heartbeat:
             timestamp = struct.unpack('<I', msg[2:6])[0]
             self.heartbeat.emit(timestamp)
