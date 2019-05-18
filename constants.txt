@@ -12,10 +12,12 @@ var int pwm_pump_zero=0
 var vec3 start_pose_yellow=(450mm,-1398mm,90deg)
 var vec3 start_pose_purple=(450mm,1398mm,-90deg)
 # Servo positions
-var int servo_slider_gauche=32600
+var int servo_slider_gauche=32200
 var int servo_slider_droite=45500
 var int servo_slider_slide_gauche=42000
 var int servo_slider_depose_gauche=35000
+
+var int chargeur_droit_out=51500
 
 
 # Robot positions

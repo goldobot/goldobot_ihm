@@ -89,3 +89,4 @@ class TestActuatorsDialog(QDialog):
         
     def set_client(self, client):
         self._client = client
+        self._servo_values._client = client

@@ -33,7 +33,7 @@ load_dynamixels_config()
 # arms_config offset
 # sequences_config offset
 
-def compile_config():
+def compile_config_binary():
     pass
 
     
