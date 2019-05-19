@@ -67,13 +67,11 @@ class TestActuatorsDialog(QDialog):
         self._client = None
         self._button = QPushButton('set actuator')
         self._servo_values = ActuatorValuesWidget([
-            ('avant droit:', 1),
-            ('avant gauche :', 2),
-            ('chargeur droit :', 0),
-            ('bras devant :', 10),
-            ('chargeur gauche :', 11),
-            ('Servomoteur 9 :', 9)])
-
+            ('griffe G:', 2),
+            ('griffe D:', 1),
+            ('slider :', 10),
+            ('stock G :', 11),
+            ('stock D :', 0)])
         self._button_reset = QPushButton('Reset')
 
         layout = QGridLayout()
