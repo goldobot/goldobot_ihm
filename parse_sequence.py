@@ -51,6 +51,11 @@ opcodes = {
     'propulsion.move_to': (129, 'var', 'var', None),
     'propulsion.rotate': (130, 'var', 'var', None),
     'propulsion.translate': (131, 'var', 'var', None),
+    'propulsion.reposition': (132, 'var', 'var', None),
+    'propulsion.enter_manual': (133, None, None, None),
+    'propulsion.exit_manual': (134, None, None, None),
+    'propulsion.set_control_levels': (135, 'imm', 'imm', None),
+    'propulsion.set_target_pose': (136, 'var', 'var', None),
     'pump.set_pwm': (140, 'var', None, None),
     'arm.go_to_position': (141, 'arm_position', None, None),
     'set_servo': (142, 'servo_id', 'var', None),
@@ -103,6 +108,8 @@ class Arg:
             return 0
         if typ == 'var':
             return parser.variable_index(self.name)
+        if typ == 'imm':
+            return int(self.value)
         if typ == 'arm_position':
             return list(config.dynamixels_positions.keys()).index(self.name)
         if typ == 'sequence':

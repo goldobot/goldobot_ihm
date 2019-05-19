@@ -9,6 +9,9 @@ var float test_distance=400mm
 var float test_angle=90deg
 var vec3 test_yaw_speeds=(500mm,500mm,500mm)
 
+var float r_speed=200mm
+var float r_accel=1
+
 begin sequence prematch_yellow
 call prematch_common
 end sequence
@@ -93,4 +96,19 @@ arm.go_to_position stk_av_retrait
 set_servo devant,servo_slider_gauche
 propulsion.motors_enable
 propulsion.enable
+end sequence
+
+var vec3 tar_pose=(0mm,0mm,00deg)
+var vec3 tar_pose2=(0mm,0mm,45deg)
+var vec2 tar_sy=(000mm,0mm)
+
+begin sequence test_reposition
+propulsion.motors_enable
+propulsion.enable
+propulsion.set_pose tar_pose
+propulsion.enter_manual
+propulsion.set_control_levels 0,2
+propulsion.set_target_pose tar_pose,tar_sy
+propulsion.set_target_pose tar_pose2,tar_sy
+#propulsion.reposition r_speed,r_accel
 end sequence
