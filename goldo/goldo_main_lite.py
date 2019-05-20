@@ -11,11 +11,9 @@ from PyQt5.QtCore import QObject, pyqtSignal, QSize, QRectF, QPointF, Qt, QTimer
 from PyQt5.QtWidgets import QTabWidget, QAction, QDialog, QVBoxLayout, QCheckBox
 from PyQt5.QtWidgets import  QHBoxLayout, QComboBox
 
-from widgets.table_view import TableViewWidget
-
 from zmq_client import ZmqClient
 
-from widgets.robot_status import RobotStatusWidget
+from widgets.robot_status import RobotStatusWidget_lite
 from widgets.properties_editor import PropertiesEditorWidget
 from dialogs.odometry_config import OdometryConfigDialog
 from dialogs.propulsion_controller_config import PropulsionControllerConfigDialog
@@ -69,16 +67,11 @@ class MainWindow(QMainWindow):
         tools_menu.addAction(self._action_reset)
 
         self._main_widget = QWidget()
-        self._table_view = TableViewWidget()
-        self._widget_robot_status = RobotStatusWidget()
+        self._widget_robot_status = RobotStatusWidget_lite()
 
         layout1 = QHBoxLayout()
-        layout2 = QVBoxLayout()
         self.setCentralWidget(self._main_widget)
         layout1.addWidget(self._widget_robot_status)
-        layout1.addLayout(layout2)
-        layout2.addWidget(self._table_view)
-        layout2.addStretch(1)
 
         self._main_widget.setLayout(layout1)
 
@@ -104,7 +97,6 @@ class MainWindow(QMainWindow):
         self._client.comm_stats.connect(self._on_comm_stats)
         self._client.match_state_change.connect(self._on_match_state_change)
         self._widget_robot_status.set_client(self._client)
-        self._table_view.set_client(self._client)
         
 
     def _send_reset(self):
