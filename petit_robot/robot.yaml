@@ -162,10 +162,14 @@ dynamixels:
 servos:
   - name: griffe_gauche
     id: 2
+    max_speed: 1000
   - name: griffe_droit
     id: 1
+    max_speed: 1000
   - name: slider
     id: 10
+    max_speed: 5000
+    
 sequence_files:
   - "sequences/constants.txt"
   - "sequences/sequences.txt"

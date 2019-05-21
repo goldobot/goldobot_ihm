@@ -49,7 +49,7 @@ class SequencesDialog(QDialog):
             self._client.send_message(42, buff[0:32])
             buff = buff[32:]
         self._client.send_message(42, buff)
-        #Finish prgramming
+        #Finish programming
         self._client.send_message(41, b'')
         
         #upload arms positions

@@ -67,6 +67,12 @@ class RobotConfig:
         arm_config_buffer += struct.pack('<HH', 32,8)
         arm_config_buffer += b'\0' * 8
         
+        #Servo config buffer
+        servos_config_buffer = struct.pack('<H', len(self.yaml['servos']))
+        for s in self.yaml['servos']:
+            servos_config_buffer += struct.pack('<BBHHH', s['id'], 1, 0, 0, s['max_speed'])
+        servos_config += b'\0' * (8 * (16 - len(self.yaml['servos'])))
+        
         #16 uint16 header
         buff = b''
         offset = 32
@@ -82,7 +88,11 @@ class RobotConfig:
         offset_arm_config = len(buff)
         buff = align_buffer(buff + arm_config_buffer)
         
+        offset_servos_config = len(buff)
+        buff = align_buffer(buff + servos_config_buffer)
+        
         offset_arm_positions = len(buff)
+        
         
         header = struct.pack('HHHHHHHHHHHHHHHH',
         offset_robot_config + 32,
@@ -90,7 +100,7 @@ class RobotConfig:
         offset_propulsion_config + 32,
         offset_arm_config + 32,
         offset_arm_positions + 32,
-        0,
+        offset_servos_config + 32,
         0,
         0,
         0,0,0,0,0,0,0,0)
