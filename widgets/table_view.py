@@ -43,6 +43,15 @@ class TableViewWidget(QGraphicsView):
 
         self._big_robot = self._scene.addPolygon(big_robot_poly, QPen(), QBrush(QColor('red')))
         self._big_robot.setZValue(1)
+        self._friend_robot = self._scene.addEllipse(0, 0, 200, 200, QPen(QBrush(QColor('black')),4), QBrush(QColor('green')))
+        self._friend_robot.setZValue(1)
+        self._friend_robot.setPos(0 * 1000, 3 * 1000)
+        self._adv1_robot = self._scene.addEllipse(0, 0, 200, 200, QPen(QBrush(QColor('black')),4), QBrush(QColor('white')))
+        self._adv1_robot.setZValue(1)
+        self._adv1_robot.setPos(0 * 1000, 3 * 1000)
+        self._adv2_robot = self._scene.addEllipse(0, 0, 200, 200, QPen(QBrush(QColor('black')),4), QBrush(QColor('blue')))
+        self._adv2_robot.setZValue(1)
+        self._adv2_robot.setPos(0 * 1000, 3 * 1000)
         self.setScene(self._scene)
 
         self.rotate(90)
@@ -130,7 +139,17 @@ class TableViewWidget(QGraphicsView):
     def set_client(self, client):
         self._client = client
         self._client.propulsion_telemetry.connect(self.update_telemetry)
+        self._client.rplidar_robot_detection.connect(self.update_other_robots)
 
     def update_telemetry(self, telemetry):
         self._big_robot.setPos(telemetry.x * 1000, telemetry.y * 1000)
         self._big_robot.setRotation(telemetry.yaw * 180 / math.pi)
+
+    def update_other_robots(self, other_robot):
+        if (other_robot.id == 0):
+            self._friend_robot.setPos(other_robot.x * 1000, other_robot.y * 1000)
+        elif (other_robot.id == 1):
+            self._adv1_robot.setPos(other_robot.x * 1000, other_robot.y * 1000)
+        elif (other_robot.id == 2):
+            self._adv2_robot.setPos(other_robot.x * 1000, other_robot.y * 1000)
+

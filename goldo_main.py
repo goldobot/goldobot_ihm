@@ -6,6 +6,7 @@ import config
 
 from optparse import OptionParser
 
+import PyQt5.QtCore
 from PyQt5.QtWidgets import QMainWindow, QApplication, QWidget, QLabel, QLineEdit, QGridLayout, QFrame, QPushButton, QSpinBox, QSizePolicy
 from PyQt5.QtCore import QObject, pyqtSignal, QSize, QRectF, QPointF, Qt, QTimer
 from PyQt5.QtWidgets import QTabWidget, QAction, QDialog, QVBoxLayout, QCheckBox
@@ -29,6 +30,7 @@ from dialogs.sequences import SequencesDialog
 from parse_sequence import SequenceParser
 
 import message_types
+from config import RobotConfig
 
 dialogs = [
     ("Configure Odometry", OdometryConfigDialog),
@@ -49,6 +51,7 @@ class MainWindow(QMainWindow):
         self._action_reset = QAction("Reset",self)
         self._action_enter_debug = QAction("Debug enter",self)
         self._action_exit_debug = QAction("Debug exit",self)
+        self._action_upload_config = QAction("Upload config",self)
         
         # Add menu
         tools_menu = self.menuBar().addMenu("Tools")
@@ -67,6 +70,7 @@ class MainWindow(QMainWindow):
         tools_menu.addAction(self._action_enter_debug)
         tools_menu.addAction(self._action_exit_debug)
         tools_menu.addAction(self._action_reset)
+        tools_menu.addAction(self._action_upload_config)
 
         self._main_widget = QWidget()
         self._table_view = TableViewWidget()
@@ -85,6 +89,7 @@ class MainWindow(QMainWindow):
         self._action_reset.triggered.connect(self._send_reset) 
         self._action_enter_debug.triggered.connect(self._send_enter_debug) 
         self._action_exit_debug.triggered.connect(self._send_exit_debug) 
+        self._action_upload_config.triggered.connect(self._upload_config) 
 
         #Dirty
         parser = OptionParser()
@@ -125,6 +130,20 @@ class MainWindow(QMainWindow):
     def _upload_sequence(self):
         config.load_dynamixels_config()
         config.load_sequence()
+        
+    def _upload_config(self):
+        cfg = RobotConfig('petit_robot')
+        cfg.compile()
+        #Start programming
+        self._client.send_message(message_types.RobotBeginLoadConfig, b'')
+        #Upload codes by packets
+        buff = cfg.binary
+        while len(buff) >32:
+            self._client.send_message(message_types.RobotLoadConfig, buff[0:32])
+            buff = buff[32:]
+        self._client.send_message(message_types.RobotLoadConfig, buff)
+        #Finish programming
+        self._client.send_message(message_types.RobotEndLoadConfig, b'aa')
         
        
 

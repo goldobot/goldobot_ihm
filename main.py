@@ -134,15 +134,15 @@ class MainWindow(QMainWindow):
         cfg = RobotConfig('petit_robot')
         cfg.compile()
         #Start programming
-        self._client.send_message(400, b'')
+        self._client.send_message(message_types.RobotBeginLoadConfig, b'')
         #Upload codes by packets
         buff = cfg.binary
         while len(buff) >32:
-            self._client.send_message(401, buff[0:32])
+            self._client.send_message(message_types.RobotLoadConfig, buff[0:32])
             buff = buff[32:]
-        self._client.send_message(401, buff)
+        self._client.send_message(message_types.RobotLoadConfig, buff)
         #Finish programming
-        self._client.send_message(402, b'aa')
+        self._client.send_message(message_types.RobotEndLoadConfig, b'aa')
         
         
        
