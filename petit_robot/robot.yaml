@@ -7,94 +7,12 @@ geometry:
 odometry:
   dist_per_count_left: -1.966033264580682e-05
   dist_per_count_right: -1.9621583742116328e-05
-  wheels_spacing: 187.8e-3
-  update_period: 1.0e-3
-  speed_filter_period: 5.0e-3
   encoder_period: 8192
+  update_period: 1.0e-3
+  wheels_spacing: 187.8e-3
+  speed_filter_period: 5.0e-3
 propulsion:
   pid_static:
-    longi:
-      period: 1.0e-3
-      kp: 5
-      ki: 10
-      kd: 0
-      feed_forward: 0
-      lim_iterm: 0.2
-      lim_dterm: 0
-      min_out: -1
-      max_out: 1
-    speed:
-      period: 1.0e-3
-      kp: 1.0
-      ki: 0.0
-      kd: 0.0
-      feed_forward: 0.64
-      lim_iterm: 0.2
-      lim_dterm: 0.0
-      min_out: -1.0
-      max_out: 1.0
-    yaw:
-      period: 1.0e-3
-      kp: 5
-      ki: 20
-      kd: 0
-      feed_forward: 0
-      lim_iterm: 0.2
-      lim_dterm: 0
-      min_out: -1
-      max_out: 1
-    yaw_rate:
-      period: 1.0e-3
-      kp: 0.2
-      ki: 0
-      kd: 0
-      feed_forward: 0.12
-      lim_iterm: 0.2
-      lim_dterm: 0
-      min_out: -1
-      max_out: 1
-  pid_cruise:
-    longi:
-      period: 1.0e-3
-      kp: 5
-      ki: 10
-      kd: 0
-      feed_forward: 0
-      lim_iterm: 0.2
-      lim_dterm: 0
-      min_out: -1
-      max_out: 1
-    speed:
-      period: 1.0e-3
-      kp: 1.0
-      ki: 0.0
-      kd: 0.0
-      feed_forward: 0.64
-      lim_iterm: 0.2
-      lim_dterm: 0.0
-      min_out: -1.0
-      max_out: 1.0
-    yaw:
-      period: 1.0e-3
-      kp: 5
-      ki: 20
-      kd: 0
-      feed_forward: 0
-      lim_iterm: 0.2
-      lim_dterm: 0
-      min_out: -1
-      max_out: 1
-    yaw_rate:
-      period: 1.0e-3
-      kp: 0.2
-      ki: 0
-      kd: 0
-      feed_forward: 0.12
-      lim_iterm: 0.2
-      lim_dterm: 0
-      min_out: -1
-      max_out: 1
-  pid_rotate:
     longi:
       period: 1.0e-3
       kp: 5

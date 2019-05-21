@@ -2,7 +2,7 @@
 #var float angle=90deg
 #var float distance=100mm
 #var vec2 start_point=(100mm,100mm)
-var vec3 start_pose=(750mm,-1220mm,90.0deg)
+var vec3 start_pose=(0mm,0mm,00deg)
 #var vec2 point3=(100mm,200mm)
 
 

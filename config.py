@@ -52,10 +52,10 @@ class RobotConfig:
             self.yaml['geometry']['back_length'])        
         
         #OdometryConfig
-        odometry_config_buffer = messages.OdometryConfig(data=self.yaml['odometry']).serialize()
+        odometry_config_buffer = messages.OdometryConfig(yaml=self.yaml['odometry']).serialize()
         
         #Propulsion config
-        propulsion_config_buffer = messages.PropulsionControllerConfig(data=self.yaml['propulsion']).serialize()
+        propulsion_config_buffer = messages.PropulsionControllerConfig(yaml=self.yaml['propulsion']).serialize()
         
         tid = {'ax12':2, 'mx28':3}
         #Arm servo configs
