@@ -30,7 +30,8 @@ from dialogs.sequences import SequencesDialog
 from parse_sequence import SequenceParser
 
 import message_types
-from config import RobotConfig
+
+import config
 
 dialogs = [
     ("Configure Odometry", OdometryConfigDialog),
@@ -46,6 +47,16 @@ dialogs = [
 class MainWindow(QMainWindow):
     def __init__(self, parent = None):
         super(MainWindow, self).__init__(None)
+        
+         #PArse arguments
+        parser = OptionParser()
+        parser.add_option('--robot-ip', default='192.168.1.222')
+        parser.add_option('--config-path', default='petit_robot')
+        (options, args) = parser.parse_args(sys.argv)
+        
+        self._client = ZmqClient(ip=options.robot_ip)
+        config.load_config(options.config_path)
+        
         # Create actions
        
         self._action_reset = QAction("Reset",self)
@@ -88,14 +99,10 @@ class MainWindow(QMainWindow):
 
         self._action_reset.triggered.connect(self._send_reset) 
         self._action_enter_debug.triggered.connect(self._send_enter_debug) 
-        self._action_exit_debug.triggered.connect(self._send_exit_debug) 
+        self._action_exit_debug.triggered.connect(self._send_exit_debug)
         self._action_upload_config.triggered.connect(self._upload_config) 
 
-        #Dirty
-        parser = OptionParser()
-        parser.add_option('--robot-ip', default='192.168.1.222')
-        (options, args) = parser.parse_args(sys.argv)
-        self._client = ZmqClient(ip=options.robot_ip)
+       
         
         for d in self._dialogs:
             d.set_client(self._client)
@@ -130,9 +137,8 @@ class MainWindow(QMainWindow):
     def _upload_sequence(self):
         config.load_dynamixels_config()
         config.load_sequence()
-        
     def _upload_config(self):
-        cfg = RobotConfig('petit_robot')
+        cfg = config.robot_config
         cfg.compile()
         #Start programming
         self._client.send_message(message_types.RobotBeginLoadConfig, b'')
@@ -144,6 +150,7 @@ class MainWindow(QMainWindow):
         self._client.send_message(message_types.RobotLoadConfig, buff)
         #Finish programming
         self._client.send_message(message_types.RobotEndLoadConfig, b'aa')
+        
         
        
 
