@@ -26,22 +26,26 @@ class SequencesDialog(QDialog):
         self.setLayout(layout)
         self._button_upload.clicked.connect(self._upload)
         self._button_execute.clicked.connect(self._execute)
-        self._sequence_ids = []       
+        self._update_sequence_names()
+    
 
     def set_client(self, client):
         self._client = client
         
-    def _upload(self):
-        config.load_dynamixels_config()
-        config.load_sequence()
-       
-        self._combobox_sequence_id.clear()
-        self._sequence_ids = []
-        for k in config.compiled_sequences.sequence_names:
+    def _update_sequence_names(self):
+        sequences = config.robot_config.sequences
+        self._combobox_sequence_id.clear()        
+        for k in sequences.sequence_names:
             self._combobox_sequence_id.addItem(k)
+        
+    def _upload(self):
+        config.robot_config.update_config()     
+        self._update_sequence_names()
+        
+     
             
-        buff = config.compiled_sequences.binary
-        print(config.compiled_sequences.sequence_names)
+        buff = sequences.binary
+
         #Start programming
         self._client.send_message(40, b'')
         #Upload codes by packets
@@ -54,7 +58,7 @@ class SequencesDialog(QDialog):
         
         #upload arms positions
         i = 0
-        for n,pos in config.dynamixels_positions.items():
+        for n,pos in config.robot_config.dynamixels_positions.items():
             print(n,pos)
             msg = struct.pack('<BB', 0, i)
             msg = msg + b''.join([struct.pack('<H', v) for v in pos])

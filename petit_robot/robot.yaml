@@ -81,12 +81,18 @@ servos:
   - name: griffe_gauche
     id: 2
     max_speed: 1000
+    cw_limit: 250
+    ccw_limit: 850 
   - name: griffe_droit
     id: 1
     max_speed: 1000
+    cw_limit: 250
+    ccw_limit: 850 
   - name: slider
     id: 10
     max_speed: 5000
+    cw_limit: 250
+    ccw_limit: 850 
     
 sequence_files:
   - "sequences/constants.txt"

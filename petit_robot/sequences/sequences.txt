@@ -80,7 +80,7 @@ end sequence
 # Accelerateur
 
 begin sequence pousse_accel
-set_servo devant,servo_slider_droite
+set_servo slider,servo_slider_droite
 end sequence
 
 
@@ -93,7 +93,7 @@ end sequence
 
 begin sequence prematch_common
 arm.go_to_position stk_av_retrait
-set_servo devant,servo_slider_gauche
+set_servo slider,servo_slider_gauche
 propulsion.motors_enable
 propulsion.enable
 end sequence

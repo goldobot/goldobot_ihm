@@ -11,7 +11,6 @@ from PyQt5.QtWidgets import QTabWidget
 
 import struct
 import message_types
-from config import robot_config
 import config as cfg
 
 class ArmValuesWidget(QWidget):
@@ -112,9 +111,9 @@ class ArmValuesWidget(QWidget):
             self._client.send_message(message_types.DbgDynamixelGetRegisters,struct.pack('<BBB',id_, 0x24, 8))
 
     def reload_positions(self):
-        cfg.load_dynamixels_config()
+        cfg.robot_config.load_dynamixels_config()
         self._combobox_position.clear()
-        for k,v in cfg.dynamixels_positions.items():
+        for k,v in cfg.robot_config.dynamixels_positions.items():
             self._combobox_position.addItem(k)
         
     def _on_dynamixel_registers(self, id_, address, data):
@@ -157,7 +156,7 @@ class ArmValuesWidget(QWidget):
    
     def _go_position(self):
         pos_index = self._combobox_position.currentIndex()
-        pos = list(cfg.dynamixels_positions.items())[pos_index][1]
+        pos = list(cfg.robot_config.dynamixels_positions.items())[pos_index][1]
         
         #first update position
         msg = struct.pack('<BB', 0, pos_index)
@@ -176,11 +175,12 @@ class ArmValuesWidget(QWidget):
 class TestArmsDialog(QDialog):
     def __init__(self, parent = None):
         super(TestArmsDialog, self).__init__(None)
+        robot_config = cfg.robot_config
         self._client = None
         self._button = QPushButton('set pwm')
         self._left_pwm_spinbox = QSpinBox()
         self._left_pwm_spinbox.setRange(0,1024)
-        self._left_arm_values = ArmValuesWidget([(d['name'], d['id']) for d in robot_config['dynamixels']])
+        self._left_arm_values = ArmValuesWidget([(d['name'], d['id']) for d in robot_config.yaml['dynamixels']])
         self._button_reset = QPushButton('Reset')
         self._button_pump = QPushButton('Pompe On')
         self._pump_state = False
@@ -214,18 +214,6 @@ class TestArmsDialog(QDialog):
 
     def _reset(self):
         self._client.send_message(79,b'')
-
-    def _send_config_positions(self, arm_id, name):
-        arm_positions = [[int(e) for e in l.strip().split(',')] for l in open('robot_config/{}_positions.txt'.format(name)) if not l.startswith('//')]
-
-        for p in arm_positions:
-            msg = struct.pack('<BB', arm_id, p[0])
-            msg = msg + b''.join([struct.pack('<H', v) for v in p[1:]])
-            self._client.send_message(message_types.DbgArmsSetPose,msg)
-
-    def _go_position(self):
-        self._client.send_message(message_types.DbgArmsGoToPosition,
-            struct.pack('<BB', self._spinbox_arm_id.value(), self._spinbox_position.value()))
 
     def _switch_pump(self):
         self._pump_state = not self._pump_state

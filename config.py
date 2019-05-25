@@ -4,27 +4,7 @@ from parse_sequence import SequenceParser
 import messages
 import struct
 
-robot_config = yaml.load(open('config/petit_robot.yaml'))
-dynamixels_positions = OrderedDict()
-
-servos = {s['name']:s['id'] for s in robot_config['servos']}
-
-def load_dynamixels_config():
-    global dynamixels_positions
-    lines = list(open('config/dynamixels_positions.txt', 'r'))
-    dynamixels_positions = OrderedDict()
-    for l in lines[1:]:
-        cols = l.split(',')
-        dynamixels_positions[cols[0]] =  [int(cols[1]), int(cols[2]), int(cols[3])]
-        
-def load_sequence():
-    global compiled_sequences
-    parser = SequenceParser()
-    parser.parse_file('constants.txt')
-    parser.parse_file('sequence.txt')
-    compiled_sequences = parser.compile()
-    
-load_dynamixels_config()
+#servos = {s['name']:s['id'] for s in robot_config['servos']}
 
 def align_buffer(buff):
     k = len(buff) % 8
@@ -37,6 +17,14 @@ class RobotConfig:
     def __init__(self, path):
         self.yaml = yaml.load(open(path + '/robot.yaml'))
         self.path = path
+        self.servo_nums = {s['name']:s['id'] for s in self.yaml['servos']}
+        print(self.servo_nums)
+        self.load_dynamixels_config()
+        self.load_sequences()
+        
+    def update_config(self):
+        self.load_dynamixels_config()
+        self.load_sequences()
         
     def load_dynamixels_config(self):
         lines = list(open(self.path + '/dynamixels_positions.txt', 'r'))
@@ -44,6 +32,13 @@ class RobotConfig:
         for l in lines[1:]:
             cols = l.split(',')
             self.dynamixels_positions[cols[0]] =  [int(cols[1]), int(cols[2]), int(cols[3])]
+        
+    def load_sequences(self):
+        parser = SequenceParser()
+        parser.config = self
+        for f in self.yaml['sequence_files']:
+            parser.parse_file(self.path + '/' + f)
+        self.sequences = parser.compile()
         
     def compile(self):
         #RobotConfig
@@ -70,8 +65,8 @@ class RobotConfig:
         #Servo config buffer
         servos_config_buffer = struct.pack('<H', len(self.yaml['servos']))
         for s in self.yaml['servos']:
-            servos_config_buffer += struct.pack('<BBHHH', s['id'], 1, 0, 0, s['max_speed'])
-        servos_config += b'\0' * (8 * (16 - len(self.yaml['servos'])))
+            servos_config_buffer += struct.pack('<BBHHH', s['id'], 1, s['cw_limit'], s['ccw_limit'], s['max_speed'])
+        servos_config_buffer += b'\0' * (8 * (16 - len(self.yaml['servos'])))
         
         #16 uint16 header
         buff = b''
@@ -92,7 +87,10 @@ class RobotConfig:
         buff = align_buffer(buff + servos_config_buffer)
         
         offset_arm_positions = len(buff)
+        buff = align_buffer(buff + b'\0' * (len(self.yaml['dynamixels']) * 2 * 64))
         
+        offset_sequences = len(buff)
+        buff += self.sequences.binary        
         
         header = struct.pack('HHHHHHHHHHHHHHHH',
         offset_robot_config + 32,
@@ -101,7 +99,7 @@ class RobotConfig:
         offset_arm_config + 32,
         offset_arm_positions + 32,
         offset_servos_config + 32,
-        0,
+        offset_sequences + 32,
         0,
         0,0,0,0,0,0,0,0)
 
@@ -117,9 +115,12 @@ class RobotConfig:
 # odometry_config offset
 # propulsion_config offset
 # arms_config offset
+# arms position config offset
+# servos config offset
 # sequences_config offset
 
-def compile_config_binary():
-    pass
+def load_config(path):
+    global robot_config
+    robot_config = RobotConfig(path)
 
     
