@@ -33,7 +33,7 @@ class PropulsionTelemetryEx:
 
 class RplidarRobotDetection:
     def __init__(self, data):
-        unpacked = struct.unpack('<iihhhhhh', data)
+        unpacked = struct.unpack('<iihhhhhhi', data)
         self.timestamp = unpacked[0]
         self.id = unpacked[1]
         self.x = unpacked[2] * 0.25e-3
@@ -42,6 +42,7 @@ class RplidarRobotDetection:
         self.vy = unpacked[5] * 1.0e-3
         self.ax = unpacked[6] * 1.0e-3
         self.ay = unpacked[7] * 1.0e-3
+        self.samples = unpacked[8]
 
 
 class OdometryConfig:

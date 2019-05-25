@@ -6,7 +6,7 @@ from PyQt5.QtWidgets import QGraphicsView
 from PyQt5.QtWidgets import QGraphicsScene
 from PyQt5.QtWidgets import  QGraphicsRectItem
 
-from PyQt5.QtGui import QPolygonF, QPen, QBrush, QColor
+from PyQt5.QtGui import QPolygonF, QPen, QBrush, QColor, QFont, QTransform
 
 
 class TableViewWidget(QGraphicsView):
@@ -43,15 +43,33 @@ class TableViewWidget(QGraphicsView):
 
         self._big_robot = self._scene.addPolygon(big_robot_poly, QPen(), QBrush(QColor('red')))
         self._big_robot.setZValue(1)
-        self._friend_robot = self._scene.addEllipse(0, 0, 200, 200, QPen(QBrush(QColor('black')),4), QBrush(QColor('green')))
+        #self._friend_robot = self._scene.addEllipse(-100, -100, 200, 200, QPen(QBrush(QColor('black')),4), QBrush(QColor('green')))
+        self._friend_robot = self._scene.addEllipse(-100, -100, 200, 200, QPen(QBrush(QColor('black')),4), QBrush(QColor('white')))
         self._friend_robot.setZValue(1)
-        self._friend_robot.setPos(0 * 1000, 3 * 1000)
-        self._adv1_robot = self._scene.addEllipse(0, 0, 200, 200, QPen(QBrush(QColor('black')),4), QBrush(QColor('white')))
+        self._friend_robot.setPos(-1 * 1000, -1 * 1000)
+        self._friend_robot_text = self._scene.addText("0123456", QFont("System",80));
+        self._friend_robot_text.setPos(-1 * 1000 - 60, -1 * 1000 - 40)
+        self._friend_robot_text.setRotation(-90)
+        self._friend_robot_text.setTransform(QTransform(1.0, 0.0, 0.0,  0.0, -1.0, 0.0,   0.0, 0.0, 1.0))
+        self._friend_robot_text.setZValue(1)
+        #self._adv1_robot = self._scene.addEllipse(-100, -100, 200, 200, QPen(QBrush(QColor('black')),4), QBrush(QColor('white')))
+        self._adv1_robot = self._scene.addEllipse(-100, -100, 200, 200, QPen(QBrush(QColor('black')),4), QBrush(QColor('white')))
         self._adv1_robot.setZValue(1)
-        self._adv1_robot.setPos(0 * 1000, 3 * 1000)
-        self._adv2_robot = self._scene.addEllipse(0, 0, 200, 200, QPen(QBrush(QColor('black')),4), QBrush(QColor('blue')))
+        self._adv1_robot.setPos(-1 * 1000, -1 * 1000)
+        self._adv1_robot_text = self._scene.addText("0", QFont("System",80));
+        self._adv1_robot_text.setPos(-1 * 1000 - 60, -1 * 1000 - 40)
+        self._adv1_robot_text.setRotation(-90)
+        self._adv1_robot_text.setTransform(QTransform(1.0, 0.0, 0.0,  0.0, -1.0, 0.0,   0.0, 0.0, 1.0))
+        self._adv1_robot_text.setZValue(1)
+        #self._adv2_robot = self._scene.addEllipse(-100, -100, 200, 200, QPen(QBrush(QColor('black')),4), QBrush(QColor('blue')))
+        self._adv2_robot = self._scene.addEllipse(-100, -100, 200, 200, QPen(QBrush(QColor('black')),4), QBrush(QColor('white')))
         self._adv2_robot.setZValue(1)
-        self._adv2_robot.setPos(0 * 1000, 3 * 1000)
+        self._adv2_robot.setPos(-1 * 1000, -1 * 1000)
+        self._adv2_robot_text = self._scene.addText("0", QFont("System",80));
+        self._adv2_robot_text.setPos(-1 * 1000 - 60, -1 * 1000 - 40)
+        self._adv2_robot_text.setRotation(-90)
+        self._adv2_robot_text.setTransform(QTransform(1.0, 0.0, 0.0,  0.0, -1.0, 0.0,   0.0, 0.0, 1.0))
+        self._adv2_robot_text.setZValue(1)
         self.setScene(self._scene)
 
         self.rotate(90)
@@ -148,8 +166,14 @@ class TableViewWidget(QGraphicsView):
     def update_other_robots(self, other_robot):
         if (other_robot.id == 0):
             self._friend_robot.setPos(other_robot.x * 1000, other_robot.y * 1000)
+            self._friend_robot_text.setPlainText('%d'%other_robot.samples)
+            self._friend_robot_text.setPos(other_robot.x * 1000 - 60, other_robot.y * 1000 - 40)
         elif (other_robot.id == 1):
             self._adv1_robot.setPos(other_robot.x * 1000, other_robot.y * 1000)
+            self._adv1_robot_text.setPlainText('%d'%other_robot.samples)
+            self._adv1_robot_text.setPos(other_robot.x * 1000 - 60, other_robot.y * 1000 - 40)
         elif (other_robot.id == 2):
             self._adv2_robot.setPos(other_robot.x * 1000, other_robot.y * 1000)
+            self._adv2_robot_text.setPlainText('%d'%other_robot.samples)
+            self._adv2_robot_text.setPos(other_robot.x * 1000 - 60, other_robot.y * 1000 - 40)
 
