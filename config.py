@@ -30,8 +30,16 @@ class RobotConfig:
         lines = list(open(self.path + '/dynamixels_positions.txt', 'r'))
         self.dynamixels_positions = OrderedDict()
         for l in lines[1:]:
+            if l.strip() == '':
+                continue
             cols = l.split(',')
             self.dynamixels_positions[cols[0]] =  [int(cols[1]), int(cols[2]), int(cols[3])]
+        
+    def get_servo_index(self, name):
+        return [s['name'] for s in self.yaml['servos']].index(name)
+        
+    def get_arm_position_index(self, name):
+        return list(self.dynamixels_positions.keys()).index(name)
         
     def load_sequences(self):
         parser = SequenceParser()

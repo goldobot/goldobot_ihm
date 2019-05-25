@@ -41,7 +41,7 @@ class SequencesDialog(QDialog):
     def _upload(self):
         config.robot_config.update_config()     
         self._update_sequence_names()
-        
+        sequences = config.robot_config.sequences
      
             
         buff = sequences.binary

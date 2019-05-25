@@ -7,11 +7,13 @@ from PyQt5.QtWidgets import QSpinBox
 from PyQt5.QtWidgets import QCheckBox
 from PyQt5.QtWidgets import QLineEdit
 from PyQt5.QtWidgets import QTabWidget
+from PyQt5.QtWidgets import QComboBox
 
 from widgets.properties_editor import PropertiesEditorWidget
 
 import struct
 import message_types
+import config
 
 import struct
 import math
@@ -60,30 +62,45 @@ class ActuatorValuesWidget(QWidget):
             self._client.send_message(message_types.FpgaCmdServo,
             struct.pack('<BH', id_, self._widgets[id_][0].value()))
             
+            self._client.send_message(message_types.FpgaCmdServo,
+            struct.pack('<BH', id_, self._widgets[id_][0].value()))
 
 class TestActuatorsDialog(QDialog):
     def __init__(self, parent = None):
         super(TestActuatorsDialog, self).__init__(None)
         self._client = None
         self._button = QPushButton('set actuator')
-        self._servo_values = ActuatorValuesWidget([
-            ('griffe G:', 2),
-            ('griffe D:', 1),
-            ('slider :', 10),
-            ('stock G :', 11),
-            ('stock D :', 0)])
-        self._button_reset = QPushButton('Reset')
+        servos = []
+        i = 0
+        for s in config.robot_config.yaml['servos']:
+            servos.append((s['name'], i))
+            i += 1
+        self._servo_values = ActuatorValuesWidget(servos)
+        self._button_go = QPushButton('go')
 
         layout = QGridLayout()
-        tab_widget = QTabWidget()
-        tab_widget.addTab(self._servo_values, "Servo values")
-        layout.addWidget(tab_widget)
-        layout.addWidget(self._button_reset)
+        #tab_widget = QTabWidget()
+        #.addTab(self._servo_values, "Servo values")
+        #layout.addWidget(tab_widget)
+        #layout.addWidget(self._button_reset)
+        self.combobox_servo = QComboBox()
+        self.spinbox_value = QSpinBox()
+        
+        self.button_go = QPushButton('go')
+        self.spinbox_value.setRange(0, 0x40000)
+        for s in config.robot_config.yaml['servos']:
+            self.combobox_servo.addItem(s['name'])
+        
+        
+        layout.addWidget(self.combobox_servo, 0,0)
+        layout.addWidget(self.spinbox_value, 0,1)
+        layout.addWidget(self.button_go, 0,2)
         self.setLayout(layout)
-        self._button_reset.clicked.connect(self._reset)
+        self._button_go.clicked.connect(self._go)
 
-    def _reset(self):
-        pass
+    def _go(self):
+        self._client.send_message(message_types.FpgaCmdServo,
+        struct.pack('<BH', self.combobox_servo.currentIndex(), self.spinbox_value.value()))
         
     def set_client(self, client):
         self._client = client

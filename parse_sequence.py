@@ -111,11 +111,11 @@ class Arg:
         if typ == 'imm':
             return int(self.value)
         if typ == 'arm_position':
-            return list(parser.config.dynamixels_positions.keys()).index(self.name)
+            return parser.config.get_arm_position_index(self.name)
         if typ == 'sequence':
             return list(parser.sequences.keys()).index(self.name)
         if typ == 'servo_id':
-            return parser.config.servo_nums[self.name]     
+            return parser.config.get_servo_index(self.name)     
         
     def __repr__(self):
         return '<Arg {}>'.format(self.__dict__)
