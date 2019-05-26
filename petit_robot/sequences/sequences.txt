@@ -55,14 +55,20 @@ end sequence
 
 # Attrape et depose
 begin sequence attrape_devant
-arm.go_to_position sol_preprise
-wait_arm_finished
-arm.go_to_position sol_prise
+label begin
+#arm.go_to_position sol_preprise
+#wait_arm_finished
+#arm.go_to_position sol_prise
 pump.set_pwm pwm_pump_activated
 delay delay2
-arm.go_to_position sol_preprise
-wait_arm_finished
+pump.set_pwm pwm_pump_zero
+delay delay2
+label lbl2
+#arm.go_to_position sol_preprise
+#wait_arm_finished
+jmp begin
 end sequence
+
 
 begin sequence depose_devant
 arm.go_to_position sol_preprise

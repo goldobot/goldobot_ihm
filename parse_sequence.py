@@ -36,7 +36,11 @@ opcodes = {
     'jge',
     'call'
 }
-
+opcodes_jump = {
+    'jmp' : 200,
+    'jz': 201,
+    'jnz': 202
+   }
 opcodes = {
     'nop': (0, None, None, None),
     'mov1': (1, 'var', 'var', None), #move one int32 from arg1 into arg0
@@ -56,12 +60,17 @@ opcodes = {
     'propulsion.exit_manual': (134, None, None, None),
     'propulsion.set_control_levels': (135, 'imm', 'imm', None),
     'propulsion.set_target_pose': (136, 'var', 'var', None),
+    'propulsion.face_direction': (137, 'var', 'var', None),
     'pump.set_pwm': (140, 'var', None, None),
-    'arm.go_to_position': (141, 'arm_position', None, None),
-    'set_servo': (142, 'servo_id', 'var', None),
+    'arm.go_to_position': (141, 'arm_position', 'imm', 'imm'),
+    'set_servo': (142, 'servo_id', 'var', 'imm'),
+    'arm.shutdown': (143, None, None, None,),
     'ret': (30, None, None, None,),
     'call': (31,'sequence', 0,0),
-    'delay': (32, 'var', None, None)
+    'delay': (32, 'var', None, None),
+    'yield': (33, None, None, None,),
+    'check_sensor' : (150, 'imm', None, None),
+    'send_event' : (34, 'imm', 'imm', None)
     }
 
         
@@ -126,11 +135,16 @@ class Op:
         self.args = [Arg(a) for a in args.split(',')] if args != '' else []
         
     def encode(self, parser):
+        if self.op in opcodes_jump:
+            offset = parser.current_sequence.labels[self.args[0].name] + parser.current_sequence_offset
+            print(struct.pack('<BBBB', opcodes_jump[self.op], offset % 256, offset >> 8, 0))
+            return struct.pack('<BBBB', opcodes_jump[self.op], offset % 256, offset >> 8, 0)
+            
         args = [0,0,0]
         opc = opcodes[self.op]
         for i in range(len(self.args)):
             args[i] = self.args[i].encode(opc[i+1], parser)
-        return struct.pack('BBBB', opc[0], args[0], args[1], args[2])
+        return struct.pack('<BBBB', opc[0], args[0], args[1], args[2])
         
     def __repr__(self):
         return '<Op {} {}>'.format(self.op, self.args)
@@ -180,6 +194,7 @@ class SequenceParser:
                     self.sequences[self.current_sequence.name] = self.current_sequence
             elif op == 'end' and args.split(' ')[0] == 'sequence':
                 self.current_sequence.ops.append(Op('ret',''))
+                print(self.current_sequence.labels)
                 self.current_sequence = None
             elif op == 'var':
                 var = Variable(args)
@@ -188,7 +203,7 @@ class SequenceParser:
                 else:
                     self.current_sequence.variables[var.name] = var   
             elif op == 'label':
-                self.current_sequence.labels[args] = self.current_index
+                self.current_sequence.labels[args] = len(self.current_sequence.ops)
             else:
                 op = Op(op,args)
                 self.current_sequence.ops.append(op)
@@ -205,7 +220,9 @@ class SequenceParser:
         seqs_table = []
         seqs_buffer = b''
         for s in self.sequences.values():
-            seqs_table.append(len(seqs_buffer) // 4)          
+            seqs_table.append(len(seqs_buffer) // 4)
+            self.current_sequence = s
+            self.current_sequence_offset = len(seqs_buffer) // 4
             for op in s.ops:
                 seqs_buffer+=op.encode(self)
         #encode buffer

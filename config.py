@@ -33,7 +33,15 @@ class RobotConfig:
             if l.strip() == '':
                 continue
             cols = l.split(',')
-            self.dynamixels_positions[cols[0]] =  [int(cols[1]), int(cols[2]), int(cols[3])]
+            self.dynamixels_positions[cols[0]] =  [int(c) for c in cols[1:]]
+            
+        self.dynamixels_torques = OrderedDict()
+        lines = list(open(self.path + '/dynamixels_torques.txt', 'r'))
+        for l in lines[1:]:
+            if l.strip() == '':
+                continue
+            cols = l.split(',')
+            self.dynamixels_torques[cols[0]] =  [int(c) for c in cols[1:]]
         
     def get_servo_index(self, name):
         return [s['name'] for s in self.yaml['servos']].index(name)
@@ -67,8 +75,12 @@ class RobotConfig:
             servo_buffer = struct.pack('<BBHHH', s['id'], tid[s['type']],0,0,0)
             arm_config_buffer += servo_buffer
         arm_config_buffer += b'\0' * 8 * (16-len(self.yaml['dynamixels']))
-        arm_config_buffer += struct.pack('<HH', 32,8)
+        arm_config_buffer += struct.pack('<HH', 32,len(self.dynamixels_torques))
         arm_config_buffer += b'\0' * 8
+        
+        arm_positions_buffer = b''.join([b''.join([struct.pack('<H', t) for t in s]) for s in self.dynamixels_positions.values()])
+        arm_positions_buffer += b'\0' * (len(self.yaml['dynamixels']) * 2 * 64 - len(arm_positions_buffer))
+        arm_torques_buffer = b''.join([b''.join([struct.pack('<H', t) for t in s]) for s in self.dynamixels_torques.values()])
         
         #Servo config buffer
         servos_config_buffer = struct.pack('<H', len(self.yaml['servos']))
@@ -95,7 +107,10 @@ class RobotConfig:
         buff = align_buffer(buff + servos_config_buffer)
         
         offset_arm_positions = len(buff)
-        buff = align_buffer(buff + b'\0' * (len(self.yaml['dynamixels']) * 2 * 64))
+        buff = align_buffer(buff + arm_positions_buffer)
+        
+        offset_arm_torques = len(buff)
+        buff = align_buffer(buff + arm_torques_buffer)
         
         offset_sequences = len(buff)
         buff += self.sequences.binary        
@@ -108,7 +123,7 @@ class RobotConfig:
         offset_arm_positions + 32,
         offset_servos_config + 32,
         offset_sequences + 32,
-        0,
+        offset_arm_torques + 32,
         0,0,0,0,0,0,0,0)
 
         
@@ -126,6 +141,7 @@ class RobotConfig:
 # arms position config offset
 # servos config offset
 # sequences_config offset
+# arms torque offset
 
 def load_config(path):
     global robot_config

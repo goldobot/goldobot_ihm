@@ -96,11 +96,12 @@ class TestActuatorsDialog(QDialog):
         layout.addWidget(self.spinbox_value, 0,1)
         layout.addWidget(self.button_go, 0,2)
         self.setLayout(layout)
-        self._button_go.clicked.connect(self._go)
+        self.button_go.clicked.connect(self._go)
 
     def _go(self):
         self._client.send_message(message_types.FpgaCmdServo,
         struct.pack('<BH', self.combobox_servo.currentIndex(), self.spinbox_value.value()))
+        print(self.combobox_servo.currentIndex(), self.spinbox_value.value())
         
     def set_client(self, client):
         self._client = client
