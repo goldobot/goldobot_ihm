@@ -18,7 +18,6 @@ class RobotConfig:
         self.yaml = yaml.load(open(path + '/robot.yaml'))
         self.path = path
         self.servo_nums = {s['name']:s['id'] for s in self.yaml['servos']}
-        print(self.servo_nums)
         self.load_dynamixels_config()
         self.load_sequences()
         
@@ -129,7 +128,9 @@ class RobotConfig:
         
         # add padding for alignment?
         self.binary = header + buff
-        
+        self.crc = compute_crc(self.binary)
+        open(self.path+'/robot_config.bin', 'wb').write(self.binary)
+        open(self.path+'/robot_config.crc', 'w').write(str(self.crc))
 
 #Full config format:
 # Offsets table
@@ -146,5 +147,13 @@ class RobotConfig:
 def load_config(path):
     global robot_config
     robot_config = RobotConfig(path)
+
+def compute_crc(buffer):
+    crc = 0
+    for b in buffer:
+        x = crc >> 8 ^ b;
+        x ^= x >> 4;
+        crc = ((crc << 8) ^ (x << 12) ^ (x << 5) ^ x) & 0xffff;
+    return crc
 
     

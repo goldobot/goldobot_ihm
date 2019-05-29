@@ -25,6 +25,7 @@ class ZmqClient(QObject):
     fpga_registers = pyqtSignal(int, int)
     sensors = pyqtSignal(int)
     gpio = pyqtSignal(int)
+    robot_end_load_config_status = pyqtSignal(bool)
 
     def __init__(self, ip=None, parent = None):
         super(ZmqClient, self).__init__(None)
@@ -80,7 +81,8 @@ class ZmqClient(QObject):
             self.gpio.emit(struct.unpack('<I',msg[2:])[0])
         if msg_type == 22:
             print('sequence event', struct.unpack('<BB',msg[2:]))
-            
+        if msg_type == 403:
+            self.robot_end_load_config_status.emit(bool(struct.unpack('<B',msg[2:])))
         if msg_type == message_types.Heartbeat:
             timestamp = struct.unpack('<I', msg[2:6])[0]
             self.heartbeat.emit(timestamp)

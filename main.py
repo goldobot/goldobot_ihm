@@ -10,7 +10,7 @@ import PyQt5.QtCore
 from PyQt5.QtWidgets import QMainWindow, QApplication, QWidget, QLabel, QLineEdit, QGridLayout, QFrame, QPushButton, QSpinBox, QSizePolicy
 from PyQt5.QtCore import QObject, pyqtSignal, QSize, QRectF, QPointF, Qt, QTimer
 from PyQt5.QtWidgets import QTabWidget, QAction, QDialog, QVBoxLayout, QCheckBox
-from PyQt5.QtWidgets import  QHBoxLayout, QComboBox
+from PyQt5.QtWidgets import  QHBoxLayout, QComboBox, QMessageBox
 
 from widgets.table_view import TableViewWidget
 
@@ -70,6 +70,8 @@ class MainWindow(QMainWindow):
         self._actions = []
         self._dialogs = []
         
+        
+        
         for d in dialogs:
             action = QAction(d[0])
             widget = d[1]()
@@ -102,6 +104,7 @@ class MainWindow(QMainWindow):
         self._action_exit_debug.triggered.connect(self._send_exit_debug)
         self._action_upload_config.triggered.connect(self._upload_config) 
 
+        self._client.robot_end_load_config_status.connect(self._upload_status)
        
         
         for d in self._dialogs:
@@ -149,8 +152,13 @@ class MainWindow(QMainWindow):
             buff = buff[32:]
         self._client.send_message(message_types.RobotLoadConfig, buff)
         #Finish programming
-        self._client.send_message(message_types.RobotEndLoadConfig, b'aa')
+        self._client.send_message(message_types.RobotEndLoadConfig, struct.pack('<H', cfg.crc))
         
+    def _upload_status(self, status):
+        if status:
+            QMessageBox.information(self, "Upload config status", "Success")
+        else:
+            QMessageBox.critical(self, "Upload config status", "Failure")
         
        
 

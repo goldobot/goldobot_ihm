@@ -46,6 +46,13 @@ wait_movement_finished start
 pump.set_pwm pwm_pump_zero
 end sequence
 
+begin sequence end_match
+propulsion.motors_disable
+propulsion.disable
+pump.set_pwm pwm_pump_zero
+arm.shutdown
+end sequence
+
 begin sequence test
 propulsion.motors_enable
 propulsion.enable

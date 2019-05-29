@@ -48,6 +48,8 @@ opcodes = {
     'mov3': (3, 'var', 'var', None), #move three int32 from arg1 into arg0
     'propulsion.motors_enable': (64, None, None, None),
     'propulsion.enable': (65, None, None, None),
+    'propulsion.motors_disable': (66, None, None, None),
+    'propulsion.disable': (67, None, None, None),
     'wait_movement_finished': (126, None, None, None),
     'wait_arm_finished': (125, None, None, None),
     'propulsion.set_pose': (127, 'var', None, None),
@@ -137,7 +139,6 @@ class Op:
     def encode(self, parser):
         if self.op in opcodes_jump:
             offset = parser.current_sequence.labels[self.args[0].name] + parser.current_sequence_offset
-            print(struct.pack('<BBBB', opcodes_jump[self.op], offset % 256, offset >> 8, 0))
             return struct.pack('<BBBB', opcodes_jump[self.op], offset % 256, offset >> 8, 0)
             
         args = [0,0,0]
@@ -194,7 +195,6 @@ class SequenceParser:
                     self.sequences[self.current_sequence.name] = self.current_sequence
             elif op == 'end' and args.split(' ')[0] == 'sequence':
                 self.current_sequence.ops.append(Op('ret',''))
-                print(self.current_sequence.labels)
                 self.current_sequence = None
             elif op == 'var':
                 var = Variable(args)
