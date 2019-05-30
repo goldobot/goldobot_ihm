@@ -124,4 +124,7 @@ class ZmqClient(QObject):
         if msg_type == message_types.FpgaDbgReadReg:
             apb_addr, apb_data = struct.unpack('<II', msg[2:])
             self.fpga_registers.emit(apb_addr, apb_data)
+            
+        if msg_type == 90:
+            print(struct.unpack('<BB', msg[2:]))
 

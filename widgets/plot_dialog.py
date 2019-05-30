@@ -1,4 +1,5 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtWidgets import QTabWidget
 
 
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
@@ -9,7 +10,7 @@ from matplotlib.figure import Figure
 class PlotDialog(QtWidgets.QDialog):
     def __init__(self,  parent=None):
         super(PlotDialog, self).__init__(parent)
-        self.resize(1200,400)
+        #self.resize(1200,400)
 
         # a figure instance to plot on
         self.figure = Figure()
@@ -28,20 +29,10 @@ class PlotDialog(QtWidgets.QDialog):
         layout.addWidget(self.canvas)
         self.setLayout(layout)
 
-        self._axes = []
-        self._axes.append(self.figure.add_subplot(411))
-        self._axes.append(self.figure.add_subplot(412))
-        self._axes.append(self.figure.add_subplot(413))
-        self._axes.append(self.figure.add_subplot(414))
-
-        # discards the old graph
-        #self._ax.clear()
-
-        # plot data
-        #ax.plot(data, '*-')
+        self.axes = self.figure.add_subplot(111)     
 
         self.canvas.draw()
 
-    def plot_curve(self,idx, points):
-        self._axes[idx].plot(points, '*-')
+    def plot_curve(self,points):
+        self.axes.plot(points, '*-')
         self.canvas.draw()

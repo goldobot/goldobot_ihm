@@ -35,7 +35,6 @@ propulsion.rotate a1,test_yaw_speeds
 propulsion.translate d1,test_yaw_speeds
 propulsion.rotate a1,test_yaw_speeds
 propulsion.translate d2,test_yaw_speeds
-delay delay_test
 wait_movement_finished
 end sequence
 
@@ -59,75 +58,9 @@ pump.set_pwm pwm_pump_zero
 arm.shutdown
 end sequence
 
-begin sequence test
-propulsion.motors_enable
-propulsion.enable
-propulsion.rotate test_angle,test_yaw_speeds
-propulsion.translate test_distance,test_yaw_speeds
-end sequence
-
-# Attrape et depose
-begin sequence attrape_devant
-label begin
-arm.go_to_position sol_preprise,0,100
-#wait_arm_finished
-arm.go_to_position sol_prise,0,100
-pump.set_pwm pwm_pump_activated
-delay delay2
-pump.set_pwm pwm_pump_zero
-delay delay2
-label lbl2
-#arm.go_to_position sol_preprise
-#wait_arm_finished
-jmp begin
-end sequence
-
-
-begin sequence depose_devant
-arm.go_to_position sol_preprise
-wait_arm_finished foo
-pump.set_pwm pwm_pump_zero
-delay delay1
-end sequence
-
-begin sequence depose_balance
-arm.go_to_position acc_predepose
-wait_arm_finished foo
-pump.set_pwm pwm_pump_zero
-end sequence
-
-# Accelerateur
-
-begin sequence pousse_accel
-set_servo slider,servo_slider_droite
-end sequence
-
-
-
-
-
-begin sequence load_positions_yellow
-mov3 start_pose,start_pose_yellow
-end sequence
-
 begin sequence prematch_common
-arm.go_to_position stk_av_retrait
-set_servo slider,servo_slider_gauche
+#arm.go_to_position stk_av_retrait
+#set_servo slider,servo_slider_gauche
 propulsion.motors_enable
 propulsion.enable
-end sequence
-
-var vec3 tar_pose=(0mm,0mm,00deg)
-var vec3 tar_pose2=(0mm,0mm,45deg)
-var vec2 tar_sy=(000mm,0mm)
-
-begin sequence test_reposition
-propulsion.motors_enable
-propulsion.enable
-propulsion.set_pose tar_pose
-propulsion.enter_manual
-propulsion.set_control_levels 0,2
-propulsion.set_target_pose tar_pose,tar_sy
-propulsion.set_target_pose tar_pose2,tar_sy
-#propulsion.reposition r_speed,r_accel
 end sequence

@@ -45,6 +45,12 @@ class RobotConfig:
     def get_servo_index(self, name):
         return [s['name'] for s in self.yaml['servos']].index(name)
         
+    def get_gpio_index(self, name):
+        return [s['name'] for s in self.yaml['gpios']].index(name)
+        
+    def get_dc_motor_index(self, name):
+        return [s['name'] for s in self.yaml['dc_motors']].index(name)
+        
     def get_arm_position_index(self, name):
         return list(self.dynamixels_positions.keys()).index(name)
         

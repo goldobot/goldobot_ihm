@@ -11,6 +11,7 @@ pousse_accel
 load_positions_yellow
 prematch_common
 test_reposition
+test_calibrate_rotation
 test_check_sensor
 test_arm_speed
 test_servos_speed

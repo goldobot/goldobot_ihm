@@ -9,7 +9,7 @@ odometry:
   dist_per_count_right: 1.9621583742116328e-05
   encoder_period: 8192
   update_period: 1.0e-3
-  wheels_spacing: 340.8e-3
+  wheels_spacing: 396.2e-3
   speed_filter_period: 5.0e-3
 propulsion:
   pid_static:
@@ -35,8 +35,8 @@ propulsion:
       max_out: 1.0
     yaw:
       period: 1.0e-3
-      kp: 5
-      ki: 20
+      kp: 2
+      ki: 5
       kd: 0
       feed_forward: 0
       lim_iterm: 0.2
@@ -80,42 +80,41 @@ dynamixels:
   - name: coude
     id: 5
     type: ax12
-    cw_limit: 800
-    ccw_limit: 3150   
+    cw_limit: 130
+    ccw_limit: 1000
     torque_limit: 512
   - name: tete
     id: 6
     type: ax12
-    cw_limit: 250
+    cw_limit: 670
     ccw_limit: 850    
     torque_limit: 512
 servos:
-  - name: griffe_g
-    id: 2
+  - name: moteur
+    id: 8
     max_speed: 1000
     cw_limit: 250
     ccw_limit: 850 
-  - name: griffe_d
-    id: 1
+  - name: gache
+    id: 9
     max_speed: 1000
     cw_limit: 250
     ccw_limit: 850
-  - name: stock_g
-    id: 11
-    max_speed: 1000
-    cw_limit: 250
-    ccw_limit: 850
-  - name: stock_d
-    id: 0
-    max_speed: 1000
-    cw_limit: 250
-    ccw_limit: 850 
-  - name: slider
+  - name: rampe
     id: 10
-    max_speed: 10000
-    cw_limit: 32600
-    ccw_limit: 45500
-    
+    max_speed: 1000
+    cw_limit: 250
+    ccw_limit: 850
+gpios:
+ - name: electrovanne
+   id: 3
+dc_motors:
+ - name: pompe
+   id: 0
+ - name: ev_vcentrale
+   id: 2
+ - name: ev_vexterne
+   id: 3
 sequence_files:
   - "sequences/constants.txt"
   - "sequences/sequences.txt"

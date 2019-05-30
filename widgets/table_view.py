@@ -158,6 +158,10 @@ class TableViewWidget(QGraphicsView):
         self._client = client
         self._client.propulsion_telemetry.connect(self.update_telemetry)
         self._client.rplidar_robot_detection.connect(self.update_other_robots)
+        
+    def draw_strategy(self,strategy):
+        pass
+        
 
     def update_telemetry(self, telemetry):
         self._big_robot.setPos(telemetry.x * 1000, telemetry.y * 1000)

@@ -67,6 +67,7 @@ opcodes = {
     'arm.go_to_position': (141, 'arm_position', 'imm', 'imm'),
     'set_servo': (142, 'servo_id', 'var', 'imm'),
     'arm.shutdown': (143, None, None, None,),
+    'dc_motor.set_pwm': (144, 'dc_motor_id', 'var', None),
     'ret': (30, None, None, None,),
     'call': (31,'sequence', 0,0),
     'delay': (32, 'var', None, None),
@@ -127,25 +128,35 @@ class Arg:
             return list(parser.sequences.keys()).index(self.name)
         if typ == 'servo_id':
             return parser.config.get_servo_index(self.name)     
+        if typ == 'gpio_id':
+            return parser.config.get_gpio_index(self.name)
+        if typ == 'dc_motor_id':
+            return parser.config.get_dc_motor_index(self.name)
         
     def __repr__(self):
         return '<Arg {}>'.format(self.__dict__)
         
 class Op:
-    def __init__(self, op, args):        
+    def __init__(self, op, args, lineno):        
         self.op = op
         self.args = [Arg(a) for a in args.split(',')] if args != '' else []
+        self.lineno = lineno
         
     def encode(self, parser):
-        if self.op in opcodes_jump:
-            offset = parser.current_sequence.labels[self.args[0].name] + parser.current_sequence_offset
-            return struct.pack('<BBBB', opcodes_jump[self.op], offset % 256, offset >> 8, 0)
-            
-        args = [0,0,0]
-        opc = opcodes[self.op]
-        for i in range(len(self.args)):
-            args[i] = self.args[i].encode(opc[i+1], parser)
-        return struct.pack('<BBBB', opc[0], args[0], args[1], args[2])
+        try:
+            if self.op in opcodes_jump:
+                offset = parser.current_sequence.labels[self.args[0].name] + parser.current_sequence_offset
+                return struct.pack('<BBBB', opcodes_jump[self.op], offset % 256, offset >> 8, 0)
+                
+            args = [0,0,0]
+            opc = opcodes[self.op]
+            for i in range(len(self.args)):
+                args[i] = self.args[i].encode(opc[i+1], parser)
+            return struct.pack('<BBBB', opc[0], args[0], args[1], args[2])
+        except:
+            print('Compile error, line {}'.format(self.lineno))
+            print(args)
+            raise
         
     def __repr__(self):
         return '<Op {} {}>'.format(self.op, self.args)
@@ -171,10 +182,14 @@ class SequenceParser:
         self.current_index = 0
         
     def variable_index(self, name):
+        if name in self.current_sequence.variables:
+            return self.current_sequence.variables[name].index
         return self.variables[name].index
         
     def parse_file(self, path):
+        lineno = 0
         for line in open(path):
+            lineno += 1
             #strip whitespace
             line = line.split('#')[0].strip()
             #comment line and empty lines
@@ -194,7 +209,7 @@ class SequenceParser:
                     self.current_index = 0
                     self.sequences[self.current_sequence.name] = self.current_sequence
             elif op == 'end' and args.split(' ')[0] == 'sequence':
-                self.current_sequence.ops.append(Op('ret',''))
+                self.current_sequence.ops.append(Op('ret','', lineno))
                 self.current_sequence = None
             elif op == 'var':
                 var = Variable(args)
@@ -205,7 +220,7 @@ class SequenceParser:
             elif op == 'label':
                 self.current_sequence.labels[args] = len(self.current_sequence.ops)
             else:
-                op = Op(op,args)
+                op = Op(op,args,lineno)
                 self.current_sequence.ops.append(op)
                 
     def compile(self):
@@ -215,6 +230,10 @@ class SequenceParser:
             v.index = len(vars_buffer)//4
             vars_buffer += v.encode()
         #allocate sequence variables
+        for s in self.sequences.values():
+            for v in s.variables.values():
+                v.index = len(vars_buffer)//4
+                vars_buffer += v.encode()
         
         #encode sequences
         seqs_table = []
