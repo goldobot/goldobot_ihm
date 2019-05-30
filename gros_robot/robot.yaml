@@ -115,6 +115,11 @@ dc_motors:
    id: 2
  - name: ev_vexterne
    id: 3
+sensors:
+  - name: vacu1
+    id: 5
+  - name: vacu2
+    id: 6
 sequence_files:
   - "sequences/constants.txt"
   - "sequences/sequences.txt"

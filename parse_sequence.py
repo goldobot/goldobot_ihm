@@ -72,7 +72,7 @@ opcodes = {
     'call': (31,'sequence', 0,0),
     'delay': (32, 'var', None, None),
     'yield': (33, None, None, None,),
-    'check_sensor' : (150, 'imm', None, None),
+    'check_sensor' : (150, 'sensor_id', None, None),
     'send_event' : (34, 'imm', 'imm', None)
     }
 
@@ -130,6 +130,8 @@ class Arg:
             return parser.config.get_servo_index(self.name)     
         if typ == 'gpio_id':
             return parser.config.get_gpio_index(self.name)
+        if typ == 'sensor_id':
+            return parser.config.get_sensor_index(self.name)
         if typ == 'dc_motor_id':
             return parser.config.get_dc_motor_index(self.name)
         
