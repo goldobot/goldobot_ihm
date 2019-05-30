@@ -1,0 +1,281 @@
+#var int side=0
+#var float angle=90deg
+#var float distance=400mm
+#var vec2 start_point=(100mm,100mm)
+var vec3 start_pose=(0mm,0mm,00deg)
+#var vec2 point3=(100mm,200mm)
+
+var float test_distance=400mm
+var float test_angle=90deg
+var vec3 test_yaw_speeds=(500mm,500mm,500mm)
+
+var float r_speed=200mm
+var float r_accel=1
+
+var vec3 test_goldo_speeds=(400mm,400mm,400mm)
+
+
+begin sequence prematch_yellow
+call prematch_common
+propulsion.set_pose start_pose_yellow
+end sequence
+
+begin sequence prematch_purple
+call prematch_common
+propulsion.set_pose start_pose_purple
+end sequence
+
+begin sequence match_yellow
+set_servo slider,servo_slider_gauche,100
+propulsion.set_pose start_pose_yellow
+propulsion.move_to goldo_yellow_pt1,test_goldo_speeds
+wait_movement_finished goldo_yellow_pt1
+call attrape_devant_goldo
+propulsion.move_to goldo_yellow_pt2,test_goldo_speeds
+wait_movement_finished goldo_yellow_pt2
+propulsion.point_to goldo_yellow_pt3,test_goldo_speeds
+wait_movement_finished goldo_yellow_pt3
+propulsion.move_to goldo_yellow_pt3,test_goldo_speeds
+wait_movement_finished goldo_yellow_pt3
+arm.go_to_position stk_av_retrait,1,75
+wait_arm_finished
+delay delay1
+set_servo slider,servo_slider_prep_gauche,100
+delay delay1
+set_servo slider,servo_slider_droite,100
+delay delay1
+set_servo slider,servo_slider_gauche,100
+delay delay1
+arm.go_to_position goldo_attack_high,1,75
+wait_arm_finished
+delay delay1
+pump.set_pwm pwm_pump_zero
+delay delay1
+arm.go_to_position goldo_attack_low,1,75
+wait_arm_finished
+delay delay1
+arm.go_to_position goldo_retract_low,1,75
+wait_arm_finished
+delay delay05
+arm.go_to_position goldo_attack_low,1,75
+wait_arm_finished
+delay delay05
+arm.go_to_position goldo_retract_low,1,75
+wait_arm_finished
+delay delay05
+set_servo slider,servo_slider_droite,100
+delay delay05
+set_servo slider,servo_slider_gauche,100
+delay delay05
+# goldo_yellow_pt4 := green_3
+propulsion.move_to goldo_yellow_pt4,test_goldo_speeds
+wait_movement_finished goldo_yellow_pt4
+#propulsion.rotation,-90,0
+propulsion.point_to goldo_yellow_pt5,test_goldo_speeds
+wait_movement_finished goldo_yellow_pt5
+#  goldo_yellow_pt5 := green_4
+propulsion.move_to goldo_yellow_pt5,test_goldo_speeds
+wait_movement_finished goldo_yellow_pt5
+#propulsion.rotation,90,0
+propulsion.point_to goldo_yellow_pt6,test_goldo_speeds
+wait_movement_finished goldo_yellow_pt6
+arm.go_to_position goldo_attack,1,75
+delay delay05
+pump.set_pwm pwm_pump_activated
+delay delay05
+#  goldo_yellow_pt6 := green_5
+propulsion.move_to goldo_yellow_pt6,test_goldo_speeds
+wait_movement_finished goldo_yellow_pt6
+delay delay05
+#  goldo_yellow_pt6_bis := green_5_bis
+propulsion.move_to goldo_yellow_pt6_bis,test_goldo_speeds
+wait_movement_finished goldo_yellow_pt6_bis
+propulsion.move_to goldo_yellow_pt6,test_goldo_speeds
+wait_movement_finished goldo_yellow_pt6
+delay delay05
+arm.go_to_position goldo_attack_high,1,75
+delay delay05
+arm.go_to_position goldo_protect_goldenium,1,50
+delay delay05
+#  goldo_yellow_pt7 := green_6
+propulsion.move_to goldo_yellow_pt7,test_goldo_speeds
+wait_movement_finished goldo_yellow_pt7
+#propulsion.rotation,90,0
+propulsion.point_to goldo_yellow_pt8,test_goldo_speeds
+wait_movement_finished goldo_yellow_pt8
+#  goldo_yellow_pt8 := green_7
+propulsion.move_to goldo_yellow_pt8,test_goldo_speeds
+wait_movement_finished goldo_yellow_pt8
+#propulsion.rotation,90,0
+propulsion.point_to goldo_yellow_pt9,test_goldo_speeds
+wait_movement_finished goldo_yellow_pt9
+#  goldo_yellow_pt9 := green_8
+propulsion.move_to goldo_yellow_pt9,test_goldo_speeds
+wait_movement_finished goldo_yellow_pt9
+arm.go_to_position goldo_attack_high,1,75
+delay delay1
+pump.set_pwm pwm_pump_zero
+delay delay1
+arm.go_to_position goldo_attack,1,75
+delay delay1
+#  goldo_yellow_pt10 := green_9
+propulsion.move_to goldo_yellow_pt10,test_goldo_speeds
+wait_movement_finished goldo_yellow_pt10
+#propulsion.rotation,-130,0
+propulsion.point_to goldo_yellow_pt11,test_goldo_speeds
+wait_movement_finished goldo_yellow_pt11
+set_servo griffe_g,servo_griffe_g_attack,100
+set_servo griffe_d,servo_griffe_d_attack,100
+delay delay05
+#  goldo_yellow_pt11 := green_start
+propulsion.move_to goldo_yellow_pt11,test_goldo_speeds
+wait_movement_finished goldo_yellow_pt11
+set_servo griffe_g,servo_griffe_g_retrait,100
+set_servo griffe_d,servo_griffe_d_retrait,100
+delay delay100
+end sequence
+
+
+begin sequence match_purple
+set_servo slider,servo_slider_droite,100
+propulsion.set_pose start_pose_purple
+propulsion.move_to goldo_purple_pt1,test_goldo_speeds
+wait_movement_finished goldo_purple_pt1
+call attrape_devant_goldo
+propulsion.move_to goldo_purple_pt2,test_goldo_speeds
+wait_movement_finished goldo_purple_pt2
+propulsion.point_to goldo_purple_pt3,test_goldo_speeds
+wait_movement_finished goldo_purple_pt3
+propulsion.move_to goldo_purple_pt3,test_goldo_speeds
+wait_movement_finished goldo_purple_pt3
+arm.go_to_position stk_av_retrait,1,75
+wait_arm_finished
+delay delay1
+set_servo slider,servo_slider_prep_droite,100
+delay delay1
+set_servo slider,servo_slider_gauche,100
+delay delay1
+set_servo slider,servo_slider_droite,100
+delay delay1
+arm.go_to_position goldo_attack_high,1,75
+wait_arm_finished
+delay delay1
+pump.set_pwm pwm_pump_zero
+delay delay1
+arm.go_to_position goldo_attack_low,1,75
+wait_arm_finished
+delay delay1
+arm.go_to_position goldo_retract_low,1,75
+wait_arm_finished
+delay delay05
+arm.go_to_position goldo_attack_low,1,75
+wait_arm_finished
+delay delay05
+arm.go_to_position goldo_retract_low,1,75
+wait_arm_finished
+delay delay05
+set_servo slider,servo_slider_gauche,100
+delay delay05
+set_servo slider,servo_slider_droite,100
+delay delay05
+# goldo_purple_pt4 := green_3
+propulsion.move_to goldo_purple_pt4,test_goldo_speeds
+wait_movement_finished goldo_purple_pt4
+#propulsion.rotation,-90,0
+propulsion.point_to goldo_purple_pt5,test_goldo_speeds
+wait_movement_finished goldo_purple_pt5
+#  goldo_purple_pt5 := green_4
+propulsion.move_to goldo_purple_pt5,test_goldo_speeds
+wait_movement_finished goldo_purple_pt5
+#propulsion.rotation,90,0
+propulsion.point_to goldo_purple_pt6,test_goldo_speeds
+wait_movement_finished goldo_purple_pt6
+arm.go_to_position goldo_attack,1,75
+delay delay05
+pump.set_pwm pwm_pump_activated
+delay delay05
+#  goldo_purple_pt6 := green_5
+propulsion.move_to goldo_purple_pt6,test_goldo_speeds
+wait_movement_finished goldo_purple_pt6
+delay delay05
+#  goldo_purple_pt6_bis := green_5_bis
+propulsion.move_to goldo_purple_pt6_bis,test_goldo_speeds
+wait_movement_finished goldo_purple_pt6_bis
+propulsion.move_to goldo_purple_pt6,test_goldo_speeds
+wait_movement_finished goldo_purple_pt6
+delay delay05
+arm.go_to_position goldo_attack_high,1,75
+delay delay05
+arm.go_to_position goldo_protect_goldenium,1,50
+delay delay05
+#  goldo_purple_pt7 := green_6
+propulsion.move_to goldo_purple_pt7,test_goldo_speeds
+wait_movement_finished goldo_purple_pt7
+#propulsion.rotation,90,0
+propulsion.point_to goldo_purple_pt8,test_goldo_speeds
+wait_movement_finished goldo_purple_pt8
+#  goldo_purple_pt8 := green_7
+propulsion.move_to goldo_purple_pt8,test_goldo_speeds
+wait_movement_finished goldo_purple_pt8
+#propulsion.rotation,90,0
+propulsion.point_to goldo_purple_pt9,test_goldo_speeds
+wait_movement_finished goldo_purple_pt9
+#  goldo_purple_pt9 := green_8
+propulsion.move_to goldo_purple_pt9,test_goldo_speeds
+wait_movement_finished goldo_purple_pt9
+arm.go_to_position goldo_attack_high,1,75
+delay delay1
+pump.set_pwm pwm_pump_zero
+delay delay1
+arm.go_to_position goldo_attack,1,75
+delay delay1
+#  goldo_purple_pt10 := green_9
+propulsion.move_to goldo_purple_pt10,test_goldo_speeds
+wait_movement_finished goldo_purple_pt10
+#propulsion.rotation,-130,0
+propulsion.point_to goldo_purple_pt11,test_goldo_speeds
+wait_movement_finished goldo_purple_pt11
+set_servo griffe_g,servo_griffe_g_attack,100
+set_servo griffe_d,servo_griffe_d_attack,100
+delay delay05
+#  goldo_purple_pt11 := green_start
+propulsion.move_to goldo_purple_pt11,test_goldo_speeds
+wait_movement_finished goldo_purple_pt11
+set_servo griffe_g,servo_griffe_g_retrait,100
+set_servo griffe_d,servo_griffe_d_retrait,100
+delay delay100
+end sequence
+
+begin sequence postmatch
+propulsion.disable
+propulsion.motors_disable
+end sequence
+
+
+begin sequence test
+propulsion.motors_enable
+propulsion.enable
+propulsion.rotate test_angle,test_yaw_speeds
+propulsion.translate test_distance,test_yaw_speeds
+end sequence
+
+# Attrape et depose (version Goldo)
+begin sequence attrape_devant_goldo
+pump.set_pwm pwm_pump_activated
+arm.go_to_position goldo_prise_devant,1,75
+wait_arm_finished
+delay delay1
+arm.go_to_position goldo_attack,1,75
+wait_arm_finished
+arm.go_to_position goldo_iddle,1,75
+wait_arm_finished
+end sequence
+
+begin sequence prematch_common
+arm.go_to_position stk_av_retrait,1,100
+set_servo slider,servo_slider_gauche,100
+propulsion.motors_enable
+propulsion.enable
+end sequence
+
+

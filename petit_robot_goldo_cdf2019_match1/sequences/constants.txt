@@ -1,0 +1,63 @@
+var int delay05=500
+var int delay1=1000
+var int delay2=2000
+var int delay100=100000
+
+var vec2 start=(0,0)
+var vec2 pt1=(200mm,0mm)
+var vec2 pt2=(0mm,-200mm)
+var vec2 pt3=(400mm,0)
+
+var int pwm_pump_activated=400
+var int pwm_pump_zero=0
+
+var vec3 start_pose_yellow=(750mm,-1398mm,90deg)
+var vec3 start_pose_purple=(750mm,1398mm,-90deg)
+
+# Servo positions
+var int servo_slider_gauche=32200
+var int servo_slider_droite=45500
+var int servo_slider_slide_gauche=42000
+var int servo_slider_depose_gauche=35000
+var int servo_slider_prep_gauche=34000
+var int servo_slider_prep_droite=43700
+
+var int servo_griffe_g_attack=20000
+var int servo_griffe_g_retrait=51000
+var int servo_griffe_d_attack=47000
+var int servo_griffe_d_retrait=16000
+
+var int chargeur_droit_out=51500
+
+
+# Robot positions
+
+var vec2 goldo_yellow_pt1=(750mm,-700mm)
+var vec2 goldo_yellow_pt2=(750mm,200mm)
+var vec2 goldo_yellow_pt3=(120mm,200mm)
+var vec2 goldo_yellow_pt4=(300mm,200mm)
+var vec2 goldo_yellow_pt5=(300mm,735mm)
+var vec2 goldo_yellow_pt6=(160mm,735mm)
+var vec2 goldo_yellow_pt6_bis=(140mm,735mm)
+var vec2 goldo_yellow_pt7=(750mm,735mm)
+var vec2 goldo_yellow_pt8=(750mm,-150mm)
+var vec2 goldo_yellow_pt9=(1530mm,-150mm)
+var vec2 goldo_yellow_pt10=(1250mm,-150mm)
+var vec2 goldo_yellow_pt11=(750mm,-1220mm)
+
+var vec2 goldo_purple_pt1=(750mm,700mm)
+var vec2 goldo_purple_pt2=(750mm,-200mm)
+var vec2 goldo_purple_pt3=(120mm,-200mm)
+var vec2 goldo_purple_pt4=(300mm,-200mm)
+var vec2 goldo_purple_pt5=(300mm,-735mm)
+var vec2 goldo_purple_pt6=(160mm,-735mm)
+var vec2 goldo_purple_pt6_bis=(140mm,-735mm)
+var vec2 goldo_purple_pt7=(750mm,-735mm)
+var vec2 goldo_purple_pt8=(750mm,150mm)
+var vec2 goldo_purple_pt9=(1530mm,150mm)
+var vec2 goldo_purple_pt10=(1250mm,150mm)
+var vec2 goldo_purple_pt11=(750mm,1220mm)
+
+
+
+
