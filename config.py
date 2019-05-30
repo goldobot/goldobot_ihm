@@ -18,9 +18,13 @@ class RobotConfig:
         self.yaml = yaml.load(open(path + '/robot.yaml'))
         self.path = path
         self.servo_nums = {s['name']:s['id'] for s in self.yaml['servos']}
-        self.load_dynamixels_config()        
-        self.dc_motors_indices = {s['name']:s['id'] for s in self.yaml['dc_motors']}
-        self.sensors_indices = {s['name']:s['id'] for s in self.yaml['sensors']}
+        self.load_dynamixels_config()
+        if 'dc_motors' in self.yaml:
+            self.dc_motors_indices = {s['name']:s['id'] for s in self.yaml['dc_motors']}
+        if 'sensors' in self.yaml:
+            self.sensors_indices = {s['name']:s['id'] for s in self.yaml['sensors']}
+        if 'gpios' in self.yaml:
+            self.gpio_indices = {s['name']:s['id'] for s in self.yaml['gpios']}
         self.load_sequences()
         
     def update_config(self):
@@ -51,7 +55,7 @@ class RobotConfig:
         return self.sensors_indices[name]
         
     def get_gpio_index(self, name):
-        return [s['name'] for s in self.yaml['gpios']].index(name)
+        return self.gpio_indices[name]
         
     def get_dc_motor_index(self, name):
         return self.dc_motors_indices[name]
