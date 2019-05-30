@@ -142,6 +142,7 @@ class MainWindow(QMainWindow):
         config.load_sequence()
     def _upload_config(self):
         cfg = config.robot_config
+        #cfg.update_config()
         cfg.compile()
         #Start programming
         self._client.send_message(message_types.RobotBeginLoadConfig, b'')
@@ -159,8 +160,6 @@ class MainWindow(QMainWindow):
             QMessageBox.information(self, "Upload config status", "Success")
         else:
             QMessageBox.critical(self, "Upload config status", "Failure")
-        
-       
 
     def _start_sequence(self):
         self._client.send_message(43, struct.pack('<H',1))

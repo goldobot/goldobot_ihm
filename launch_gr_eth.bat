@@ -1,0 +1,1 @@
+python  main.py --robot-ip 10.0.0.221 --config-path gros_robot

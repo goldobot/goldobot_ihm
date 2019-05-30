@@ -131,6 +131,10 @@ class RobotConfig:
         self.crc = compute_crc(self.binary)
         open(self.path+'/robot_config.bin', 'wb').write(self.binary)
         open(self.path+'/robot_config.crc', 'w').write(str(self.crc))
+        sn = open(self.path+'/sequence_names.txt','w')
+        for s in self.sequences.sequence_names:
+            sn.write(s + '\n')
+        sn.close()
 
 #Full config format:
 # Offsets table

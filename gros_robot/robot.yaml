@@ -1,0 +1,122 @@
+geometry:
+  front_length: 106.5
+  back_length: 101.5
+  outline:
+    - [0,116.5]
+    - [10,20]
+odometry:
+  dist_per_count_left: 1.966033264580682e-05
+  dist_per_count_right: 1.9621583742116328e-05
+  encoder_period: 8192
+  update_period: 1.0e-3
+  wheels_spacing: 340.8e-3
+  speed_filter_period: 5.0e-3
+propulsion:
+  pid_static:
+    longi:
+      period: 1.0e-3
+      kp: 5
+      ki: 10
+      kd: 0
+      feed_forward: 0
+      lim_iterm: 0.2
+      lim_dterm: 0
+      min_out: -1
+      max_out: 1
+    speed:
+      period: 1.0e-3
+      kp: 1.0
+      ki: 0.0
+      kd: 0.0
+      feed_forward: 0.64
+      lim_iterm: 0.2
+      lim_dterm: 0.0
+      min_out: -1.0
+      max_out: 1.0
+    yaw:
+      period: 1.0e-3
+      kp: 5
+      ki: 20
+      kd: 0
+      feed_forward: 0
+      lim_iterm: 0.2
+      lim_dterm: 0
+      min_out: -1
+      max_out: 1
+    yaw_rate:
+      period: 1.0e-3
+      kp: 0.2
+      ki: 0
+      kd: 0
+      feed_forward: 0.12
+      lim_iterm: 0.2
+      lim_dterm: 0
+      min_out: -1
+      max_out: 1
+  lookahead_time: 0.5
+  lookahead_distance: 0.15
+  static_pwm_limit: 0.5
+  moving_pwm_limit: 0.7
+  reposition_pwm_limit: 0.2
+dynamixels:
+  - name: rail
+    type: ax12
+    id: 4
+    cw_limit: 160
+    ccw_limit: 440    
+    torque_limit: 512
+  - name: rotation
+    id: 83
+    type: mx28
+    cw_limit: 800
+    ccw_limit: 3150   
+    torque_limit: 512
+  - name: epaule
+    id: 84
+    type: mx28
+    cw_limit: 2000
+    ccw_limit: 3160   
+    torque_limit: 512
+  - name: coude
+    id: 5
+    type: ax12
+    cw_limit: 800
+    ccw_limit: 3150   
+    torque_limit: 512
+  - name: tete
+    id: 6
+    type: ax12
+    cw_limit: 250
+    ccw_limit: 850    
+    torque_limit: 512
+servos:
+  - name: griffe_g
+    id: 2
+    max_speed: 1000
+    cw_limit: 250
+    ccw_limit: 850 
+  - name: griffe_d
+    id: 1
+    max_speed: 1000
+    cw_limit: 250
+    ccw_limit: 850
+  - name: stock_g
+    id: 11
+    max_speed: 1000
+    cw_limit: 250
+    ccw_limit: 850
+  - name: stock_d
+    id: 0
+    max_speed: 1000
+    cw_limit: 250
+    ccw_limit: 850 
+  - name: slider
+    id: 10
+    max_speed: 10000
+    cw_limit: 32600
+    ccw_limit: 45500
+    
+sequence_files:
+  - "sequences/constants.txt"
+  - "sequences/sequences.txt"
+  - "sequences/tests.txt"

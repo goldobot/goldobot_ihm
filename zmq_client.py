@@ -89,7 +89,6 @@ class ZmqClient(QObject):
             
         if msg_type == message_types.MatchStateChange:
             state,side = struct.unpack('<BB', msg[2:4])
-            print(state,side)
             self.match_state_change.emit(state,side)
 
         if msg_type == message_types.PropulsionTelemetry:

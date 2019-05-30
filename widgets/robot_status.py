@@ -9,6 +9,7 @@ class RobotStatusWidget(QWidget):
         self._x_wid = QLineEdit()
         self._y_wid = QLineEdit()
         self._button = QPushButton('Emergency Stop')
+        self._robot_state_wid = QLineEdit('')
         self._sensors_wid = QLabel()
         self._gpio_wid = QLabel()
 
@@ -17,8 +18,9 @@ class RobotStatusWidget(QWidget):
         layout = QGridLayout()
         layout.addWidget(QLabel('time:'),0,0)
         layout.addWidget(self._time_wid,0,1,1,1)
-        layout.addWidget(self._sensors_wid,1,1,1,1)
-        layout.addWidget(self._gpio_wid,1,2,1,1)
+        layout.addWidget(self._robot_state_wid,1,1,1,1)
+        layout.addWidget(self._sensors_wid,1,2,1,1)
+        layout.addWidget(self._gpio_wid,1,3,1,1)
 
         frame = QFrame()
         frame.setFrameShape(QFrame.HLine)
@@ -66,6 +68,7 @@ class RobotStatusWidget(QWidget):
         self._client.propulsion_telemetry.connect(self.update_telemetry)
         self._client.sensors.connect(self.update_sensors)
         self._client.gpio.connect(self.update_gpio)
+        self._client.match_state_change.connect(self.match_state_change)
 
     def update_heartbeat(self, timestamp):
         self._time_wid.setText(str(timestamp*1e-3))
@@ -80,6 +83,19 @@ class RobotStatusWidget(QWidget):
         
     def update_gpio(self, sensors):
         self._gpio_wid.setText('{0:b}'.format(sensors).zfill(6))
+        
+    def match_state_change(self, state, side):
+        states = {
+            0: 'Unconfigured',
+            1: 'Idle',
+            2: 'PreMatch',
+            3: 'WaitMatch',
+            4: 'Match',
+            5: 'PostMatch',
+            6: 'Debug'
+            }
+        self._robot_state_wid.setText(states[state])
+
 
     def _on_emergency_stop_button_clicked(self):
         self._client.send_message(16,b'')

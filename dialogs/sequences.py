@@ -17,15 +17,18 @@ class SequencesDialog(QDialog):
         self._client = None
         self._button_upload = QPushButton('upload')
         self._button_execute = QPushButton('execute')
+        self._button_abort = QPushButton('abort')
         self._combobox_sequence_id = QComboBox()
         
         layout = QGridLayout()        
         layout.addWidget(self._button_upload, 0, 0)
+        layout.addWidget(self._button_abort, 0, 1)
         layout.addWidget(self._combobox_sequence_id, 1, 0)
         layout.addWidget(self._button_execute, 1, 1)
         self.setLayout(layout)
         self._button_upload.clicked.connect(self._upload)
         self._button_execute.clicked.connect(self._execute)
+        self._button_abort.clicked.connect(self._abort)
         self._update_sequence_names()
     
 
@@ -69,3 +72,6 @@ class SequencesDialog(QDialog):
         seq_id = self._combobox_sequence_id.currentIndex()
         print(seq_id)
         self._client.send_message(43, struct.pack('<H', seq_id))
+        
+    def _abort(self):
+        self._client.send_message(45, b'')

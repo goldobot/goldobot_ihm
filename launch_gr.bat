@@ -1,1 +1,1 @@
-python  main.py --robot-ip 192.168.0.221
+python  main.py --robot-ip 192.168.0.221 --config-path gros_robot
