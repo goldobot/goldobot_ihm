@@ -4,8 +4,10 @@ match_yellow
 match_purple
 end_match
 prematch_common
+deploie_rampe
+retracte_rampe
+lance_atome
 test_calibrate_rotation
 test_check_sensor
-test_arm_speed
 test_electrovannes
 test_servos_gr

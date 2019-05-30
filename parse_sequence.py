@@ -68,6 +68,7 @@ opcodes = {
     'set_servo': (142, 'servo_id', 'var', 'imm'),
     'arm.shutdown': (143, None, None, None,),
     'dc_motor.set_pwm': (144, 'dc_motor_id', 'var', None),
+    'gpio.set': (145, 'gpio_id', 'imm', None),
     'ret': (30, None, None, None,),
     'call': (31,'sequence', 0,0),
     'delay': (32, 'var', None, None),

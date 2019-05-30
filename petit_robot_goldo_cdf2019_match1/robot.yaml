@@ -103,7 +103,6 @@ servos:
     max_speed: 16000
     cw_limit: 32600
     ccw_limit: 45500
-    
 sequence_files:
   - "sequences/constants.txt"
   - "sequences/sequences.txt"

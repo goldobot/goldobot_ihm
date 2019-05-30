@@ -13,7 +13,7 @@ from PyQt5.QtWidgets import QTabWidget, QAction, QDialog, QVBoxLayout, QCheckBox
 from PyQt5.QtWidgets import  QHBoxLayout, QComboBox, QMessageBox
 
 from widgets.table_view import TableViewWidget
-from widgets.plot_dialog import PlotDialog
+from widgets.plot_dialog import PlotDialog, ControlPlots
 
 from zmq_client import ZmqClient
 
@@ -122,8 +122,9 @@ class MainWindow(QMainWindow):
         self._widget_robot_status.set_client(self._client)
         self._table_view.set_client(self._client)
         
-        #plt = PlotDialog()
-        #plt.show()
+        plt = ControlPlots()
+        plt.show()
+        self.plt = plt
         #plt.plot_curve([0,2,1])
         
         
@@ -162,7 +163,7 @@ class MainWindow(QMainWindow):
         self._client.send_message(message_types.RobotEndLoadConfig, struct.pack('<H', cfg.crc))
         
     def _upload_status(self, status):
-        if status:
+        if status == True:
             QMessageBox.information(self, "Upload config status", "Success")
         else:
             QMessageBox.critical(self, "Upload config status", "Failure")

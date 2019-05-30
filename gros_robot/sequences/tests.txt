@@ -26,30 +26,25 @@ delay delay2
 pump.set_pwm pwm_pump_zero
 end sequence
 
-
-begin sequence test_arm_speed
-arm.go_to_position sol_preprise,1,100
-arm.go_to_position stk_av_prise,1,100
-arm.go_to_position sol_preprise,1,50
-send_event 1,20
-arm.go_to_position stk_av_prise,1,25
-arm.go_to_position sol_preprise,0,10
-arm.shutdown
-end sequence
-
 begin sequence test_electrovannes
-var int ev_on=100
-var int ev_off=-100
+var int ev_on=65535
+var int ev_off=0
 var int pompe_off=0
 var int pompe_on=500
 var int delay=2000
 dc_motor.set_pwm pompe,pompe_on
-dc_motor.set_pwm ev_vcentrale,ev_on
-dc_motor.set_pwm ev_vexterne,ev_off
+
+gpio.set ev_vcentrale,1
+gpio.set ev_vexterne,1
 delay delay
-dc_motor.set_pwm ev_vcentrale,ev_off
-dc_motor.set_pwm ev_vexterne,ev_on
+gpio.set ev_vcentrale,1
+gpio.set ev_vexterne,0
 delay delay
+gpio.set ev_vcentrale,0
+gpio.set ev_vexterne,1
+delay delay
+gpio.set ev_vcentrale,1
+gpio.set ev_vexterne,1
 dc_motor.set_pwm pompe,pompe_off
 end sequence
 

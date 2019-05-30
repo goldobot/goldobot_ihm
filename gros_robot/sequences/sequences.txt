@@ -14,18 +14,26 @@ var float r_accel=1
 var int delay_test=20000
 
 begin sequence prematch_yellow
+var vec3 start_pose=(700mm,1275mm,0deg)
 call prematch_common
+propulsion.set_pose start_pose
 end sequence
 
 begin sequence prematch_purple
+var vec3 start_pose=(700mm,-1275mm,0deg)
 call prematch_common
+propulsion.set_pose start_pose
 end sequence
 
+
+
+begin sequence match_yellow
 var float d1=300mm
 var float d2=400mm
 var float a1=90deg
 
-begin sequence match_yellow
+var vec2 pt1=(700mm,1275mm)
+
 propulsion.enable
 propulsion.motors_enable
 propulsion.translate d1,test_yaw_speeds
@@ -39,6 +47,10 @@ wait_movement_finished
 end sequence
 
 begin sequence match_purple
+var float d1=300mm
+var float d2=400mm
+var float a1=90deg
+
 propulsion.enable
 propulsion.motors_enable
 propulsion.translate d1,test_yaw_speeds
@@ -63,4 +75,29 @@ begin sequence prematch_common
 #set_servo slider,servo_slider_gauche
 propulsion.motors_enable
 propulsion.enable
+end sequence
+
+begin sequence deploie_rampe
+var int servo_rampe_depliee=20500
+var int delay1=2000
+var int gache_off=1000
+
+set_servo rampe,servo_rampe_depliee,100
+#delay delay1
+#set_servo gache,servo_rampe_depliee,100
+delay delay1
+end sequence
+
+begin sequence retracte_rampe
+var int servo_rampe_retractee=56000
+var int delay1=1000
+set_servo rampe,servo_rampe_retractee,100
+delay delay1
+end sequence
+
+begin sequence lance_atome
+var int moteur_pwm=20000
+var int moteur_pwm_zero=0
+var int gache_on=1000
+var int gache_off=1000
 end sequence

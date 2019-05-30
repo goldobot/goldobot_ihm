@@ -1,0 +1,1 @@
+python  main.py --robot-ip 10.0.0.222 --config-path petit_robot_goldo_cdf2019_match1

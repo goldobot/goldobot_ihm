@@ -6,6 +6,5 @@ postmatch
 test
 attrape_devant_goldo
 prematch_common
-test_check_sensor
 test_arm_speed
 test_servos_speed

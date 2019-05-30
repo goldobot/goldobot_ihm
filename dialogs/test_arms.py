@@ -85,7 +85,6 @@ class ArmValuesWidget(QWidget):
         self._button_read_state.clicked.connect(self.read_dynamixels_state)
         self._button_go_position.clicked.connect(self._go_position)
         self._button_reload.clicked.connect(self.reload_positions)
-        self.reload_positions()
 
     def update_dynamixel_state(self, id_, values):
         if id_ in self._widgets:
@@ -113,8 +112,11 @@ class ArmValuesWidget(QWidget):
     def reload_positions(self):
         cfg.robot_config.load_dynamixels_config()
         self._combobox_position.clear()
+        i = 0
         for k,v in cfg.robot_config.dynamixels_positions.items():
             self._combobox_position.addItem(k)
+            msg = struct.pack('<BB', 0, i) + b''.join([struct.pack('<H', p) for p in v])
+            self._client.send_message(160, msg)
         
     def _on_dynamixel_registers(self, id_, address, data):
         if address == 36 and len(data) == 8:
@@ -164,7 +166,7 @@ class ArmValuesWidget(QWidget):
         self._client.send_message(message_types.DbgArmsSetPose,msg)            
        
         self._client.send_message(message_types.DbgArmsGoToPosition,
-            struct.pack('<BB', pos_index, pos_index ))
+            struct.pack('<BBH', pos_index, 0, 50))
 
     def update_values(self, values):
         for k, v in values.items():
@@ -183,15 +185,17 @@ class TestArmsDialog(QDialog):
         self._left_arm_values = ArmValuesWidget([(d['name'], d['id']) for d in robot_config.yaml['dynamixels']])
         self._button_reset = QPushButton('Reset')
         self._button_pump = QPushButton('Pompe On')
+        self._button_shutdown = QPushButton('Shutdown')
         self._pump_state = False
-        self._button_send_config = QPushButton('send config')       
+        #self._button_send_config = QPushButton('send config')       
 
         layout = QGridLayout()        
         layout.addWidget(self._left_arm_values,0,0,1,7)
 
-        layout.addWidget(self._button_reset,1,1)
-        layout.addWidget(self._button_send_config,1,2)
+        #layout.addWidget(self._button_reset,1,1)
+        #layout.addWidget(self._button_send_config,1,2)
         layout.addWidget(self._button_pump,1,3)
+        layout.addWidget(self._button_shutdown,1,4)
 
         self._spinbox_arm_id = QSpinBox()
         self._spinbox_arm_id.setRange(0,5)
@@ -203,17 +207,20 @@ class TestArmsDialog(QDialog):
         self._spinbox_sequence.setRange(0,32)
         
         self.setLayout(layout)
-        self._button_reset.clicked.connect(self._reset)
         self._button_pump.clicked.connect(self._switch_pump)
         #self._button_send_config.clicked.connect(self._send_config)
+        self._button_shutdown.clicked.connect(self._shutdown)
 
 
     def set_client(self, client):
         self._client = client
         self._left_arm_values.set_client(client)
-
-    def _reset(self):
-        self._client.send_message(79,b'')
+        
+    def _shutdown(self):
+        self._client.send_message(167,b'')
+        
+    def _send_config(self):
+        pass
 
     def _switch_pump(self):
         self._pump_state = not self._pump_state

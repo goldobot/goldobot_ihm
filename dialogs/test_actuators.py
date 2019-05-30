@@ -100,7 +100,7 @@ class TestActuatorsDialog(QDialog):
 
     def _go(self):
         self._client.send_message(message_types.FpgaCmdServo,
-        struct.pack('<BH', self.combobox_servo.currentIndex(), self.spinbox_value.value()))
+        struct.pack('<BHB', self.combobox_servo.currentIndex(), self.spinbox_value.value(), 100))
         print(self.combobox_servo.currentIndex(), self.spinbox_value.value())
         
     def set_client(self, client):
