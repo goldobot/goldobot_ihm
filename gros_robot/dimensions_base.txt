@@ -1,0 +1,3 @@
+longeur avant 150mm
+arriere 90mm
+largeur 324mm

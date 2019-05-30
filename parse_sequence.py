@@ -19,7 +19,6 @@ def parse_literal(val):
     m = re.match('\((-?[\w]+),(-?[\w]+),(-?[\w]+)\)', val)
     if m:
         return (parse_literal(m.group(1)), parse_literal(m.group(2)), parse_literal(m.group(3)))
-    print(val)
     return int(val)
     
 sensor_shifts = {'microswitch':0}

@@ -13,6 +13,8 @@ import struct
 import message_types
 import config as cfg
 
+speeds = [100,75,50,25,10]
+
 class ArmValuesWidget(QWidget):
     def __init__(self, servos):
         super(ArmValuesWidget, self).__init__()
@@ -64,27 +66,42 @@ class ArmValuesWidget(QWidget):
             i+=1
         self._button_read_state = QPushButton('read')
         self._button_copy_state = QPushButton('copy')
+        self._button_load_state = QPushButton('<<')
+        self._button_save_state = QPushButton('>>')
 
         self._combobox_position = QComboBox()
+        self._combobox_speed = QComboBox()
+        self._combobox_torque = QComboBox()
+        
+        for s in speeds:
+            self._combobox_speed.addItem(str(s))
+        for n in cfg.robot_config.dynamixels_torques.keys():
+            self._combobox_torque.addItem(n)
 
         self._button_go_position = QPushButton('go')
         self._button_reload = QPushButton('reload')
-        self._button_set_position = QPushButton('set')
-        self._button_get_position = QPushButton('get')
-
+        self._button_save_file = QPushButton('save')
+  
         layout.addWidget(self._button_read_state,i, 0)
         layout.addWidget(self._button_copy_state,i, 1)
-        layout.addWidget(self._button_get_position, i, 2)
-        layout.addWidget(self._button_set_position, i, 3)
-        layout.addWidget(self._combobox_position, i, 4)
-        layout.addWidget(self._button_go_position, i, 5)
-        layout.addWidget(self._button_reload, i, 6)
+        layout.addWidget(self._button_load_state, i, 2)
+        layout.addWidget(self._button_save_state, i, 3)
+        layout.addWidget(self._combobox_position, i+1, 0, 1, 2)
+        layout.addWidget(self._combobox_speed, i+1,2)
+        layout.addWidget(self._combobox_torque, i+1,3)
+        layout.addWidget(self._button_go_position, i+1, 4)
+        layout.addWidget(self._button_reload, i, 4)
+        layout.addWidget(self._button_save_file, i, 5)
  
         self.setLayout(layout)
-        self._button_get_position.clicked.connect(self._get_position)
+        #self._button_get_position.clicked.connect(self._get_position)
+        self._button_copy_state.clicked.connect(self._copy_state)
         self._button_read_state.clicked.connect(self.read_dynamixels_state)
+        self._button_load_state.clicked.connect(self._load_state)
+        self._button_save_state.clicked.connect(self._save_state)
         self._button_go_position.clicked.connect(self._go_position)
         self._button_reload.clicked.connect(self.reload_positions)
+        self._button_save_file.clicked.connect(self._save_file)
 
     def update_dynamixel_state(self, id_, values):
         if id_ in self._widgets:
@@ -123,9 +140,12 @@ class ArmValuesWidget(QWidget):
             vals = struct.unpack('<HHHBB', data)
             self.update_dynamixel_state(id_,vals)
 
-    def _copy_pos(self):
+    def _copy_state(self):
         for wids in self._widgets.values():
-            wids[0].setValue(int(wids[3].text()))
+            try:
+                wids[0].setValue(int(wids[3].text()))
+            except:
+                pass
             
     def _get_position(self):
         pos_index = self._combobox_position.currentIndex()
@@ -166,7 +186,38 @@ class ArmValuesWidget(QWidget):
         self._client.send_message(message_types.DbgArmsSetPose,msg)            
        
         self._client.send_message(message_types.DbgArmsGoToPosition,
-            struct.pack('<BBH', pos_index, 0, 50))
+            struct.pack('<BBH', pos_index, self._combobox_torque.currentIndex(), speeds[self._combobox_speed.currentIndex()]))
+            
+    def _load_state(self):
+        pos_index = self._combobox_position.currentIndex()
+        pos = list(cfg.robot_config.dynamixels_positions.items())[pos_index][1]
+        for i in range(len(self._widgets)):
+            wids = self._widgets[cfg.robot_config.yaml['dynamixels'][i]['id']]
+            wids[0].setValue(pos[i])
+            
+    def _save_state(self):
+        pos_index = self._combobox_position.currentIndex()
+        pos = list(cfg.robot_config.dynamixels_positions.items())[pos_index][1]
+        for i in range(len(self._widgets)):
+            wids = self._widgets[cfg.robot_config.yaml['dynamixels'][i]['id']]
+            pos[i] = wids[0].value()
+            
+    def _save_file(self):
+        of = open(cfg.robot_config.path + '/saved_dynamixel_positions.txt', 'w')
+        of.write('name')
+        for s in cfg.robot_config.yaml['dynamixels']:
+            of.write(',' + s['name'])
+        of.write('\n')
+        for k,v in cfg.robot_config.dynamixels_positions.items():
+            of.write(k)
+            for e in v:
+                of.write(',' + str(e))
+            of.write('\n')
+        of.close()
+        
+            
+            
+          
 
     def update_values(self, values):
         for k, v in values.items():

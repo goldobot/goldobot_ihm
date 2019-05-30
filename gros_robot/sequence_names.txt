@@ -4,6 +4,8 @@ match_yellow
 match_purple
 end_match
 prematch_common
+attrape_devant
+depose_sol
 deploie_rampe
 retracte_rampe
 lance_atome

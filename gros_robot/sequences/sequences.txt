@@ -17,50 +17,44 @@ begin sequence prematch_yellow
 var vec3 start_pose=(700mm,1275mm,0deg)
 call prematch_common
 propulsion.set_pose start_pose
+#arm.go_to_position depart,1,20
 end sequence
 
 begin sequence prematch_purple
 var vec3 start_pose=(700mm,-1275mm,0deg)
 call prematch_common
 propulsion.set_pose start_pose
+#arm.go_to_position depart,1,20
 end sequence
 
 
 
 begin sequence match_yellow
-var float d1=300mm
-var float d2=400mm
-var float a1=90deg
-
 var vec2 pt1=(700mm,1275mm)
-
+var vec2 pt2=(2200mm,1275mm)
+var vec2 pt3=(1950mm,1275mm)
 propulsion.enable
 propulsion.motors_enable
-propulsion.translate d1,test_yaw_speeds
-propulsion.rotate a1,test_yaw_speeds
-propulsion.translate d2,test_yaw_speeds
-propulsion.rotate a1,test_yaw_speeds
-propulsion.translate d1,test_yaw_speeds
-propulsion.rotate a1,test_yaw_speeds
-propulsion.translate d2,test_yaw_speeds
+propulsion.move_to pt2,test_yaw_speeds
 wait_movement_finished
+call attrape_devant
+propulsion.move_to pt1,test_yaw_speeds
+wait_movement_finished
+call depose_sol
 end sequence
 
 begin sequence match_purple
-var float d1=300mm
-var float d2=400mm
-var float a1=90deg
-
+var vec2 pt1=(700mm,-1275mm)
+var vec2 pt2=(2200mm,-1275mm)
+var vec2 pt3=(1850mm,-1275mm)
 propulsion.enable
 propulsion.motors_enable
-propulsion.translate d1,test_yaw_speeds
-propulsion.rotate a1,test_yaw_speeds
-propulsion.translate d2,test_yaw_speeds
-propulsion.rotate a1,test_yaw_speeds
-propulsion.translate d1,test_yaw_speeds
-propulsion.rotate a1,test_yaw_speeds
-propulsion.translate d2,test_yaw_speeds
+propulsion.move_to pt2,test_yaw_speeds
 wait_movement_finished
+call attrape_devant
+propulsion.move_to pt1,test_yaw_speeds
+wait_movement_finished
+call depose_sol
 end sequence
 
 begin sequence end_match
@@ -71,16 +65,43 @@ arm.shutdown
 end sequence
 
 begin sequence prematch_common
+var int moteur_init_1=0
+var int moteur_init_2=20000
 #arm.go_to_position stk_av_retrait
 #set_servo slider,servo_slider_gauche
 propulsion.motors_enable
 propulsion.enable
+set_servo moteur,moteur_init_1,100
+set_servo moteur,moteur_init_2,100
+arm.go_to_position prise_devant,1,20
+end sequence
+
+begin sequence attrape_devant
+var int delay=2000
+arm.go_to_position prise_devant,1,10
+pump.set_pwm pwm_pump_activated
+arm.go_to_position prise_devant_tasse,1,10
+wait_arm_finished
+#delay delay
+arm.go_to_position prise_devant,1,10
+wait_arm_finished
+end sequence
+
+begin sequence depose_sol
+arm.go_to_position predepose_sol_1,1,20
+arm.go_to_position predepose_sol_2,1,10
+arm.go_to_position depose_sol,1,20
+wait_arm_finished
+pump.set_pwm pwm_pump_zero
+arm.go_to_position predepose_sol_2,1,20
+wait_arm_finished
 end sequence
 
 begin sequence deploie_rampe
 var int servo_rampe_depliee=20500
 var int delay1=2000
-var int gache_off=1000
+var int gache_off=28000
+var int gache_off=34000
 
 set_servo rampe,servo_rampe_depliee,100
 #delay delay1

@@ -1,4 +1,4 @@
-name,rail,rotation,epaule,coude,tete
+,rail,rotation,epaule,coude,tete
 depart,550,2024,2300,500,50
 prise_devant,550,2024,2300,785,50
 prise_devant_tasse,520,2024,2450,730,50

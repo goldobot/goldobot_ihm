@@ -62,7 +62,6 @@ class SequencesDialog(QDialog):
         #upload arms positions
         i = 0
         for n,pos in config.robot_config.dynamixels_positions.items():
-            print(n,pos)
             msg = struct.pack('<BB', 0, i)
             msg = msg + b''.join([struct.pack('<H', v) for v in pos])
             self._client.send_message(message_types.DbgArmsSetPose,msg)
@@ -70,7 +69,6 @@ class SequencesDialog(QDialog):
 
     def _execute(self):
         seq_id = self._combobox_sequence_id.currentIndex()
-        print(seq_id)
         self._client.send_message(43, struct.pack('<H', seq_id))
         
     def _abort(self):
