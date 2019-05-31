@@ -64,6 +64,7 @@ opcodes = {
     'propulsion.set_target_pose': (136, 'var', 'var', None),
     'propulsion.face_direction': (137, 'var', 'var', None),
     'propulsion.set_adversary_detection_enable': (138, 'imm', None, None),
+    'propulsion.measure_normal': (139, 'var', None, None),
     'pump.set_pwm': (140, 'var', None, None),
     'arm.go_to_position': (141, 'arm_position', 'imm', 'imm'),
     'set_servo': (142, 'servo_id', 'var', 'imm'),

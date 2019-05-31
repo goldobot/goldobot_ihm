@@ -1,15 +1,15 @@
 geometry:
-  front_length: 106.5
-  back_length: 101.5
+  front_length: 150
+  back_length: 90
   outline:
     - [0,116.5]
     - [10,20]
 odometry:
-  dist_per_count_left: 1.966033264580682e-05
-  dist_per_count_right: 1.9621583742116328e-05
+  dist_per_count_left: 1.515060215035251e-05
+  dist_per_count_right: 1.5028092286148539e-05
   encoder_period: 8192
   update_period: 1.0e-3
-  wheels_spacing: 396.2e-3
+  wheels_spacing: 304.4e-3
   speed_filter_period: 5.0e-3
 propulsion:
   pid_static:
@@ -36,7 +36,7 @@ propulsion:
     yaw:
       period: 1.0e-3
       kp: 2
-      ki: 5
+      ki: 2
       kd: 0
       feed_forward: 0
       lim_iterm: 0.2
@@ -128,3 +128,4 @@ sequence_files:
   - "sequences/constants.txt"
   - "sequences/sequences.txt"
   - "sequences/tests.txt"
+  - "sequences/coupe_off.txt"

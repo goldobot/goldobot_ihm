@@ -16,3 +16,6 @@ test_check_sensor
 test_electrovannes
 ev_lache_centrale
 test_servos_gr
+test_mesure_bord
+coupe_off
+arm_esc

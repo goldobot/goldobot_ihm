@@ -9,6 +9,8 @@ var float test_distance=400mm
 var float test_angle=90deg
 var vec3 test_yaw_speeds=(500mm,500mm,500mm)
 
+var vec3 speeds_rotation=(90deg,90deg,90deg)
+
 var float r_speed=200mm
 var float r_accel=1
 var int delay_test=20000
@@ -31,9 +33,9 @@ end sequence
 
 begin sequence match_yellow
 var vec2 pt1=(700mm,-1275mm)
-var vec2 pt2=(2200mm,-1275mm)
-var vec2 pt3=(2000mm,-1275mm)
-var vec2 pt4=(1200mm,-1275mm)
+var vec2 pt2=(1800mm,-1275mm)
+var vec2 pt3=(1600mm,-1275mm)
+var vec2 pt4=(1090mm,-1275mm)
 var float reposition_speed=100mm
 var float a1=180deg
 var int delay=0
@@ -47,7 +49,7 @@ propulsion.set_adversary_detection_enable 1
 delay delay
 call attrape_devant
 propulsion.move_to pt3,test_yaw_speeds
-propulsion.rotate a1,test_yaw_speeds
+propulsion.rotate a1,speeds_rotation
 propulsion.move_to pt4,test_yaw_speeds
 wait_movement_finished
 call depose_sol
@@ -57,9 +59,9 @@ end sequence
 
 begin sequence match_purple
 var vec2 pt1=(700mm,1275mm)
-var vec2 pt2=(2200mm,1275mm)
-var vec2 pt3=(2000mm,1275mm)
-var vec2 pt4=(1200mm,1275mm)
+var vec2 pt2=(1800mm,1275mm)
+var vec2 pt3=(1600mm,1275mm)
+var vec2 pt4=(1090mm,1275mm)
 var float reposition_speed=100mm
 var float a1=-180deg
 var int delay=0
@@ -73,7 +75,7 @@ propulsion.set_adversary_detection_enable 1
 delay delay
 call attrape_devant
 propulsion.move_to pt3,test_yaw_speeds
-propulsion.rotate a1,test_yaw_speeds
+propulsion.rotate a1,speeds_rotation
 propulsion.move_to pt4,test_yaw_speeds
 wait_movement_finished
 call depose_sol
@@ -100,6 +102,8 @@ arm.go_to_position prise_devant,1,20
 propulsion.set_adversary_detection_enable 0
 propulsion.enable
 propulsion.motors_enable
+gpio.set ev_vcentrale,1
+gpio.set ev_vexterne,1
 end sequence
 
 begin sequence attrape_devant

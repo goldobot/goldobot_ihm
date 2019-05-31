@@ -45,6 +45,9 @@ class ControlPlots(QtWidgets.QDialog):
         self.plot_translation = PlotDialog()
         tab_widget.addTab(self.plot_translation, "translation")
         
+        self.plot_speed = PlotDialog()
+        tab_widget.addTab(self.plot_speed, "speed")
+        
         self.plot_yaw = PlotDialog()
         tab_widget.addTab(self.plot_yaw, "yaw")
         

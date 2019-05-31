@@ -1,0 +1,26 @@
+begin sequence coupe_off
+#var int moteur_pwm_idle=20000
+var int moteur_pwm_on=30000
+var int delay=2000
+call deploie_rampe
+#set_servo moteur,moteur_pwm_idle
+#set_servo moteur,moteur_pwm_on
+delay delay
+#set_servo moteur,moteur_pwm_idle
+end sequence
+
+begin sequence arm_esc
+var int moteur_pwm_zero=0
+var int moteur_pwm_min=20000
+var int moteur_pwm_max=50000
+var int delay=2000
+
+set_servo moteur,moteur_pwm_zero,100
+delay delay
+set_servo moteur,moteur_pwm_min,100
+delay delay
+set_servo moteur,moteur_pwm_max,100
+delay delay
+set_servo moteur,moteur_pwm_min,100
+
+end sequence

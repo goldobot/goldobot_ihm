@@ -51,8 +51,8 @@ var int ev_off=0
 var int pompe_off=0
 var int pompe_on=500
 var int delay=2000
-dc_motor.set_pwm pompe,pompe_on
 
+dc_motor.set_pwm pompe,pompe_on
 gpio.set ev_vcentrale,1
 gpio.set ev_vexterne,1
 delay delay
@@ -81,5 +81,12 @@ end sequence
 
 begin sequence test_servos_gr
 
+end sequence
+
+begin sequence test_mesure_bord
+var vec3 pose=(200mm,0mm,180deg)
+var vec2 bord=(0,0)
+propulsion.set_pose pose
+propulsion.measure_normal bord
 end sequence
 
