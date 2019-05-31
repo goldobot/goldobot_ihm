@@ -10,6 +10,7 @@ class RobotStatusWidget(QWidget):
         self._y_wid = QLineEdit()
         self._button = QPushButton('Emergency Stop')
         self._robot_state_wid = QLineEdit('')
+        self._robot_side_wid = QLineEdit('')
         self._sensors_wid = QLabel()
         self._gpio_wid = QLabel()
 
@@ -18,7 +19,8 @@ class RobotStatusWidget(QWidget):
         layout = QGridLayout()
         layout.addWidget(QLabel('time:'),0,0)
         layout.addWidget(self._time_wid,0,1,1,1)
-        layout.addWidget(self._robot_state_wid,1,1,1,1)
+        layout.addWidget(self._robot_state_wid,1,0,1,1)
+        layout.addWidget(self._robot_side_wid,1,1,1,1)
         layout.addWidget(self._sensors_wid,1,2,1,1)
         layout.addWidget(self._gpio_wid,1,3,1,1)
 
@@ -94,7 +96,13 @@ class RobotStatusWidget(QWidget):
             5: 'PostMatch',
             6: 'Debug'
             }
+        sides =  {
+        0:'Unknown',
+        1: 'Yellow',
+        2:'Purple'
+        }
         self._robot_state_wid.setText(states[state])
+        self._robot_side_wid.setText(sides[side])
 
 
     def _on_emergency_stop_button_clicked(self):

@@ -237,7 +237,7 @@ class TestArmsDialog(QDialog):
         self._button_reset = QPushButton('Reset')
         self._button_pump = QPushButton('Pompe On')
         self._button_shutdown = QPushButton('Shutdown')
-        self._pump_state = False
+        self._pump_state = 0
         #self._button_send_config = QPushButton('send config')       
 
         layout = QGridLayout()        
@@ -274,12 +274,17 @@ class TestArmsDialog(QDialog):
         pass
 
     def _switch_pump(self):
-        self._pump_state = not self._pump_state
-        if self._pump_state:
-            self._button_pump.setText('Pompe Off')
+        if self._pump_state == 0:
+            self._button_pump.setText('Pompe Medium')
             self._client.send_message(288,struct.pack('<Bh',0,400))
+            self._pump_state = 1
+        elif self._pump_state == 1 :
+            self._button_pump.setText('Pompe Off')
+            self._client.send_message(288,struct.pack('<Bh',0,300))
+            self._pump_state = 2
         else:
             self._button_pump.setText('Pompe On')
-            self._client.send_message(288,struct.pack('<Bh',0,000))
+            self._client.send_message(288,struct.pack('<Bh',0,0))
+            self._pump_state = 0
 
 

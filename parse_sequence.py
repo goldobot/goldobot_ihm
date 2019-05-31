@@ -3,6 +3,7 @@ import re
 import math
 import struct
 import config
+from utils import compute_crc
 
 units = {'': 1, 'mm' : 1e-3, 'deg' : math.pi/180 }
 
@@ -62,9 +63,11 @@ opcodes = {
     'propulsion.set_control_levels': (135, 'imm', 'imm', None),
     'propulsion.set_target_pose': (136, 'var', 'var', None),
     'propulsion.face_direction': (137, 'var', 'var', None),
+    'propulsion.set_adversary_detection_enable': (138, 'imm', None, None),
     'pump.set_pwm': (140, 'var', None, None),
     'arm.go_to_position': (141, 'arm_position', 'imm', 'imm'),
     'set_servo': (142, 'servo_id', 'var', 'imm'),
+    'wait_servo_finished': (146, 'servo_id', None, None),
     'arm.shutdown': (143, None, None, None,),
     'dc_motor.set_pwm': (144, 'dc_motor_id', 'var', None),
     'gpio.set': (145, 'gpio_id', 'imm', None),
@@ -248,13 +251,16 @@ class SequenceParser:
                 seqs_buffer+=op.encode(self)
         #encode buffer
         #header
-        buff = struct.pack('HHbbbb', 0,0, len(vars_buffer)//4, len(self.sequences), 0, 0)
+        buff = struct.pack('bbbb', len(vars_buffer)//4, len(self.sequences), 0, 0)
         #variables
         buff += vars_buffer
         for si in seqs_table:
             buff += struct.pack('<H', si)
         buff += seqs_buffer
         retval = CompiledSequences()
+        
+        #crc and size of buffer
+        buff = struct.pack('HH', len(buff), compute_crc(buff)) + buff
         retval.binary = buff
         retval.variables = self.variables
         retval.sequence_names = [s.name for s in self.sequences.values()]

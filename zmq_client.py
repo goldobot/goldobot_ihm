@@ -83,6 +83,11 @@ class ZmqClient(QObject):
             print('sequence event', struct.unpack('<BB',msg[2:]))
         if msg_type == 403:
             self.robot_end_load_config_status.emit(bool(struct.unpack('<B',msg[2:])))
+            
+        if msg_type == 46:
+            status = bool(struct.unpack('<B',msg[2:]))
+            print('sequence loaded, status: ', status)
+            
         if msg_type == message_types.Heartbeat:
             timestamp = struct.unpack('<I', msg[2:6])[0]
             self.heartbeat.emit(timestamp)
