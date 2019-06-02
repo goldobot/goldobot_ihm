@@ -80,27 +80,27 @@ dynamixels:
 servos:
   - name: griffe_g
     id: 2
-    max_speed: 20000
+    max_speed: 40000
     cw_limit: 19000
     ccw_limit: 51000 
   - name: griffe_d
     id: 1
-    max_speed: 20000
+    max_speed: 40000
     cw_limit: 16000
     ccw_limit: 48000
   - name: stock_g
     id: 11
-    max_speed: 1000
+    max_speed: 40000
     cw_limit: 250
     ccw_limit: 850
   - name: stock_d
     id: 0
-    max_speed: 1000
+    max_speed: 40000
     cw_limit: 250
     ccw_limit: 850 
   - name: slider
     id: 10
-    max_speed: 16000
+    max_speed: 40000
     cw_limit: 32600
     ccw_limit: 45500
 sequence_files:
