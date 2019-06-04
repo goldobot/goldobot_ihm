@@ -39,13 +39,16 @@ opcodes = {
 opcodes_jump = {
     'jmp' : 200,
     'jz': 201,
-    'jnz': 202
+    'jnz': 202,
+    'je': 203,
+    'jne': 204
    }
 opcodes = {
     'nop': (0, None, None, None),
     'mov1': (1, 'var', 'var', None), #move one int32 from arg1 into arg0
     'mov2': (2, 'var', 'var', None), #move two int32 from arg1 into arg0
     'mov3': (3, 'var', 'var', None), #move three int32 from arg1 into arg0
+    'movi': (4, 'var', 'imm', None), #move one 8 bit integer to variable
     'propulsion.motors_enable': (64, None, None, None),
     'propulsion.enable': (65, None, None, None),
     'propulsion.motors_disable': (66, None, None, None),
@@ -77,6 +80,7 @@ opcodes = {
     'delay': (32, 'var', None, None),
     'yield': (33, None, None, None,),
     'check_sensor' : (150, 'sensor_id', None, None),
+    'cmp': (151,'var','var',None),
     'send_event' : (34, 'imm', 'imm', None)
     }
 
@@ -192,6 +196,11 @@ class SequenceParser:
             return self.current_sequence.variables[name].index
         return self.variables[name].index
         
+    def constant_index(self, name):
+        if name in self.current_sequence.constants:
+            return self.current_sequence.constants[name].index
+        return self.constants[name].index
+        
     def parse_file(self, path):
         lineno = 0
         for line in open(path):
@@ -226,6 +235,7 @@ class SequenceParser:
             elif op == 'label':
                 self.current_sequence.labels[args] = len(self.current_sequence.ops)
             else:
+                print(op, args)
                 op = Op(op,args,lineno)
                 self.current_sequence.ops.append(op)
                 
@@ -240,6 +250,7 @@ class SequenceParser:
             for v in s.variables.values():
                 v.index = len(vars_buffer)//4
                 vars_buffer += v.encode()
+        print('Variable slots taken: {}'.format(len(vars_buffer)//4))
         
         #encode sequences
         seqs_table = []
@@ -252,7 +263,7 @@ class SequenceParser:
                 seqs_buffer+=op.encode(self)
         #encode buffer
         #header
-        buff = struct.pack('bbbb', len(vars_buffer)//4, len(self.sequences), 0, 0)
+        buff = struct.pack('BBBB', len(vars_buffer)//4, len(self.sequences), 0, 0)
         #variables
         buff += vars_buffer
         for si in seqs_table:
