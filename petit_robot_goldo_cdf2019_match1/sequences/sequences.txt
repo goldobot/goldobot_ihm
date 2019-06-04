@@ -298,6 +298,19 @@ wait_arm_finished
 delay delay05
 end sequence
 
+begin sequence prise_sol_av_v2
+pump.set_pwm pwm_pump_activated
+arm.go_to_position sol_prise,1,75
+wait_arm_finished
+delay delay05
+arm.go_to_position sol_postprise,1,60
+wait_arm_finished
+delay delay02
+arm.go_to_position stk_av_prise,1,100
+wait_arm_finished
+delay delay05
+end sequence
+
 begin sequence prise_sol_ar
 pump.set_pwm pwm_pump_activated
 arm.go_to_position sol_prise,1,75

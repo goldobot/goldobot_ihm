@@ -3,6 +3,7 @@ sol_intermediaire,1060,1600,510
 sol_preprise_intermediaire,1060,1600,900
 sol_preprise,990,880,900
 sol_prise,990,880,855
+sol_postprise,990,880,950
 gold_preprise,1100,2281,745
 gold_prise,870,2278,726
 gold_stockage_intermediaire1,960,2278,850
