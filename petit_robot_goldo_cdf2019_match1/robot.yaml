@@ -103,6 +103,20 @@ servos:
     max_speed: 40000
     cw_limit: 32600
     ccw_limit: 45500
+sensors:
+  - name: micro_switch
+    id: 0
+  - name: vacuostat
+    id: 1
+  - name: laser_droit
+    id: 2
+  - name: laser_gauche
+    id: 3
+  - name: rouge_gauche
+    id: 4
+  - name: rouge_droit
+    id: 5
+
 sequence_files:
   - "sequences/constants.txt"
   - "sequences/sequences.txt"

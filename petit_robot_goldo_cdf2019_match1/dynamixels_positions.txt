@@ -1,6 +1,6 @@
 name,rail,coude,tete
-sol_intermediaire,1060,1600,510
-sol_preprise_intermediaire,1060,1600,900
+sol_preprise_intermediaire1,1060,1600,510
+sol_preprise_intermediaire2,1060,1600,900
 sol_preprise,990,880,900
 sol_prise,990,880,855
 sol_postprise,990,880,950
@@ -20,3 +20,5 @@ acc_depose,1020,2185,775
 acc_pre_tassage,1350,2530,355
 acc_tassage,1200,2530,355
 acc_tassage2,1400,2160,610
+dist_preprise,1210,1560,970
+dist_prise,1135,1560,955
