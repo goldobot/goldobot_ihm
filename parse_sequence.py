@@ -79,6 +79,7 @@ opcodes = {
     'arm.shutdown': (143, None, None, None,),
     'dc_motor.set_pwm': (144, 'dc_motor_id', 'var', None),
     'gpio.set': (145, 'gpio_id', 'imm', None),
+    'propulsion.trajectory': (120, 'var','imm', 'var'),
     'ret': (30, None, None, None,),
     'call': (31,'sequence', 0,0),
     'delay': (32, 'var', None, None),
