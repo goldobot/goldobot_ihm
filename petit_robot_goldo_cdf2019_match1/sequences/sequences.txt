@@ -755,6 +755,7 @@ begin sequence recale_accelerateur_jaune
 propulsion.motors_enable
 propulsion.enable
 propulsion.set_pose debut_recal_acc_yellow
+delay delay02
 propulsion.move_to approche_acc_yellow,speed_200
 label boucle_recalage_acc_jaune
 check_sensor rouge_droit
