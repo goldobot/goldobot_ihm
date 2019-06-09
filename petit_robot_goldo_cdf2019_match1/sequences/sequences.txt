@@ -71,19 +71,22 @@ wait_movement_finished palet_zone_bleu_yellow
 call prise_sol_ar
 
 #voyage a accelerateur
-#propulsion.point_to approche_acc_yellow,yaw_180
-#wait_movement_finished approche_acc_yellow
-propulsion.move_to approche_acc_yellow,speed_500
+propulsion.point_to debut_recal_acc_yellow,yaw_180
+wait_movement_finished
+propulsion.move_to debut_recal_acc_yellow,speed_500
 call stocke_palet_ar_g
 delay delay02
 call griffes_accelerateur_jaune
-wait_movement_finished approche_acc_yellow
-propulsion.point_to contact_acc_yellow,yaw_180
+wait_movement_finished
+call recale_accelerateur_jaune
+
+#wait_movement_finished 
+#propulsion.point_to contact_acc_yellow,yaw_180
 #prepositionnement pour prise acc
 arm.go_to_position acc_depose,1,100
-wait_movement_finished contact_acc_yellow
+#wait_movement_finished
 propulsion.move_to contact_acc_yellow,speed_200
-wait_movement_finished contact_acc_yellow
+wait_movement_finished
 #declenchement accelerateur
 #call prise_palet_accelerateur
 arm.go_to_position acc_tassage,1,100
@@ -505,6 +508,7 @@ set_servo slider,servo_slider_droite_presorti,100
 delay delay02
 set_servo slider,servo_slider_gauche,100
 delay delay05
+call slider_range_droite
 end sequence
 
 begin sequence slider_pousse_droite
@@ -512,20 +516,21 @@ set_servo slider,servo_slider_gauche_presorti,100
 delay delay02
 set_servo slider,servo_slider_droite,100
 delay delay05
+call slider_range_gauche
 end sequence
 
 begin sequence slider_range_gauche
 set_servo slider,servo_slider_gauche_overshoot,100
-delay delay02
-set_servo slider,servo_slider_gauche_range,100
 delay delay05
+set_servo slider,servo_slider_gauche_range,100
+delay delay02
 end sequence
 
 begin sequence slider_range_droite
 set_servo slider,servo_slider_droite_overshoot,100
-delay delay02
-set_servo slider,servo_slider_droite_range,100
 delay delay05
+set_servo slider,servo_slider_droite_range,100
+delay delay02
 end sequence
 
 begin sequence stocke_palet_av_g
@@ -752,16 +757,23 @@ end sequence
 
 begin sequence recale_accelerateur_jaune
 # set position pour test recalage
-propulsion.motors_enable
-propulsion.enable
-propulsion.set_pose debut_recal_acc_yellow
-delay delay02
-propulsion.move_to approche_acc_yellow,speed_200
+#propulsion.motors_enable
+#propulsion.enable
+#propulsion.set_pose debut_recal_acc_yellow
+#delay delay02
+
+propulsion.point_to fin_recal_acc_yellow,yaw_180
+wait_movement_finished
+delay delay1
+propulsion.move_to fin_recal_acc_yellow,speed_200
+#boucle de surveillance capteur lateral
 label boucle_recalage_acc_jaune
 check_sensor rouge_droit
 yield
 jz boucle_recalage_acc_jaune
 propulsion.set_pose capteur_recal_acc_yellow
+wait_movement_finished
+propulsion.move_to approche_acc_yellow,speed_200
 wait_movement_finished
 propulsion.point_to contact_acc_yellow,yaw_180
 wait_movement_finished
