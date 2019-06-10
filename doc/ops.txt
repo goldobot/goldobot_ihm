@@ -1,0 +1,29 @@
+
+
+checks:
+
+check_sensor sensor_id
+Set Z flag to inverse of sensor bit corresponding to sensor_id
+
+exemple:
+check_sensor microswitch
+jnz do_thing_if_microswitch_on
+
+check_propulsion_state uint8
+
+exemple:
+check_propulsion_status 1
+je do_thing_if robot_stopped
+	
+propulsion.measure_point vec2 sensor_line,vec2 point
+sensor_line = (angle, offset)
+update robot longitudinal position so that the line perpendicular to robot axis and crossing it 
+at position offset (positive in front of center) intersects point
+
+exemple:
+mesure d'un point avec un capteur situé 50mm devant le centre du robot
+
+var vec2 sensor_line=(0, 50mm)
+var vec2 point=(300mm, 500mm)
+propulsion.measure_point sensor_line,point
+
