@@ -107,18 +107,12 @@ servos:
     ccw_limit: 850
 gpios:
  - name: ev_vcentrale
-   id: 5
- - name: ev_vexterne
    id: 6
+ - name: ev_vexterne
+   id: 7
 dc_motors:
  - name: pompe
    id: 0
- - name: dummy
-   id: 1
- - name: ev_vcentrale
-   id: 2
- - name: ev_vexterne
-   id: 3
 sensors:
   - name: vacu1
     id: 5
