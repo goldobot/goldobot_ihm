@@ -18,15 +18,14 @@ var vec3 start_pose_yellow=(450mm,-1250mm,90deg)
 var vec3 start_pose_purple=(450mm,1250mm,-90deg)
 
 # Servo positions
-var int servo_slider_gauche_overshoot=31800
+var int servo_slider_gauche_overshoot=32200
 var int servo_slider_gauche_range=32500
-#range_gauche ancine 32000
 var int servo_slider_gauche_presorti=34000
-var int servo_slider_gauche=37000
+var int servo_slider_gauche=36500
 var int servo_slider_droite=42000
-var int servo_slider_droite_presorti=44700
-var int servo_slider_droite_range=46200
-var int servo_slider_droite_overshoot=46400
+var int servo_slider_droite_presorti=44300
+var int servo_slider_droite_range=45700
+var int servo_slider_droite_overshoot=46000
 
 var int servo_griffe_g_attack=20000
 var int servo_griffe_g_retrait=51000
@@ -39,27 +38,27 @@ var int servo_griffe_d_accelerateur=22000
 
 var int chargeur_droit_preprise=43500
 var int chargeur_gauche_preprise=32000
-var int chargeur_droit_prise=33000
-var int chargeur_gauche_prise=43000
+var int chargeur_droit_prise=32000
+var int chargeur_gauche_prise=42500
 var int chargeur_droit_sorti=52000
-var int chargeur_gauche_sorti=23000
+var int chargeur_gauche_sorti=23700
 var int chargeur_droit_calage=45500
 var int chargeur_gauche_calage=30000
 
 
 # Robot positions
-#Centre-Avant (sans CoSe): 105.5
-#centre-Arriere:100.5
+#Centre-Avant (sans CoSe): 105.5mm
+#centre-Arriere:100.5mm
 
 var vec2 palet_zone_rouge_yellow=(450mm,-1000mm)
 var vec2 palet_zone_verte_yellow=(750mm,-1000mm)
 var vec2 palet_zone_bleu_yellow=(1050mm,-1000mm)
 var vec2 virage_top_chaos_yellow=(750mm,-500mm)
 var vec2 virage_face_acc_advchaos_yellow=(750mm,200mm)
-var vec2 debut_recal_acc_yellow=(300mm,350mm)
-var vec2 capteur_recal_acc_yellow=(300mm,170mm)
-var vec2 fin_recal_acc_yellow=(300mm,100mm)
-var vec2 approche_acc_yellow=(300mm,200mm)
+var vec2 debut_recal_acc_yellow=(170mm,400mm)
+var vec3 capteur_recal_acc_yellow=(170mm,340mm,-90deg)
+var vec2 fin_recal_acc_yellow=(170mm,150mm)
+var vec2 approche_acc_yellow=(170mm,200mm)
 var vec2 contact_acc_yellow=(120mm,200mm)
 var vec2 approche_gold_yellow=(300mm,730mm)
 var vec2 contact_gold_yellow=(140mm,730mm)
