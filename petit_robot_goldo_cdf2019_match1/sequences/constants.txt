@@ -1,3 +1,4 @@
+#--delais
 var int delay005=50
 var int delay02=200
 var int delay05=500
@@ -6,36 +7,64 @@ var int delay2=2000
 var int delay5=5000
 var int delay100=100000
 
+#--unused: variable pour un test de trajectoire courbe
 var vec2 start=(0,0)
 var vec2 pt1=(200mm,0mm)
 var vec2 pt2=(0mm,-200mm)
 var vec2 pt3=(400mm,0)
 
+#--pompe
 var int pwm_pump_activated=400
-var int pwm_pump_zero=0
+var int pwm_pump_off=0
 
-var vec3 start_pose_yellow=(450mm,-1250mm,90deg)
-var vec3 start_pose_purple=(450mm,1250mm,-90deg)
 
-# Servo positions
+####################################################################
+#							Deplacement
+####################################################################
+
+var vec3 start_pose=(0mm,0mm,00deg)
+var float r_speed=200mm
+var float r_accel=1
+
+#--vitesse rotation
+var vec3 yaw_180=(180deg,180deg,180deg)
+
+#--vitesse de translation
+#--deplacement rapide
+var vec3 speed_750=(750mm,500mm,500mm)
+#--deplacement nominal
+var vec3 speed_500=(500mm,500mm,500mm)
+#--approche
+var vec3 speed_200=(200mm,400mm,200mm)
+#--ramasse ligne chaos
+var vec3 speed_100=(45mm,300mm,300mm)
+
+
+####################################################################
+#							Position servo
+####################################################################
+
+#--position GuiC (slider avant)
 var int servo_slider_gauche_overshoot=32200
 var int servo_slider_gauche_range=32500
 var int servo_slider_gauche_presorti=34000
 var int servo_slider_gauche=36500
 var int servo_slider_droite=42000
-var int servo_slider_droite_presorti=44300
-var int servo_slider_droite_range=45700
-var int servo_slider_droite_overshoot=46000
+var int servo_slider_droit_presorti=44300
+var int servo_slider_droit_range=45700
+var int servo_slider_droit_overshoot=46000
 
-var int servo_griffe_g_attack=20000
-var int servo_griffe_g_retrait=51000
-var int servo_griffe_g_goldenium=28000
-var int servo_griffe_g_accelerateur=45000
-var int servo_griffe_d_attack=47000
-var int servo_griffe_d_retrait=16000
-var int servo_griffe_d_goldenium=39000
-var int servo_griffe_d_accelerateur=22000
+#--position CoSe (cale mobile avant)
+var int servo_griffe_gauche_attack=20000
+var int servo_griffe_gauche_retrait=51000
+var int servo_griffe_gauche_goldenium=28000
+var int servo_griffe_gauche_accelerateur=45000
+var int servo_griffe_droit_attack=47000
+var int servo_griffe_droit_retrait=16000
+var int servo_griffe_droit_goldenium=39000
+var int servo_griffe_droit_accelerateur=22000
 
+#--position Tock (stock lateraux)
 var int chargeur_droit_preprise=43500
 var int chargeur_gauche_preprise=32000
 var int chargeur_droit_prise=32000
@@ -46,49 +75,9 @@ var int chargeur_droit_calage=45500
 var int chargeur_gauche_calage=30000
 
 
-# Robot positions
-#Centre-Avant (sans CoSe): 105.5mm
-#centre-Arriere:100.5mm
+####################################################################
+#							Capteur
+####################################################################
 
-var vec2 palet_zone_rouge_yellow=(450mm,-1000mm)
-var vec2 palet_zone_verte_yellow=(750mm,-1000mm)
-var vec2 palet_zone_bleu_yellow=(1050mm,-1000mm)
-var vec2 virage_top_chaos_yellow=(750mm,-500mm)
-var vec2 virage_face_acc_advchaos_yellow=(750mm,200mm)
-var vec2 debut_recal_acc_yellow=(170mm,400mm)
-var vec3 capteur_recal_acc_yellow=(170mm,340mm,-90deg)
-var vec2 fin_recal_acc_yellow=(170mm,150mm)
-var vec2 approche_acc_yellow=(170mm,200mm)
-var vec2 contact_acc_yellow=(120mm,200mm)
-var vec2 approche_gold_yellow=(300mm,730mm)
-var vec2 contact_gold_yellow=(140mm,730mm)
-var vec2 virage_face_gold_advchaos_yellow=(750mm,730mm)
-var vec2 virage_face_balance_chaos_yellow=(300mm,-150mm)
-var vec2 depose_balance_yellow=(1530mm,-130mm)
-var vec2 approche_distrib1_yellow=(1320mm,-500mm)
-var vec2 contact_distrib1_yellow=(1450mm,-500mm)
-#ligne_chaos
-var vec2 fin_ligne_chaos_yellow=(750mm,-500mm)
-#balyage_chaos
-var vec2 approche_chaos_yellow=(1250mm,-130mm)
-var vec2 depose_zone_verte_rouge_yellow=(750mm,-1220mm)
-#test trajectoire courbe
-var vec2 traj_courbe1=(450mm,-1250mm)
-var vec2 traj_courbe2=(450mm,-1000mm)
-var vec2 traj_courbe3=(750mm,-500mm)
-var vec2 traj_courbe4=(200mm,350mm)
-
-var vec2 palet_zone_rouge_purple=(450mm,1000mm)
-var vec2 palet_zone_verte_purple=(750mm,1000mm)
-var vec2 palet_zone_bleu_purple=(1050mm,1000mm)
-var vec2 virage_top_chaos_purple=(750mm,500mm)
-var vec2 virage_face_acc_advchaos_purple=(750mm,-197mm)
-var vec2 approche_acc_purple=(300mm,-197mm)
-var vec2 contact_acc_purple=(120mm,-197mm)
-var vec2 approche_gold_purple=(300mm,-730mm)
-var vec2 contact_gold_purple=(140mm,-730mm)
-var vec2 virage_face_gold_advchaos_purple=(750mm,-730mm)
-var vec2 virage_face_balance_chaos_purple=(300mm,150mm)
-var vec2 depose_balance_purple=(1530mm,130mm)
-var vec2 approche_chaos_purple=(1250mm,130mm)
-var vec2 depose_zone_verte_rouge_purple=(750mm,1220mm)
+#--position capteur (décalage capteur par rapport au centre du robot)
+var vec2 rouge_lateral=(0,96mm)
