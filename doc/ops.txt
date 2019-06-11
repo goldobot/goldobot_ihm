@@ -1,6 +1,5 @@
 
-
-checks:
+ ####################### test etat capteur ##############
 
 check_sensor sensor_id
 Set Z flag to inverse of sensor bit corresponding to sensor_id
@@ -9,12 +8,16 @@ exemple:
 check_sensor microswitch
 jnz do_thing_if_microswitch_on
 
+ ####################### test d'état de déplacement ##############
+
 check_propulsion_state uint8
 
 exemple:
 check_propulsion_status 1
 je do_thing_if robot_stopped
-	
+
+ ####################### recalage capteur ##############
+
 propulsion.measure_point vec2 sensor_line,vec2 point
 sensor_line = (angle, offset)
 update robot longitudinal position so that the line perpendicular to robot axis and crossing it 
@@ -22,8 +25,35 @@ at position offset (positive in front of center) intersects point
 
 exemple:
 mesure d'un point avec un capteur situé 50mm devant le centre du robot
-
-var vec2 sensor_line=(0, 50mm)
-var vec2 point=(300mm, 500mm)
+var vec2 sensor_line=(0,50mm)
+var vec2 point=(300mm,500mm)
 propulsion.measure_point sensor_line,point
+
+ ####################### definition variable ##############
+
+ var int var_A=valeur_initiale
+
+ ####################### operation sur variable (int) ##############
+
+#incrementation de 1 (jusqu'à 255)
+ addi var_A,1
+
+#decrementation de 1 (jusqu'à 255)
+subi var_A,1
+
+#mettre à une valeur 1 (jusqu'à 255)
+movi var_A,1
+
+#recopier de valeur
+mov1 Var_A,var_B
+
+ ############# utilisation de test sur variable ##############
+
+#saut si var_A=var_B
+cmp var_A,var_B
+je label_to_jump_to
+
+#saut si var_A>var_B
+cmp var_A,var_B
+jge label_to_jump_to
 

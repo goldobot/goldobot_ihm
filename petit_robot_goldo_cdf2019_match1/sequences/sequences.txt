@@ -3,14 +3,14 @@
 ####################################################################
 
 begin sequence prematch_jaune
-call auto_test
+#call auto_test
 call prematch_common
 call slider_range_gauche
 propulsion.set_pose start_pose_jaune
 end sequence
 
 begin sequence prematch_violet
-call auto_test
+#call auto_test
 call prematch_common
 call slider_range_droite
 propulsion.set_pose start_pose_violet
@@ -167,7 +167,6 @@ call prise_ligne_chaos
 
 end sequence
 
-
 ############################ match violet #####################
 
 begin sequence match_violet
@@ -282,8 +281,13 @@ wait_movement_finished
 call griffes_range
 end sequence
 
-
 begin sequence postmatch
+pump.set_pwm pwm_pump_off
+set_servo stock_g,chargeur_gauche_sorti,100
+set_servo stock_d,chargeur_droit_sorti,100
+arm.go_to_position stk_ar_retrait,1,100
+call griffes_range
+arm.shutdown
 propulsion.disable
 propulsion.motors_disable
 end sequence
@@ -297,25 +301,6 @@ call griffes_range
 delay delay1
 propulsion.motors_enable
 propulsion.enable
-end sequence
-
-####################################################################
-#							Sequence test
-####################################################################
-
-begin sequence test_propulsion
-var float test_distance=400mm
-var float test_angle=90deg
-propulsion.motors_enable
-propulsion.enable
-propulsion.rotate test_angle,yaw_180
-propulsion.translate test_distance,yaw_180
-end sequence
-
-begin sequence test_trajectoire_courbe
-propulsion.trajectory traj_courbe1,4,speed_750
-wait_movement_finished
-propulsion.point_to fin_recal_acc_jaune,yaw_180
 end sequence
 
 begin sequence auto_test
@@ -341,8 +326,27 @@ call slider_range_droite
 delay delay02
 #--test Cose
 call griffes_chaos
-delay delay05
+delay delay2
 call griffes_range
+end sequence
+
+####################################################################
+#							Sequence test
+####################################################################
+
+begin sequence test_propulsion
+var float test_distance=400mm
+var float test_angle=90deg
+propulsion.motors_enable
+propulsion.enable
+propulsion.rotate test_angle,yaw_180
+propulsion.translate test_distance,yaw_180
+end sequence
+
+begin sequence test_trajectoire_courbe
+propulsion.trajectory traj_courbe1,4,speed_750
+wait_movement_finished
+propulsion.point_to fin_recal_acc_jaune,yaw_180
 end sequence
 
 begin sequence test_prise_distrib1_jaune
@@ -372,6 +376,16 @@ wait_movement_finished
 call prise_ligne_chaos
 end sequence
 
+begin sequence test_recalage_acc_jaune
+propulsion.motors_enable
+propulsion.enable
+propulsion.set_pose debut_recal_acc_jaune
+call slider_range_gauche
+delay delay02
+call recale_accelerateur_jaune_v2
+propulsion.move_to contact_acc_jaune,speed_200
+wait_movement_finished
+end sequence
 
 ####################################################################
 #							Sous-sequence
@@ -739,15 +753,11 @@ end sequence
 ####################################################################
 
 begin sequence recale_accelerateur_jaune
-#--set position pour test recalage
-#propulsion.motors_enable
-#propulsion.enable
-#propulsion.set_pose debut_recal_acc_jaune
-#delay delay02
 propulsion.point_to fin_recal_acc_jaune,yaw_180
 wait_movement_finished
 delay delay1
 propulsion.move_to fin_recal_acc_jaune,speed_200
+
 #--boucle de surveillance capteur lateral
 label boucle_recalage_acc_jaune
 check_sensor rouge_droit
@@ -757,18 +767,13 @@ jz boucle_recalage_acc_jaune
 #--sortie boucle capteur
 propulsion.measure_point rouge_lateral,capteur_recal_acc_jaune
 wait_movement_finished
-propulsion.move_to approche_acc_jaune,speed_200
+propulsion.move_to approche_acc_jaune,speed_500
 wait_movement_finished
 propulsion.point_to contact_acc_jaune,yaw_180
 wait_movement_finished
 end sequence
 
 begin sequence recale_accelerateur_jaune_v2
-#--set position pour test recalage
-#propulsion.motors_enable
-#propulsion.enable
-#propulsion.set_pose debut_recal_acc_jaune
-#delay delay02
 propulsion.point_to fin_recal_acc_jaune,yaw_180
 wait_movement_finished
 delay delay1
@@ -933,7 +938,7 @@ jne palet_ventouse
 #--si palet perdu
 movi status_stock_av_g,0
 call debourrage_palet_dans_robot
-jump fin_depose
+jmp fin_depose
 
 #--si palet toujours présent, on enregistre le bon depot
 label palet_ventouse
@@ -986,17 +991,18 @@ movi status_ventouse,0
 label fin_sequence
 end sequence
 
+#--  ########### non fonctionnelle #########
 begin sequence update_nb_palet_en_stock
 #--comptage local
 var int cmp_palet_en_stock=0
 #--recuperation des status
-addi cmp_palet_en_stock,status_stock_av_d
-addi cmp_palet_en_stock,status_stock_av_g
-addi cmp_palet_en_stock,status_stock_ar_d
-addi cmp_palet_en_stock,status_stock_ar_g
-addi cmp_palet_en_stock,status_ventouse
+#addi cmp_palet_en_stock,status_stock_av_d
+#addi cmp_palet_en_stock,status_stock_av_g
+#addi cmp_palet_en_stock,status_stock_ar_d
+#addi cmp_palet_en_stock,status_stock_ar_g
+#addi cmp_palet_en_stock,status_ventouse
 #--on verifie que l'on a pas plus de palet que possible
-cmp  cmp_palet_en_stock,max_palet_en_stock
+cmp cmp_palet_en_stock,max_palet_en_stock
 jne nombre_max_non_atteint
 #--nombre max atteint, on limite à 5
 movi cmp_palet_en_stock,5
