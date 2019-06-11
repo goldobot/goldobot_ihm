@@ -17,10 +17,10 @@ var vec2 palet_zone_bleu_jaune=(1050mm,-1000mm)
 #--trajet accelerateur
 var vec2 virage_top_chaos_jaune=(750mm,-500mm)
 var vec2 virage_face_acc_advchaos_jaune=(750mm,200mm)
-var vec3 debut_recal_acc_jaune=(180mm,400mm,-90deg)
-var vec2 capteur_recal_acc_jaune=(180mm,225mm)
-var vec2 fin_recal_acc_jaune=(180mm,150mm)
-var vec2 approche_acc_jaune=(180mm,200mm)
+var vec3 debut_recal_acc_jaune=(200mm,400mm,-90deg)
+var vec2 capteur_recal_acc_jaune=(200mm,235mm)
+var vec2 fin_recal_acc_jaune=(200mm,150mm)
+var vec2 approche_acc_jaune=(200mm,200mm)
 var vec2 contact_acc_jaune=(120mm,200mm)
 
 #--trajet goldonium

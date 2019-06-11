@@ -50,15 +50,9 @@ call stocke_palet_ar_g
 delay delay02
 wait_movement_finished
 call griffes_accelerateur_jaune
-call recale_accelerateur_jaune
 
-#wait_movement_finished 
-#propulsion.point_to contact_acc_jaune,yaw_180
-#prepositionnement pour prise acc
-arm.go_to_position acc_depose,1,100
-#wait_movement_finished
-propulsion.move_to contact_acc_jaune,speed_200
-wait_movement_finished
+#--recalage et positionnement contre l'accelerateur
+call recale_accelerateur_jaune
 
 #--declenchement accelerateur
 #arm.go_to_position acc_tassage,1,100
@@ -382,7 +376,7 @@ propulsion.enable
 propulsion.set_pose debut_recal_acc_jaune
 call slider_range_gauche
 delay delay02
-call recale_accelerateur_jaune_v2
+call recale_accelerateur_jaune
 propulsion.move_to contact_acc_jaune,speed_200
 wait_movement_finished
 end sequence
@@ -402,10 +396,10 @@ end sequence
 
 begin sequence prise_sol_av
 pump.set_pwm pwm_pump_activated
-arm.go_to_position sol_prise,1,75
+arm.go_to_position sol_prise,1,100
 wait_arm_finished
-delay delay05
-arm.go_to_position stk_av_prise,1,75
+delay delay01
+arm.go_to_position stk_av_prise,1,100
 wait_arm_finished
 delay delay05
 end sequence
@@ -554,17 +548,13 @@ end sequence
 begin sequence stocke_palet_av_d
 arm.go_to_position stk_av_prise,1,100
 wait_arm_finished
-set_servo stock_d,chargeur_droit_preprise,100
+set_servo stock_d,chargeur_droit_prise,100
 delay delay02
 arm.go_to_position stk_av_tasse,1,100
-wait_arm_finished
-delay delay02
-set_servo stock_d,chargeur_droit_prise,100
-delay delay05
+delay delay03
 pump.set_pwm pwm_pump_off
-delay delay02
+delay delay005
 arm.go_to_position stk_av_retrait,1,100
-wait_arm_finished
 set_servo stock_d,chargeur_droit_sorti,100
 delay delay05
 end sequence
@@ -756,28 +746,7 @@ begin sequence recale_accelerateur_jaune
 propulsion.point_to fin_recal_acc_jaune,yaw_180
 wait_movement_finished
 delay delay1
-propulsion.move_to fin_recal_acc_jaune,speed_200
-
-#--boucle de surveillance capteur lateral
-label boucle_recalage_acc_jaune
-check_sensor rouge_droit
-yield
-jz boucle_recalage_acc_jaune
-
-#--sortie boucle capteur
-propulsion.measure_point rouge_lateral,capteur_recal_acc_jaune
-wait_movement_finished
-propulsion.move_to approche_acc_jaune,speed_500
-wait_movement_finished
-propulsion.point_to contact_acc_jaune,yaw_180
-wait_movement_finished
-end sequence
-
-begin sequence recale_accelerateur_jaune_v2
-propulsion.point_to fin_recal_acc_jaune,yaw_180
-wait_movement_finished
-delay delay1
-propulsion.move_to fin_recal_acc_jaune,speed_200
+propulsion.move_to approche_acc_jaune,speed_200
 
 #--boucle de surveillance capteur lateral
 label boucle_recalage_acc
@@ -795,9 +764,9 @@ wait_movement_finished
 
 #--fin de trajectoire atteinte
 label fin_ligne_recalage_acc_atteinte
-propulsion.move_to approche_acc_jaune,speed_200
-wait_movement_finished
 propulsion.point_to contact_acc_jaune,yaw_180
+wait_movement_finished
+propulsion.move_to contact_acc_jaune,speed_200
 wait_movement_finished
 end sequence
 
