@@ -55,13 +55,13 @@ call griffes_accelerateur_jaune
 call recale_accelerateur_jaune
 
 #--declenchement accelerateur
-#arm.go_to_position acc_tassage,1,100
-#delay delay05
-#call slider_pousse_droite
-#delay delay02
+arm.go_to_position acc_tassage,1,100
+wait_arm_finished
+call slider_pousse_droite
+delay delay02
 
 #--prise accelerateur
-call prise_palet_accelerateur
+#call prise_palet_accelerateur
 
 #--depose accelerateur
 call destock_palet_ar_g
@@ -545,6 +545,34 @@ set_servo slider,servo_slider_droit_range,100
 delay delay02
 end sequence
 
+#--------------------- stock -------------------------#
+begin sequence stocke_palet_av_g
+arm.go_to_position stk_av_prise,1,100
+wait_arm_finished
+set_servo stock_g,chargeur_gauche_prise,100
+delay delay02
+arm.go_to_position stk_av_tasse,1,100
+delay delay03
+#--test de la presence du palet avant depose
+call update_status_ventouse
+cmp status_ventouse,oui
+jne palet_ventouse
+#--si palet perdu
+movi status_stock_av_g,0
+call debourrage_palet_dans_robot
+jmp fin_depose
+#--si palet toujours présent, on enregistre le bon depot
+label palet_ventouse
+movi status_stock_av_g,1
+#--on termine le depot du palet
+label fin_depose
+pump.set_pwm pwm_pump_off
+delay delay005
+arm.go_to_position stk_av_retrait,1,100
+set_servo stock_g,chargeur_gauche_sorti,100
+delay delay05
+end sequence
+
 begin sequence stocke_palet_av_d
 arm.go_to_position stk_av_prise,1,100
 wait_arm_finished
@@ -552,6 +580,19 @@ set_servo stock_d,chargeur_droit_prise,100
 delay delay02
 arm.go_to_position stk_av_tasse,1,100
 delay delay03
+#--test de la presence du palet avant depose
+call update_status_ventouse
+cmp status_ventouse,oui
+jne palet_ventouse
+#--si palet perdu
+movi status_stock_av_d,0
+call debourrage_palet_dans_robot
+jmp fin_depose
+#--si palet toujours présent, on enregistre le bon depot
+label palet_ventouse
+movi status_stock_av_d,1
+#--on termine le depot du palet
+label fin_depose
 pump.set_pwm pwm_pump_off
 delay delay005
 arm.go_to_position stk_av_retrait,1,100
@@ -562,17 +603,26 @@ end sequence
 begin sequence stocke_palet_ar_g
 arm.go_to_position stk_ar_prise,1,100
 wait_arm_finished
-set_servo stock_g,chargeur_gauche_preprise,100
+set_servo stock_g,chargeur_gauche_prise,100
 delay delay02
 arm.go_to_position stk_ar_tasse,1,100
-wait_arm_finished
-delay delay02
-set_servo stock_g,chargeur_gauche_prise,100
-delay delay05
+delay delay03
+#--test de la presence du palet avant depose
+call update_status_ventouse
+cmp status_ventouse,oui
+jne palet_ventouse
+#--si palet perdu
+movi status_stock_ar_g,0
+call debourrage_palet_dans_robot
+jmp fin_depose
+#--si palet toujours présent, on enregistre le bon depot
+label palet_ventouse
+movi status_stock_ar_g,1
+#--on termine le depot du palet
+label fin_depose
 pump.set_pwm pwm_pump_off
-delay delay02
+delay delay005
 arm.go_to_position stk_ar_retrait,1,100
-wait_arm_finished
 set_servo stock_g,chargeur_gauche_sorti,100
 delay delay05
 end sequence
@@ -580,17 +630,26 @@ end sequence
 begin sequence stocke_palet_ar_d
 arm.go_to_position stk_ar_prise,1,100
 wait_arm_finished
-set_servo stock_d,chargeur_droit_preprise,100
+set_servo stock_d,chargeur_droit_prise,100
 delay delay02
 arm.go_to_position stk_ar_tasse,1,100
-wait_arm_finished
-delay delay02
-set_servo stock_d,chargeur_droit_prise,100
-delay delay05
+delay delay03
+#--test de la presence du palet avant depose
+call update_status_ventouse
+cmp status_ventouse,oui
+jne palet_ventouse
+#--si palet perdu
+movi status_stock_ar_d,0
+call debourrage_palet_dans_robot
+jmp fin_depose
+#--si palet toujours présent, on enregistre le bon depot
+label palet_ventouse
+movi status_stock_ar_d,1
+#--on termine le depot du palet
+label fin_depose
 pump.set_pwm pwm_pump_off
-delay delay02
+delay delay005
 arm.go_to_position stk_ar_retrait,1,100
-wait_arm_finished
 set_servo stock_d,chargeur_droit_sorti,100
 delay delay05
 end sequence
@@ -600,19 +659,17 @@ arm.go_to_position stk_av_retrait,1,100
 wait_arm_finished
 delay delay02
 set_servo stock_g,chargeur_gauche_prise,100
-delay delay1
-arm.go_to_position stk_av_tasse,1,100
-wait_arm_finished
-pump.set_pwm pwm_pump_activated
 delay delay05
-arm.go_to_position stk_av_prise,1,75
+delay delay01
+pump.set_pwm pwm_pump_activated
+arm.go_to_position stk_av_tasse,1,100
+delay delay01
+arm.go_to_position stk_av_prise,1,100
 wait_arm_finished
 set_servo stock_g,chargeur_gauche_sorti,100
 #--stock vide:
 movi status_stock_av_g,0
 delay delay05
-
-
 end sequence
 
 begin sequence destock_palet_av_d
@@ -620,12 +677,12 @@ arm.go_to_position stk_av_retrait,1,100
 wait_arm_finished
 delay delay02
 set_servo stock_d,chargeur_droit_prise,100
-delay delay1
-arm.go_to_position stk_av_tasse,1,100
-wait_arm_finished
-pump.set_pwm pwm_pump_activated
 delay delay05
-arm.go_to_position stk_av_prise,1,75
+delay delay01
+pump.set_pwm pwm_pump_activated
+arm.go_to_position stk_av_tasse,1,100
+delay delay01
+arm.go_to_position stk_av_prise,1,100
 wait_arm_finished
 set_servo stock_d,chargeur_droit_sorti,100
 delay delay05
@@ -638,17 +695,17 @@ arm.go_to_position stk_ar_retrait,1,100
 wait_arm_finished
 delay delay02
 set_servo stock_g,chargeur_gauche_prise,100
-delay delay1
-arm.go_to_position stk_ar_tasse,1,100
-wait_arm_finished
-pump.set_pwm pwm_pump_activated
 delay delay05
-arm.go_to_position stk_ar_prise,1,75
+delay delay01
+pump.set_pwm pwm_pump_activated
+arm.go_to_position stk_ar_tasse,1,100
+delay delay01
+arm.go_to_position stk_ar_prise,1,100
 wait_arm_finished
 set_servo stock_g,chargeur_gauche_sorti,100
-delay delay05
 #--stock vide:
 movi status_stock_ar_g,0
+delay delay05
 end sequence
 
 begin sequence destock_palet_ar_d
@@ -656,12 +713,12 @@ arm.go_to_position stk_ar_retrait,1,100
 wait_arm_finished
 delay delay02
 set_servo stock_d,chargeur_droit_prise,100
-delay delay1
-arm.go_to_position stk_ar_tasse,1,100
-wait_arm_finished
-pump.set_pwm pwm_pump_activated
 delay delay05
-arm.go_to_position stk_ar_prise,1,75
+delay delay01
+pump.set_pwm pwm_pump_activated
+arm.go_to_position stk_ar_tasse,1,100
+delay delay01
+arm.go_to_position stk_ar_prise,1,100
 wait_arm_finished
 set_servo stock_d,chargeur_droit_sorti,100
 delay delay05
@@ -669,13 +726,12 @@ delay delay05
 movi status_stock_ar_d,0
 end sequence
 
-begin sequence acc_depose
+begin sequence depose_acc
 #--prereq: Cose sortie, palet ventouse
 arm.go_to_position acc_pre_depose,1,100
 wait_arm_finished
-arm.go_to_position acc_depose,1,75
+arm.go_to_position acc_depose,1,100
 wait_arm_finished
-delay delay02
 pump.set_pwm pwm_pump_off
 delay delay02
 end sequence
@@ -691,11 +747,9 @@ end sequence
 
 begin sequence accelerateur_violet
 #--prereq: Cose sortie, palet ventouse
-call acc_depose
-delay delay02
+call depose_acc
 arm.go_to_position acc_tassage2,1,100
 wait_arm_finished
-delay delay02
 call slider_pousse_gauche
 arm.go_to_position stk_av_prise,1,100
 wait_arm_finished
@@ -703,11 +757,9 @@ end sequence
 
 begin sequence accelerateur_jaune
 #--prereq: Cose sortie, palet ventouse
-call acc_depose
-delay delay02
+call depose_acc
 arm.go_to_position acc_tassage2,1,100
 wait_arm_finished
-delay delay02
 call slider_pousse_droite
 arm.go_to_position stk_av_prise,1,100
 wait_arm_finished
@@ -821,11 +873,21 @@ wait_movement_finished
 end sequence
 
 begin sequence prise_auto_av
+#--boucle de surveillance micro-switch
 label boucle_palet
 	check_sensor micro_switch
+	jnz capteur_declenche
+		check_propulsion_state 1
+		je fin_deplacement
 	yield
-jz boucle_palet
+jmp boucle_palet
+
+#--sortie boucle capteur
+label capteur_declenche
 call prise_sol_av
+
+#--fin de trajectoire atteinte
+label fin_deplacement
 end sequence
 
 begin sequence prise_auto_ar
@@ -888,41 +950,6 @@ var int status_stock_ar_d=0
 var int status_stock_ar_g=0
 var int status_ventouse=0
 
-begin sequence stocke_palet_av_g
-arm.go_to_position stk_av_prise,1,100
-wait_arm_finished
-set_servo stock_g,chargeur_gauche_preprise,100
-delay delay02
-arm.go_to_position stk_av_tasse,1,100
-wait_arm_finished
-delay delay02
-set_servo stock_g,chargeur_gauche_prise,100
-delay delay05
-
-#--test de la presence du palet avant depose
-call update_status_ventouse
-cmp status_ventouse,oui
-jne palet_ventouse
-
-#--si palet perdu
-movi status_stock_av_g,0
-call debourrage_palet_dans_robot
-jmp fin_depose
-
-#--si palet toujours présent, on enregistre le bon depot
-label palet_ventouse
-movi status_stock_av_g,1
-
-#--on termine le depot du palet
-label fin_depose
-pump.set_pwm pwm_pump_off
-delay delay02
-arm.go_to_position stk_av_retrait,1,100
-wait_arm_finished
-set_servo stock_g,chargeur_gauche_sorti,100
-delay delay05
-end sequence
-
 #-- + tester destock
 
 begin sequence stock_auto
@@ -980,34 +1007,3 @@ label nombre_max_non_atteint
 mov1 nb_palet_en_stock,cmp_palet_en_stock
 end sequence
 
-begin sequence prise_ligne_chaos_v2
-#--prereq: palet distrib1 stocke en stock_ar_d
-call griffes_chaos
-propulsion.move_to fin_ligne_chaos_jaune,speed_100
-
-#--palet 1
-call prise_auto_av
-call stocke_palet_av_d
-
-#--palet 2
-call preprise_sol
-call prise_auto_av
-call stocke_palet_av_g
-
-#--palet 3
-call preprise_sol
-call prise_auto_ar
-call stocke_palet_ar_g
-
-wait_movement_finished
-propulsion.move_to debut_recal_acc_jaune,speed_200
-delay delay1
-call griffes_range
-
-#--palet 4
-call preprise_sol
-call prise_auto_av
-#--on garde un palet sur la ventouse
-
-wait_movement_finished
-end sequence

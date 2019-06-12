@@ -70,8 +70,8 @@ var int servo_griffe_droit_accelerateur=22000
 #--position Tock (stock lateraux)
 var int chargeur_droit_preprise=43500
 var int chargeur_gauche_preprise=32000
-var int chargeur_droit_prise=32000
-var int chargeur_gauche_prise=42500
+var int chargeur_droit_prise=31000
+var int chargeur_gauche_prise=43500
 var int chargeur_droit_sorti=52000
 var int chargeur_gauche_sorti=23700
 var int chargeur_droit_calage=45500
