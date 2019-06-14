@@ -276,7 +276,7 @@ class TestArmsDialog(QDialog):
     def _switch_pump(self):
         if self._pump_state == 0:
             self._button_pump.setText('Pompe Medium')
-            self._client.send_message(288,struct.pack('<Bh',0,400))
+            self._client.send_message(288,struct.pack('<Bh',0,511))
             self._pump_state = 1
         elif self._pump_state == 1 :
             self._button_pump.setText('Pompe Off')

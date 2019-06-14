@@ -53,6 +53,8 @@ opcodes = {
     'movi': (4, 'var', 'imm', None), #move one 8 bit integer to variable
     'addi': (8, 'var', 'imm', None),
     'subi': (9, 'var', 'imm', None),
+    'add': (10, 'var', 'var', 'var'),
+    'sub': (11, 'var', 'var', 'var'),
     'propulsion.motors_enable': (64, None, None, None),
     'propulsion.enable': (65, None, None, None),
     'propulsion.motors_disable': (66, None, None, None),
@@ -89,7 +91,7 @@ opcodes = {
     'check_sensor' : (150, 'sensor_id', None, None),
     'check_propulsion_state' : (151, 'imm', None, None),
     'cmp': (160,'var','var',None),
-    'send_event' : (34, 'imm', 'imm', None)
+    'send_event' : (34, 'imm', 'var', 'imm')
     }
 
         
@@ -124,7 +126,7 @@ class Variable:
         
 class Arg:
     def __init__(self, arg):
-        if re.match('^[a-z][\w]+$', arg):
+        if re.match('^[a-z_][\w]*$', arg):
             self.type = 'var'# var_idx, cst
             self.name = arg
         else:
@@ -243,9 +245,14 @@ class SequenceParser:
             elif op == 'label':
                 self.current_sequence.labels[args] = len(self.current_sequence.ops)
             else:
-                print(op, args)
-                op = Op(op,args,lineno)
-                self.current_sequence.ops.append(op)
+                try:
+                    op = Op(op,args,lineno)
+                    self.current_sequence.ops.append(op)
+                except:
+                    print("Parse error at line {}".format(lineno))
+                    print(line)
+                    print(args)
+                    raise
                 
     def compile(self):
         #allocate global variables

@@ -42,8 +42,11 @@ class ControlPlots(QtWidgets.QDialog):
         super(ControlPlots, self).__init__(parent)
         tab_widget = QTabWidget()
         
-        self.plot_translation = PlotDialog()
-        tab_widget.addTab(self.plot_translation, "translation")
+        self.plot_x = PlotDialog()
+        tab_widget.addTab(self.plot_x, "x")
+        
+        self.plot_y = PlotDialog()
+        tab_widget.addTab(self.plot_y, "y")
         
         self.plot_speed = PlotDialog()
         tab_widget.addTab(self.plot_speed, "speed")
@@ -52,14 +55,14 @@ class ControlPlots(QtWidgets.QDialog):
         tab_widget.addTab(self.plot_yaw, "yaw")
         
         self.plot_yaw_rate = PlotDialog()
-        tab_widget.addTab(self.plot_yaw_rate, "yaw_rate")
-        
-        
-        
-        
+        tab_widget.addTab(self.plot_yaw_rate, "yaw_rate")        
         
         layout = QGridLayout()
         layout.addWidget(tab_widget)
         self.setLayout(layout)
         self.plot_yaw.plot_curve([0,2,1])
         self.plot_yaw.show()
+    
+    def set_client(self, client):
+        self.client = client
+        

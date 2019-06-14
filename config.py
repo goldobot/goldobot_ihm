@@ -21,10 +21,16 @@ class RobotConfig:
         self.load_dynamixels_config()
         if 'dc_motors' in self.yaml:
             self.dc_motors_indices = {s['name']:s['id'] for s in self.yaml['dc_motors']}
+        else:
+            self.dc_motors_indices = {}
         if 'sensors' in self.yaml:
             self.sensors_indices = {s['name']:s['id'] for s in self.yaml['sensors']}
+        else:
+            self.sensors_indices = {}
         if 'gpios' in self.yaml:
             self.gpio_indices = {s['name']:s['id'] for s in self.yaml['gpios']}
+        else:
+            self.gpio_indices = {}
         self.load_sequences()
         
     def update_config(self):
