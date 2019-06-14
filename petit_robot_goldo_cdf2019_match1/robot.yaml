@@ -119,5 +119,7 @@ sensors:
 
 sequence_files:
   - "sequences/constants.txt"
+  - "sequences/waypoint_jaune.txt"
+  - "sequences/waypoint_violet.txt"
   - "sequences/sequences.txt"
   - "sequences/tests.txt"

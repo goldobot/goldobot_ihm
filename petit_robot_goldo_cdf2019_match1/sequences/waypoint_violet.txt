@@ -1,0 +1,26 @@
+####################################################################
+#							Position violet
+####################################################################
+#--Robot positions
+#--Centre-Avant (sans CoSe): 105.5mm
+#--centre-Arriere:100.5mm
+
+
+#--position de depart
+var vec3 start_pose_violet=(450mm,1250mm,-90deg)
+
+var vec2 palet_zone_rouge_violet=(450mm,1000mm)
+var vec2 palet_zone_verte_violet=(750mm,1000mm)
+var vec2 palet_zone_bleu_violet=(1050mm,1000mm)
+var vec2 virage_top_chaos_violet=(750mm,500mm)
+var vec2 virage_face_acc_advchaos_violet=(750mm,-197mm)
+var vec2 approche_acc_violet=(300mm,-197mm)
+var vec2 contact_acc_violet=(120mm,-197mm)
+var vec2 approche_gold_violet=(300mm,-730mm)
+var vec2 contact_gold_violet=(140mm,-730mm)
+var vec2 virage_face_gold_advchaos_violet=(750mm,-730mm)
+var vec2 virage_face_balance_chaos_violet=(300mm,150mm)
+var vec2 debut_recal_balance_violet=(1380mm,130mm)
+var vec2 depose_balance_violet=(1530mm,130mm)
+var vec2 approche_chaos_violet=(1250mm,130mm)
+var vec2 depose_zone_verte_rouge_violet=(750mm,1220mm)
