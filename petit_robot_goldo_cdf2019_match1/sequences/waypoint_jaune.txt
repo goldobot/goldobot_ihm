@@ -17,21 +17,22 @@ var vec2 palet_zone_bleu_jaune=(1050mm,-1000mm)
 #--trajet accelerateur
 var vec2 virage_top_chaos_jaune=(750mm,-500mm)
 var vec2 virage_face_acc_advchaos_jaune=(750mm,200mm)
-var vec3 debut_recal_acc_jaune=(200mm,400mm,-90deg)
-var vec2 capteur_recal_acc_jaune=(200mm,235mm)
-var vec2 fin_recal_acc_jaune=(200mm,150mm)
-var vec2 approche_acc_jaune=(200mm,200mm)
+var vec3 debut_recal_acc_jaune=(220mm,400mm,-90deg)
+var vec2 capteur_recal_acc_jaune=(220mm,235mm)
+var vec2 fin_recal_acc_jaune=(220mm,150mm)
+var vec2 approche_acc_jaune=(220mm,200mm)
 var vec2 contact_acc_jaune=(120mm,200mm)
 
 #--trajet goldonium
-var vec2 approche_gold_jaune=(300mm,730mm)
-var vec2 contact_gold_jaune=(140mm,730mm)
-var vec2 virage_face_gold_advchaos_jaune=(750mm,730mm)
+var vec2 capteur_recal_gold_jaune=(220mm,690mm)
+var vec2 approche_gold_jaune=(220mm,740mm)
+var vec2 contact_gold_jaune=(140mm,740mm)
+var vec2 virage_face_gold_advchaos_jaune=(750mm,740mm)
 
 #--trajet balance
-var vec2 virage_face_balance_chaos_jaune=(300mm,-150mm)
-var vec2 depose_balance_jaune=(1530mm,-130mm)
-var vec2 debut_recal_balance_jaune=(1380mm,-130mm)
+var vec2 virage_face_balance_chaos_jaune=(300mm,-135mm)
+var vec2 depose_balance_jaune=(1530mm,-135mm)
+var vec2 debut_recal_balance_jaune=(1380mm,-135mm)
 
 #--trajet distributeur
 var vec2 approche_distrib1_jaune=(1380mm,-500mm)
@@ -41,7 +42,7 @@ var vec2 contact_distrib1_jaune=(1450mm,-500mm)
 var vec2 fin_ligne_chaos_jaune=(750mm,-500mm)
 
 #--balyage_chaos
-var vec2 approche_chaos_jaune=(1250mm,-130mm)
+var vec2 approche_chaos_jaune=(1250mm,-135mm)
 var vec2 depose_zone_verte_rouge_jaune=(750mm,-1220mm)
 
 #--test trajectoire courbe (depart jaune)
