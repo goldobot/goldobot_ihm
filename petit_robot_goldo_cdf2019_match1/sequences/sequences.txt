@@ -27,7 +27,7 @@ call preprise_sol
 propulsion.move_to palet_zone_rouge_jaune,speed_500
 propulsion.point_to palet_zone_bleu_jaune,yaw_180
 #--ajoute point experience et electron
-movi score,40
+addi score,40
 call prise_auto_av
 call stocke_palet_av_g
 call preprise_sol
@@ -42,6 +42,10 @@ call prise_auto_av
 #--voyage a accelerateur
 propulsion.point_to debut_recal_acc_jaune,yaw_180
 wait_movement_finished
+#--on releve le bras au cas ou on loupe le dernier
+arm.go_to_position stk_av_prise,1,100
+wait_arm_finished
+propulsion.set_adversary_detection_enable 1
 propulsion.move_to debut_recal_acc_jaune,speed_500
 wait_movement_finished
 call griffes_accelerateur_jaune
@@ -53,7 +57,7 @@ call recale_accelerateur_jaune
 call slider_pousse_droite
 delay delay02
 #--ajoute point 1 atom accelerateur + goldonium revele
-movi score,20
+addi score,20
 
 #--prise accelerateur
 #call prise_palet_accelerateur
@@ -96,7 +100,7 @@ propulsion.move_to depose_balance_jaune,speed_500
 wait_movement_finished
 
 #--depose balance du goldonium
-call jette_palet
+call jette_goldonium
 
 #--trajet au distrib1
 propulsion.move_to debut_recal_balance_jaune,speed_200
@@ -147,13 +151,14 @@ call prise_ligne_chaos_jaune
 #wait_movement_finished
 #propulsion.move_to depose_balance_jaune,speed_500
 #wait_movement_finished
-#call jette_palet
+#call jette_goldonium
 
 #--recalage sur goldonium
 call recale_goldonium_jaune
 #-- OU
 #--recalage sur goldonium
 #call recale_mat_jaune
+call griffes_accelerateur_jaune
 propulsion.point_to contact_acc_jaune,yaw_180
 propulsion.move_to contact_acc_jaune,speed_200
 wait_movement_finished
@@ -181,7 +186,7 @@ call preprise_sol
 propulsion.move_to palet_zone_rouge_violet,speed_500
 propulsion.point_to palet_zone_bleu_violet,yaw_180
 #--ajoute point experience et electron
-movi score,40
+addi score,40
 call prise_auto_av
 call stocke_palet_av_g
 call preprise_sol
@@ -196,6 +201,10 @@ call prise_auto_av
 #--voyage a accelerateur
 propulsion.point_to debut_recal_acc_violet,yaw_180
 wait_movement_finished
+#--on releve le bras au cas ou on loupe le dernier
+arm.go_to_position stk_av_prise,1,100
+wait_arm_finished
+propulsion.set_adversary_detection_enable 1
 propulsion.move_to debut_recal_acc_violet,speed_500
 wait_movement_finished
 call griffes_accelerateur_violet
@@ -207,7 +216,7 @@ call recale_accelerateur_violet
 call slider_pousse_gauche
 delay delay02
 #--ajoute point 1 atom accelerateur + goldonium revele
-movi score,20
+addi score,20
 
 #--prise accelerateur
 #call prise_palet_accelerateur
@@ -250,7 +259,7 @@ propulsion.move_to depose_balance_violet,speed_500
 wait_movement_finished
 
 #--depose balance du goldonium
-call jette_palet
+call jette_goldonium
 
 #--trajet au distrib1
 propulsion.move_to debut_recal_balance_violet,speed_200
@@ -301,13 +310,15 @@ call prise_ligne_chaos_violet
 #wait_movement_finished
 #propulsion.move_to depose_balance_violet,speed_500
 #wait_movement_finished
-#call jette_palet
+#call jette_goldonium
 
 #--recalage sur goldonium
 call recale_goldonium_violet
 #-- OU
 #--recalage sur goldonium
 #call recale_mat_violet
+#--OU trajet direct
+call griffes_accelerateur_violet
 propulsion.point_to contact_acc_violet,yaw_180
 propulsion.move_to contact_acc_violet,speed_200
 wait_movement_finished
@@ -435,9 +446,70 @@ propulsion.move_to contact_acc_jaune,speed_200
 wait_movement_finished
 end sequence
 
+begin sequence test_recalage_gold_violet
+#--trajet au distrib1
+propulsion.point_to approche_acc_violet,yaw_180
+wait_movement_finished
+propulsion.move_to approche_acc_violet,speed_500
+wait_movement_finished
+
+call recale_goldonium_violet
+propulsion.point_to contact_acc_violet,yaw_180
+wait_movement_finished
+propulsion.move_to contact_acc_violet,speed_200
+wait_movement_finished
+end sequence
+
+begin sequence test_score_sub_un
+cmp score,oui
+jge score_zero
+call griffes_accelerateur_violet
+ret
+label score_zero
+call griffes_accelerateur_jaune
+end sequence
+
+begin sequence debug
+call preprise_sol
+call prise_sol_av
+call stocke_palet_av_g
+delay delay02
+#--prise palet devant vert
+call preprise_sol
+call prise_sol_av
+call stocke_palet_av_d
+delay delay02
+#--prise palet devant bleu
+call preprise_sol
+call prise_sol_ar
+call stocke_palet_ar_g
+delay delay02
+#--voyage a l'accel
+call griffes_accelerateur_violet
+#declenchement accelerateur
+arm.go_to_position acc_tassage2,1,100
+wait_arm_finished
+delay delay02
+call slider_pousse_droite
+delay delay05
+call slider_range_gauche
+#depose accelerateur
+call destock_palet_ar_g
+call accelerateur_violet
+delay delay02
+call destock_palet_av_d
+call accelerateur_violet
+delay delay02
+call destock_palet_av_g
+call accelerateur_violet
+delay delay02
+end sequence
+
 ####################################################################
 #							Sous-sequence
 ####################################################################
+
+############################ prise #####################
 
 begin sequence preprise_sol
 arm.go_to_position sol_preprise_intermediaire1,1,100
@@ -531,7 +603,7 @@ wait_arm_finished
 arm.go_to_position gold_stockage,1,20
 wait_arm_finished
 end sequence
-#### ajouter test prise goldonium avant ajout score goldonium###
+
 begin sequence prise_goldenium_out
 arm.go_to_position gold_preprise,1,100
 wait_arm_finished
@@ -539,81 +611,21 @@ arm.go_to_position gold_prise,1,100
 wait_arm_finished
 pump.set_pwm pwm_pump_activated
 delay delay05
-#--ajoute point prise goldonium
-movi score,20
-
-#arm.go_to_position gold_stockage_intermediaire1,1,20
-#wait_arm_finished
-end sequence
-
-begin sequence jette_palet
-arm.go_to_position gold_prise,1,100
-delay delay005
-pump.set_pwm pwm_pump_off
-#--ajoute point depose goldonium
-movi score,24
-end sequence
-
-begin sequence depose_sol
-arm.go_to_position sol_preprise_intermediaire1,1,100
+arm.go_to_position gold_postprise,1,30
 wait_arm_finished
-arm.go_to_position sol_preprise_intermediaire2,1,100
-wait_arm_finished
-arm.go_to_position sol_preprise,1,100
-wait_arm_finished
-delay delay02
-pump.set_pwm pwm_pump_off
+
+#--ajoute point prise goldonium si toujours ventousé
+call update_status_ventouse
+cmp status_ventouse,oui
+je goldonium_non_ventouse
+#si goldonium toujours ventouse, ajout score
+movi goldonium_pris,1
+addi score,20
+#--sinon fin sequence
+label goldonium_non_ventouse
 end sequence
 
-begin sequence vidange_stock
-arm.go_to_position stk_av_retrait,1,100
-delay delay05
-call destock_palet_av_g
-call jette_palet
-arm.go_to_position stk_av_retrait,1,100
-delay delay05
-call destock_palet_av_d
-call jette_palet
-arm.go_to_position stk_ar_retrait,1,100
-delay delay05
-call destock_palet_ar_g
-call jette_palet
-arm.go_to_position stk_ar_retrait,1,100
-delay delay05
-call destock_palet_ar_d
-call jette_palet
-arm.go_to_position stk_av_retrait,1,100
-end sequence
-
-begin sequence slider_pousse_gauche
-set_servo slider,servo_slider_droit_presorti,100
-delay delay01
-set_servo slider,servo_slider_gauche,100
-delay delay03
-call slider_range_droite
-end sequence
-
-begin sequence slider_pousse_droite
-set_servo slider,servo_slider_gauche_presorti,100
-delay delay01
-set_servo slider,servo_slider_droite,100
-delay delay03
-call slider_range_gauche
-end sequence
-
-begin sequence slider_range_gauche
-set_servo slider,servo_slider_gauche_overshoot,100
-delay delay03
-set_servo slider,servo_slider_gauche_range,100
-end sequence
-
-begin sequence slider_range_droite
-set_servo slider,servo_slider_droit_overshoot,100
-delay delay03
-set_servo slider,servo_slider_droit_range,100
-end sequence
-
-#--------------------- stock -------------------------#
+############################ stockage #####################
 begin sequence stocke_palet_av_g
 arm.go_to_position stk_av_prise,1,100
 wait_arm_finished
@@ -794,6 +806,54 @@ delay delay05
 movi status_stock_ar_d,0
 end sequence
 
+############################ depose #####################
+begin sequence depose_sol
+arm.go_to_position sol_preprise_intermediaire1,1,100
+wait_arm_finished
+arm.go_to_position sol_preprise_intermediaire2,1,100
+wait_arm_finished
+arm.go_to_position sol_preprise,1,100
+wait_arm_finished
+delay delay02
+pump.set_pwm pwm_pump_off
+end sequence
+
+begin sequence vidange_stock
+arm.go_to_position stk_av_retrait,1,100
+delay delay05
+call destock_palet_av_g
+call jette_goldonium
+arm.go_to_position stk_av_retrait,1,100
+delay delay05
+call destock_palet_av_d
+call jette_goldonium
+arm.go_to_position stk_ar_retrait,1,100
+delay delay05
+call destock_palet_ar_g
+call jette_goldonium
+arm.go_to_position stk_ar_retrait,1,100
+delay delay05
+call destock_palet_ar_d
+call jette_goldonium
+arm.go_to_position stk_av_retrait,1,100
+end sequence
+
+begin sequence jette_goldonium
+call update_status_ventouse
+cmp status_ventouse,oui
+je goldonium_non_ventouse
+#si goldonium toujours ventouse,on jette et ajout score
+arm.go_to_position gold_prise,1,100
+delay delay005
+pump.set_pwm pwm_pump_off
+#--ajoute point depose goldonium
+addi score,24
+ret
+#--si goldonium perdu on jette pas, on coupe la pompe
+label goldonium_non_ventouse
+pump.set_pwm pwm_pump_off
+end sequence
+
 begin sequence depose_acc
 #--prereq: Cose sortie, palet ventouse
 arm.go_to_position acc_pre_depose,1,100
@@ -820,7 +880,7 @@ call depose_acc
 #wait_arm_finished
 call slider_pousse_gauche
 #--ajoute point 1 atom accelerateur
-movi score,10
+addi score,10
 arm.go_to_position stk_av_prise,1,100
 wait_arm_finished
 end sequence
@@ -832,11 +892,12 @@ call depose_acc
 #wait_arm_finished
 call slider_pousse_droite
 #--ajoute point 1 atom accelerateur
-movi score,10
+addi score,10
 arm.go_to_position stk_av_prise,1,100
 wait_arm_finished
 end sequence
 
+############################ griffe #####################
 begin sequence griffes_goldenium
 set_servo griffe_g,servo_griffe_gauche_goldenium,100
 set_servo griffe_d,servo_griffe_droit_goldenium,100
@@ -860,6 +921,35 @@ end sequence
 begin sequence griffes_chaos
 set_servo griffe_g,servo_griffe_gauche_attack,100
 set_servo griffe_d,servo_griffe_droit_attack,100
+end sequence
+
+############################ slider #####################
+begin sequence slider_pousse_gauche
+set_servo slider,servo_slider_droit_presorti,100
+delay delay01
+set_servo slider,servo_slider_gauche,100
+delay delay03
+call slider_range_droite
+end sequence
+
+begin sequence slider_pousse_droite
+set_servo slider,servo_slider_gauche_presorti,100
+delay delay01
+set_servo slider,servo_slider_droite,100
+delay delay03
+call slider_range_gauche
+end sequence
+
+begin sequence slider_range_gauche
+set_servo slider,servo_slider_gauche_overshoot,100
+delay delay03
+set_servo slider,servo_slider_gauche_range,100
+end sequence
+
+begin sequence slider_range_droite
+set_servo slider,servo_slider_droit_overshoot,100
+delay delay03
+set_servo slider,servo_slider_droit_range,100
 end sequence
 
 ####################################################################
@@ -918,6 +1008,7 @@ end sequence
 
 begin sequence recale_goldonium_jaune
 propulsion.point_to approche_gold_jaune,yaw_180
+delay delay02
 propulsion.move_to approche_gold_jaune,speed_200
 
 #--boucle de surveillance capteur lateral
@@ -942,6 +1033,7 @@ end sequence
 
 begin sequence recale_goldonium_violet
 propulsion.point_to approche_gold_violet,yaw_180
+delay delay02
 propulsion.move_to approche_gold_violet,speed_200
 
 #--boucle de surveillance capteur lateral
@@ -969,9 +1061,152 @@ begin sequence recale_mat_jaune
 end sequence
 
 ####################################################################
-#							Sequence collecte chaos
+#							Sequence automatisation
 ####################################################################
 
+
+begin sequence stock_auto
+#--fonction sortante sur une arrive en fin de deplacement
+#--on stock en priorité av puis ar.
+#--ne pas oublier de lire le flag "garder_dernier_palet_prit_sur_ventouse" pour savoir si on garde le palet sur la ventouse
+#--todo
+call update_nb_palet_en_stock
+call update_status_ventouse
+cmp status_ventouse,oui
+je palet_non_ventouse
+#--si palet toujours ventouse, on range
+
+#--check stock av_g
+cmp status_stock_av_g,oui
+je stock_av_g_libre
+#--check stock av_d
+cmp status_stock_av_d,oui
+je stock_av_d_libre
+#--check stock ar_g
+cmp status_stock_ar_g,oui
+je stock_ar_g_libre
+#--check stock ar_d
+cmp status_stock_ar_d,oui
+je stock_ar_d_libre
+ret
+
+#--on range dans le stock av_g
+label stock_av_g_libre
+call stocke_palet_av_g
+ret
+#--on range dans le stock av_d
+label stock_av_d_libre
+call stocke_palet_av_d
+ret
+#--on range dans le stock ar_g
+label stock_ar_g_libre
+call stocke_palet_ar_g
+ret
+#--on range dans le stock ar_d
+label stock_ar_d_libre
+call stocke_palet_ar_d
+ret
+
+#--si palet perdu, on coupe la pompe
+label palet_non_ventouse
+pump.set_pwm pwm_pump_off
+end sequence
+
+begin sequence destock_auto
+call update_nb_palet_en_stock
+cmp nb_palet_en_stock,oui
+jge stock_non_vide
+#--si stocke vide, fin
+ret
+#--si stock non vide, on checke la présence de ventouse
+label stock_non_vide
+call update_status_ventouse
+cmp status_ventouse,oui
+je palet_non_ventouse
+#--si palet toujours ventouse, on est pret a depose (fin de fonction)
+ret
+#--sinon on teste le destoke av_g
+label palet_non_ventouse
+
+
+#--check stock av_g
+cmp status_stock_av_g,oui
+je stock_av_g_libre
+call destock_palet_av_g
+ret
+#--l'emplacement etant libre on teste le suivant
+label stock_av_g_libre
+
+#--check stock av_d
+cmp status_stock_av_d,oui
+je stock_av_d_libre
+call destock_palet_av_d
+ret
+#--l'emplacement etant libre on teste le suivant
+label stock_av_d_libre
+
+
+#--check stock ar_g
+cmp status_stock_ar_g,oui
+je stock_ar_g_libre
+call destock_palet_ar_g
+ret
+#--l'emplacement etant libre on teste le suivant
+label stock_ar_g_libre
+
+#--check stock ar_d
+cmp status_stock_ar_d,oui
+je stock_ar_d_libre
+call destock_palet_ar_d
+ret
+#--l'emplacement etant libre on teste le suivant
+label stock_ar_d_libre
+#--on a pas de palet stocker
+end sequence
+
+begin sequence debourrage_palet_dans_robot
+movi palet_tombe_dans_robot,1
+#--todo - que faire pour debourrer??
+end sequence
+
+begin sequence update_status_ventouse
+#--test de l'etat du vacuostat
+check_sensor vacuostat
+jnz palet_present
+#--pas de palet
+movi status_ventouse,0
+#send_event 10,status_ventouse,1
+ret
+#--palet present
+label palet_present
+movi status_ventouse,1
+#send_event 10,status_ventouse,1
+end sequence
+
+begin sequence update_nb_palet_en_stock
+#--comptage local
+var int cmp_palet_en_stock=0
+movi cmp_palet_en_stock,0
+call update_status_ventouse
+#--recuperation des status
+add cmp_palet_en_stock,cmp_palet_en_stock,status_stock_av_d
+add cmp_palet_en_stock,cmp_palet_en_stock,status_stock_av_g
+add cmp_palet_en_stock,cmp_palet_en_stock,status_stock_ar_d
+add cmp_palet_en_stock,cmp_palet_en_stock,status_stock_ar_g
+add cmp_palet_en_stock,cmp_palet_en_stock,status_ventouse
+#send_event 21,cmp_palet_en_stock,1
+#--on verifie que l'on a pas plus de palet que possible
+cmp cmp_palet_en_stock,max_palet_en_stock
+je nombre_max_non_atteint
+#--nombre max atteint, on limite à 5
+movi nb_palet_en_stock,5
+#send_event 20,nb_palet_en_stock,1
+ret
+#--on recopie le compte local dans le compte global
+label nombre_max_non_atteint
+mov1 nb_palet_en_stock,cmp_palet_en_stock
+#send_event 20,nb_palet_en_stock,1
+end sequence
 
 begin sequence prise_ligne_chaos_jaune
 #--prereq: palet distrib1 stocke en stock_ar_d
@@ -1026,6 +1261,7 @@ call stocke_palet_ar_g
 
 wait_movement_finished
 propulsion.move_to debut_recal_acc_violet,speed_200
+#propulsion.move_to approche_acc_violet,speed_200
 delay delay1
 call griffes_range
 
@@ -1075,106 +1311,8 @@ ret
 label fin_deplacement
 end sequence
 
-begin sequence debug
-call preprise_sol
-call prise_sol_av
-call stocke_palet_av_g
-delay delay02
-#--prise palet devant vert
-call preprise_sol
-call prise_sol_av
-call stocke_palet_av_d
-delay delay02
-#--prise palet devant bleu
-call preprise_sol
-call prise_sol_ar
-call stocke_palet_ar_g
-delay delay02
-#--voyage a l'accel
-call griffes_accelerateur_violet
-#declenchement accelerateur
-arm.go_to_position acc_tassage2,1,100
-wait_arm_finished
-delay delay02
-call slider_pousse_droite
-delay delay05
-call slider_range_gauche
-#depose accelerateur
-call destock_palet_ar_g
-call accelerateur_violet
-delay delay02
-call destock_palet_av_d
-call accelerateur_violet
-delay delay02
-call destock_palet_av_g
-call accelerateur_violet
-delay delay02
-end sequence
-
 ####################################################################
 #							Sequence a tester
 ####################################################################
 
-
-begin sequence stock_auto
-call update_nb_palet_en_stock
-#--fonction sortante sur une arrive en fin de deplacement
-#--on stock en priorité av puis ar.
-#--ne pas oublier de lire le flag "garder_dernier_palet_prit_sur_ventouse" pour savoir si on garde le palet sur la ventouse
-#--todo
-end sequence
-
-begin sequence destock_auto
-#--todo
-#--1) test si palet dans ventouse, pas de déstockage
-#--2) test si stock av_g
-#--3) test si stock av_d
-#--4) test si stock ar_g
-#--5) test si stock ar_d
-
-end sequence
-
-begin sequence debourrage_palet_dans_robot
-movi palet_tombe_dans_robot,1
-#--todo - que faire pour debourrer??
-end sequence
-
-begin sequence update_status_ventouse
-#--test de l'etat du vacuostat
-check_sensor vacuostat
-jnz palet_present
-#--pas de palet
-movi status_ventouse,0
-#send_event 10,status_ventouse,1
-ret
-#--palet present
-label palet_present
-movi status_ventouse,1
-#send_event 10,status_ventouse,1
-end sequence
-
-begin sequence update_nb_palet_en_stock
-#--comptage local
-var int cmp_palet_en_stock=0
-movi cmp_palet_en_stock,0
-call update_status_ventouse
-#--recuperation des status
-add cmp_palet_en_stock,cmp_palet_en_stock,status_stock_av_d
-add cmp_palet_en_stock,cmp_palet_en_stock,status_stock_av_g
-add cmp_palet_en_stock,cmp_palet_en_stock,status_stock_ar_d
-add cmp_palet_en_stock,cmp_palet_en_stock,status_stock_ar_g
-add cmp_palet_en_stock,cmp_palet_en_stock,status_ventouse
-#send_event 21,cmp_palet_en_stock,1
-#--on verifie que l'on a pas plus de palet que possible
-cmp cmp_palet_en_stock,max_palet_en_stock
-je nombre_max_non_atteint
-#--nombre max atteint, on limite à 5
-movi nb_palet_en_stock,5
-#send_event 20,nb_palet_en_stock,1
-ret
-#--on recopie le compte local dans le compte global
-label nombre_max_non_atteint
-mov1 nb_palet_en_stock,cmp_palet_en_stock
-#send_event 20,nb_palet_en_stock,1
-end sequence
 

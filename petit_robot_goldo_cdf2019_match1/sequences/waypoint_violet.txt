@@ -12,7 +12,8 @@ var vec3 start_pose_violet=(450mm,1250mm,-90deg)
 #--collecte depart
 var vec2 palet_zone_rouge_violet=(450mm,1000mm)
 var vec2 palet_zone_verte_violet=(750mm,1000mm)
-var vec2 palet_zone_bleu_violet=(1050mm,1000mm)
+var vec2 palet_zone_bleu_violet=(1080mm,1000mm)
+#anciencement 1050,1000
 
 #--trajet accelerateur
 var vec2 virage_top_chaos_violet=(750mm,500mm)
@@ -24,7 +25,7 @@ var vec2 approche_acc_violet=(220mm,-200mm)
 var vec2 contact_acc_violet=(120mm,-200mm)
 
 #--trajet goldonium
-var vec2 capteur_recal_gold_violet=(220mm,-690mm)
+var vec2 capteur_recal_gold_violet=(220mm,-703mm)
 var vec2 approche_gold_violet=(220mm,-740mm)
 var vec2 contact_gold_violet=(140mm,-740mm)
 var vec2 virage_face_gold_advchaos_violet=(750mm,-740mm)

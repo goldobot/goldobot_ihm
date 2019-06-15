@@ -13,6 +13,7 @@
 ####################################################################
 
 #--general
+var int non=0
 var int oui=1
 var int score=0
 #ajout de score: movi score,1
@@ -28,6 +29,7 @@ var int status_stock_av_g=0
 var int status_stock_ar_d=0
 var int status_stock_ar_g=0
 var int status_ventouse=0
+var int goldonium_pris=0
 
 ####################################################################
 #							constantes

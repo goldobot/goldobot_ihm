@@ -24,7 +24,7 @@ var vec2 approche_acc_jaune=(220mm,200mm)
 var vec2 contact_acc_jaune=(120mm,200mm)
 
 #--trajet goldonium
-var vec2 capteur_recal_gold_jaune=(220mm,690mm)
+var vec2 capteur_recal_gold_jaune=(220mm,703mm)
 var vec2 approche_gold_jaune=(220mm,740mm)
 var vec2 contact_gold_jaune=(140mm,740mm)
 var vec2 virage_face_gold_advchaos_jaune=(750mm,740mm)
