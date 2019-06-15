@@ -27,6 +27,7 @@ from dialogs.test_actuators import TestActuatorsDialog
 from dialogs.test_dynamixels import TestDynamixelAx12Dialog
 from dialogs.debug_fpga import DebugFpgaDialog
 from dialogs.sequences import SequencesDialog
+from dialogs.score import ScoreDialog
 
 from parse_sequence import SequenceParser
 
@@ -43,13 +44,14 @@ dialogs = [
     ("Test actionneurs", TestActuatorsDialog),
     ("Debug FPGA", DebugFpgaDialog),
     ("Test sequences", SequencesDialog),
+    ('Score', ScoreDialog)
  ]
         
 class MainWindow(QMainWindow):
     def __init__(self, parent = None):
         super(MainWindow, self).__init__(None)
         
-         #PArse arguments
+         #Parse arguments
         parser = OptionParser()
         parser.add_option('--robot-ip', default='192.168.1.222')
         parser.add_option('--config-path', default='petit_robot')
