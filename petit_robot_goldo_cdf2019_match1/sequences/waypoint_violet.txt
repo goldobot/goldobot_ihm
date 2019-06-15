@@ -9,18 +9,44 @@
 #--position de depart
 var vec3 start_pose_violet=(450mm,1250mm,-90deg)
 
+#--collecte depart
 var vec2 palet_zone_rouge_violet=(450mm,1000mm)
 var vec2 palet_zone_verte_violet=(750mm,1000mm)
 var vec2 palet_zone_bleu_violet=(1050mm,1000mm)
+
+#--trajet accelerateur
 var vec2 virage_top_chaos_violet=(750mm,500mm)
-var vec2 virage_face_acc_advchaos_violet=(750mm,-197mm)
-var vec2 approche_acc_violet=(300mm,-197mm)
-var vec2 contact_acc_violet=(120mm,-197mm)
-var vec2 approche_gold_violet=(300mm,-730mm)
-var vec2 contact_gold_violet=(140mm,-730mm)
-var vec2 virage_face_gold_advchaos_violet=(750mm,-730mm)
-var vec2 virage_face_balance_chaos_violet=(300mm,150mm)
-var vec2 debut_recal_balance_violet=(1380mm,130mm)
-var vec2 depose_balance_violet=(1530mm,130mm)
-var vec2 approche_chaos_violet=(1250mm,130mm)
+var vec2 virage_face_acc_advchaos_violet=(750mm,-200mm)
+var vec3 debut_recal_acc_violet=(220mm,-400mm,90deg)
+var vec2 capteur_recal_acc_violet=(220mm,-235mm)
+#var vec2 fin_recal_acc_violet=(220mm,-150mm)
+var vec2 approche_acc_violet=(220mm,-200mm)
+var vec2 contact_acc_violet=(120mm,-200mm)
+
+#--trajet goldonium
+var vec2 capteur_recal_gold_violet=(220mm,-690mm)
+var vec2 approche_gold_violet=(220mm,-740mm)
+var vec2 contact_gold_violet=(140mm,-740mm)
+var vec2 virage_face_gold_advchaos_violet=(750mm,-740mm)
+
+#--trajet balance
+var vec2 virage_face_balance_chaos_violet=(300mm,135mm)
+var vec2 depose_balance_violet=(1530mm,135mm)
+var vec2 debut_recal_balance_violet=(1380mm,135mm)
+
+#--trajet distributeur
+var vec2 approche_distrib1_violet=(1380mm,500mm)
+var vec2 contact_distrib1_violet=(1450mm,500mm)
+
+#--ligne_chaos
+var vec2 fin_ligne_chaos_violet=(750mm,500mm)
+
+#--balyage_chaos
+var vec2 approche_chaos_violet=(1250mm,135mm)
 var vec2 depose_zone_verte_rouge_violet=(750mm,1220mm)
+
+#--test trajectoire courbe (depart violet)
+var vec2 traj_courbe1=(450mm,1250mm)
+var vec2 traj_courbe2=(450mm,1000mm)
+var vec2 traj_courbe3=(750mm,500mm)
+var vec2 traj_courbe4=(200mm,-350mm)

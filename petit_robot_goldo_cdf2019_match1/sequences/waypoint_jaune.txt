@@ -19,7 +19,7 @@ var vec2 virage_top_chaos_jaune=(750mm,-500mm)
 var vec2 virage_face_acc_advchaos_jaune=(750mm,200mm)
 var vec3 debut_recal_acc_jaune=(220mm,400mm,-90deg)
 var vec2 capteur_recal_acc_jaune=(220mm,235mm)
-var vec2 fin_recal_acc_jaune=(220mm,150mm)
+#var vec2 fin_recal_acc_jaune=(220mm,150mm)
 var vec2 approche_acc_jaune=(220mm,200mm)
 var vec2 contact_acc_jaune=(120mm,200mm)
 
