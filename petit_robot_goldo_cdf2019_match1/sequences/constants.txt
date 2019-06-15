@@ -1,3 +1,38 @@
+
+####################################################################
+#							liste des send event
+####################################################################
+
+#0: reserve_test
+#1: score
+#10: statut ventouse (vacuostat)
+#20: statut stock (nombre de palet stocke
+
+####################################################################
+#							variable de sequence
+####################################################################
+
+#--general
+var int oui=1
+var int score=0
+#ajout de score: movi score,1
+
+#--stockage palet
+var int nb_palet_a_collecter=0
+var int nb_palet_en_stock=0
+var int max_palet_en_stock=5
+var int garder_dernier_palet_prit_sur_ventouse=0
+var int palet_tombe_dans_robot=0
+var int status_stock_av_d=0
+var int status_stock_av_g=0
+var int status_stock_ar_d=0
+var int status_stock_ar_g=0
+var int status_ventouse=0
+
+####################################################################
+#							constantes
+####################################################################
+
 #--delais
 var int delay005=50
 var int delay01=100
@@ -41,6 +76,13 @@ var vec3 speed_500=(500mm,500mm,500mm)
 var vec3 speed_200=(200mm,500mm,300mm)
 #--ramasse ligne chaos
 var vec3 speed_100=(45mm,300mm,300mm)
+
+
+####################################################################
+#							vecteur de recalage
+####################################################################
+
+var vec2 recalage_x_accelerateur=(180deg,56mm)
 
 
 ####################################################################

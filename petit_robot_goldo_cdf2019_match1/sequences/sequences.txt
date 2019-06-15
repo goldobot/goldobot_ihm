@@ -3,6 +3,7 @@
 ####################################################################
 
 begin sequence prematch_jaune
+movi score,0
 #call auto_test
 call prematch_common
 call slider_range_gauche
@@ -10,6 +11,7 @@ propulsion.set_pose start_pose_jaune
 end sequence
 
 begin sequence prematch_violet
+movi score,0
 #call auto_test
 call prematch_common
 call slider_range_droite
@@ -23,48 +25,40 @@ propulsion.set_pose start_pose_jaune
 #--prise palet devant rouge
 call preprise_sol
 propulsion.move_to palet_zone_rouge_jaune,speed_500
-wait_movement_finished
-call prise_sol_av
-propulsion.point_to palet_zone_verte_jaune,yaw_180
+propulsion.point_to palet_zone_bleu_jaune,yaw_180
+#--ajoute point experience et electron
+movi score,40
+call prise_auto_av
 call stocke_palet_av_g
-delay delay02
-wait_movement_finished
+call preprise_sol
 #--prise palet devant vert
-call preprise_sol
-propulsion.move_to palet_zone_verte_jaune,speed_500
-wait_movement_finished
-call prise_sol_av
-propulsion.move_to palet_zone_bleu_jaune,speed_500
+propulsion.move_to palet_zone_bleu_jaune,speed_200
+call prise_auto_av
 call stocke_palet_av_d
-delay delay02
-#--prise palet devant bleu
 call preprise_sol
-wait_movement_finished
-call prise_sol_ar
+#--prise palet devant bleu
+call prise_auto_av
 
 #--voyage a accelerateur
 propulsion.point_to debut_recal_acc_jaune,yaw_180
 wait_movement_finished
 propulsion.move_to debut_recal_acc_jaune,speed_500
-call stocke_palet_ar_g
-delay delay02
 wait_movement_finished
 call griffes_accelerateur_jaune
 
 #--recalage et positionnement contre l'accelerateur
 call recale_accelerateur_jaune
 
-#--declenchement accelerateur
-arm.go_to_position acc_tassage,1,100
-wait_arm_finished
+#--declenchement accelerateur (palet bleu)
 call slider_pousse_droite
 delay delay02
+#--ajoute point 1 atom accelerateur + goldonium revele
+movi score,20
 
 #--prise accelerateur
 #call prise_palet_accelerateur
 
 #--depose accelerateur
-call destock_palet_ar_g
 call accelerateur_jaune
 delay delay02
 call destock_palet_av_d
@@ -76,69 +70,65 @@ delay delay02
 
 #--voyage goldenium
 propulsion.move_to approche_acc_jaune,speed_500
-wait_movement_finished
 propulsion.point_to approche_gold_jaune,yaw_180
 propulsion.move_to approche_gold_jaune,speed_500
-call griffes_goldenium
-call slider_range_droite
-wait_movement_finished
+#call slider_range_droite
 propulsion.point_to contact_gold_jaune,yaw_180
+wait_movement_finished
+call griffes_goldenium
 propulsion.move_to contact_gold_jaune,speed_200
 wait_movement_finished
 
 #--prise goldenium
-call prise_goldenium
+call prise_goldenium_out
 propulsion.move_to approche_gold_jaune,speed_500
-wait_movement_finished
 call griffes_range
+wait_movement_finished
 
 #--voyage vers balance
-propulsion.point_to virage_face_balance_chaos_jaune,yaw_180
+propulsion.point_to approche_chaos_jaune,yaw_180
 wait_movement_finished
-propulsion.move_to virage_face_balance_chaos_jaune,speed_500
+propulsion.move_to approche_chaos_jaune,speed_500
 wait_movement_finished
 propulsion.point_to depose_balance_jaune,yaw_180
 wait_movement_finished
 propulsion.move_to depose_balance_jaune,speed_500
 wait_movement_finished
 
-#--depose balance
-call jette_palet
-delay delay02
-call destock_palet_ar_d
-delay delay02
+#--depose balance du goldonium
 call jette_palet
 
 #--trajet au distrib1
 propulsion.move_to debut_recal_balance_jaune,speed_200
-######### instruction pour mettre de dos, à remplacer #####
 propulsion.point_to debut_recal_balance_violet,yaw_180
+#propulsion.face_direction 90,yaw_180
 wait_movement_finished
 ################## todo - recalage balance ici ##################
 propulsion.move_to approche_distrib1_jaune,speed_500
 wait_movement_finished
 
 #--prise distrib1
-propulsion.point_to contact_distrib1_jaune,yaw_180
-call preprise_dist
-set_servo griffe_g,servo_griffe_gauche_attack,100
-wait_movement_finished
-propulsion.move_to contact_distrib1_jaune,speed_200
-wait_movement_finished
-call prise_dist_ar
+#propulsion.point_to contact_distrib1_jaune,yaw_180
+#call preprise_dist
+#set_servo griffe_g,servo_griffe_gauche_attack,100
+#wait_movement_finished
+#propulsion.move_to contact_distrib1_jaune,speed_200
+#wait_movement_finished
+#call prise_dist_ar
 #--recul distrib1
-propulsion.move_to approche_distrib1_jaune,speed_500
-set_servo griffe_g,servo_griffe_gauche_retrait,100
-call stocke_palet_ar_d
-wait_movement_finished
+#propulsion.move_to approche_distrib1_jaune,speed_500
+#set_servo griffe_g,servo_griffe_gauche_retrait,100
+#call stocke_palet_ar_d
+#wait_movement_finished
+
+#--ligne collecte chaos et voyage accelerateur 2
 propulsion.point_to fin_ligne_chaos_jaune,yaw_180
 call preprise_sol
+call slider_range_gauche
 wait_movement_finished fin_ligne_chaos_jaune
+call prise_ligne_chaos_jaune
 
-#--ligne collecte chaos
-call prise_ligne_chaos
-
-#--collecte chaos
+#--collecte chaos vers zone de départ
 #propulsion.move_to approche_chaos_jaune,speed_500
 #wait_movement_finished
 #propulsion.point_to depose_zone_verte_rouge_jaune,yaw_180
@@ -159,6 +149,27 @@ call prise_ligne_chaos
 #wait_movement_finished
 #call jette_palet
 
+#--recalage sur goldonium
+call recale_goldonium_jaune
+#-- OU
+#--recalage sur goldonium
+#call recale_mat_jaune
+propulsion.point_to contact_acc_jaune,yaw_180
+propulsion.move_to contact_acc_jaune,speed_200
+wait_movement_finished
+
+#--depose accelerateur 2
+call accelerateur_jaune
+delay delay02
+call destock_palet_av_d
+call accelerateur_jaune
+delay delay02
+call destock_palet_av_g
+call accelerateur_jaune
+delay delay02
+call destock_palet_ar_g
+call accelerateur_jaune
+delay delay02
 end sequence
 
 ############################ match violet #####################
@@ -168,59 +179,40 @@ propulsion.set_pose start_pose_violet
 #--prise palet devant rouge
 call preprise_sol
 propulsion.move_to palet_zone_rouge_violet,speed_500
-wait_movement_finished
-call prise_sol_av
-propulsion.point_to palet_zone_verte_violet,yaw_180
+propulsion.point_to palet_zone_bleu_violet,yaw_180
+#--ajoute point experience et electron
+movi score,40
+call prise_auto_av
 call stocke_palet_av_g
-delay delay02
-wait_movement_finished
+call preprise_sol
 #--prise palet devant vert
-call preprise_sol
-propulsion.move_to palet_zone_verte_violet,speed_500
-wait_movement_finished
-call prise_sol_av
-propulsion.move_to palet_zone_bleu_violet,speed_500
+propulsion.move_to palet_zone_bleu_violet,speed_200
+call prise_auto_av
 call stocke_palet_av_d
-delay delay02
-#--prise palet devant bleu
 call preprise_sol
-wait_movement_finished
-call prise_sol_ar
+#--prise palet devant bleu
+call prise_auto_av
 
 #--voyage a accelerateur
-#propulsion.point_to virage_top_chaos_violet,yaw_180
-#wait_movement_finished
-#propulsion.move_to virage_top_chaos_violet,speed_500
-propulsion.point_to approche_acc_violet,yaw_180
+propulsion.point_to debut_recal_acc_violet,yaw_180
 wait_movement_finished
-propulsion.move_to approche_acc_violet,speed_500
-call stocke_palet_ar_g
-delay delay02
+propulsion.move_to debut_recal_acc_violet,speed_500
+wait_movement_finished
 call griffes_accelerateur_violet
-#wait_movement_finished
-wait_movement_finished
-#propulsion.point_to virage_face_acc_advchaos_violet,yaw_180
-#wait_movement_finished
-#propulsion.move_to virage_face_acc_advchaos_violet,speed_500
-#wait_movement_finished
-#propulsion.point_to approche_acc_violet,yaw_180
-#wait_movement_finished
-#propulsion.move_to approche_acc_violet,speed_500
-#wait_movement_finished
-propulsion.point_to contact_acc_violet,yaw_180
-wait_movement_finished
-propulsion.move_to contact_acc_violet,speed_200
-wait_movement_finished
-#--declenchement accelerateur
-arm.go_to_position acc_tassage2,1,100
-wait_arm_finished
-delay delay02
+
+#--recalage et positionnement contre l'accelerateur
+call recale_accelerateur_violet
+
+#--declenchement accelerateur (palet bleu)
 call slider_pousse_gauche
-delay delay05
-call slider_range_droite
-delay delay05
+delay delay02
+#--ajoute point 1 atom accelerateur + goldonium revele
+movi score,20
+
+#--prise accelerateur
+#call prise_palet_accelerateur
+
 #--depose accelerateur
-call destock_palet_ar_g
 call accelerateur_violet
 delay delay02
 call destock_palet_av_d
@@ -229,50 +221,109 @@ delay delay02
 call destock_palet_av_g
 call accelerateur_violet
 delay delay02
+
 #--voyage goldenium
 propulsion.move_to approche_acc_violet,speed_500
-wait_movement_finished
-call griffes_range
 propulsion.point_to approche_gold_violet,yaw_180
-wait_movement_finished
 propulsion.move_to approche_gold_violet,speed_500
-wait_movement_finished
-call griffes_goldenium
-call slider_range_gauche
+#call slider_range_gauche
 propulsion.point_to contact_gold_violet,yaw_180
 wait_movement_finished
+call griffes_goldenium
 propulsion.move_to contact_gold_violet,speed_200
 wait_movement_finished
+
 #--prise goldenium
-call prise_goldenium
+call prise_goldenium_out
 propulsion.move_to approche_gold_violet,speed_500
-wait_movement_finished
 call griffes_range
-#--voyage vers balance
-#propulsion.point_to virage_face_gold_advchaos_violet,yaw_180
-#wait_movement_finished
-#propulsion.move_to virage_face_gold_advchaos_violet,speed_500
-#wait_movement_finished
-propulsion.point_to virage_face_balance_chaos_violet,yaw_180
 wait_movement_finished
-propulsion.move_to virage_face_balance_chaos_violet,speed_500
+
+#--voyage vers balance
+propulsion.point_to approche_chaos_violet,yaw_180
+wait_movement_finished
+propulsion.move_to approche_chaos_violet,speed_500
 wait_movement_finished
 propulsion.point_to depose_balance_violet,yaw_180
 wait_movement_finished
 propulsion.move_to depose_balance_violet,speed_500
 wait_movement_finished
-#--depose balance
+
+#--depose balance du goldonium
 call jette_palet
-delay delay1
-#collecte chaos
-propulsion.move_to approche_chaos_violet,speed_500
+
+#--trajet au distrib1
+propulsion.move_to debut_recal_balance_violet,speed_200
+propulsion.point_to debut_recal_balance_jaune,yaw_180
+#propulsion.face_direction 90,yaw_180
 wait_movement_finished
-propulsion.point_to depose_zone_verte_rouge_violet,yaw_180
+################## todo - recalage balance ici ##################
+propulsion.move_to approche_distrib1_violet,speed_500
 wait_movement_finished
-call griffes_chaos
-propulsion.move_to depose_zone_verte_rouge_violet,speed_500
+
+#--prise distrib1
+#propulsion.point_to contact_distrib1_violet,yaw_180
+#call preprise_dist
+#set_servo griffe_g,servo_griffe_droite_attack,100
+#wait_movement_finished
+#propulsion.move_to contact_distrib1_violet,speed_200
+#wait_movement_finished
+#call prise_dist_ar
+#--recul distrib1
+#propulsion.move_to approche_distrib1_violet,speed_500
+#set_servo griffe_g,servo_griffe_droite_retrait,100
+#call stocke_palet_ar_d
+#wait_movement_finished
+
+#--ligne collecte chaos et voyage accelerateur 2
+propulsion.point_to fin_ligne_chaos_violet,yaw_180
+call preprise_sol
+call slider_range_droite
+wait_movement_finished fin_ligne_chaos_violet
+call prise_ligne_chaos_violet
+
+#--collecte chaos vers zone de départ
+#propulsion.move_to approche_chaos_violet,speed_500
+#wait_movement_finished
+#propulsion.point_to depose_zone_verte_rouge_violet,yaw_180
+#wait_movement_finished
+#call griffes_chaos
+#propulsion.move_to depose_zone_verte_rouge_violet,speed_500
+#call preprise_sol
+#wait_movement_finished
+#call griffes_range
+
+#--recuperation 1 palet
+#call prise_sol_av
+#propulsion.move_to approche_chaos_violet,speed_500
+#wait_movement_finished
+#propulsion.point_to depose_balance_violet,yaw_180
+#wait_movement_finished
+#propulsion.move_to depose_balance_violet,speed_500
+#wait_movement_finished
+#call jette_palet
+
+#--recalage sur goldonium
+call recale_goldonium_violet
+#-- OU
+#--recalage sur goldonium
+#call recale_mat_violet
+propulsion.point_to contact_acc_violet,yaw_180
+propulsion.move_to contact_acc_violet,speed_200
 wait_movement_finished
-call griffes_range
+
+#--depose accelerateur 2
+call accelerateur_violet
+delay delay02
+call destock_palet_av_d
+call accelerateur_violet
+delay delay02
+call destock_palet_av_g
+call accelerateur_violet
+delay delay02
+call destock_palet_ar_g
+call accelerateur_violet
+delay delay02
 end sequence
 
 begin sequence postmatch
@@ -284,6 +335,9 @@ call griffes_range
 arm.shutdown
 propulsion.disable
 propulsion.motors_disable
+
+#--on envoit le score
+send_event 1,score,1
 end sequence
 
 begin sequence prematch_common
@@ -340,7 +394,7 @@ end sequence
 begin sequence test_trajectoire_courbe
 propulsion.trajectory traj_courbe1,4,speed_750
 wait_movement_finished
-propulsion.point_to fin_recal_acc_jaune,yaw_180
+propulsion.point_to approche_acc_jaune,yaw_180
 end sequence
 
 begin sequence test_prise_distrib1_jaune
@@ -367,7 +421,7 @@ propulsion.point_to fin_ligne_chaos_jaune,yaw_180
 call preprise_sol
 wait_movement_finished
 #--ligne
-call prise_ligne_chaos
+call prise_ligne_chaos_jaune
 end sequence
 
 begin sequence test_recalage_acc_jaune
@@ -477,11 +531,27 @@ wait_arm_finished
 arm.go_to_position gold_stockage,1,20
 wait_arm_finished
 end sequence
+#### ajouter test prise goldonium avant ajout score goldonium###
+begin sequence prise_goldenium_out
+arm.go_to_position gold_preprise,1,100
+wait_arm_finished
+arm.go_to_position gold_prise,1,100
+wait_arm_finished
+pump.set_pwm pwm_pump_activated
+delay delay05
+#--ajoute point prise goldonium
+movi score,20
+
+#arm.go_to_position gold_stockage_intermediaire1,1,20
+#wait_arm_finished
+end sequence
 
 begin sequence jette_palet
 arm.go_to_position gold_prise,1,100
 delay delay005
 pump.set_pwm pwm_pump_off
+#--ajoute point depose goldonium
+movi score,24
 end sequence
 
 begin sequence depose_sol
@@ -517,32 +587,30 @@ end sequence
 
 begin sequence slider_pousse_gauche
 set_servo slider,servo_slider_droit_presorti,100
-delay delay02
+delay delay01
 set_servo slider,servo_slider_gauche,100
-delay delay05
+delay delay03
 call slider_range_droite
 end sequence
 
 begin sequence slider_pousse_droite
 set_servo slider,servo_slider_gauche_presorti,100
-delay delay02
+delay delay01
 set_servo slider,servo_slider_droite,100
-delay delay05
+delay delay03
 call slider_range_gauche
 end sequence
 
 begin sequence slider_range_gauche
 set_servo slider,servo_slider_gauche_overshoot,100
-delay delay05
+delay delay03
 set_servo slider,servo_slider_gauche_range,100
-delay delay02
 end sequence
 
 begin sequence slider_range_droite
 set_servo slider,servo_slider_droit_overshoot,100
-delay delay05
+delay delay03
 set_servo slider,servo_slider_droit_range,100
-delay delay02
 end sequence
 
 #--------------------- stock -------------------------#
@@ -748,9 +816,11 @@ end sequence
 begin sequence accelerateur_violet
 #--prereq: Cose sortie, palet ventouse
 call depose_acc
-arm.go_to_position acc_tassage2,1,100
-wait_arm_finished
+#arm.go_to_position acc_tassage2,1,100
+#wait_arm_finished
 call slider_pousse_gauche
+#--ajoute point 1 atom accelerateur
+movi score,10
 arm.go_to_position stk_av_prise,1,100
 wait_arm_finished
 end sequence
@@ -758,9 +828,11 @@ end sequence
 begin sequence accelerateur_jaune
 #--prereq: Cose sortie, palet ventouse
 call depose_acc
-arm.go_to_position acc_tassage2,1,100
-wait_arm_finished
+#arm.go_to_position acc_tassage2,1,100
+#wait_arm_finished
 call slider_pousse_droite
+#--ajoute point 1 atom accelerateur
+movi score,10
 arm.go_to_position stk_av_prise,1,100
 wait_arm_finished
 end sequence
@@ -795,9 +867,7 @@ end sequence
 ####################################################################
 
 begin sequence recale_accelerateur_jaune
-propulsion.point_to fin_recal_acc_jaune,yaw_180
-wait_movement_finished
-delay delay1
+propulsion.point_to approche_acc_jaune,yaw_180
 propulsion.move_to approche_acc_jaune,speed_200
 
 #--boucle de surveillance capteur lateral
@@ -817,30 +887,93 @@ wait_movement_finished
 #--fin de trajectoire atteinte
 label fin_ligne_recalage_acc_atteinte
 propulsion.point_to contact_acc_jaune,yaw_180
-wait_movement_finished
 propulsion.move_to contact_acc_jaune,speed_200
 wait_movement_finished
 end sequence
 
 begin sequence recale_accelerateur_violet
-#propulsion.set_pose preapproche_acc_violet
-#propulsion.move_to approche_acc_violet,test_approche_speeds
-#label boucle_recalage_acc_violet
-#check_sensor rouge_droit
-#jz boucle_recalage_acc_violet
-#propulsion.set_pose approche_acc_violet
-#wait_movement_finished
+propulsion.point_to approche_acc_violet,yaw_180
+propulsion.move_to approche_acc_violet,speed_200
+
+#--boucle de surveillance capteur lateral
+label boucle_recalage_acc
+	check_sensor rouge_gauche
+	jnz fin_boucle_recalage_acc
+		check_propulsion_state 1
+		je fin_ligne_recalage_acc_atteinte
+	yield
+jmp boucle_recalage_acc
+
+#--sortie boucle capteur
+label fin_boucle_recalage_acc
+propulsion.measure_point rouge_lateral,capteur_recal_acc_violet
+wait_movement_finished
+
+#--fin de trajectoire atteinte
+label fin_ligne_recalage_acc_atteinte
 propulsion.point_to contact_acc_violet,yaw_180
+propulsion.move_to contact_acc_violet,speed_200
 wait_movement_finished
 end sequence
 
+begin sequence recale_goldonium_jaune
+propulsion.point_to approche_gold_jaune,yaw_180
+propulsion.move_to approche_gold_jaune,speed_200
+
+#--boucle de surveillance capteur lateral
+label boucle_recalage_gold
+	check_sensor rouge_gauche
+	jnz fin_boucle_recalage_gold
+		check_propulsion_state 1
+		je fin_ligne_recalage_gold_atteinte
+	yield
+jmp boucle_recalage_gold
+
+#--sortie boucle capteur
+label fin_boucle_recalage_gold
+propulsion.measure_point rouge_lateral,capteur_recal_gold_jaune
+wait_movement_finished
+
+#--fin de trajectoire atteinte
+label fin_ligne_recalage_gold_atteinte
+propulsion.move_to approche_acc_jaune,speed_200
+wait_movement_finished
+end sequence
+
+begin sequence recale_goldonium_violet
+propulsion.point_to approche_gold_violet,yaw_180
+propulsion.move_to approche_gold_violet,speed_200
+
+#--boucle de surveillance capteur lateral
+label boucle_recalage_gold
+	check_sensor rouge_droit
+	jnz fin_boucle_recalage_gold
+		check_propulsion_state 1
+		je fin_ligne_recalage_gold_atteinte
+	yield
+jmp boucle_recalage_gold
+
+#--sortie boucle capteur
+label fin_boucle_recalage_gold
+propulsion.measure_point rouge_lateral,capteur_recal_gold_violet
+wait_movement_finished
+
+#--fin de trajectoire atteinte
+label fin_ligne_recalage_gold_atteinte
+propulsion.move_to approche_acc_violet,speed_200
+wait_movement_finished
+end sequence
+####TODO
+begin sequence recale_mat_jaune
+
+end sequence
 
 ####################################################################
 #							Sequence collecte chaos
 ####################################################################
 
 
-begin sequence prise_ligne_chaos
+begin sequence prise_ligne_chaos_jaune
 #--prereq: palet distrib1 stocke en stock_ar_d
 call griffes_chaos
 propulsion.move_to fin_ligne_chaos_jaune,speed_100
@@ -872,6 +1005,38 @@ call prise_auto_av
 wait_movement_finished
 end sequence
 
+begin sequence prise_ligne_chaos_violet
+#--prereq: palet distrib1 stocke en stock_ar_d
+call griffes_chaos
+propulsion.move_to fin_ligne_chaos_violet,speed_100
+
+#--palet 1
+call prise_auto_av
+call stocke_palet_av_d
+
+#--palet 2
+call preprise_sol
+call prise_auto_av
+call stocke_palet_av_g
+
+#--palet 3
+call preprise_sol
+call prise_auto_ar
+call stocke_palet_ar_g
+
+wait_movement_finished
+propulsion.move_to debut_recal_acc_violet,speed_200
+delay delay1
+call griffes_range
+
+#--palet 4
+call preprise_sol
+call prise_auto_av
+#--on garde un palet sur la ventouse
+
+wait_movement_finished
+end sequence
+
 begin sequence prise_auto_av
 #--boucle de surveillance micro-switch
 label boucle_palet
@@ -885,17 +1050,29 @@ jmp boucle_palet
 #--sortie boucle capteur
 label capteur_declenche
 call prise_sol_av
+ret
 
 #--fin de trajectoire atteinte
 label fin_deplacement
 end sequence
 
 begin sequence prise_auto_ar
+#--boucle de surveillance micro-switch
 label boucle_palet
 	check_sensor micro_switch
+	jnz capteur_declenche
+		check_propulsion_state 1
+		je fin_deplacement
 	yield
-jz boucle_palet
+jmp boucle_palet
+
+#--sortie boucle capteur
+label capteur_declenche
 call prise_sol_ar
+ret
+
+#--fin de trajectoire atteinte
+label fin_deplacement
 end sequence
 
 begin sequence debug
@@ -938,21 +1115,9 @@ end sequence
 #							Sequence a tester
 ####################################################################
 
-var int oui=1
-var int nb_palet_a_collecter=0
-var int nb_palet_en_stock=0
-var int max_palet_en_stock=5
-var int garder_dernier_palet_prit_sur_ventouse=0
-var int palet_tombe_dans_robot=0
-var int status_stock_av_d=0
-var int status_stock_av_g=0
-var int status_stock_ar_d=0
-var int status_stock_ar_g=0
-var int status_ventouse=0
-
-#-- + tester destock
 
 begin sequence stock_auto
+call update_nb_palet_en_stock
 #--fonction sortante sur une arrive en fin de deplacement
 #--on stock en priorité av puis ar.
 #--ne pas oublier de lire le flag "garder_dernier_palet_prit_sur_ventouse" pour savoir si on garde le palet sur la ventouse
@@ -977,33 +1142,39 @@ end sequence
 begin sequence update_status_ventouse
 #--test de l'etat du vacuostat
 check_sensor vacuostat
-jz palet_present
+jnz palet_present
+#--pas de palet
+movi status_ventouse,0
+#send_event 10,status_ventouse,1
+ret
 #--palet present
 label palet_present
 movi status_ventouse,1
-jmp fin_sequence
-#--pas de palet
-movi status_ventouse,0
-label fin_sequence
+#send_event 10,status_ventouse,1
 end sequence
 
-#--  ########### non fonctionnelle #########
 begin sequence update_nb_palet_en_stock
 #--comptage local
 var int cmp_palet_en_stock=0
+movi cmp_palet_en_stock,0
+call update_status_ventouse
 #--recuperation des status
-#addi cmp_palet_en_stock,status_stock_av_d
-#addi cmp_palet_en_stock,status_stock_av_g
-#addi cmp_palet_en_stock,status_stock_ar_d
-#addi cmp_palet_en_stock,status_stock_ar_g
-#addi cmp_palet_en_stock,status_ventouse
+add cmp_palet_en_stock,cmp_palet_en_stock,status_stock_av_d
+add cmp_palet_en_stock,cmp_palet_en_stock,status_stock_av_g
+add cmp_palet_en_stock,cmp_palet_en_stock,status_stock_ar_d
+add cmp_palet_en_stock,cmp_palet_en_stock,status_stock_ar_g
+add cmp_palet_en_stock,cmp_palet_en_stock,status_ventouse
+#send_event 21,cmp_palet_en_stock,1
 #--on verifie que l'on a pas plus de palet que possible
 cmp cmp_palet_en_stock,max_palet_en_stock
-jne nombre_max_non_atteint
+je nombre_max_non_atteint
 #--nombre max atteint, on limite à 5
-movi cmp_palet_en_stock,5
+movi nb_palet_en_stock,5
+#send_event 20,nb_palet_en_stock,1
+ret
 #--on recopie le compte local dans le compte global
 label nombre_max_non_atteint
 mov1 nb_palet_en_stock,cmp_palet_en_stock
+#send_event 20,nb_palet_en_stock,1
 end sequence
 

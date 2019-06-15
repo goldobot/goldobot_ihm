@@ -29,6 +29,15 @@ var vec2 sensor_line=(0,50mm)
 var vec2 point=(300mm,500mm)
 propulsion.measure_point sensor_line,point
 
+ ####################### recalage bordure ##############
+
+propulsion.move_to contact_acc_jaune,speed_200
+#on avance à vitesse de 100 (le deuxieme paramètre n'est pas pris en compte)
+propulsion.reposition 100,0
+wait_movement_finished
+propulsion.measure_normal recalage_x_accelerateur
+
+
  ####################### definition variable ##############
 
  var int var_A=valeur_initiale
@@ -47,6 +56,12 @@ movi var_A,1
 #recopier de valeur
 mov1 Var_A,var_B
 
+# var_A=var_B+Var_C
+add var_A,var_B,var_C
+
+# var_A=var_B-Var_C
+sub var_A,var_B,var_C
+
  ############# utilisation de test sur variable ##############
 
 #saut si var_A=var_B
@@ -56,4 +71,8 @@ je label_to_jump_to
 #saut si var_A>var_B
 cmp var_A,var_B
 jge label_to_jump_to
+
+ ############# envoi d'info ##############
+ 
+sentevent(numero_event(int8),variable,taille_variable[1 pour int, 2 pour vec2, etc.)
 

@@ -3,7 +3,7 @@ begin sequence test_arm_speed
 arm.go_to_position sol_preprise,1,100
 arm.go_to_position stk_av_prise,1,100
 arm.go_to_position sol_preprise,1,50
-send_event 1,20
+send_event 1,score,1
 arm.go_to_position stk_av_prise,1,25
 arm.go_to_position sol_preprise,0,10
 arm.shutdown
