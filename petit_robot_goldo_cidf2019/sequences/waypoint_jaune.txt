@@ -9,6 +9,12 @@
 #--position de depart
 var vec3 start_pose_jaune=(450mm,-1250mm,90deg)
 
+#--test Goldo
+var vec2 test_goldo_evit1_jaune=(450mm,-800mm)
+var vec2 test_goldo_evit2_jaune=(450mm,1000mm)
+var vec2 test_goldo_evit3_jaune=(750mm,1000mm)
+var vec2 test_goldo_evit4_jaune=(750mm,-800mm)
+
 #--collecte depart
 var vec2 palet_zone_rouge_jaune=(450mm,-1000mm)
 var vec2 palet_zone_verte_jaune=(750mm,-1000mm)

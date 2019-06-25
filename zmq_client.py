@@ -25,6 +25,7 @@ class ZmqClient(QObject):
     fpga_registers = pyqtSignal(int, int)
     sensors = pyqtSignal(int)
     gpio = pyqtSignal(int)
+    debug_goldo = pyqtSignal(int)
     robot_end_load_config_status = pyqtSignal(bool)
     sequence_event = pyqtSignal(int, object)
 
@@ -76,18 +77,20 @@ class ZmqClient(QObject):
         self.message_received.emit(msg)
         msg_type = struct.unpack('<H', msg[0:2])[0]
 
-        if msg_type == 20:
+        if msg_type == message_types.SensorsChange:
             self.sensors.emit(struct.unpack('<I',msg[2:])[0])
-        if msg_type == 21:
+        if msg_type == message_types.GPIODebug:
             self.gpio.emit(struct.unpack('<I',msg[2:])[0])
-        if msg_type == 22:
+        if msg_type == message_types.SequenceEvent:
             event_id = struct.unpack('<B',msg[2:3])[0]
             self.sequence_event.emit(event_id, msg[3:])
             print(event_id, msg[3:])
-        if msg_type == 403:
+        if msg_type == message_types.DebugGoldo:
+            self.debug_goldo.emit(struct.unpack('<I',msg[2:])[0])
+        if msg_type == message_types.RobotEndLoadConfigStatus:
             self.robot_end_load_config_status.emit(bool(struct.unpack('<B',msg[2:])[0]))
             
-        if msg_type == 46:
+        if msg_type == message_types.MainSequenceLoadStatus:
             status = bool(struct.unpack('<B',msg[2:]))
             print('sequence loaded, status: ', status)
             

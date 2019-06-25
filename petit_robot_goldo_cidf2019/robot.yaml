@@ -9,7 +9,7 @@ odometry:
   dist_per_count_right: -1.9621583742116328e-05
   encoder_period: 8192
   update_period: 1.0e-3
-  wheels_spacing: 187.8e-3
+  wheels_spacing: 189.5e-3
   speed_filter_period: 5.0e-3
 propulsion:
   pid_static:

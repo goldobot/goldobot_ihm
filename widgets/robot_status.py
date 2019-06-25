@@ -13,12 +13,15 @@ class RobotStatusWidget(QWidget):
         self._robot_side_wid = QLineEdit('')
         self._sensors_wid = QLabel()
         self._gpio_wid = QLabel()
+        self._debug_goldo_wid = QLabel()
 
         self._time_wid.setReadOnly(True)
 
         layout = QGridLayout()
         layout.addWidget(QLabel('time:'),0,0)
         layout.addWidget(self._time_wid,0,1,1,1)
+        layout.addWidget(QLabel('DbgGoldo:'),0,2,1,1)
+        layout.addWidget(self._debug_goldo_wid,0,3,1,1)
         layout.addWidget(self._robot_state_wid,1,0,1,1)
         layout.addWidget(self._robot_side_wid,1,1,1,1)
         layout.addWidget(self._sensors_wid,1,2,1,1)
@@ -63,6 +66,8 @@ class RobotStatusWidget(QWidget):
         self._button.clicked.connect(self._on_emergency_stop_button_clicked)
         self._sensors_wid.setText('sensors')
 
+        self.goldo_dbg_info = 0
+
     def set_client(self, client):
         self._client = client
         self._client.propulsion_telemetry_ex.connect(self.update_telemetry_ex)
@@ -70,6 +75,7 @@ class RobotStatusWidget(QWidget):
         self._client.propulsion_telemetry.connect(self.update_telemetry)
         self._client.sensors.connect(self.update_sensors)
         self._client.gpio.connect(self.update_gpio)
+        self._client.debug_goldo.connect(self.update_debug_goldo)
         self._client.match_state_change.connect(self.match_state_change)
 
     def update_heartbeat(self, timestamp):
@@ -85,6 +91,12 @@ class RobotStatusWidget(QWidget):
         
     def update_gpio(self, sensors):
         self._gpio_wid.setText('{0:b}'.format(sensors).zfill(6))
+        
+    def update_debug_goldo(self, dbg_info):
+        if self.goldo_dbg_info != dbg_info:
+            self.goldo_dbg_info = dbg_info
+            print ("  debug_goldo : %8x"%dbg_info)
+        self._debug_goldo_wid.setText("%8x"%(dbg_info))
         
     def match_state_change(self, state, side):
         states = {

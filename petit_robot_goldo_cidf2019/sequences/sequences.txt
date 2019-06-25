@@ -1337,4 +1337,35 @@ end sequence
 #							Sequence a tester
 ####################################################################
 
+#begin sequence match_jaune
+#propulsion.set_pose start_pose_jaune
+#propulsion.set_adversary_detection_enable 1
+#
+##--test Goldo
+##movi score,3
+#propulsion.point_to test_goldo_evit1_jaune,yaw_180
+#wait_movement_finished
+#propulsion.move_to test_goldo_evit1_jaune,speed_500
+#wait_movement_finished
+#label begin_test_goldo
+#propulsion.point_to test_goldo_evit2_jaune,yaw_180
+#wait_movement_finished
+#propulsion.move_to test_goldo_evit2_jaune,speed_500
+#wait_movement_finished
+#propulsion.point_to test_goldo_evit3_jaune,yaw_180
+#wait_movement_finished
+#propulsion.move_to test_goldo_evit3_jaune,speed_500
+#wait_movement_finished
+#propulsion.point_to test_goldo_evit4_jaune,yaw_180
+#wait_movement_finished
+#propulsion.move_to test_goldo_evit4_jaune,speed_500
+#wait_movement_finished
+#propulsion.point_to test_goldo_evit1_jaune,yaw_180
+#wait_movement_finished
+#propulsion.move_to test_goldo_evit1_jaune,speed_500
+#wait_movement_finished
+##addi score,255
+##jnz begin_test_goldo
+#jmp begin_test_goldo
+##end sequence
 

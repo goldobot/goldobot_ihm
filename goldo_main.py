@@ -10,7 +10,8 @@ import PyQt5.QtCore
 from PyQt5.QtWidgets import QMainWindow, QApplication, QWidget, QLabel, QLineEdit, QGridLayout, QFrame, QPushButton, QSpinBox, QSizePolicy
 from PyQt5.QtCore import QObject, pyqtSignal, QSize, QRectF, QPointF, Qt, QTimer
 from PyQt5.QtWidgets import QTabWidget, QAction, QDialog, QVBoxLayout, QCheckBox
-from PyQt5.QtWidgets import  QHBoxLayout, QComboBox, QMessageBox
+from PyQt5.QtWidgets import  QHBoxLayout, QComboBox, QMessageBox, QShortcut
+from PyQt5.QtGui import  QKeySequence
 
 from widgets.table_view import TableViewWidget
 from widgets.plot_dialog import PlotDialog, ControlPlots
@@ -102,6 +103,9 @@ class MainWindow(QMainWindow):
         self._action_enter_debug.triggered.connect(self._send_enter_debug) 
         self._action_exit_debug.triggered.connect(self._send_exit_debug)
         self._action_upload_config.triggered.connect(self._upload_config) 
+
+        self._F5_shortcut = QShortcut(QKeySequence(Qt.Key_F5), self)
+        self._F5_shortcut.activated.connect(self._upload_config)
 
         self._client.robot_end_load_config_status.connect(self._upload_status)
        

@@ -12,6 +12,13 @@ MatchStateChange=15
 StartOfMatch=16
 EndOfMatch=17
 
+SensorsChange=20
+GPIODebug=21
+SequenceEvent=22
+MatchRemainingTime=23
+
+DebugGoldo=31
+
 CmdEmergencyStop=32
 CmdSelectSide=33
 CmdEnterDebugMode=34
@@ -19,6 +26,7 @@ CmdExitDebugMode=35
 
 SetMatchState=44
 
+MainSequenceLoadStatus=46
 
 DbgGetOdometryConfig=64
 DbgSetOdometryConfig=65
@@ -75,6 +83,7 @@ FpgaColumnsSetOffset=322
 RobotBeginLoadConfig=400
 RobotLoadConfig=401
 RobotEndLoadConfig=402
+RobotEndLoadConfigStatus=403
 
 RplidarStart=1024
 RplidarStop=1025
