@@ -2,7 +2,7 @@ from PyQt5.QtWidgets import QWidget, QLineEdit, QPushButton, QGridLayout, QLabel
 from widgets.properties_editor import PropertiesEditorWidget
 
 class RobotStatusWidget(QWidget):
-    def __init__(self, parent = None):
+    def __init__(self, parent = None, ihm_type='pc'):
         super(RobotStatusWidget, self).__init__(None)
         self._client = None
         self._time_wid = QLineEdit()
@@ -31,33 +31,46 @@ class RobotStatusWidget(QWidget):
         frame.setFrameShape(QFrame.HLine)
         layout.addWidget(frame,2,0,1,2)
 
-        self._telemetry_props = PropertiesEditorWidget(None,
-            [
-            ('x', float,),
-            ('y', float,),
-            ('yaw', float,),
-            ('speed', float,),
-            ('yaw_rate', float,),
-            ('acceleration', float),
-            ('angular_acceleration', float),
-            ('left_encoder', float,),
-            ('right_encoder', float,),
-            ('left_pwm', float,),
-            ('right_pwm', float,),
-            ('state', int),
-            ('error',int)
-            ],True)
+        if ihm_type=='pc':
+            self._telemetry_props = PropertiesEditorWidget(None,
+                [
+                ('x', float,),
+                ('y', float,),
+                ('yaw', float,),
+                ('speed', float,),
+                ('yaw_rate', float,),
+                ('acceleration', float),
+                ('angular_acceleration', float),
+                ('left_encoder', float,),
+                ('right_encoder', float,),
+                ('left_pwm', float,),
+                ('right_pwm', float,),
+                ('state', int),
+                ('error',int)
+                ],True)
+        else:
+            self._telemetry_props = PropertiesEditorWidget(None,
+                [
+                ('x', float,),
+                ('y', float,),
+                ('yaw', float,)
+                ],True)
 
-        self._telemetry_ex_props = PropertiesEditorWidget(None,
-            [
-            ('target_x', float,),
-            ('target_y', float,),
-            ('target_yaw', float,),
-            ('target_speed', float,),
-            ('target_yaw_rate', float,),
-            ('longitudinal_error', float,),
-            ('lateral_error', float,)  
-            ],True)
+        if ihm_type=='pc':
+            self._telemetry_ex_props = PropertiesEditorWidget(None,
+                [
+                ('target_x', float,),
+                ('target_y', float,),
+                ('target_yaw', float,),
+                ('target_speed', float,),
+                ('target_yaw_rate', float,),
+                ('longitudinal_error', float,),
+                ('lateral_error', float,)  
+                ],True)
+        else:
+            self._telemetry_ex_props = PropertiesEditorWidget(None,
+                [
+                ],True)
 
         layout.addWidget(self._telemetry_props,3,0,1,2)
         layout.addWidget(self._telemetry_ex_props,4,0,1,2)
@@ -79,7 +92,7 @@ class RobotStatusWidget(QWidget):
         self._client.match_state_change.connect(self.match_state_change)
 
     def update_heartbeat(self, timestamp):
-        self._time_wid.setText(str(timestamp*1e-3))
+        self._time_wid.setText("%.1f"%(timestamp*1e-3))
 
     def update_telemetry(self, telemetry):
         self._telemetry_props.set_value(telemetry)

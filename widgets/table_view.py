@@ -10,10 +10,12 @@ from PyQt5.QtGui import QPolygonF, QPen, QBrush, QColor, QFont, QTransform
 
 
 class TableViewWidget(QGraphicsView):
-    def __init__(self, parent = None):
+    def __init__(self, parent = None, ihm_type='pc'):
         super(TableViewWidget, self).__init__(parent)
-        #self.setFixedSize(225,150)
-        self.setFixedSize(900,600)
+        if ihm_type=='pc':
+            self.setFixedSize(900,600)
+        else:
+            self.setFixedSize(225,150)
         self.setSceneRect(QRectF(0,-1500,2000,3000))
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
@@ -74,8 +76,10 @@ class TableViewWidget(QGraphicsView):
         self.setScene(self._scene)
 
         self.rotate(90)
-        #self.scale(0.075, -0.075)
-        self.scale(0.3, -0.3)
+        if ihm_type=='pc':
+            self.scale(0.3, -0.3)
+        else:
+            self.scale(0.075, -0.075)
 
         self._scene.addRect(QRectF(0,-1500,2000,3000),QPen(), QBrush(background))
 

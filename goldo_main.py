@@ -54,10 +54,12 @@ class MainWindow(QMainWindow):
         parser = OptionParser()
         parser.add_option('--robot-ip', default='192.168.1.222')
         parser.add_option('--config-path', default='petit_robot')
+        parser.add_option('--ihm-type', default='pc')
         (options, args) = parser.parse_args(sys.argv)
         
         self._client = ZmqClient(ip=options.robot_ip)
         config.load_config(options.config_path)
+        self._ihm_type = options.ihm_type
         
         # Create actions
        
@@ -86,8 +88,8 @@ class MainWindow(QMainWindow):
         tools_menu.addAction(self._action_upload_config)
 
         self._main_widget = QWidget()
-        self._table_view = TableViewWidget()
-        self._widget_robot_status = RobotStatusWidget()
+        self._table_view = TableViewWidget(ihm_type=self._ihm_type)
+        self._widget_robot_status = RobotStatusWidget(ihm_type=self._ihm_type)
 
         layout1 = QHBoxLayout()
         layout2 = QVBoxLayout()

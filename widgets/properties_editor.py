@@ -1,3 +1,4 @@
+import math
 from PyQt5.QtWidgets import QWidget, QLineEdit, QLabel, QGridLayout
 
 class PropertiesEditorWidget(QWidget):
@@ -12,7 +13,12 @@ class PropertiesEditorWidget(QWidget):
         for k, t in self._properties:
             wid = QLineEdit(str(t()))
             wid.setReadOnly(readonly)       
-            layout.addWidget(QLabel(k),i,0)
+            if (k=='x') or (k=='y'):
+                layout.addWidget(QLabel(k+' (mm)'),i,0)
+            elif k=='yaw':
+                layout.addWidget(QLabel(k+' (°)'),i,0)
+            else:
+                layout.addWidget(QLabel(k),i,0)
             layout.addWidget(wid,i,1)
             self._widgets.append(wid)
             i+=1
@@ -22,7 +28,15 @@ class PropertiesEditorWidget(QWidget):
     def set_value(self, obj):
         for i in range(len(self._properties)):
             k, t = self._properties[i]
-            self._widgets[i].setText(str(getattr(obj,k)))
+            val=getattr(obj,k)
+            if (k=='x') or (k=='y'):
+                val=val*1000.0
+                self._widgets[i].setText("%.1f"%val)
+            elif k=='yaw':
+                val=val*180.0/math.pi
+                self._widgets[i].setText("%.1f"%val)
+            else:
+                self._widgets[i].setText(str(val))
 
     def get_value(self):
         val = self._class()
