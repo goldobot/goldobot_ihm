@@ -90,6 +90,7 @@ class MainWindow(QMainWindow):
         self._main_widget = QWidget()
         self._table_view = TableViewWidget(ihm_type=self._ihm_type)
         self._widget_robot_status = RobotStatusWidget(ihm_type=self._ihm_type)
+        self._conf_button = QPushButton('Load Conf')
 
         layout1 = QHBoxLayout()
         layout2 = QVBoxLayout()
@@ -97,6 +98,7 @@ class MainWindow(QMainWindow):
         layout1.addWidget(self._widget_robot_status)
         layout1.addLayout(layout2)
         layout2.addWidget(self._table_view)
+        layout2.addWidget(self._conf_button)
         layout2.addStretch(1)
 
         self._main_widget.setLayout(layout1)
@@ -108,6 +110,8 @@ class MainWindow(QMainWindow):
 
         self._F5_shortcut = QShortcut(QKeySequence(Qt.Key_F5), self)
         self._F5_shortcut.activated.connect(self._upload_config)
+
+        self._conf_button.clicked.connect(self._upload_config)
 
         self._client.robot_end_load_config_status.connect(self._upload_status)
        
