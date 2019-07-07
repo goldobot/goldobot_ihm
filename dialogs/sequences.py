@@ -10,6 +10,36 @@ import message_types
 import config
 import struct
 
+from widgets.table_view import TableViewWidget
+
+
+def goldo_debug_seq(sequences,seq,indent):
+    for op in seq.ops:
+        #print ("   {}".format(op))
+        if (op.op in ["propulsion.set_pose"]):
+            print (indent + "{}".format(op))
+            my_x = int(config.robot_config.sequences.variables[op.args[0].name].default[0]*1000.0)
+            my_y = int(config.robot_config.sequences.variables[op.args[0].name].default[1]*1000.0)
+            print (indent + "  <x,y> = <{},{}>".format(my_x, my_y))
+            TableViewWidget.g_table_view.debug_set_start(my_x, my_y)
+        elif (op.op in ["propulsion.move_to", "propulsion.translate", "propulsion.reposition", "propulsion.trajectory"]):
+            print (indent + "{}".format(op))
+            my_x = int(config.robot_config.sequences.variables[op.args[0].name].default[0]*1000.0)
+            my_y = int(config.robot_config.sequences.variables[op.args[0].name].default[1]*1000.0)
+            print (indent + "  <x,y> = <{},{}>".format(my_x, my_y))
+            TableViewWidget.g_table_view.debug_line_to(my_x, my_y)
+        elif (op.op in ["jmp", "jz", "jnz", "je", "jne", "jge", "jl", "jle", "jg", "jge"]):
+            #print (indent + "!{}".format(op))
+            pass
+        elif (op.op in ["call"]):
+            #print (indent + "{}".format(op))
+            subseq = sequences.sequences[op.args[0].name]
+            goldo_debug_seq(sequences,subseq,indent+"  ")
+        else:
+            #print (indent + ".")
+            pass
+        
+        
 
 class SequencesDialog(QDialog):
     def __init__(self, parent = None):
@@ -17,6 +47,7 @@ class SequencesDialog(QDialog):
         self._client = None
         self._button_upload = QPushButton('upload')
         self._button_execute = QPushButton('execute')
+        self._button_simulate = QPushButton('simulate')
         self._button_abort = QPushButton('abort')
         self._combobox_sequence_id = QComboBox()
         
@@ -25,12 +56,31 @@ class SequencesDialog(QDialog):
         layout.addWidget(self._button_abort, 0, 1)
         layout.addWidget(self._combobox_sequence_id, 1, 0)
         layout.addWidget(self._button_execute, 1, 1)
+        layout.addWidget(self._button_simulate, 2, 1)
         self.setLayout(layout)
         self._button_upload.clicked.connect(self._upload)
         self._button_execute.clicked.connect(self._execute)
+        self._button_simulate.clicked.connect(self._simulate)
         self._button_abort.clicked.connect(self._abort)
         self._update_sequence_names()
     
+        ## FIXME : DEBUG : GOLDO
+        #sequences = config.robot_config.sequences
+        #for seq_name in sequences.sequences:
+        #    print (seq_name)
+        #seq = sequences.sequences["match_jaune"]
+        #print ("seq 'match_jaune': ")
+        #print ("  name        = " + seq.name)
+        #print ("  start_index = " + str(seq.start_index))
+        ##print ("  variables   : ")
+        ##for v in seq.variables:
+        ##    print ("    " + v)
+        ##print ("  labels      : ")
+        ##for l in seq.labels:
+        ##    print ("    " + l)
+        #print ("  ops         : ")
+        #goldo_debug_seq(sequences,seq,"  ")
+        
 
     def set_client(self, client):
         self._client = client
@@ -70,6 +120,12 @@ class SequencesDialog(QDialog):
     def _execute(self):
         seq_id = self._combobox_sequence_id.currentIndex()
         self._client.send_message(43, struct.pack('<H', seq_id))
+        
+    def _simulate(self):
+        sequences = config.robot_config.sequences
+        seq_name = self._combobox_sequence_id.currentText()
+        seq = sequences.sequences[seq_name]
+        goldo_debug_seq(sequences,seq,"  ")
         
     def _abort(self):
         self._client.send_message(45, b'')

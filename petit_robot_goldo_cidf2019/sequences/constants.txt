@@ -77,6 +77,7 @@ var vec3 speed_750=(750mm,500mm,500mm)
 var vec3 speed_500=(500mm,500mm,500mm)
 #--approche
 var vec3 speed_200=(200mm,500mm,300mm)
+var vec3 speed_180=(180mm,500mm,300mm)
 #--ramasse ligne chaos
 var vec3 speed_100=(45mm,300mm,300mm)
 

@@ -3,6 +3,7 @@ import signal
 import math
 import struct
 import config
+import subprocess
 
 from optparse import OptionParser
 
@@ -45,28 +46,36 @@ dialogs = [
     ("Debug FPGA", DebugFpgaDialog),
     ("Test sequences", SequencesDialog),
  ]
+
         
 class MainWindow(QMainWindow):
     def __init__(self, parent = None):
-        super(MainWindow, self).__init__(None)
-        
-         #PArse arguments
+        #PArse arguments
         parser = OptionParser()
         parser.add_option('--robot-ip', default='192.168.1.222')
         parser.add_option('--config-path', default='petit_robot')
         parser.add_option('--ihm-type', default='pc')
         (options, args) = parser.parse_args(sys.argv)
+        self._ihm_type = options.ihm_type
+        
+        #QMainWindow.__init__(self, None, QtCore.Qt.WindowStaysOnTopHint)
+        if self._ihm_type == "raspi":
+            super(MainWindow, self).__init__(None, Qt.WindowStaysOnTopHint)
+        else:
+            super(MainWindow, self).__init__(None)
         
         self._client = ZmqClient(ip=options.robot_ip)
         config.load_config(options.config_path)
-        self._ihm_type = options.ihm_type
+
+        self.rplidar_started = False
+        self.rplidar_proc = None
         
         # Create actions
-       
         self._action_reset = QAction("Reset",self)
         self._action_enter_debug = QAction("Debug enter",self)
         self._action_exit_debug = QAction("Debug exit",self)
         self._action_upload_config = QAction("Upload config",self)
+        self._action_rplidar = QAction("Rplidar",self)
         
         # Add menu
         tools_menu = self.menuBar().addMenu("Tools")
@@ -91,6 +100,7 @@ class MainWindow(QMainWindow):
         self._table_view = TableViewWidget(ihm_type=self._ihm_type)
         self._widget_robot_status = RobotStatusWidget(ihm_type=self._ihm_type)
         self._conf_button = QPushButton('Load Conf')
+        self._rplidar_button = QPushButton('Start Rplidar')
 
         layout1 = QHBoxLayout()
         layout2 = QVBoxLayout()
@@ -99,6 +109,7 @@ class MainWindow(QMainWindow):
         layout1.addLayout(layout2)
         layout2.addWidget(self._table_view)
         layout2.addWidget(self._conf_button)
+        layout2.addWidget(self._rplidar_button)
         layout2.addStretch(1)
 
         self._main_widget.setLayout(layout1)
@@ -107,11 +118,13 @@ class MainWindow(QMainWindow):
         self._action_enter_debug.triggered.connect(self._send_enter_debug) 
         self._action_exit_debug.triggered.connect(self._send_exit_debug)
         self._action_upload_config.triggered.connect(self._upload_config) 
+        self._action_rplidar.triggered.connect(self._rplidar_control) 
 
         self._F5_shortcut = QShortcut(QKeySequence(Qt.Key_F5), self)
         self._F5_shortcut.activated.connect(self._upload_config)
 
         self._conf_button.clicked.connect(self._upload_config)
+        self._rplidar_button.clicked.connect(self._rplidar_control)
 
         self._client.robot_end_load_config_status.connect(self._upload_status)
        
@@ -134,8 +147,6 @@ class MainWindow(QMainWindow):
         #plt.show()
         #self.plt = plt
         ##plt.plot_curve([0,2,1])
-        
-        
 
     def _send_reset(self):
         self._client.send_message(message_types.DbgReset, b'')
@@ -178,6 +189,16 @@ class MainWindow(QMainWindow):
 
     def _start_sequence(self):
         self._client.send_message(43, struct.pack('<H',1))
+
+    def _rplidar_control(self):
+        if self.rplidar_started:
+            self.rplidar_started = False
+            self.rplidar_proc.kill()
+            self._rplidar_button.setText("Start Rplidar")
+        else:
+            self.rplidar_proc = subprocess.Popen("/usr/bin/xterm")
+            self.rplidar_started = True
+            self._rplidar_button.setText("Stop Rplidar")
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)

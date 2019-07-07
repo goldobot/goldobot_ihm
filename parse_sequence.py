@@ -290,6 +290,7 @@ class SequenceParser:
         buff = struct.pack('HH', len(buff), compute_crc(buff)) + buff
         retval.binary = buff
         retval.variables = self.variables
+        retval.sequences = self.sequences
         retval.sequence_names = [s.name for s in self.sequences.values()]
         return retval
 

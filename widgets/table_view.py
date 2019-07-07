@@ -9,7 +9,10 @@ from PyQt5.QtWidgets import  QGraphicsRectItem
 from PyQt5.QtGui import QPolygonF, QPen, QBrush, QColor, QFont, QTransform
 
 
+
 class TableViewWidget(QGraphicsView):
+    g_table_view = None
+
     def __init__(self, parent = None, ihm_type='pc'):
         super(TableViewWidget, self).__init__(parent)
         if ihm_type=='pc':
@@ -121,9 +124,10 @@ class TableViewWidget(QGraphicsView):
         self._scene.addEllipse(QRectF(712,962,76,76),QPen(), QBrush(redium))
         self._scene.addEllipse(QRectF(1012,962,76,76),QPen(), QBrush(greenium))
 
-
         self._points = []
         #self.setSceneRect(QRectF(0,-150,200,300))
+
+        TableViewWidget.g_table_view = self
 
     def _add_cubes(self, x, y):
         self._scene.addRect(QRectF(x-29, y-29,58,58))
@@ -187,3 +191,13 @@ class TableViewWidget(QGraphicsView):
             self._adv2_robot_text.setPlainText('%d'%other_robot.samples)
             self._adv2_robot_text.setPos(other_robot.x * 1000 - 60, other_robot.y * 1000 - 40)
 
+    def debug_set_start(self, _new_x, _new_y):
+        self.debug_start_x = _new_x
+        self.debug_start_y = _new_y
+        self.debug_cur_x = _new_x
+        self.debug_cur_y = _new_y
+
+    def debug_line_to(self, _new_x, _new_y):
+        self._scene.addLine(self.debug_cur_x, self.debug_cur_y, _new_x, _new_y, QPen(QColor(255,255,255)));
+        self.debug_cur_x = _new_x
+        self.debug_cur_y = _new_y

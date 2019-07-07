@@ -32,7 +32,7 @@ call prise_auto_av
 call stocke_palet_av_g
 call preprise_sol
 #--prise palet devant vert
-propulsion.move_to palet_zone_bleu_jaune,speed_200
+propulsion.move_to palet_zone_bleu_jaune,speed_180
 call prise_auto_av
 call stocke_palet_av_d
 call preprise_sol
@@ -85,7 +85,7 @@ wait_movement_finished
 
 #--prise goldenium
 call prise_goldenium_out
-propulsion.move_to approche_gold_jaune,speed_500
+propulsion.move_to exfiltration_gold_jaune,speed_500
 call griffes_range
 wait_movement_finished
 
@@ -1029,9 +1029,9 @@ wait_movement_finished
 end sequence
 
 begin sequence recale_goldonium_jaune
-propulsion.point_to approche_gold_jaune,yaw_180
+propulsion.point_to approche_gold_jaune2,yaw_180
 delay delay02
-propulsion.move_to approche_gold_jaune,speed_200
+propulsion.move_to approche_gold_jaune2,speed_200
 
 #--boucle de surveillance capteur lateral
 label boucle_recalage_gold
@@ -1250,7 +1250,7 @@ call prise_auto_ar
 call stocke_palet_ar_g
 
 wait_movement_finished
-propulsion.move_to debut_recal_acc_jaune,speed_200
+propulsion.move_to debut_recal_acc_jaune2,speed_200
 delay delay1
 call griffes_range
 
@@ -1337,35 +1337,35 @@ end sequence
 #							Sequence a tester
 ####################################################################
 
-#begin sequence match_jaune
-#propulsion.set_pose start_pose_jaune
-#propulsion.set_adversary_detection_enable 1
-#
-##--test Goldo
-##movi score,3
-#propulsion.point_to test_goldo_evit1_jaune,yaw_180
-#wait_movement_finished
-#propulsion.move_to test_goldo_evit1_jaune,speed_500
-#wait_movement_finished
-#label begin_test_goldo
-#propulsion.point_to test_goldo_evit2_jaune,yaw_180
-#wait_movement_finished
-#propulsion.move_to test_goldo_evit2_jaune,speed_500
-#wait_movement_finished
-#propulsion.point_to test_goldo_evit3_jaune,yaw_180
-#wait_movement_finished
-#propulsion.move_to test_goldo_evit3_jaune,speed_500
-#wait_movement_finished
-#propulsion.point_to test_goldo_evit4_jaune,yaw_180
-#wait_movement_finished
-#propulsion.move_to test_goldo_evit4_jaune,speed_500
-#wait_movement_finished
-#propulsion.point_to test_goldo_evit1_jaune,yaw_180
-#wait_movement_finished
-#propulsion.move_to test_goldo_evit1_jaune,speed_500
-#wait_movement_finished
-##addi score,255
-##jnz begin_test_goldo
-#jmp begin_test_goldo
-##end sequence
+begin sequence match_jaune_goldo
+propulsion.set_pose start_pose_jaune
+propulsion.set_adversary_detection_enable 1
+
+#--test Goldo
+#movi score,3
+propulsion.point_to test_goldo_evit1_jaune,yaw_180
+wait_movement_finished
+propulsion.move_to test_goldo_evit1_jaune,speed_500
+wait_movement_finished
+label begin_test_goldo
+propulsion.point_to test_goldo_evit2_jaune,yaw_180
+wait_movement_finished
+propulsion.move_to test_goldo_evit2_jaune,speed_500
+wait_movement_finished
+propulsion.point_to test_goldo_evit3_jaune,yaw_180
+wait_movement_finished
+propulsion.move_to test_goldo_evit3_jaune,speed_500
+wait_movement_finished
+propulsion.point_to test_goldo_evit4_jaune,yaw_180
+wait_movement_finished
+propulsion.move_to test_goldo_evit4_jaune,speed_500
+wait_movement_finished
+propulsion.point_to test_goldo_evit1_jaune,yaw_180
+wait_movement_finished
+propulsion.move_to test_goldo_evit1_jaune,speed_500
+wait_movement_finished
+#addi score,255
+#jnz begin_test_goldo
+jmp begin_test_goldo
+#end sequence
 
