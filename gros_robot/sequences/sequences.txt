@@ -1,13 +1,9 @@
-#var int side=0
-#var float angle=90deg
-#var float distance=400mm
-#var vec2 start_point=(100mm,100mm)
-var vec3 start_pose=(0mm,0mm,00deg)
-#var vec2 point3=(100mm,200mm)
-
 var float test_distance=400mm
 var float test_angle=90deg
-var vec3 test_yaw_speeds=(500mm,500mm,500mm)
+
+var vec3 test_linear_speeds=(500mm,500mm,500mm)
+var vec3 test_slow_linear_speeds=(300mm,300mm,300mm)
+var vec3 test_yaw_speeds=(180deg,180deg,180deg)
 
 var vec3 speeds_rotation=(90deg,90deg,90deg)
 
@@ -32,29 +28,7 @@ end sequence
 
 
 begin sequence match_yellow
-var vec2 pt1=(700mm,-1275mm)
-var vec2 pt2=(1800mm,-1275mm)
-var vec2 pt3=(1600mm,-1275mm)
-var vec2 pt4=(1090mm,-1275mm)
-var float reposition_speed=100mm
-var float a1=180deg
-var int delay=0
-
-propulsion.enable
-propulsion.motors_enable
-propulsion.move_to pt2,test_yaw_speeds
-propulsion.reposition reposition_speed
-wait_movement_finished
-propulsion.set_adversary_detection_enable 1
-delay delay
-call attrape_devant
-propulsion.move_to pt3,test_yaw_speeds
-propulsion.rotate a1,speeds_rotation
-propulsion.move_to pt4,test_yaw_speeds
-wait_movement_finished
-call depose_sol
-propulsion.move_to pt3,test_yaw_speeds
-wait_movement_finished
+call test_points_yellow
 end sequence
 
 begin sequence match_purple
@@ -68,18 +42,18 @@ var int delay=0
 
 propulsion.enable
 propulsion.motors_enable
-propulsion.move_to pt2,test_yaw_speeds
+propulsion.move_to pt2,test_linear_speeds
 propulsion.reposition reposition_speed
 wait_movement_finished
 propulsion.set_adversary_detection_enable 1
 delay delay
 call attrape_devant
-propulsion.move_to pt3,test_yaw_speeds
+propulsion.move_to pt3,test_linear_speeds
 propulsion.rotate a1,speeds_rotation
-propulsion.move_to pt4,test_yaw_speeds
+propulsion.move_to pt4,test_linear_speeds
 wait_movement_finished
 call depose_sol
-propulsion.move_to pt3,test_yaw_speeds
+propulsion.move_to pt3,test_linear_speeds
 wait_movement_finished
 end sequence
 
@@ -93,11 +67,12 @@ end sequence
 begin sequence prematch_common
 var int moteur_init_1=0
 var int moteur_init_2=20000
-#set_servo slider,servo_slider_gauche
-propulsion.motors_enable
 propulsion.enable
+propulsion.motors_enable
 set_servo moteur,moteur_init_1,100
 set_servo moteur,moteur_init_2,100
+set_servo rateau,rateau_prerange,100
+set_servo rateau,rateau_range,100
 arm.go_to_position prise_devant,1,20
 propulsion.set_adversary_detection_enable 0
 propulsion.enable
@@ -152,4 +127,90 @@ var int moteur_pwm=20000
 var int moteur_pwm_zero=0
 var int gache_on=1000
 var int gache_off=1000
+end sequence
+
+begin sequence test_stock
+arm.go_to_position prise_distrib_4_5,1,25
+wait_arm_finished
+pump.set_pwm pwm_pump_activated
+end sequence
+
+begin sequence test_stock2
+arm.go_to_position depose_intermediaire,1,25
+wait_arm_finished
+arm.go_to_position depose_inter2,1,25
+wait_arm_finished
+arm.go_to_position depose_inter3,1,25
+wait_arm_finished
+delay delay1
+pump.set_pwm pwm_pump_zero
+end sequence
+
+begin sequence ratisse_purple
+propulsion.point_to chaos_orientation_purple,test_yaw_speeds
+wait_movement_finished
+propulsion.move_to chaos_debut_pousse_purple,test_linear_speeds
+wait_movement_finished
+set_servo rateau,rateau_baisse,100
+delay delay02
+propulsion.move_to chaos_leve_rateau_purple,test_slow_linear_speeds
+wait_movement_finished
+set_servo rateau,rateau_leve,100
+delay delay02
+propulsion.move_to chaos_debut_tire_purple,test_slow_linear_speeds
+wait_movement_finished
+set_servo rateau,rateau_baisse,100
+delay delay02
+propulsion.move_to chaos_leve_rateau_purple,test_slow_linear_speeds
+wait_movement_finished
+set_servo rateau,rateau_leve,100
+delay delay02
+propulsion.move_to chaos_debut_pousse_purple,test_slow_linear_speeds
+wait_movement_finished
+set_servo rateau,rateau_baisse,100
+delay delay02
+propulsion.move_to chaos_leve_rateau_purple,test_slow_linear_speeds
+wait_movement_finished
+set_servo rateau,rateau_range,100
+delay delay05
+propulsion.move_to chaos_leve_rateau_purple,test_slow_linear_speeds
+wait_movement_finished
+end sequence
+
+begin sequence ratisse_yellow
+propulsion.point_to chaos_orientation_yellow,test_yaw_speeds
+wait_movement_finished
+set_servo rateau,rateau_baisse,100
+propulsion.move_to chaos_debut_pousse_yellow,test_linear_speeds
+wait_movement_finished
+propulsion.move_to chaos_leve_rateau_yellow,test_slow_linear_speeds
+wait_movement_finished
+set_servo rateau,rateau_leve,100
+delay delay02
+propulsion.move_to chaos_debut_tire_yellow,test_slow_linear_speeds
+wait_movement_finished
+set_servo rateau,rateau_baisse,100
+delay delay02
+propulsion.move_to chaos_leve_rateau_yellow,test_slow_linear_speeds
+wait_movement_finished
+set_servo rateau,rateau_leve,100
+delay delay02
+propulsion.move_to chaos_debut_pousse_yellow,test_slow_linear_speeds
+wait_movement_finished
+set_servo rateau,rateau_baisse,100
+delay delay02
+propulsion.move_to chaos_leve_rateau_yellow,test_slow_linear_speeds
+wait_movement_finished
+set_servo rateau,rateau_leve,100
+delay delay02
+propulsion.move_to chaos_debut_tire_yellow,test_slow_linear_speeds
+wait_movement_finished
+set_servo rateau,rateau_baisse,100
+delay delay02
+propulsion.move_to chaos_leve_rateau_yellow,test_slow_linear_speeds
+wait_movement_finished
+set_servo rateau,rateau_range,100
+delay delay05
+propulsion.move_to chaos_ratisse_yellow,test_linear_speeds
+wait_movement_finished
 end sequence

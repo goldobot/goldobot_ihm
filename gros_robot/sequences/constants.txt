@@ -1,3 +1,6 @@
+var int delay01=100
+var int delay02=200
+var int delay05=500
 var int delay1=1000
 var int delay2=2000
 
@@ -9,15 +12,76 @@ var vec2 pt3=(400mm,0)
 var int pwm_pump_activated=300
 var int pwm_pump_zero=0
 
-var vec3 start_pose_yellow=(450mm,-1398mm,90deg)
-var vec3 start_pose_purple=(450mm,1398mm,-90deg)
-# Servo positions
-var int servo_slider_gauche=32200
-var int servo_slider_droite=45500
-var int servo_slider_slide_gauche=42000
-var int servo_slider_depose_gauche=35000
+var int reposition_speed=100
+var int reposition_null=0
+##############################################
+#############     VITESSE     ################
+##############################################
+var vec3 test_linear_speeds=(500mm,500mm,500mm)
+var vec3 test_slow_linear_speeds=(300mm,300mm,300mm)
+var vec3 test_approach_speeds=(200mm,200mm,200mm)
+var vec3 test_yaw_speeds=(180deg,180deg,180deg)
 
-var int chargeur_droit_out=51500
+##############################################
+##############     DEPART     ################
+##############################################
+var vec3 start_pose_yellow=(450mm,-1400mm,90deg)
+var vec3 start_pose_purple=(450mm,1400mm,-90deg)
 
+##############################################
+################## RATEAU ####################
+##############################################
+var int rateau_prerange=24300
+var int rateau_range=21300
+var int rateau_leve=45000
+var int rateau_baisse=53000
+var int moteur_pwm=24000
+var int moteur_pwm_zero=20000
+##############################################
+###########   POSITIONS VIOLET   #############
+##############################################
+var vec3 start_pose_purple=(700mm,1275mm,0deg)
 
-# Robot positions
+#points grand distrib
+var vec2 point_intermediaire_purple=(1300mm,1275mm)
+var vec2 point_intermediaire_grand_distrib_purple=(1300mm,900mm)
+var vec2 point_approche_grand_distrib_purple=(1300mm,795mm)
+var vec2 point_prise_grand_distrib_purple=(1400mm,795mm)
+
+#points ratissage
+var vec2 chaos_ratisse_purple=(1050mm,1275mm)
+var vec2 chaos_orientation_purple=(1050mm,1400mm)
+var vec2 chaos_debut_pousse_purple=(1050mm,1000mm)
+var vec2 chaos_leve_rateau_purple=(1050mm,800mm)
+var vec2 chaos_debut_tire_purple=(1050mm,600mm)
+
+#points petit distrib
+var vec2 petit_distrib_approche_purple=(1800mm,1275mm)
+var vec2 petit_distrib_contact_purple=(1900mm,1275mm)
+var vec2 petit_distrib_tire_purple=(1680mm,1275mm)
+
+##############################################
+###########   POSITIONS  JAUNE   #############
+##############################################
+var vec3 start_pose_yellow=(700mm,-1275mm,0deg)
+
+#points grand distrib
+var vec2 point_intermediaire_yellow=(1300mm,-1275mm)
+var vec2 point_intermediaire_grand_distrib_yellow=(1300mm,-900mm)
+var vec2 point_approche_grand_distrib_yellow=(1300mm,-800mm)
+var vec2 point_prise_grand_distrib_yellow=(1500mm,-800mm)
+
+#points ratissage
+var vec2 chaos_ratisse_yellow=(1050mm,-1275mm)
+var vec2 chaos_orientation_yellow=(1050mm,-1400mm)
+var vec2 chaos_debut_pousse_yellow=(1050mm,-1000mm)
+var vec2 chaos_leve_rateau_yellow=(1050mm,-800mm)
+var vec2 chaos_debut_tire_yellow=(1050mm,-600mm)
+
+#points petit distrib
+var vec2 petit_distrib_approche_yellow=(1800mm,-1275mm)
+var vec2 petit_distrib_contact_yellow=(1900mm,-1275mm)
+var vec2 petit_distrib_tire_yellow=(1680mm,-1275mm)
+var vec2 point_depose_sol_yellow=(750mm,-1275mm)
+var vec2 point_depose_sol_greenium_yellow=(500mm,-1275mm)
+var vec2 point_depose_sol_redium_yellow=(200mm,-1275mm)

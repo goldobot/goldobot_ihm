@@ -1,4 +1,5 @@
 name,rail,rotation,epaule,coude,tete
+depart,550,2024,2300,500,50
 prise_devant,550,2024,2300,785,50
 prise_devant_tasse,520,2024,2450,730,50
 prise_devant_g,550,2024,2300,785,664
@@ -32,16 +33,3 @@ rampe_pre4,555,1585,2790,176,530
 rampe_pre3,555,1840,2798,198,627
 rampe_pre2,555,2073,2790,304,661
 rampe_pre1,555,1767,2790,176,621
-pre_depart_gauche,557,2043,2907,609,671
-pre_depart_droite,557,2043,2907,609,51
-prepare_stock_droite_haut,570,2033,2220,506,48
-prepare_stock_droite_1_palet,390,2033,2220,506,48
-prepare_stock_droite_2_palet,470,2033,2220,506,48
-prepare_stock_gauche_haut,570,2033,2220,506,671
-prepare_stock_gauche_1_palet,390,2033,2220,506,671
-prepare_stock_gauche_2_palet,470,2033,2220,506,671
-milieu_droite,556,2049,2680,433,51
-milieu_gauche,556,2049,2680,433,671
-preprise_distrib_4_5,173,1087,2422,719,333
-prise_distrib_4_5,365,1504,2356,751,217
-degagement_distrib_4_5,173,1312,2465,702,362

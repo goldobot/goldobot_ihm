@@ -79,6 +79,14 @@ gpio.set ev_vcentrale,0
 delay delay
 end sequence
 
+begin sequence ev_prend_ext
+gpio.set ev_vexterne,0
+delay delay02
+gpio.set ev_vcentrale,1
+delay delay02
+dc_motor.set_pwm pompe,pwm_pump_activated
+end sequence
+
 begin sequence test_servos_gr
 
 end sequence
@@ -90,3 +98,401 @@ propulsion.set_pose pose
 propulsion.measure_normal bord
 end sequence
 
+begin sequence test_prise_6
+arm.go_to_position preprise_step0_5_6,1,25
+wait_arm_finished
+arm.go_to_position preprise_step0_5_6,1,25
+wait_arm_finished
+arm.go_to_position preprise_step1_5_6,1,25
+wait_arm_finished
+arm.go_to_position preprise_step1_5_6,1,25
+wait_arm_finished
+arm.go_to_position preprise_step2_5_6,1,25
+wait_arm_finished
+arm.go_to_position preprise_step2_5_6,1,25
+wait_arm_finished
+arm.go_to_position prise_5_6,1,25
+wait_arm_finished
+arm.go_to_position prise_5_6,1,25
+wait_arm_finished
+gpio.set ev_vexterne,0
+gpio.set ev_vcentrale,1
+gpio.set ev_vexterne,0
+gpio.set ev_vcentrale,1
+delay delay01
+dc_motor.set_pwm pompe,pwm_pump_activated
+dc_motor.set_pwm pompe,pwm_pump_activated
+delay delay02
+arm.go_to_position predepose_step1_5_6
+wait_arm_finished
+arm.go_to_position predepose_step1_5_6
+wait_arm_finished
+arm.go_to_position predepose_step2_5_6
+wait_arm_finished
+arm.go_to_position predepose_step2_5_6
+wait_arm_finished
+arm.go_to_position predepose_step3_5_6
+wait_arm_finished
+arm.go_to_position predepose_step3_5_6
+wait_arm_finished
+arm.go_to_position predepose_step4_5_6
+wait_arm_finished
+arm.go_to_position predepose_step4_5_6
+wait_arm_finished
+arm.go_to_position depose_5_6
+wait_arm_finished
+arm.go_to_position depose_5_6
+wait_arm_finished
+gpio.set ev_vexterne,1
+dc_motor.set_pwm pompe,pwm_pump_zero
+dc_motor.set_pwm pompe,pwm_pump_zero
+end sequence
+
+begin sequence test_points_purple
+propulsion.set_pose start_pose_purple
+propulsion.move_to point_intermediaire_purple,test_linear_speeds
+wait_movement_finished
+propulsion.point_to point_intermediaire_grand_distrib_purple,test_yaw_speeds
+wait_movement_finished
+propulsion.move_to point_prise_grand_distrib_purple,test_approach_speeds
+wait_movement_finished
+delay delay2
+propulsion.move_to point_intermediaire_grand_distrib_purple,test_approach_speeds
+wait_movement_finished
+propulsion.point_to chaos_ratisse_purple,test_yaw_speeds
+wait_movement_finished
+propulsion.move_to chaos_ratisse_purple,test_linear_speeds
+wait_movement_finished
+delay delay2
+propulsion.point_to point_intermediaire_purple,test_yaw_speeds
+wait_movement_finished
+propulsion.move_to point_intermediaire_purple,test_linear_speeds
+wait_movement_finished
+propulsion.point_to petit_distrib_approche_purple,test_yaw_speeds
+wait_movement_finished
+propulsion.move_to petit_distrib_approche_purple,test_linear_speeds
+wait_movement_finished
+propulsion.move_to petit_distrib_contact_purple,test_approach_speeds
+wait_movement_finished
+delay delay2
+propulsion.move_to petit_distrib_tire_purple,test_approach_speeds
+wait_movement_finished
+end sequence
+
+begin sequence test_points_yellow
+#On va au distrib
+propulsion.set_pose start_pose_yellow
+propulsion.move_to point_intermediaire_yellow,test_linear_speeds
+propulsion.point_to point_approche_grand_distrib_yellow,test_yaw_speeds
+propulsion.move_to point_approche_grand_distrib_yellow,test_linear_speeds
+propulsion.point_to point_prise_grand_distrib_yellow,test_yaw_speeds
+propulsion.move_to point_prise_grand_distrib_yellow,test_approach_speeds
+propulsion.reposition reposition_speed,reposition_null
+wait_movement_finished
+#On place le bras pour attraper le rouge
+gpio.set ev_vexterne,1
+gpio.set ev_vcentrale,0
+arm.go_to_position preprise_step0_5_6,1,75
+wait_arm_finished
+arm.go_to_position preprise_step1_5_6,1,75
+wait_arm_finished
+arm.go_to_position preprise_step2_5_6,1,75
+wait_arm_finished
+delay delay02
+#On attrape le rouge
+arm.go_to_position prise_5_6,1,75
+wait_arm_finished
+dc_motor.set_pwm pompe,pwm_pump_activated
+delay delay05
+#On depose le rouge
+arm.go_to_position predepose_step1_5_6,1,75
+wait_arm_finished
+arm.go_to_position predepose_step2_5_6,1,75
+wait_arm_finished
+arm.go_to_position predepose_step3_5_6,1,75
+wait_arm_finished
+arm.go_to_position predepose_step4_5_6,1,75
+wait_arm_finished
+arm.go_to_position depose_5_6,1,75
+wait_arm_finished
+delay delay05
+dc_motor.set_pwm pompe,pwm_pump_zero
+delay delay02
+
+#On place le bras pour le vert et le rouge
+gpio.set ev_vexterne,1
+gpio.set ev_vcentrale,1
+delay delay02
+arm.go_to_position preprise_4_5,1,75
+wait_arm_finished
+delay delay05
+#On prend le vert et le rouge
+arm.go_to_position prise_4_5,1,75
+wait_arm_finished
+dc_motor.set_pwm pompe,pwm_pump_activated
+delay delay05
+#On depose le vert et le rouge
+arm.go_to_position predepose_step1_4_5,1,75
+wait_arm_finished
+delay delay02
+arm.go_to_position predepose_step4_5_6,1,75
+wait_arm_finished
+delay delay02
+arm.go_to_position depose_5_6,1,75
+wait_arm_finished
+delay delay05
+dc_motor.set_pwm pompe,pwm_pump_zero
+delay delay02
+
+#On place le bras pour le bleu et le rouge
+arm.go_to_position preprise_2_3_step1,1,75
+wait_arm_finished
+delay delay02
+arm.go_to_position preprise_2_3_step2,1,75
+wait_arm_finished
+delay delay02
+arm.go_to_position preprise_2_3_step3,1,75
+wait_arm_finished
+delay delay02
+arm.go_to_position preprise_2_3_step4,1,75
+wait_arm_finished
+delay delay02
+#On prend le bleu et le rouge
+arm.go_to_position prise_2_3,1,75
+wait_arm_finished
+dc_motor.set_pwm pompe,pwm_pump_activated
+delay delay05
+#On depose le bleu et le rouge
+arm.go_to_position predepose_step1_2_3,1,75
+wait_arm_finished
+delay delay02
+arm.go_to_position predepose_step2_2_3,1,75
+wait_arm_finished
+delay delay02
+arm.go_to_position predepose_step3_2_3,1,75
+wait_arm_finished
+delay delay02
+arm.go_to_position predepose_step3_2_3,1,75
+wait_arm_finished
+delay delay02
+arm.go_to_position depose_2_3,1,75
+wait_arm_finished
+delay delay05
+dc_motor.set_pwm pompe,pwm_pump_zero
+delay delay02
+
+propulsion.move_to point_approche_grand_distrib_yellow,test_approach_speeds
+arm.go_to_position preprise_2_3_step4,1,75
+wait_arm_finished
+
+#On ratisse
+#propulsion.move_to point_intermediaire_grand_distrib_yellow,test_approach_speeds
+#propulsion.point_to chaos_ratisse_yellow,test_yaw_speeds
+#propulsion.move_to chaos_ratisse_yellow,test_linear_speeds
+#wait_movement_finished
+#call ratisse_yellow
+
+#On va au petit distrib
+gpio.set ev_vexterne,1
+gpio.set ev_vcentrale,1
+propulsion.point_to point_intermediaire_yellow,test_yaw_speeds
+arm.go_to_position preprise_2_3_step3,1,75
+wait_arm_finished
+propulsion.move_to point_intermediaire_yellow,test_linear_speeds
+arm.go_to_position preprise_2_3_step2,1,75
+wait_arm_finished
+propulsion.point_to petit_distrib_tire_yellow,test_yaw_speeds
+arm.go_to_position preprise_2_3_step1,1,75
+wait_arm_finished
+propulsion.move_to petit_distrib_tire_yellow,test_linear_speeds
+arm.go_to_position predepose_step4_5_6,1,75
+wait_arm_finished
+wait_movement_finished
+
+#On tire
+call tire_central
+
+#On prend les 2 palets
+arm.go_to_position prepare_tir,1,75
+gpio.set ev_vexterne,1
+gpio.set ev_vcentrale,1
+propulsion.move_to petit_distrib_approche_yellow,test_linear_speeds
+wait_movement_finished
+arm.go_to_position pretir_step3,1,75
+wait_arm_finished
+arm.go_to_position pretir_step2,1,75
+wait_arm_finished
+propulsion.move_to petit_distrib_contact_yellow,test_approach_speeds
+wait_movement_finished
+arm.go_to_position preprise_4_5,1,75
+wait_arm_finished
+arm.go_to_position prise_4_5,1,75
+wait_arm_finished
+dc_motor.set_pwm pompe,pwm_pump_activated
+delay delay05
+
+propulsion.move_to petit_distrib_approche_yellow,test_approach_speeds
+call tire_central_2
+
+#on depose les 2
+propulsion.move_to point_depose_sol_yellow,test_linear_speeds
+wait_movement_finished
+call depose_sol
+
+#on depose le greenium
+gpio.set ev_vexterne,1
+gpio.set ev_vcentrale,0
+propulsion.move_to point_depose_sol_greenium_yellow,test_linear_speeds
+arm.go_to_position depose_5_6,1,75
+wait_arm_finished
+arm.go_to_position prise_tir,1,75
+wait_arm_finished
+dc_motor.set_pwm pompe,pwm_pump_activated
+arm.go_to_position prise_tir,1,75
+wait_arm_finished
+arm.go_to_position depose_5_6,1,75
+wait_arm_finished
+arm.go_to_position prise_devant,1,75
+wait_arm_finished
+call depose_sol
+delay delay02
+gpio.set ev_vexterne,1
+gpio.set ev_vcentrale,1
+propulsion.move_to point_depose_sol_redium_yellow,test_linear_speeds
+wait_movement_finished
+arm.go_to_position depose_5_6,1,75
+wait_arm_finished
+arm.go_to_position prise_redium,1,75
+wait_arm_finished
+dc_motor.set_pwm pompe,pwm_pump_activated
+arm.go_to_position prise_redium,1,75
+wait_arm_finished
+arm.go_to_position depose_5_6,1,75
+wait_arm_finished
+arm.go_to_position prise_devant,1,75
+wait_arm_finished
+call depose_sol
+end sequence
+
+begin sequence test_bidon
+arm.go_to_position preprise_3_4,1,75
+wait_arm_finished
+arm.go_to_position prise_2_3,1,75
+wait_arm_finished
+dc_motor.set_pwm pompe,pwm_pump_activated
+arm.go_to_position prise_2_3,1,75
+wait_arm_finished
+delay delay05
+arm.go_to_position predepose_step1_3_4,1,75
+wait_arm_finished
+arm.go_to_position preprise_3_4,1,75
+wait_arm_finished
+propulsion.move_to petit_distrib_tire_yellow,test_approach_speeds
+wait_movement_finished
+arm.go_to_position pretir_step3,1,75
+wait_arm_finished
+arm.go_to_position pretir_step2,1,75
+wait_arm_finished
+arm.go_to_position depose_5_6,1,75
+wait_arm_finished
+end sequence
+
+begin sequence tire_central
+gpio.set ev_vexterne,1
+gpio.set ev_vcentrale,1
+arm.go_to_position recupe_5_6,1,50
+wait_arm_finished
+dc_motor.set_pwm pompe,pwm_pump_activated
+arm.go_to_position depose_5_6,1,50
+wait_arm_finished
+arm.go_to_position predepose_step1_2_3,1,75
+wait_arm_finished
+delay delay02
+arm.go_to_position predepose_step2_2_3,1,75
+wait_arm_finished
+delay delay02
+arm.go_to_position predepose_step3_2_3,1,75
+wait_arm_finished
+delay delay02
+arm.go_to_position predepose_step3_2_3,1,75
+wait_arm_finished
+delay delay02
+arm.go_to_position prepare_tir,1,50
+wait_arm_finished
+arm.go_to_position depose_lanceur,1,50
+wait_arm_finished
+delay delay02
+propulsion.move_to petit_distrib_approche_yellow,test_linear_speeds
+propulsion.move_to petit_distrib_contact_yellow,test_approach_speeds
+wait_movement_finished
+set_servo moteur,moteur_pwm,100
+call deploie_rampe
+delay delay1
+gpio.set ev_vcentrale,0
+delay delay02
+arm.go_to_position prepare_tir,1,50
+wait_arm_finished
+delay delay02
+arm.go_to_position depose_lanceur,1,50
+wait_arm_finished
+dc_motor.set_pwm pompe,pwm_pump_zero
+arm.go_to_position prepare_tir,1,50
+wait_arm_finished
+delay delay2
+set_servo moteur,moteur_pwm_zero,100
+call retracte_rampe
+delay delay1
+end sequence
+
+begin sequence tire_central_2
+arm.go_to_position preprise_2_3_step1,1,75
+wait_arm_finished
+delay delay02
+arm.go_to_position preprise_2_3_step2,1,75
+wait_arm_finished
+delay delay02
+arm.go_to_position preprise_2_3_step3,1,75
+wait_arm_finished
+set_servo moteur,moteur_pwm,100
+arm.go_to_position depose_2_3,1,50
+wait_arm_finished
+arm.go_to_position prepare_tir,1,50
+wait_arm_finished
+arm.go_to_position depose_lanceur,1,50
+wait_arm_finished
+delay delay02
+propulsion.move_to petit_distrib_contact_yellow,test_approach_speeds
+wait_movement_finished
+call deploie_rampe
+delay delay1
+dc_motor.set_pwm pompe,pwm_pump_zero
+delay delay02
+arm.go_to_position prepare_tir,1,50
+wait_arm_finished
+delay delay2
+set_servo moteur,moteur_pwm_zero,100
+call retracte_rampe
+delay delay1
+end sequence
+
+begin sequence attrape_devant
+var int delay=2000
+arm.go_to_position prise_devant,1,20
+pump.set_pwm pwm_pump_activated
+arm.go_to_position prise_devant_tasse,1,20
+wait_arm_finished
+delay delay02
+arm.go_to_position prise_devant,1,20
+#delay delay
+wait_arm_finished
+end sequence
+
+begin sequence depose_sol
+var int delay=5000
+arm.go_to_position predepose_sol_2,1,20
+arm.go_to_position predepose_sol_2,1,20
+arm.go_to_position depose_sol,1,20
+#delay delay
+wait_arm_finished
+pump.set_pwm pwm_pump_zero
+end sequence
