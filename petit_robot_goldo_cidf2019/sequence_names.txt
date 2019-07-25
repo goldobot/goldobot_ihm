@@ -59,5 +59,6 @@ prise_ligne_chaos_jaune
 prise_ligne_chaos_violet
 prise_auto_av
 prise_auto_ar
+match_jaune_goldo
 test_arm_speed
 test_servos_speed
