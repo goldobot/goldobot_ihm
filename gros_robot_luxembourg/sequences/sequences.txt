@@ -521,10 +521,9 @@ end sequence
 begin sequence ratisse_purple
 propulsion.point_to chaos_orientation_purple,test_yaw_speeds
 wait_movement_finished
+set_servo rateau,rateau_baisse,100
 propulsion.move_to chaos_debut_pousse_purple,test_linear_speeds
 wait_movement_finished
-set_servo rateau,rateau_baisse,100
-delay delay02
 propulsion.move_to chaos_leve_rateau_purple,test_slow_linear_speeds
 wait_movement_finished
 set_servo rateau,rateau_leve,100
@@ -541,11 +540,11 @@ propulsion.move_to chaos_debut_pousse_purple,test_slow_linear_speeds
 wait_movement_finished
 set_servo rateau,rateau_baisse,100
 delay delay02
-propulsion.move_to chaos_leve_rateau_purple,test_slow_linear_speeds
+propulsion.move_to chaos_debut_tire_purple,test_slow_linear_speeds
 wait_movement_finished
 set_servo rateau,rateau_range,100
 delay delay05
-propulsion.move_to chaos_leve_rateau_purple,test_slow_linear_speeds
+propulsion.move_to chaos_ratisse_purple,test_linear_speeds
 wait_movement_finished
 end sequence
 
