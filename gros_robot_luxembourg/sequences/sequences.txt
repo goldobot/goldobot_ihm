@@ -91,21 +91,25 @@ call degage_54
 call passage_a_gauche
 #On active l'ejecteur
 set_servo moteur,moteur_pwm,100
+set_servo moteur,moteur_pwm,100
 call deploie_rampe
 #On les ejecte
 call tire_int
 call tire_ext
 #On stoppe le moteur
 set_servo moteur,moteur_pwm,0
+set_servo moteur,moteur_pwm,0
 #On prend les deux en stock
 call passage_a_droite
 call destock_droite_haut
+set_servo moteur,moteur_pwm,100
 set_servo moteur,moteur_pwm,100
 call passage_a_gauche
 #On les ejecte
 call tire_int
 call tire_ext
 #On range l'ejecteur
+set_servo moteur,moteur_pwm,0
 set_servo moteur,moteur_pwm,0
 call retracte_rampe
 delay delay05
@@ -182,9 +186,9 @@ call degage_43
 propulsion.move_to petit_distrib_tire_purple,test_linear_speeds
 propulsion.point_to chaos_ratisse_purple,test_yaw_speeds
 propulsion.move_to petit_distrib_approche_purple,test_linear_speeds
-propulsion.move_to petit_distrib_contact_purple,test_approach_speeds
 wait_movement_finished
 #On active l'ejecteur
+set_servo moteur,moteur_pwm,100
 set_servo moteur,moteur_pwm,100
 call deploie_rampe
 #On les ejecte
@@ -192,15 +196,18 @@ call tire_int
 call tire_ext
 #On stoppe le moteur
 set_servo moteur,moteur_pwm,0
+set_servo moteur,moteur_pwm,0
 #On prend les deux en stock
 call passage_a_droite
 call destock_droite_haut
+set_servo moteur,moteur_pwm,100
 set_servo moteur,moteur_pwm,100
 call passage_a_gauche
 #On les ejecte
 call tire_int
 call tire_ext
 #On range l'ejecteur
+set_servo moteur,moteur_pwm,0
 set_servo moteur,moteur_pwm,0
 call retracte_rampe
 delay delay05
