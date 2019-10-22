@@ -22,7 +22,7 @@ begin sequence prematch_purple
 var vec3 start_pose=(700mm,1275mm,0deg)
 call prematch_common
 propulsion.set_pose start_pose
-#arm.go_to_position depart,1,20
+arm.go_to_position idle_droit,1,20
 end sequence
 
 ###############################

@@ -45,8 +45,8 @@ var vec3 start_pose_purple=(700mm,1275mm,0deg)
 #points grand distrib
 var vec2 point_intermediaire_purple=(1300mm,1275mm)
 var vec2 point_intermediaire_grand_distrib_purple=(1300mm,900mm)
-var vec2 point_approche_grand_distrib_purple=(1300mm,795mm)
-var vec2 point_prise_grand_distrib_purple=(1400mm,795mm)
+var vec2 point_approche_grand_distrib_purple=(1300mm,800mm)
+var vec2 point_prise_grand_distrib_purple=(1500mm,800mm)
 
 #points ratissage
 var vec2 chaos_ratisse_purple=(1050mm,1275mm)
