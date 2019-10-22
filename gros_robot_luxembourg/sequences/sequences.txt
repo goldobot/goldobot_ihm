@@ -306,7 +306,7 @@ wait_arm_finished
 delay delay02
 call lache
 delay delay05
-arm.go_to_position idle_droit,1,50
+arm.go_to_position idle_gauche,1,50
 wait_arm_finished
 end sequence
 
