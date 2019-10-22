@@ -60,6 +60,9 @@ var vec2 petit_distrib_approche_purple=(1800mm,1275mm)
 var vec2 petit_distrib_contact_purple=(1900mm,1275mm)
 var vec2 petit_distrib_tire_purple=(1680mm,1275mm)
 
+#point depose point_depose_sol_redium_yellow
+var vec2 point_depose_sol_redium_purple=(700mm,1275mm)
+
 ##############################################
 ###########   POSITIONS  JAUNE   #############
 ##############################################

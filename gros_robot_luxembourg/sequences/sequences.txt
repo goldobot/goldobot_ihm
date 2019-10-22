@@ -25,6 +25,9 @@ propulsion.set_pose start_pose
 #arm.go_to_position depart,1,20
 end sequence
 
+###############################
+######### MATCH JAUNE #########
+###############################
 begin sequence match_yellow
 #On va au distrib
 propulsion.move_to point_intermediaire_yellow,test_linear_speeds
@@ -105,12 +108,16 @@ call tire_ext
 #On range l'ejecteur
 set_servo moteur,moteur_pwm,0
 call retracte_rampe
+delay delay05
 propulsion.move_to point_depose_sol_redium_yellow,test_linear_speeds
 call destock_gauche_bas
 wait_movement_finished
 #TODO : Depose au sol, passage a droite, prise a droite, depose au sol
 end sequence
 
+################################
+######### MATCH VIOLET #########
+################################
 begin sequence match_purple
 #On va au distrib
 propulsion.move_to point_intermediaire_purple,test_linear_speeds
@@ -158,13 +165,24 @@ propulsion.move_to petit_distrib_approche_purple,test_linear_speeds
 propulsion.move_to petit_distrib_contact_purple,test_approach_speeds
 propulsion.reposition reposition_speed,reposition_null
 wait_movement_finished
-#On prend le blueium et le greenium
+#On stocke le redium
 call preprise_54
-call prise_duo
+call prise_ext
 delay delay05
 call degage_54
-#On les passe a gauche
 call passage_a_gauche
+call depose_32
+#On prend le greenium et le blueium
+call preprise_43
+call prise_duo
+delay delay05
+call degage_43
+#On se replace avec la rampe du bon côté
+propulsion.move_to petit_distrib_tire_purple,test_linear_speeds
+propulsion.point_to chaos_ratisse_purple,test_yaw_speeds
+propulsion.move_to petit_distrib_approche_purple,test_linear_speeds
+propulsion.move_to petit_distrib_contact_purple,test_approach_speeds
+wait_movement_finished
 #On active l'ejecteur
 set_servo moteur,moteur_pwm,100
 call deploie_rampe
@@ -184,6 +202,9 @@ call tire_ext
 #On range l'ejecteur
 set_servo moteur,moteur_pwm,0
 call retracte_rampe
+delay delay05
+propulsion.move_to point_depose_sol_redium_purple,test_linear_speeds
+call destock_gauche_bas
 #TODO : Depose au sol, passage a droite, prise a droite, depose au sol
 end sequence
 
