@@ -450,15 +450,18 @@ end sequence
 begin sequence tire_int
 arm.go_to_position e_1,1,50
 wait_arm_finished
+delay delay02
 arm.go_to_position e_2,1,50
 wait_arm_finished
+delay delay02
 arm.go_to_position e_3,1,50
 wait_arm_finished
 delay delay05
 gpio.set ev_vcentrale,0
 delay delay02
-arm.go_to_position e_lache,1,50
+arm.go_to_position e_lache,1,100
 wait_arm_finished
+delay delay05
 end sequence
 
 begin sequence tire_ext
@@ -467,7 +470,7 @@ wait_arm_finished
 delay delay05
 pump.set_pwm pwm_pump_zero
 delay delay02
-arm.go_to_position e_lache,1,50
+arm.go_to_position e_lache,1,100
 wait_arm_finished
 delay delay05
 arm.go_to_position e_3,1,50
@@ -540,7 +543,7 @@ propulsion.move_to chaos_debut_pousse_purple,test_slow_linear_speeds
 wait_movement_finished
 set_servo rateau,rateau_baisse,100
 delay delay02
-propulsion.move_to chaos_debut_tire_purple,test_slow_linear_speeds
+propulsion.move_to chaos_leve_rateau_purple,test_slow_linear_speeds
 wait_movement_finished
 set_servo rateau,rateau_range,100
 delay delay05
@@ -570,7 +573,7 @@ propulsion.move_to chaos_debut_pousse_yellow,test_slow_linear_speeds
 wait_movement_finished
 set_servo rateau,rateau_baisse,100
 delay delay02
-propulsion.move_to chaos_debut_tire_yellow,test_slow_linear_speeds
+propulsion.move_to chaos_leve_rateau_yellow,test_slow_linear_speeds
 wait_movement_finished
 set_servo rateau,rateau_range,100
 delay delay05
