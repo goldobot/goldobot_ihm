@@ -61,7 +61,7 @@ call depose_32
 delay delay05
 #On ratisse
 propulsion.move_to point_approche_grand_distrib_yellow,test_approach_speeds
-propulsion.move_to point_intermediaire_grand_distrib_yellow,test_approach_speeds
+#propulsion.move_to point_intermediaire_grand_distrib_yellow,test_approach_speeds
 propulsion.point_to chaos_ratisse_yellow,test_yaw_speeds
 propulsion.move_to chaos_ratisse_yellow,test_linear_speeds
 wait_movement_finished
@@ -151,13 +151,14 @@ call depose_32
 delay delay05
 #On ratisse
 propulsion.move_to point_approche_grand_distrib_purple,test_approach_speeds
-propulsion.move_to point_intermediaire_grand_distrib_purple,test_approach_speeds
+#propulsion.move_to point_intermediaire_grand_distrib_purple,test_approach_speeds
 propulsion.point_to chaos_ratisse_purple,test_yaw_speeds
 propulsion.move_to chaos_ratisse_purple,test_linear_speeds
 wait_movement_finished
 call ratisse_purple
 #On va au petit distrib
 propulsion.point_to point_intermediaire_purple,test_yaw_speeds
+wait_movement_finished
 call passage_a_droite
 propulsion.move_to point_intermediaire_purple,test_linear_speeds
 propulsion.point_to petit_distrib_approche_purple,test_yaw_speeds
