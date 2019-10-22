@@ -1,0 +1,4 @@
+name,rail,rotation,epaule,coude,tete
+debug,256,256,256,256,256
+full,1023,1023,1023,1023,1023
+medium,512,512,512,512,512

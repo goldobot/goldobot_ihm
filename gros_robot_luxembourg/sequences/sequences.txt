@@ -1,0 +1,579 @@
+var float test_distance=400mm
+var float test_angle=90deg
+
+var vec3 test_linear_speeds=(500mm,500mm,500mm)
+var vec3 test_slow_linear_speeds=(300mm,300mm,300mm)
+var vec3 test_yaw_speeds=(180deg,180deg,180deg)
+
+var vec3 speeds_rotation=(90deg,90deg,90deg)
+
+var float r_speed=200mm
+var float r_accel=1
+var int delay_test=20000
+
+begin sequence prematch_yellow
+var vec3 start_pose=(700mm,-1275mm,0deg)
+call prematch_common
+propulsion.set_pose start_pose
+arm.go_to_position idle_droit,1,20
+end sequence
+
+begin sequence prematch_purple
+var vec3 start_pose=(700mm,1275mm,0deg)
+call prematch_common
+propulsion.set_pose start_pose
+#arm.go_to_position depart,1,20
+end sequence
+
+###############################
+######### MATCH JAUNE #########
+###############################
+begin sequence match_yellow
+#On va au distrib
+propulsion.move_to point_intermediaire_yellow,test_linear_speeds
+propulsion.point_to point_approche_grand_distrib_yellow,test_yaw_speeds
+propulsion.move_to point_approche_grand_distrib_yellow,test_linear_speeds
+propulsion.point_to point_prise_grand_distrib_yellow,test_yaw_speeds
+propulsion.move_to point_prise_grand_distrib_yellow,test_approach_speeds
+propulsion.reposition reposition_speed,reposition_null
+wait_movement_finished
+#On stocke le redium
+call preprise_6
+call prise_ext
+delay delay05
+call degage_6
+call depose_65
+delay delay05
+#On stocke le greenium et le redium
+call preprise_54
+call prise_duo
+delay delay05
+call degage_54
+call depose_54
+delay delay05
+#On stocke le blueium et le redium
+call passage_a_gauche
+call preprise_32
+call prise_duo
+delay delay05
+call degage_32
+call depose_32
+delay delay05
+#On ratisse
+propulsion.move_to point_approche_grand_distrib_yellow,test_approach_speeds
+propulsion.move_to point_intermediaire_grand_distrib_yellow,test_approach_speeds
+propulsion.point_to chaos_ratisse_yellow,test_yaw_speeds
+propulsion.move_to chaos_ratisse_yellow,test_linear_speeds
+wait_movement_finished
+call ratisse_yellow
+#On va au petit distrib
+propulsion.point_to point_intermediaire_yellow,test_yaw_speeds
+propulsion.move_to point_intermediaire_yellow,test_linear_speeds
+propulsion.point_to petit_distrib_approche_yellow,test_yaw_speeds
+propulsion.move_to petit_distrib_approche_yellow,test_linear_speeds
+propulsion.move_to petit_distrib_contact_yellow,test_approach_speeds
+propulsion.reposition reposition_speed,reposition_null
+wait_movement_finished
+#On stocke le redium
+call preprise_43
+call prise_ext
+delay delay05
+call degage_43
+call depose_43
+delay delay05
+#On prend le blueium et le greenium
+call passage_a_droite
+call preprise_54
+call prise_duo
+delay delay05
+call degage_54
+#On les passe a gauche
+call passage_a_gauche
+#On active l'ejecteur
+set_servo moteur,moteur_pwm,100
+call deploie_rampe
+#On les ejecte
+call tire_int
+call tire_ext
+#On stoppe le moteur
+set_servo moteur,moteur_pwm,0
+#On prend les deux en stock
+call passage_a_droite
+call destock_droite_haut
+set_servo moteur,moteur_pwm,100
+call passage_a_gauche
+#On les ejecte
+call tire_int
+call tire_ext
+#On range l'ejecteur
+set_servo moteur,moteur_pwm,0
+call retracte_rampe
+delay delay05
+propulsion.move_to point_depose_sol_redium_yellow,test_linear_speeds
+call destock_gauche_bas
+wait_movement_finished
+#TODO : Depose au sol, passage a droite, prise a droite, depose au sol
+end sequence
+
+################################
+######### MATCH VIOLET #########
+################################
+begin sequence match_purple
+#On va au distrib
+propulsion.move_to point_intermediaire_purple,test_linear_speeds
+propulsion.point_to point_approche_grand_distrib_purple,test_yaw_speeds
+propulsion.move_to point_approche_grand_distrib_purple,test_linear_speeds
+propulsion.point_to point_prise_grand_distrib_purple,test_yaw_speeds
+propulsion.move_to point_prise_grand_distrib_purple,test_approach_speeds
+propulsion.reposition reposition_speed,reposition_null
+wait_movement_finished
+#On stocke le redium
+call preprise_6
+call prise_ext
+delay delay05
+call degage_6
+call depose_65
+delay delay05
+#On stocke le greenium et le redium
+call preprise_54
+call prise_duo
+delay delay05
+call degage_54
+call depose_54
+delay delay05
+#On stocke le blueium et le redium
+call passage_a_gauche
+call preprise_32
+call prise_duo
+delay delay05
+call degage_32
+call depose_32
+delay delay05
+#On ratisse
+propulsion.move_to point_approche_grand_distrib_purple,test_approach_speeds
+propulsion.move_to point_intermediaire_grand_distrib_purple,test_approach_speeds
+propulsion.point_to chaos_ratisse_purple,test_yaw_speeds
+propulsion.move_to chaos_ratisse_purple,test_linear_speeds
+wait_movement_finished
+call ratisse_purple
+#On va au petit distrib
+propulsion.point_to point_intermediaire_purple,test_yaw_speeds
+call passage_a_droite
+propulsion.move_to point_intermediaire_purple,test_linear_speeds
+propulsion.point_to petit_distrib_approche_purple,test_yaw_speeds
+propulsion.move_to petit_distrib_approche_purple,test_linear_speeds
+propulsion.move_to petit_distrib_contact_purple,test_approach_speeds
+propulsion.reposition reposition_speed,reposition_null
+wait_movement_finished
+#On stocke le redium
+call preprise_54
+call prise_ext
+delay delay05
+call degage_54
+call passage_a_gauche
+call depose_32
+#On prend le greenium et le blueium
+call preprise_43
+call prise_duo
+delay delay05
+call degage_43
+#On se replace avec la rampe du bon côté
+propulsion.move_to petit_distrib_tire_purple,test_linear_speeds
+propulsion.point_to chaos_ratisse_purple,test_yaw_speeds
+propulsion.move_to petit_distrib_approche_purple,test_linear_speeds
+propulsion.move_to petit_distrib_contact_purple,test_approach_speeds
+wait_movement_finished
+#On active l'ejecteur
+set_servo moteur,moteur_pwm,100
+call deploie_rampe
+#On les ejecte
+call tire_int
+call tire_ext
+#On stoppe le moteur
+set_servo moteur,moteur_pwm,0
+#On prend les deux en stock
+call passage_a_droite
+call destock_droite_haut
+set_servo moteur,moteur_pwm,100
+call passage_a_gauche
+#On les ejecte
+call tire_int
+call tire_ext
+#On range l'ejecteur
+set_servo moteur,moteur_pwm,0
+call retracte_rampe
+delay delay05
+propulsion.move_to point_depose_sol_redium_purple,test_linear_speeds
+call destock_gauche_bas
+#TODO : Depose au sol, passage a droite, prise a droite, depose au sol
+end sequence
+
+begin sequence end_match
+propulsion.motors_disable
+propulsion.disable
+pump.set_pwm pwm_pump_zero
+arm.shutdown
+end sequence
+
+begin sequence preprise_6
+arm.go_to_position p65_pre1,1,50
+wait_arm_finished
+arm.go_to_position p65_pre2,1,50
+wait_arm_finished
+delay delay05
+arm.go_to_position p6,1,50
+wait_arm_finished
+end sequence
+
+begin sequence degage_6
+arm.go_to_position r65_1,1,50
+wait_arm_finished
+arm.go_to_position r65_2,1,50
+wait_arm_finished
+arm.go_to_position r65_3,1,50
+wait_arm_finished
+arm.go_to_position r65_4,1,50
+wait_arm_finished
+arm.go_to_position r65_5,1,50
+wait_arm_finished
+end sequence
+
+begin sequence depose_65
+delay delay02
+arm.go_to_position d65,1,50
+wait_arm_finished
+delay delay02
+call lache
+delay delay05
+arm.go_to_position idle_droit,1,50
+wait_arm_finished
+end sequence
+
+begin sequence preprise_54
+arm.go_to_position p54_pre1,1,50
+wait_arm_finished
+delay delay05
+arm.go_to_position p54,1,50
+wait_arm_finished
+end sequence
+
+begin sequence degage_54
+arm.go_to_position r54_1,1,50
+wait_arm_finished
+arm.go_to_position r54_2,1,50
+wait_arm_finished
+arm.go_to_position r54_3,1,50
+wait_arm_finished
+arm.go_to_position r54_4,1,50
+wait_arm_finished
+end sequence
+
+begin sequence depose_54
+delay delay02
+arm.go_to_position d54,1,50
+wait_arm_finished
+delay delay02
+call lache
+delay delay05
+arm.go_to_position idle_droit,1,50
+wait_arm_finished
+end sequence
+
+begin sequence preprise_43
+arm.go_to_position p43_pre1,1,50
+wait_arm_finished
+delay delay05
+arm.go_to_position p43,1,50
+wait_arm_finished
+end sequence
+
+begin sequence degage_43
+arm.go_to_position r43_1,1,50
+wait_arm_finished
+arm.go_to_position r43_2,1,50
+wait_arm_finished
+arm.go_to_position r43_3,1,50
+wait_arm_finished
+arm.go_to_position r43_4,1,50
+wait_arm_finished
+end sequence
+
+begin sequence depose_43
+delay delay02
+arm.go_to_position d43,1,50
+wait_arm_finished
+delay delay02
+call lache
+delay delay05
+arm.go_to_position idle_droit,1,50
+wait_arm_finished
+end sequence
+
+begin sequence preprise_32
+arm.go_to_position p32_pre1,1,50
+wait_arm_finished
+arm.go_to_position p32_pre2,1,50
+wait_arm_finished
+delay delay05
+arm.go_to_position p32,1,50
+wait_arm_finished
+end sequence
+
+begin sequence degage_32
+arm.go_to_position r32_1,1,50
+wait_arm_finished
+arm.go_to_position r32_2,1,50
+wait_arm_finished
+end sequence
+
+begin sequence depose_32
+arm.go_to_position dg_1,1,50
+wait_arm_finished
+arm.go_to_position dg_2,1,50
+wait_arm_finished
+delay delay05
+call lache
+delay delay05
+arm.go_to_position idle_gauche,1,50
+wait_arm_finished
+end sequence
+
+begin sequence prise_ext
+gpio.set ev_vexterne,1
+gpio.set ev_vcentrale,0
+pump.set_pwm pwm_pump_activated
+pump.set_pwm pwm_pump_activated
+end sequence
+
+begin sequence prise_int
+gpio.set ev_vexterne,0
+gpio.set ev_vcentrale,1
+pump.set_pwm pwm_pump_activated
+pump.set_pwm pwm_pump_activated
+end sequence
+
+begin sequence prise_duo
+gpio.set ev_vexterne,1
+gpio.set ev_vcentrale,1
+pump.set_pwm pwm_pump_activated
+pump.set_pwm pwm_pump_activated
+end sequence
+
+begin sequence lache
+pump.set_pwm pwm_pump_zero
+pump.set_pwm pwm_pump_zero
+end sequence
+
+begin sequence passage_a_gauche
+arm.go_to_position td1,1,50
+wait_arm_finished
+arm.go_to_position td2,1,50
+wait_arm_finished
+arm.go_to_position td3,1,50
+wait_arm_finished
+arm.go_to_position tg3,1,50
+wait_arm_finished
+arm.go_to_position tg2,1,50
+wait_arm_finished
+arm.go_to_position tg1,1,50
+wait_arm_finished
+arm.go_to_position idle_gauche,1,50
+wait_arm_finished
+end sequence
+
+begin sequence passage_a_droite
+arm.go_to_position tg1,1,50
+wait_arm_finished
+arm.go_to_position tg2,1,50
+wait_arm_finished
+arm.go_to_position tg3,1,50
+wait_arm_finished
+arm.go_to_position td3,1,50
+wait_arm_finished
+arm.go_to_position td2,1,50
+wait_arm_finished
+arm.go_to_position td1,1,50
+wait_arm_finished
+arm.go_to_position idle_droit,1,50
+wait_arm_finished
+end sequence
+
+begin sequence destock_droite_bas
+arm.go_to_position sd1,1,50
+wait_arm_finished
+arm.go_to_position sdb,1,50
+wait_arm_finished
+delay delay05
+call prise_duo
+delay delay05
+arm.go_to_position idle_droit,1,50
+wait_arm_finished
+end sequence
+
+begin sequence destock_droite_haut
+arm.go_to_position sd1,1,50
+wait_arm_finished
+arm.go_to_position sdh,1,50
+wait_arm_finished
+delay delay05
+call prise_duo
+delay delay05
+arm.go_to_position idle_droit,1,50
+wait_arm_finished
+end sequence
+
+begin sequence destock_gauche_bas
+arm.go_to_position sg1,1,50
+wait_arm_finished
+arm.go_to_position sgb,1,50
+wait_arm_finished
+delay delay05
+call prise_duo
+delay delay05
+arm.go_to_position idle_gauche,1,50
+wait_arm_finished
+end sequence
+
+begin sequence destock_gauche_haut
+arm.go_to_position sg1,1,50
+wait_arm_finished
+arm.go_to_position sgh,1,50
+wait_arm_finished
+delay delay05
+call prise_duo
+delay delay05
+arm.go_to_position idle_gauche,1,50
+wait_arm_finished
+end sequence
+
+begin sequence tire_int
+arm.go_to_position e_1,1,50
+wait_arm_finished
+arm.go_to_position e_2,1,50
+wait_arm_finished
+arm.go_to_position e_3,1,50
+wait_arm_finished
+delay delay05
+gpio.set ev_vcentrale,0
+delay delay02
+arm.go_to_position e_lache,1,50
+wait_arm_finished
+end sequence
+
+begin sequence tire_ext
+arm.go_to_position e_3,1,50
+wait_arm_finished
+delay delay05
+pump.set_pwm pwm_pump_zero
+delay delay02
+arm.go_to_position e_lache,1,50
+wait_arm_finished
+delay delay05
+arm.go_to_position e_3,1,50
+wait_arm_finished
+arm.go_to_position e_2,1,50
+wait_arm_finished
+arm.go_to_position e_1,1,50
+wait_arm_finished
+end sequence
+
+begin sequence prematch_common
+var int moteur_init_1=0
+var int moteur_init_2=20000
+propulsion.enable
+propulsion.motors_enable
+set_servo moteur,moteur_init_1,100
+set_servo moteur,moteur_init_2,100
+set_servo rateau,rateau_prerange,100
+set_servo rateau,rateau_range,100
+pump.set_pwm pwm_pump_zero
+propulsion.set_adversary_detection_enable 0
+propulsion.enable
+propulsion.motors_enable
+gpio.set ev_vcentrale,1
+gpio.set ev_vexterne,1
+end sequence
+
+begin sequence deploie_rampe
+var int servo_rampe_depliee=20500
+var int delay1=2000
+var int gache_off=28000
+var int gache_off=34000
+set_servo rampe,servo_rampe_depliee,100
+delay delay1
+end sequence
+
+begin sequence retracte_rampe
+var int servo_rampe_retractee=56000
+var int delay1=1000
+set_servo rampe,servo_rampe_retractee,100
+delay delay1
+end sequence
+
+begin sequence lance_atome
+var int moteur_pwm=20000
+var int moteur_pwm_zero=0
+var int gache_on=1000
+var int gache_off=1000
+end sequence
+
+begin sequence ratisse_purple
+propulsion.point_to chaos_orientation_purple,test_yaw_speeds
+wait_movement_finished
+propulsion.move_to chaos_debut_pousse_purple,test_linear_speeds
+wait_movement_finished
+set_servo rateau,rateau_baisse,100
+delay delay02
+propulsion.move_to chaos_leve_rateau_purple,test_slow_linear_speeds
+wait_movement_finished
+set_servo rateau,rateau_leve,100
+delay delay02
+propulsion.move_to chaos_debut_tire_purple,test_slow_linear_speeds
+wait_movement_finished
+set_servo rateau,rateau_baisse,100
+delay delay02
+propulsion.move_to chaos_leve_rateau_purple,test_slow_linear_speeds
+wait_movement_finished
+set_servo rateau,rateau_leve,100
+delay delay02
+propulsion.move_to chaos_debut_pousse_purple,test_slow_linear_speeds
+wait_movement_finished
+set_servo rateau,rateau_baisse,100
+delay delay02
+propulsion.move_to chaos_leve_rateau_purple,test_slow_linear_speeds
+wait_movement_finished
+set_servo rateau,rateau_range,100
+delay delay05
+propulsion.move_to chaos_leve_rateau_purple,test_slow_linear_speeds
+wait_movement_finished
+end sequence
+
+begin sequence ratisse_yellow
+propulsion.point_to chaos_orientation_yellow,test_yaw_speeds
+wait_movement_finished
+set_servo rateau,rateau_baisse,100
+propulsion.move_to chaos_debut_pousse_yellow,test_linear_speeds
+wait_movement_finished
+propulsion.move_to chaos_leve_rateau_yellow,test_slow_linear_speeds
+wait_movement_finished
+set_servo rateau,rateau_leve,100
+delay delay02
+propulsion.move_to chaos_debut_tire_yellow,test_slow_linear_speeds
+wait_movement_finished
+set_servo rateau,rateau_baisse,100
+delay delay02
+propulsion.move_to chaos_leve_rateau_yellow,test_slow_linear_speeds
+wait_movement_finished
+set_servo rateau,rateau_leve,100
+delay delay02
+propulsion.move_to chaos_debut_pousse_yellow,test_slow_linear_speeds
+wait_movement_finished
+set_servo rateau,rateau_baisse,100
+delay delay02
+propulsion.move_to chaos_debut_tire_yellow,test_slow_linear_speeds
+wait_movement_finished
+set_servo rateau,rateau_range,100
+delay delay05
+propulsion.move_to chaos_ratisse_yellow,test_linear_speeds
+wait_movement_finished
+end sequence

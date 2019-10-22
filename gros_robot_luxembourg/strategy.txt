@@ -1,0 +1,5 @@
+start_pose 100 100 90
+waypoint 100 100
+waypoint 100 200
+action attrape_palet
+
