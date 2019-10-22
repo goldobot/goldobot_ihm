@@ -9,7 +9,7 @@ var vec2 pt1=(200mm,0mm)
 var vec2 pt2=(0mm,-200mm)
 var vec2 pt3=(400mm,0)
 
-var int pwm_pump_activated=300
+var int pwm_pump_activated=500
 var int pwm_pump_zero=0
 
 var int reposition_speed=100
