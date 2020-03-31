@@ -4,7 +4,7 @@ from PyQt5.QtCore import QObject, pyqtSignal, QSize, QRectF, QPointF, Qt
 
 from PyQt5.QtWidgets import QGraphicsView
 from PyQt5.QtWidgets import QGraphicsScene
-from PyQt5.QtWidgets import  QGraphicsRectItem
+from PyQt5.QtWidgets import QGraphicsRectItem
 
 from PyQt5.QtGui import QPolygonF, QPen, QBrush, QColor, QFont, QTransform
 
@@ -86,43 +86,60 @@ class TableViewWidget(QGraphicsView):
 
         self._scene.addRect(QRectF(0,-1500,2000,3000),QPen(), QBrush(background))
 
-        #Zones gauche
-        self._scene.addRect(QRectF(300,-1500,300,450),QPen(), QBrush(redium))
-        self._scene.addRect(QRectF(600,-1500,300,450),QPen(), QBrush(greenium))
-        self._scene.addRect(QRectF(900,-1500,300,450),QPen(), QBrush(blueium))
-        self._scene.addRect(QRectF(320,-1480,260,410),QPen(), QBrush(background))
-        self._scene.addRect(QRectF(620,-1480,260,410),QPen(), QBrush(background))
-        self._scene.addRect(QRectF(920,-1480,260,410),QPen(), QBrush(background))
+        # Scenario 2020
 
-        #Zones droite
-        self._scene.addRect(QRectF(300,1050,300,450),QPen(), QBrush(redium))
-        self._scene.addRect(QRectF(600,1050,300,450),QPen(), QBrush(greenium))
-        self._scene.addRect(QRectF(900,1050,300,450),QPen(), QBrush(blueium))
-        self._scene.addRect(QRectF(320,1070,260,410),QPen(), QBrush(background))
-        self._scene.addRect(QRectF(620,1070,260,410),QPen(), QBrush(background))
-        self._scene.addRect(QRectF(920,1070,260,410),QPen(), QBrush(background))
-        #Zones de chaos
-        self._scene.addEllipse(QRectF(785,-715,430,430),QPen(), QBrush(darker))
-        self._scene.addEllipse(QRectF(785,285,430,430),QPen(), QBrush(darker))
-        self._scene.addEllipse(QRectF(825,-675,350,350),QPen(), QBrush(background))
-        self._scene.addEllipse(QRectF(825,325,350,350),QPen(), QBrush(background))
+        #Port principal "bleu"
+        self._scene.addRect(QRectF(500,-1120,570,20),QPen(), QBrush(blueium))
+        self._scene.addRect(QRectF(500,-1500,30,400),QPen(), QBrush(greenium))
+        self._scene.addRect(QRectF(1070,-1500,30,400),QPen(), QBrush(redium))
 
-        #Balance
-        self._scene.addRect(QRectF(1600,-272,400,252),QPen(), QBrush(yellow))
-        self._scene.addRect(QRectF(1400,-20,600,40),QPen(), QBrush(background))
-        self._scene.addRect(QRectF(1600,20,400,252),QPen(), QBrush(purple))
+        #Port secondaire "bleu"
+        self._scene.addRect(QRectF(1700,150,20,300),QPen(), QBrush(blueium))
+        self._scene.addRect(QRectF(1700,150,300,100),QPen(), QBrush(greenium))
+        self._scene.addRect(QRectF(1700,350,300,100),QPen(), QBrush(redium))
 
-        #Pente
-        self._scene.addRect(QRectF(1600, -1050, 400, 778), QPen(), QBrush(darker))
-        self._scene.addRect(QRectF(1600, 272, 400, 778), QPen(), QBrush(darker))
+        #Bouees cote "bleu"
+        self._scene.addEllipse(QRectF(1200-35,-1200-35,70,70),QPen(), QBrush(greenium))
+        self._scene.addEllipse(QRectF(1080-35,-1050-35,70,70),QPen(), QBrush(redium))
+        self._scene.addEllipse(QRectF(510-35,-1050-35,70,70),QPen(), QBrush(greenium))
+        self._scene.addEllipse(QRectF(400-35,-1200-35,70,70),QPen(), QBrush(redium))
 
-        #Palets
-        self._scene.addEllipse(QRectF(412,-1038,76,76),QPen(), QBrush(redium))
-        self._scene.addEllipse(QRectF(712,-1038,76,76),QPen(), QBrush(redium))
-        self._scene.addEllipse(QRectF(1012,-1038,76,76),QPen(), QBrush(greenium))
-        self._scene.addEllipse(QRectF(412,962,76,76),QPen(), QBrush(redium))
-        self._scene.addEllipse(QRectF(712,962,76,76),QPen(), QBrush(redium))
-        self._scene.addEllipse(QRectF(1012,962,76,76),QPen(), QBrush(greenium))
+        self._scene.addEllipse(QRectF(100-35,-830-35,70,70),QPen(), QBrush(redium))
+        self._scene.addEllipse(QRectF(400-35,-550-35,70,70),QPen(), QBrush(greenium))
+        self._scene.addEllipse(QRectF(800-35,-400-35,70,70),QPen(), QBrush(redium))
+        self._scene.addEllipse(QRectF(1200-35,-230-35,70,70),QPen(), QBrush(greenium))
+
+        self._scene.addEllipse(QRectF(1650-35,-435-35,70,70),QPen(), QBrush(greenium))
+        self._scene.addEllipse(QRectF(1650-35,-165-35,70,70),QPen(), QBrush(redium))
+        self._scene.addEllipse(QRectF(1955-35,-495-35,70,70),QPen(), QBrush(redium))
+        self._scene.addEllipse(QRectF(1955-35,-105-35,70,70),QPen(), QBrush(greenium))
+
+        #Port principal "jaune"
+        self._scene.addRect(QRectF(500,1100,570,20),QPen(), QBrush(yellow))
+        self._scene.addRect(QRectF(500,1100,30,400),QPen(), QBrush(redium))
+        self._scene.addRect(QRectF(1070,1100,30,400),QPen(), QBrush(greenium))
+
+        #Port secondaire "jaune"
+        self._scene.addRect(QRectF(1700,-450,20,300),QPen(), QBrush(yellow))
+        self._scene.addRect(QRectF(1700,-450,300,100),QPen(), QBrush(greenium))
+        self._scene.addRect(QRectF(1700,-250,300,100),QPen(), QBrush(redium))
+
+        #Bouees cote "jaune"
+        self._scene.addEllipse(QRectF(1200-35,1200-35,70,70),QPen(), QBrush(redium))
+        self._scene.addEllipse(QRectF(1080-35,1050-35,70,70),QPen(), QBrush(greenium))
+        self._scene.addEllipse(QRectF(510-35,1050-35,70,70),QPen(), QBrush(redium))
+        self._scene.addEllipse(QRectF(400-35,1200-35,70,70),QPen(), QBrush(greenium))
+
+        self._scene.addEllipse(QRectF(100-35,830-35,70,70),QPen(), QBrush(greenium))
+        self._scene.addEllipse(QRectF(400-35,550-35,70,70),QPen(), QBrush(redium))
+        self._scene.addEllipse(QRectF(800-35,400-35,70,70),QPen(), QBrush(greenium))
+        self._scene.addEllipse(QRectF(1200-35,230-35,70,70),QPen(), QBrush(redium))
+
+        self._scene.addEllipse(QRectF(1650-35,435-35,70,70),QPen(), QBrush(redium))
+        self._scene.addEllipse(QRectF(1650-35,165-35,70,70),QPen(), QBrush(greenium))
+        self._scene.addEllipse(QRectF(1955-35,495-35,70,70),QPen(), QBrush(greenium))
+        self._scene.addEllipse(QRectF(1955-35,105-35,70,70),QPen(), QBrush(redium))
+
 
         self._points = []
         #self.setSceneRect(QRectF(0,-150,200,300))
