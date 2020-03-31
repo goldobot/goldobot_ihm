@@ -62,6 +62,7 @@ opcodes = {
     'wait_movement_finished': (126, None, None, None),
     'wait_arm_finished': (125, None, None, None),
     'propulsion.set_pose': (127, 'var', None, None),
+    'propulsion.set_pose_virtual': (0, None, None, None),
     'propulsion.point_to': (128, 'var','var', None),
     'propulsion.move_to': (129, 'var', 'var', None),
     'propulsion.rotate': (130, 'var', 'var', None),

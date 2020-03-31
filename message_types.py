@@ -3,6 +3,7 @@ Heartbeat=1
 Reset=2
 CommStats=3
 DbgPrintf=4
+GetNucleoFirmwareVersion=5
 
 PropulsionTelemetry=8
 PropulsionTelemetryEx=9

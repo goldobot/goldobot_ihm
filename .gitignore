@@ -2,6 +2,4 @@
 *.crc
 *.pyc
 __pycache__/
-env/
-goldobot_ihm/
-widgets/
+sequence_names.txt

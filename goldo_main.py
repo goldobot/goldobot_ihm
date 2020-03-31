@@ -49,6 +49,8 @@ dialogs = [
 
         
 class MainWindow(QMainWindow):
+    nucleo_ver_prefix_s = "Nucleo firmware version : "
+
     def __init__(self, parent = None):
         #PArse arguments
         parser = OptionParser()
@@ -101,12 +103,14 @@ class MainWindow(QMainWindow):
         self._widget_robot_status = RobotStatusWidget(ihm_type=self._ihm_type)
         self._conf_button = QPushButton('Load Conf')
         self._rplidar_button = QPushButton('Start Rplidar')
+        self._nucleo_firmware_version = QLabel(self.nucleo_ver_prefix_s + "Unknown")
 
         layout1 = QHBoxLayout()
         layout2 = QVBoxLayout()
         self.setCentralWidget(self._main_widget)
         layout1.addWidget(self._widget_robot_status)
         layout1.addLayout(layout2)
+        layout2.addWidget(self._nucleo_firmware_version)
         layout2.addWidget(self._table_view)
         layout2.addWidget(self._conf_button)
         layout2.addWidget(self._rplidar_button)
@@ -120,6 +124,9 @@ class MainWindow(QMainWindow):
         self._action_upload_config.triggered.connect(self._upload_config) 
         self._action_rplidar.triggered.connect(self._rplidar_control) 
 
+        self._F1_shortcut = QShortcut(QKeySequence(Qt.Key_F1), self)
+        self._F1_shortcut.activated.connect(self._get_nucleo_firmware_version)
+
         self._F5_shortcut = QShortcut(QKeySequence(Qt.Key_F5), self)
         self._F5_shortcut.activated.connect(self._upload_config)
 
@@ -127,6 +134,7 @@ class MainWindow(QMainWindow):
         self._rplidar_button.clicked.connect(self._rplidar_control)
 
         self._client.robot_end_load_config_status.connect(self._upload_status)
+        self._client.nucleo_firmware_version.connect(self._display_nucleo_firmware_version)
        
         
         for d in self._dialogs:
@@ -166,10 +174,13 @@ class MainWindow(QMainWindow):
     def _upload_sequence(self):
         config.load_dynamixels_config()
         config.load_sequence()
+
     def _upload_config(self):
         cfg = config.robot_config
         #cfg.update_config()
         cfg.compile()
+        #Get nucleo firmware version
+        #self._client.send_message(message_types.GetNucleoFirmwareVersion, b'')
         #Start programming
         self._client.send_message(message_types.RobotBeginLoadConfig, b'')
         #Upload codes by packets
@@ -202,6 +213,12 @@ class MainWindow(QMainWindow):
             #self.rplidar_proc = subprocess.Popen("/usr/bin/xterm",shell=True)
             self.rplidar_started = True
             self._rplidar_button.setText("Stop Rplidar")
+
+    def _get_nucleo_firmware_version(self):
+        self._client.send_message(message_types.GetNucleoFirmwareVersion, b'')
+
+    def _display_nucleo_firmware_version(self, firm_ver):
+        self._nucleo_firmware_version.setText(self.nucleo_ver_prefix_s + firm_ver)
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)

@@ -220,7 +220,7 @@ end sequence
 ############################ match jaune #####################
 #### strat goal 1 ####
 begin sequence goldo_obj_strat_jaune_collecte_sol_initial
-propulsion.set_pose_virtual start_pose_jaune
+propulsion.set_pose start_pose_jaune
 #--prise palet devant rouge
 call preprise_sol
 propulsion.move_to palet_zone_rouge_jaune,speed_500
@@ -244,7 +244,7 @@ end sequence
 
 #### strat goal 2 ####
 begin sequence goldo_obj_strat_jaune_depose_acc_1
-propulsion.set_pose_virtual debut_recal_acc_jaune
+propulsion.set_pose debut_recal_acc_jaune
 call griffes_accelerateur_jaune
 #--recalage et positionnement contre l'accelerateur
 call recale_accelerateur_jaune
@@ -267,7 +267,7 @@ end sequence
 
 #### strat goal 3 ####
 begin sequence goldo_obj_strat_jaune_prise_goldenium
-propulsion.set_pose_virtual approche_gold_jaune
+propulsion.set_pose approche_gold_jaune
 #call slider_range_droite
 propulsion.point_to contact_gold_jaune,yaw_180
 wait_movement_finished
@@ -283,7 +283,7 @@ end sequence
 
 #### strat goal 4 ####
 begin sequence goldo_obj_strat_jaune_depose_goldenium
-propulsion.set_pose_virtual approche_chaos_jaune
+propulsion.set_pose approche_chaos_jaune
 propulsion.point_to depose_balance_jaune,yaw_180
 wait_movement_finished
 propulsion.move_to depose_balance_jaune,speed_500
@@ -294,7 +294,7 @@ end sequence
 
 #### strat goal 5 ####
 begin sequence goldo_obj_strat_jaune_collecte_chaos
-propulsion.set_pose_virtual debut_recal_balance_jaune
+propulsion.set_pose debut_recal_balance_jaune
 ################## todo - recalage balance ici ##################
 propulsion.move_to approche_distrib1_jaune,speed_500
 wait_movement_finished
@@ -308,7 +308,7 @@ end sequence
 
 #### strat goal 6 ####
 begin sequence goldo_obj_strat_jaune_depose_acc_2
-propulsion.set_pose_virtual debut_recal_acc_jaune
+propulsion.set_pose debut_recal_acc_jaune
 #--recalage sur goldonium
 call recale_goldonium_jaune
 call griffes_accelerateur_jaune

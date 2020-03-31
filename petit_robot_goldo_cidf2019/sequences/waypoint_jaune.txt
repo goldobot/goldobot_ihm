@@ -54,6 +54,7 @@ var vec2 contact_distrib1_jaune=(1450mm,-500mm)
 
 #--ligne_chaos
 var vec2 fin_ligne_chaos_jaune=(750mm,-500mm)
+var vec2 fin_ligne_chaos_jaune2=(500mm,-250mm)
 
 #--balyage_chaos
 #var vec2 approche_chaos_jaune=(1200mm,-185mm)

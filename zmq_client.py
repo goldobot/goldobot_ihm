@@ -1,16 +1,21 @@
 import zmq
 import struct
 from PyQt5.QtCore import QObject, QSocketNotifier, pyqtSignal
+import scapy
 
+from messages import NucleoFirmwareVersion
 from messages import PropulsionTelemetry
 from messages import PropulsionTelemetryEx
 from messages import RplidarRobotDetection
 from messages import OdometryConfig
 from messages import PropulsionControllerConfig
 
+from scapy.all import hexdump
+
 import message_types
 
 class ZmqClient(QObject):
+    nucleo_firmware_version = pyqtSignal(str)
     message_received = pyqtSignal(object)
     heartbeat = pyqtSignal(int)
     start_of_match = pyqtSignal(int)
@@ -44,6 +49,9 @@ class ZmqClient(QObject):
         self._push_socket = self._context.socket(zmq.PUB)
         self._push_socket.connect('tcp://{}:3002'.format(ip))
 
+        self._push_socket_rplidar = self._context.socket(zmq.PUB)
+        self._push_socket_rplidar.connect('tcp://{}:3102'.format(ip))
+
         self._notifier = QSocketNotifier(self._sub_socket.getsockopt(zmq.FD), QSocketNotifier.Read, self)
         self._notifier.activated.connect(self._on_sub_socket_event)
 
@@ -51,7 +59,20 @@ class ZmqClient(QObject):
         self._notifier_rplidar.activated.connect(self._on_sub_socket_rplidar_event)
 
     def send_message(self, message_type, message_body):
+        dbg_msg = struct.pack('<H',message_type) + message_body
+        hexdump(dbg_msg)
+        print()
+
         self._push_socket.send_multipart([struct.pack('<H',message_type), message_body])
+
+    def send_message_rplidar(self, message_type, message_body):
+        print("= send_message_rplidar ========================")
+        dbg_msg = struct.pack('<H',message_type) + message_body
+        hexdump(dbg_msg)
+        print("===============================================")
+        print()
+
+        self._push_socket_rplidar.send_multipart([struct.pack('<H',message_type), message_body])
 
     def _on_sub_socket_event(self):        
         self._notifier.setEnabled(False)
@@ -74,8 +95,16 @@ class ZmqClient(QObject):
         self._notifier_rplidar.setEnabled(True)
 
     def _on_message_received(self, msg):
+        #hexdump(msg)
+        #print()
+
         self.message_received.emit(msg)
         msg_type = struct.unpack('<H', msg[0:2])[0]
+
+        if msg_type == message_types.GetNucleoFirmwareVersion:
+            firm_ver = NucleoFirmwareVersion(msg[2:])
+            print("firm_ver : " + firm_ver.s)
+            self.nucleo_firmware_version.emit(firm_ver.s)
 
         if msg_type == message_types.SensorsChange:
             self.sensors.emit(struct.unpack('<I',msg[2:])[0])

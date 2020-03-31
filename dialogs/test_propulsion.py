@@ -8,6 +8,7 @@ from PyQt5.QtWidgets import QLineEdit
 from PyQt5.QtCore import  QTimer
 
 from widgets.properties_editor import PropertiesEditorWidget
+from widgets.table_view import TableViewWidget
 
 from messages import PropulsionControllerConfig
 from messages import PIDConfig
@@ -37,8 +38,10 @@ class PropulsionTestDialog(QDialog):
         self._speed_steps_button = QPushButton('speed steps')
         self._yaw_rate_steps_button = QPushButton('yaw rate steps')
         self._yaw_steps_button = QPushButton('yaw steps')
-        self._execute_trajectory_button = QPushButton('trajectory')
         self._execute_rotation_button = QPushButton('rotation')
+        self._execute_trajectory_button = QPushButton('trajectory')
+        self._start_traj_edit_button = QPushButton('start_traj_edit')
+        self._end_traj_edit_button = QPushButton('end_traj_edit')
 
         self._pose_x_edit = QLineEdit('0')
         self._pose_y_edit = QLineEdit('0')
@@ -79,7 +82,10 @@ class PropulsionTestDialog(QDialog):
 
         layout.addWidget(self._button_set_pose, 10,0)
         layout.addWidget(self._button_reposition, 11,0)
-        layout.addWidget(self._execute_trajectory_button, 12,0)
+
+        layout.addWidget(self._start_traj_edit_button, 12,0)
+        layout.addWidget(self._end_traj_edit_button, 12,1)
+        layout.addWidget(self._execute_trajectory_button, 13,0)
 
         self.setLayout(layout)
         
@@ -97,10 +103,18 @@ class PropulsionTestDialog(QDialog):
 
         self._button_set_pose.clicked.connect(self._set_pose)
         self._button_reposition.clicked.connect(self._reposition_forward)
-        self._execute_trajectory_button.clicked.connect(self._test_trajectory)
+
+        self._start_traj_edit_button.clicked.connect(self._start_traj_edit)
+        self._end_traj_edit_button.clicked.connect(self._end_traj_edit)
+        #self._execute_trajectory_button.clicked.connect(self._test_trajectory)
+        self._execute_trajectory_button.clicked.connect(self._test_traj_goldo)
+
         self._telemetry_buffer = []
         self._current_telemetry = None
         self._current_telemetry_ex = None
+
+        self._editing_traj = False
+        self._traj_point_l = [(0.0,0.0)]
 
     def set_client(self, client):
         self._client = client
@@ -188,3 +202,23 @@ class PropulsionTestDialog(QDialog):
 
         self._plt_widget.show()
         self._telemetry_buffer = []
+
+    def _start_traj_edit(self):
+        self._editing_traj = True
+        self._traj_point_l = [(0.0,0.0)]
+        #TableViewWidget.g_table_view.debug_start_edit(0.0,0.0)
+        TableViewWidget.g_table_view.debug_start_edit_rel()
+
+    def _end_traj_edit(self):
+        self._editing_traj = False
+        self._traj_point_l = TableViewWidget.g_table_view.debug_stop_edit()
+
+    def _test_traj_goldo(self):
+        if self._editing_traj: return
+        print (self._traj_point_l)
+        msg = b''.join([struct.pack('<fff',0.4,0.3,0.3)] + [struct.pack('<ff', p[0]*1e-3, p[1] * 1e-3) for p in self._traj_point_l])
+        self._client.send_message_rplidar(message_types.DbgPropulsionExecuteTrajectory, msg)
+        #self._client.send_message(message_types.DbgPropulsionExecuteTrajectory, msg)
+        self._telemetry_buffer = []
+        #QTimer.singleShot(5000, self.foo)
+

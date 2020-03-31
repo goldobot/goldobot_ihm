@@ -1,6 +1,10 @@
 import struct
 import math
 
+class NucleoFirmwareVersion:
+    def __init__(self, data):
+        self.s = data.split(bytes([0]),1)[0].decode("utf-8")
+
 class PropulsionTelemetry:
     def __init__(self, data):
         unpacked = struct.unpack('<hhhhhhhHHbbBB', data)

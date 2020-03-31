@@ -127,6 +127,14 @@ class TableViewWidget(QGraphicsView):
         self._points = []
         #self.setSceneRect(QRectF(0,-150,200,300))
 
+        self._traj_segm_l = []
+
+        self._debug_edit_mode = False
+        self._debug_edit_point_l = []
+
+        self._big_robot_x = 0
+        self._big_robot_y = 0
+
         TableViewWidget.g_table_view = self
 
     def _add_cubes(self, x, y):
@@ -176,6 +184,8 @@ class TableViewWidget(QGraphicsView):
     def update_telemetry(self, telemetry):
         self._big_robot.setPos(telemetry.x * 1000, telemetry.y * 1000)
         self._big_robot.setRotation(telemetry.yaw * 180 / math.pi)
+        self._big_robot_x = telemetry.x * 1000
+        self._big_robot_y = telemetry.y * 1000
 
     def update_other_robots(self, other_robot):
         if (other_robot.id == 0):
@@ -196,8 +206,49 @@ class TableViewWidget(QGraphicsView):
         self.debug_start_y = _new_y
         self.debug_cur_x = _new_x
         self.debug_cur_y = _new_y
+        if self._debug_edit_mode:
+            self._debug_edit_point_l.append((_new_x,_new_y))
 
     def debug_line_to(self, _new_x, _new_y):
-        self._scene.addLine(self.debug_cur_x, self.debug_cur_y, _new_x, _new_y, QPen(QColor(255,255,255)));
+        my_segm = self._scene.addLine(self.debug_cur_x, self.debug_cur_y, _new_x, _new_y, QPen(QColor(255,255,255)));
+        self._traj_segm_l.append(my_segm)
         self.debug_cur_x = _new_x
         self.debug_cur_y = _new_y
+
+    def debug_clear_lines(self):
+        for l in self._traj_segm_l:
+            self._scene.removeItem(l)
+        self._traj_segm_l = []
+
+    def debug_start_edit(self, _new_x, _new_y):
+        self.debug_clear_lines()
+        self._debug_edit_mode = True
+        self.debug_start_x = _new_x
+        self.debug_start_y = _new_y
+        self.debug_cur_x = _new_x
+        self.debug_cur_y = _new_y
+        self._debug_edit_point_l = [(_new_x,_new_y)]
+
+    def debug_start_edit_rel(self):
+        self.debug_clear_lines()
+        self._debug_edit_mode = True
+        self.debug_start_x = self._big_robot_x
+        self.debug_start_y = self._big_robot_y
+        self.debug_cur_x = self._big_robot_x
+        self.debug_cur_y = self._big_robot_y
+        self._debug_edit_point_l = [(self._big_robot_x,self._big_robot_y)]
+
+    def debug_stop_edit(self):
+        self._debug_edit_mode = False
+        return self._debug_edit_point_l
+
+    def mousePressEvent(self, event):
+        print ("pix:<{},{}>".format(event.x(),event.y()))
+        realY = 3000.0*(event.x()-450.0)/900.0
+        realX = 2000.0*(event.y())/600.0
+        print ("real:<{},{}>".format(realX,realY))
+        if self._debug_edit_mode:
+            self._debug_edit_point_l.append((realX,realY))
+            self.debug_line_to(realX, realY)
+
+
