@@ -70,7 +70,6 @@ class MainWindow(QMainWindow):
         config.load_config(options.config_path)
 
         self.rplidar_started = False
-        self.rplidar_proc = None
         
         # Create actions
         self._action_reset = QAction("Reset",self)
@@ -204,15 +203,12 @@ class MainWindow(QMainWindow):
     def _rplidar_control(self):
         if self.rplidar_started:
             self.rplidar_started = False
-            #self.rplidar_proc.kill()
-            self.rplidar_proc.send_signal(2)
             self._rplidar_button.setText("Start Rplidar")
+            self._client.send_message_rplidar(message_types.RplidarStop, b'')
         else:
-            self.rplidar_proc = subprocess.Popen("/home/pi/goldo/ultra_simple",shell=False)
-            #self.rplidar_proc = subprocess.Popen(" /usr/bin/xterm -e /home/pi/goldo/ultra_simple",shell=True)
-            #self.rplidar_proc = subprocess.Popen("/usr/bin/xterm",shell=True)
             self.rplidar_started = True
             self._rplidar_button.setText("Stop Rplidar")
+            self._client.send_message_rplidar(message_types.RplidarStart, b'')
 
     def _get_nucleo_firmware_version(self):
         self._client.send_message(message_types.GetNucleoFirmwareVersion, b'')

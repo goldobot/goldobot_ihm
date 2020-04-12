@@ -140,6 +140,10 @@ class TableViewWidget(QGraphicsView):
         self._scene.addEllipse(QRectF(1955-35,495-35,70,70),QPen(), QBrush(greenium))
         self._scene.addEllipse(QRectF(1955-35,105-35,70,70),QPen(), QBrush(redium))
 
+        self.rplidar_remanence = False
+
+        #dbg_plt_sz = 3
+        #self._scene.addEllipse(1000 - dbg_plt_sz, 0 - dbg_plt_sz, 2*dbg_plt_sz, 2*dbg_plt_sz, QPen(QBrush(QColor('white')),4), QBrush(QColor('white')))
 
         self._points = []
         #self.setSceneRect(QRectF(0,-150,200,300))
@@ -205,18 +209,25 @@ class TableViewWidget(QGraphicsView):
         self._big_robot_y = telemetry.y * 1000
 
     def update_other_robots(self, other_robot):
+        dbg_plt_sz = 3
         if (other_robot.id == 0):
             self._friend_robot.setPos(other_robot.x * 1000, other_robot.y * 1000)
             self._friend_robot_text.setPlainText('%d'%other_robot.samples)
             self._friend_robot_text.setPos(other_robot.x * 1000 - 60, other_robot.y * 1000 - 40)
+            if self.rplidar_remanence:
+                self._scene.addEllipse(other_robot.x * 1000 - dbg_plt_sz, other_robot.y * 1000 - dbg_plt_sz, 2*dbg_plt_sz, 2*dbg_plt_sz, QPen(QBrush(QColor('white')),4), QBrush(QColor('white')))
         elif (other_robot.id == 1):
             self._adv1_robot.setPos(other_robot.x * 1000, other_robot.y * 1000)
             self._adv1_robot_text.setPlainText('%d'%other_robot.samples)
             self._adv1_robot_text.setPos(other_robot.x * 1000 - 60, other_robot.y * 1000 - 40)
+            if self.rplidar_remanence:
+                self._scene.addEllipse(other_robot.x * 1000 - dbg_plt_sz, other_robot.y * 1000 - dbg_plt_sz, 2*dbg_plt_sz, 2*dbg_plt_sz, QPen(QBrush(QColor('white')),4), QBrush(QColor('white')))
         elif (other_robot.id == 2):
             self._adv2_robot.setPos(other_robot.x * 1000, other_robot.y * 1000)
             self._adv2_robot_text.setPlainText('%d'%other_robot.samples)
             self._adv2_robot_text.setPos(other_robot.x * 1000 - 60, other_robot.y * 1000 - 40)
+            if self.rplidar_remanence:
+                self._scene.addEllipse(other_robot.x * 1000 - dbg_plt_sz, other_robot.y * 1000 - dbg_plt_sz, 2*dbg_plt_sz, 2*dbg_plt_sz, QPen(QBrush(QColor('white')),4), QBrush(QColor('white')))
 
     def debug_set_start(self, _new_x, _new_y):
         self.debug_start_x = _new_x
