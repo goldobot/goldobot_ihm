@@ -77,6 +77,7 @@ class MainWindow(QMainWindow):
         self._action_exit_debug = QAction("Debug exit",self)
         self._action_upload_config = QAction("Upload config",self)
         self._action_rplidar = QAction("Rplidar",self)
+        self._action_dbg_strat = QAction("Debug Strat",self)
         
         # Add menu
         tools_menu = self.menuBar().addMenu("Tools")
@@ -102,6 +103,7 @@ class MainWindow(QMainWindow):
         self._widget_robot_status = RobotStatusWidget(ihm_type=self._ihm_type)
         self._conf_button = QPushButton('Load Conf')
         self._rplidar_button = QPushButton('Start Rplidar')
+        self._dbg_strat_button = QPushButton('Debug Strat')
         self._nucleo_firmware_version = QLabel(self.nucleo_ver_prefix_s + "Unknown")
 
         layout1 = QHBoxLayout()
@@ -113,6 +115,7 @@ class MainWindow(QMainWindow):
         layout2.addWidget(self._table_view)
         layout2.addWidget(self._conf_button)
         layout2.addWidget(self._rplidar_button)
+        layout2.addWidget(self._dbg_strat_button)
         layout2.addStretch(1)
 
         self._main_widget.setLayout(layout1)
@@ -122,6 +125,7 @@ class MainWindow(QMainWindow):
         self._action_exit_debug.triggered.connect(self._send_exit_debug)
         self._action_upload_config.triggered.connect(self._upload_config) 
         self._action_rplidar.triggered.connect(self._rplidar_control) 
+        self._action_dbg_strat.triggered.connect(self._dbg_strat_control) 
 
         self._F1_shortcut = QShortcut(QKeySequence(Qt.Key_F1), self)
         self._F1_shortcut.activated.connect(self._get_nucleo_firmware_version)
@@ -131,6 +135,7 @@ class MainWindow(QMainWindow):
 
         self._conf_button.clicked.connect(self._upload_config)
         self._rplidar_button.clicked.connect(self._rplidar_control)
+        self._dbg_strat_button.clicked.connect(self._dbg_strat_control)
 
         self._client.robot_end_load_config_status.connect(self._upload_status)
         self._client.nucleo_firmware_version.connect(self._display_nucleo_firmware_version)
@@ -209,6 +214,9 @@ class MainWindow(QMainWindow):
             self.rplidar_started = True
             self._rplidar_button.setText("Stop Rplidar")
             self._client.send_message_rplidar(message_types.RplidarStart, b'')
+
+    def _dbg_strat_control(self):
+            self._client.send_message_rplidar(message_types.RobotStratDbgStartMatch, b'')
 
     def _get_nucleo_firmware_version(self):
         self._client.send_message(message_types.GetNucleoFirmwareVersion, b'')
