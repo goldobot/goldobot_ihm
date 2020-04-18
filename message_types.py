@@ -92,6 +92,8 @@ RplidarStop=1025
 RplidarRobotDetection=1280
 
 RobotStratDbgStartMatch=2048
+RobotStratDbgStartPause=2049
+RobotStratDbgStartResume=2050
 
 
 
