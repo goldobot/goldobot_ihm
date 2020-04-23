@@ -51,6 +51,7 @@ DbgPropulsionTest=84
 DbgPropulsionExecuteTrajectory=85
 DbgPropulsionExecuteRotation=86
 DbgPropulsionExecuteReposition=87
+DbgPropulsionExecutePointTo=88
 DbgMiscRepositionStartGreen=100
 DbgReset=127
 
@@ -92,8 +93,8 @@ RplidarStop=1025
 RplidarRobotDetection=1280
 
 RobotStratDbgStartMatch=2048
-RobotStratDbgStartPause=2049
-RobotStratDbgStartResume=2050
+RobotStratDbgPauseMatch=2049
+RobotStratDbgResumeMatch=2050
 
 
 

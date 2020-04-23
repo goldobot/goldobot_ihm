@@ -234,10 +234,10 @@ class MainWindow(QMainWindow):
             self._client.send_message_rplidar(message_types.RobotStratDbgStartMatch, b'')
 
     def _dbg_strat_pause_control(self):
-            self._client.send_message_rplidar(message_types.RobotStratDbgStartPause, b'')
+            self._client.send_message_rplidar(message_types.RobotStratDbgPauseMatch, b'')
 
     def _dbg_strat_resume_control(self):
-            self._client.send_message_rplidar(message_types.RobotStratDbgStartResume, b'')
+            self._client.send_message_rplidar(message_types.RobotStratDbgResumeMatch, b'')
 
     def _get_nucleo_firmware_version(self):
         self._client.send_message(message_types.GetNucleoFirmwareVersion, b'')
