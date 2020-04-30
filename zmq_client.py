@@ -24,6 +24,7 @@ class ZmqClient(QObject):
     propulsion_telemetry = pyqtSignal(object)
     propulsion_telemetry_ex = pyqtSignal(object)
     rplidar_robot_detection = pyqtSignal(object)
+    astar_dbg_map = pyqtSignal(object)
     odometry_config = pyqtSignal(object)
     propulsion_controller_config = pyqtSignal(object)
     dynamixel_registers = pyqtSignal(int, int, object)
@@ -95,6 +96,7 @@ class ZmqClient(QObject):
         self._notifier_rplidar.setEnabled(True)
 
     def _on_message_received(self, msg):
+        #print (" len(msg) = {}".format(len(msg)))
         #hexdump(msg)
         #print()
 
@@ -142,6 +144,10 @@ class ZmqClient(QObject):
         if msg_type == message_types.RplidarRobotDetection:
             other_robot = RplidarRobotDetection(msg[2:])
             self.rplidar_robot_detection.emit(other_robot)
+
+        if msg_type == message_types.RobotStratDbgAstarMap:
+            astar_dbg_map_bytes = msg[3:]
+            self.astar_dbg_map.emit(astar_dbg_map_bytes)
 
         if msg_type == message_types.StartOfMatch:
             timestamp = struct.unpack('<I', msg[2:6])[0]

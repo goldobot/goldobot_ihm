@@ -95,6 +95,8 @@ RplidarRobotDetection=1280
 RobotStratDbgStartMatch=2048
 RobotStratDbgPauseMatch=2049
 RobotStratDbgResumeMatch=2050
+RobotStratDbgAstarMap=2051
+RobotStratDbgTestAstar=2052
 
 
 

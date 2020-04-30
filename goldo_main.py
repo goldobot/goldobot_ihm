@@ -11,8 +11,8 @@ import PyQt5.QtCore
 from PyQt5.QtWidgets import QMainWindow, QApplication, QWidget, QLabel, QLineEdit, QGridLayout, QFrame, QPushButton, QSpinBox, QSizePolicy
 from PyQt5.QtCore import QObject, pyqtSignal, QSize, QRectF, QPointF, Qt, QTimer
 from PyQt5.QtWidgets import QTabWidget, QAction, QDialog, QVBoxLayout, QCheckBox
-from PyQt5.QtWidgets import  QHBoxLayout, QComboBox, QMessageBox, QShortcut
-from PyQt5.QtGui import  QKeySequence
+from PyQt5.QtWidgets import QHBoxLayout, QComboBox, QMessageBox, QShortcut
+from PyQt5.QtGui import QKeySequence
 
 from widgets.table_view import TableViewWidget
 from widgets.plot_dialog import PlotDialog, ControlPlots
@@ -29,6 +29,7 @@ from dialogs.test_actuators import TestActuatorsDialog
 from dialogs.test_dynamixels import TestDynamixelAx12Dialog
 from dialogs.debug_fpga import DebugFpgaDialog
 from dialogs.sequences import SequencesDialog
+from widgets.plot_astar import PlotAstarWidget
 
 from parse_sequence import SequenceParser
 
@@ -109,27 +110,32 @@ class MainWindow(QMainWindow):
         self._dbg_strat_pause_button = QPushButton('Debug Strat pause')
         self._dbg_strat_resume_button = QPushButton('Debug Strat resume')
         self._nucleo_firmware_version = QLabel(self.nucleo_ver_prefix_s + "Unknown")
+        self._astar_view = PlotAstarWidget()
 
         main_layout = QHBoxLayout()
         table_layout = QVBoxLayout()
+        under_table_layout = QHBoxLayout()
         raspi_layout = QGridLayout()
 
         self.setCentralWidget(self._main_widget)
-
-        main_layout.addWidget(self._widget_robot_status)
-        main_layout.addLayout(table_layout)
-
-        table_layout.addWidget(self._nucleo_firmware_version)
-        table_layout.addWidget(self._table_view)
-        table_layout.addWidget(self._conf_button)
-        table_layout.addLayout(raspi_layout)
-        table_layout.addStretch(1)
 
         raspi_layout.addWidget(self._rplidar_start_button,    1, 1)
         raspi_layout.addWidget(self._rplidar_stop_button,     1, 2)
         raspi_layout.addWidget(self._dbg_strat_go_button,     2, 1)
         raspi_layout.addWidget(self._dbg_strat_pause_button,  3, 1)
         raspi_layout.addWidget(self._dbg_strat_resume_button, 3, 2)
+
+        under_table_layout.addLayout(raspi_layout)
+        under_table_layout.addWidget(self._astar_view)
+
+        table_layout.addWidget(self._nucleo_firmware_version)
+        table_layout.addWidget(self._table_view)
+        table_layout.addWidget(self._conf_button)
+        table_layout.addLayout(under_table_layout)
+        table_layout.addStretch(1)
+
+        main_layout.addWidget(self._widget_robot_status)
+        main_layout.addLayout(table_layout)
 
         self._main_widget.setLayout(main_layout)
 
@@ -173,6 +179,7 @@ class MainWindow(QMainWindow):
         self._client.match_state_change.connect(self._on_match_state_change)
         self._widget_robot_status.set_client(self._client)
         self._table_view.set_client(self._client)
+        self._astar_view.set_client(self._client)
         
         #plt = ControlPlots()
         #plt.show()
