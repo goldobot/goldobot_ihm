@@ -78,6 +78,7 @@ class MainWindow(QMainWindow):
         self._action_rplidar_start = QAction("Rplidar start",self)
         self._action_rplidar_stop = QAction("Rplidar stop",self)
         self._action_dbg_strat_go = QAction("Debug strat GO",self)
+        self._action_dbg_strat_clear_err = QAction("Debug strat clear err",self)
         self._action_dbg_strat_pause = QAction("Debug strat pause",self)
         self._action_dbg_strat_resume = QAction("Debug strat resume",self)
         
@@ -107,6 +108,7 @@ class MainWindow(QMainWindow):
         self._rplidar_start_button = QPushButton('Start Rplidar')
         self._rplidar_stop_button = QPushButton('Stop Rplidar')
         self._dbg_strat_go_button = QPushButton('Debug Strat GO!')
+        self._dbg_strat_clear_err_button = QPushButton('Clear error')
         self._dbg_strat_pause_button = QPushButton('Debug Strat pause')
         self._dbg_strat_resume_button = QPushButton('Debug Strat resume')
         self._nucleo_firmware_version = QLabel(self.nucleo_ver_prefix_s + "Unknown")
@@ -119,11 +121,12 @@ class MainWindow(QMainWindow):
 
         self.setCentralWidget(self._main_widget)
 
-        raspi_layout.addWidget(self._rplidar_start_button,    1, 1)
-        raspi_layout.addWidget(self._rplidar_stop_button,     1, 2)
-        raspi_layout.addWidget(self._dbg_strat_go_button,     2, 1)
-        raspi_layout.addWidget(self._dbg_strat_pause_button,  3, 1)
-        raspi_layout.addWidget(self._dbg_strat_resume_button, 3, 2)
+        raspi_layout.addWidget(self._rplidar_start_button,        1, 1)
+        raspi_layout.addWidget(self._rplidar_stop_button,         1, 2)
+        raspi_layout.addWidget(self._dbg_strat_go_button,         2, 1)
+        raspi_layout.addWidget(self._dbg_strat_clear_err_button,  2, 2)
+        raspi_layout.addWidget(self._dbg_strat_pause_button,      3, 1)
+        raspi_layout.addWidget(self._dbg_strat_resume_button,     3, 2)
 
         under_table_layout.addLayout(raspi_layout)
         under_table_layout.addWidget(self._astar_view)
@@ -146,6 +149,7 @@ class MainWindow(QMainWindow):
         self._action_rplidar_start.triggered.connect(self._rplidar_start_control) 
         self._action_rplidar_stop.triggered.connect(self._rplidar_stop_control) 
         self._action_dbg_strat_go.triggered.connect(self._dbg_strat_go_control) 
+        self._action_dbg_strat_clear_err.triggered.connect(self._dbg_strat_clear_err_control) 
         self._action_dbg_strat_pause.triggered.connect(self._dbg_strat_pause_control) 
         self._action_dbg_strat_resume.triggered.connect(self._dbg_strat_resume_control) 
 
@@ -159,6 +163,7 @@ class MainWindow(QMainWindow):
         self._rplidar_start_button.clicked.connect(self._rplidar_start_control)
         self._rplidar_stop_button.clicked.connect(self._rplidar_stop_control)
         self._dbg_strat_go_button.clicked.connect(self._dbg_strat_go_control)
+        self._dbg_strat_clear_err_button.clicked.connect(self._dbg_strat_clear_err_control)
         self._dbg_strat_pause_button.clicked.connect(self._dbg_strat_pause_control)
         self._dbg_strat_resume_button.clicked.connect(self._dbg_strat_resume_control)
 
@@ -238,7 +243,11 @@ class MainWindow(QMainWindow):
         self._client.send_message_rplidar(message_types.RplidarStop, b'')
 
     def _dbg_strat_go_control(self):
-            self._client.send_message_rplidar(message_types.RobotStratDbgStartMatch, b'')
+        self._client.send_message_rplidar(message_types.RobotStratDbgStartMatch, b'')
+
+    def _dbg_strat_clear_err_control(self):
+        #self._client.send_message(message_types.PropulsionClearError, b'')
+        self._client.send_message_rplidar(message_types.PropulsionClearError, b'')
 
     def _dbg_strat_pause_control(self):
             self._client.send_message_rplidar(message_types.RobotStratDbgPauseMatch, b'')
