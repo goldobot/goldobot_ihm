@@ -52,7 +52,20 @@ DbgPropulsionExecuteTrajectory=85
 DbgPropulsionExecuteRotation=86
 DbgPropulsionExecuteReposition=87
 DbgPropulsionExecutePointTo=88
-DbgMiscRepositionStartGreen=100
+
+PropulsionStateChanged=90
+PropulsionExecuteTranslation=91
+PropulsionEnterManualControl=92
+PropulsionExitManualControl=93
+PropulsionSetTargetPose=94
+PropulsionSetControlLevels=95
+PropulsionExecuteFaceDirection=96
+PropulsionMeasureNormal=97
+PropulsionClearCommandQueue=98
+PropulsionClearError=99
+PropulsionSetAdversaryDetectionEnable=100
+PropulsionMeasurePoint=101
+
 DbgReset=127
 
 DbgArmsSetPose=160
