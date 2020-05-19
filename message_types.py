@@ -25,6 +25,7 @@ CmdSelectSide=33
 CmdEnterDebugMode=34
 CmdExitDebugMode=35
 
+MainSequenceStartSequence=43
 SetMatchState=44
 
 MainSequenceLoadStatus=46

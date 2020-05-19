@@ -4,9 +4,10 @@ from PyQt5.QtCore import QObject, pyqtSignal, QSize, QRectF, QPointF, Qt
 
 from PyQt5.QtWidgets import QGraphicsView
 from PyQt5.QtWidgets import QGraphicsScene
-from PyQt5.QtWidgets import QGraphicsRectItem
+from PyQt5.QtWidgets import QGraphicsPixmapItem
 
 from PyQt5.QtGui import QPolygonF, QPen, QBrush, QColor, QFont, QTransform
+from PyQt5.QtGui import QImage, QImageReader, QPixmap
 
 
 
@@ -17,6 +18,8 @@ class TableViewWidget(QGraphicsView):
         super(TableViewWidget, self).__init__(parent)
         if ihm_type=='pc':
             self.setFixedSize(900,600)
+        elif ihm_type=='pc-mini':
+            self.setFixedSize(600,400)
         else:
             self.setFixedSize(225,150)
         self.setSceneRect(QRectF(0,-1500,2000,3000))
@@ -32,23 +35,37 @@ class TableViewWidget(QGraphicsView):
         background = QColor(40,40,40)
         darker = QColor(20,20,20)
 
-        big_robot_poly = QPolygonF([
-            QPointF(-135,-151),
-            QPointF(60,-151),
-            QPointF(170,-91),
-            QPointF(170,-45),
-            QPointF(111,-40),
-            QPointF(111,40),
-            QPointF(170,45),
-            QPointF(170,91),
-            QPointF(60,151),
-            QPointF(-135,151)
+#        big_robot_poly = QPolygonF([
+#            QPointF(-135,-151),
+#            QPointF(60,-151),
+#            QPointF(170,-91),
+#            QPointF(170,-45),
+#            QPointF(111,-40),
+#            QPointF(111,40),
+#            QPointF(170,45),
+#            QPointF(170,91),
+#            QPointF(60,151),
+#            QPointF(-135,151)
+#            ])
+
+        little_robot_poly = QPolygonF([
+            QPointF(  50,   0),
+            QPointF( 100,  85),
+            QPointF(  65, 115),
+            QPointF( -65, 115),
+            QPointF(-100,  85),
+            QPointF(-100, -85),
+            QPointF( -65,-115),
+            QPointF(  65,-115),
+            QPointF( 100, -85)
             ])
 
         self._scene = QGraphicsScene(QRectF(0,-1500,2000,3000))
 
-        self._big_robot = self._scene.addPolygon(big_robot_poly, QPen(), QBrush(QColor('red')))
-        self._big_robot.setZValue(1)
+#        self._big_robot = self._scene.addPolygon(big_robot_poly, QPen(), QBrush(QColor('red')))
+#        self._big_robot.setZValue(1)
+        self._little_robot = self._scene.addPolygon(little_robot_poly, QPen(), QBrush(QColor('red')))
+        self._little_robot.setZValue(1)
         #self._friend_robot = self._scene.addEllipse(-100, -100, 200, 200, QPen(QBrush(QColor('black')),4), QBrush(QColor('green')))
         self._friend_robot = self._scene.addEllipse(-100, -100, 200, 200, QPen(QBrush(QColor('black')),4), QBrush(QColor('white')))
         self._friend_robot.setZValue(1)
@@ -81,10 +98,23 @@ class TableViewWidget(QGraphicsView):
         self.rotate(90)
         if ihm_type=='pc':
             self.scale(0.3, -0.3)
+        elif ihm_type=='pc-mini':
+            self.scale(0.2, -0.2)
         else:
             self.scale(0.075, -0.075)
 
-        self._scene.addRect(QRectF(0,-1500,2000,3000),QPen(), QBrush(background))
+        #self._scene.addRect(QRectF(0,-1500,2000,3000),QPen(), QBrush(background))
+
+        f=open("widgets/table_2020_600x400.png","rb")
+        my_buff=f.read()
+        test_img_pixmap2 = QPixmap()
+        test_img_pixmap2.loadFromData(my_buff)
+        #self.setPixmap(test_img_pixmap2)
+        self._bg_img = QGraphicsPixmapItem(test_img_pixmap2)
+        self._bg_img.setTransform(QTransform(1.0, 0.0, 0.0,  0.0, -1.0, 0.0,   0.0, 0.0, 0.2))
+        self._bg_img.setRotation(-90)
+        self._bg_img.setPos(0, -1500)
+        self._scene.addItem(self._bg_img);
 
         # Scenario 2020
 
@@ -153,8 +183,10 @@ class TableViewWidget(QGraphicsView):
         self._debug_edit_mode = False
         self._debug_edit_point_l = []
 
-        self._big_robot_x = 0
-        self._big_robot_y = 0
+#        self._big_robot_x = 0
+#        self._big_robot_y = 0
+        self._little_robot_x = 0
+        self._little_robot_y = 0
 
         TableViewWidget.g_table_view = self
 
@@ -203,10 +235,14 @@ class TableViewWidget(QGraphicsView):
         
 
     def update_telemetry(self, telemetry):
-        self._big_robot.setPos(telemetry.x * 1000, telemetry.y * 1000)
-        self._big_robot.setRotation(telemetry.yaw * 180 / math.pi)
-        self._big_robot_x = telemetry.x * 1000
-        self._big_robot_y = telemetry.y * 1000
+#        self._big_robot.setPos(telemetry.x * 1000, telemetry.y * 1000)
+#        self._big_robot.setRotation(telemetry.yaw * 180 / math.pi)
+#        self._big_robot_x = telemetry.x * 1000
+#        self._big_robot_y = telemetry.y * 1000
+        self._little_robot.setPos(telemetry.x * 1000, telemetry.y * 1000)
+        self._little_robot.setRotation(telemetry.yaw * 180 / math.pi)
+        self._little_robot_x = telemetry.x * 1000
+        self._little_robot_y = telemetry.y * 1000
 
     def update_other_robots(self, other_robot):
         dbg_plt_sz = 3
@@ -260,11 +296,11 @@ class TableViewWidget(QGraphicsView):
     def debug_start_edit_rel(self):
         self.debug_clear_lines()
         self._debug_edit_mode = True
-        self.debug_start_x = self._big_robot_x
-        self.debug_start_y = self._big_robot_y
-        self.debug_cur_x = self._big_robot_x
-        self.debug_cur_y = self._big_robot_y
-        self._debug_edit_point_l = [(self._big_robot_x,self._big_robot_y)]
+        self.debug_start_x = self._little_robot_x
+        self.debug_start_y = self._little_robot_y
+        self.debug_cur_x = self._little_robot_x
+        self.debug_cur_y = self._little_robot_y
+        self._debug_edit_point_l = [(self._little_robot_x,self._little_robot_y)]
 
     def debug_stop_edit(self):
         self._debug_edit_mode = False
