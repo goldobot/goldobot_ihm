@@ -1,3 +1,6 @@
 matplotlib
 PyQt5
 pyzmq
+PyYAML
+scapy
+
