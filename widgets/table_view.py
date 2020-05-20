@@ -1,4 +1,5 @@
 import math
+import os
 
 from PyQt5.QtCore import QObject, pyqtSignal, QSize, QRectF, QPointF, Qt
 
@@ -70,7 +71,10 @@ class TableViewWidget(QGraphicsView):
         self._friend_robot = self._scene.addEllipse(-100, -100, 200, 200, QPen(QBrush(QColor('black')),4), QBrush(QColor('white')))
         self._friend_robot.setZValue(1)
         self._friend_robot.setPos(-1 * 1000, -1 * 1000)
-        self._friend_robot_text = self._scene.addText("0123456", QFont("System",80));
+        if os.name == 'nt':
+            self._friend_robot_text = self._scene.addText("0123456", QFont("Calibri",80));
+        else:
+            self._friend_robot_text = self._scene.addText("0123456", QFont("System",80));
         self._friend_robot_text.setPos(-1 * 1000 - 60, -1 * 1000 - 40)
         self._friend_robot_text.setRotation(-90)
         self._friend_robot_text.setTransform(QTransform(1.0, 0.0, 0.0,  0.0, -1.0, 0.0,   0.0, 0.0, 1.0))
@@ -79,7 +83,10 @@ class TableViewWidget(QGraphicsView):
         self._adv1_robot = self._scene.addEllipse(-100, -100, 200, 200, QPen(QBrush(QColor('black')),4), QBrush(QColor('white')))
         self._adv1_robot.setZValue(1)
         self._adv1_robot.setPos(-1 * 1000, -1 * 1000)
-        self._adv1_robot_text = self._scene.addText("0", QFont("System",80));
+        if os.name == 'nt':
+            self._adv1_robot_text = self._scene.addText("0", QFont("Calibri",80));
+        else:
+            self._adv1_robot_text = self._scene.addText("0", QFont("System",80));
         self._adv1_robot_text.setPos(-1 * 1000 - 60, -1 * 1000 - 40)
         self._adv1_robot_text.setRotation(-90)
         self._adv1_robot_text.setTransform(QTransform(1.0, 0.0, 0.0,  0.0, -1.0, 0.0,   0.0, 0.0, 1.0))
@@ -88,7 +95,10 @@ class TableViewWidget(QGraphicsView):
         self._adv2_robot = self._scene.addEllipse(-100, -100, 200, 200, QPen(QBrush(QColor('black')),4), QBrush(QColor('white')))
         self._adv2_robot.setZValue(1)
         self._adv2_robot.setPos(-1 * 1000, -1 * 1000)
-        self._adv2_robot_text = self._scene.addText("0", QFont("System",80));
+        if os.name == 'nt':
+            self._adv2_robot_text = self._scene.addText("0", QFont("Calibri",80));
+        else:
+            self._adv2_robot_text = self._scene.addText("0", QFont("System",80));
         self._adv2_robot_text.setPos(-1 * 1000 - 60, -1 * 1000 - 40)
         self._adv2_robot_text.setRotation(-90)
         self._adv2_robot_text.setTransform(QTransform(1.0, 0.0, 0.0,  0.0, -1.0, 0.0,   0.0, 0.0, 1.0))
