@@ -42,8 +42,12 @@ class PlotAstarWidget(QtWidgets.QWidget):
         #hexdump(astar_dbg_map_bytes)
         #print("")
         test_img_pixmap2 = QPixmap()
-        test_img_pixmap2.loadFromData(astar_dbg_map_bytes)
-        self.test_img_label.setPixmap(test_img_pixmap2)
+        result = test_img_pixmap2.loadFromData(astar_dbg_map_bytes)
+        if (result) : 
+            self.test_img_label.setPixmap(test_img_pixmap2)
+        else :
+            print ("ERROR : pixmap load error")
+            print ("DEBUG : len(astar_dbg_map_bytes)={}".format(len(astar_dbg_map_bytes)))
 
 
 

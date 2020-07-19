@@ -29,6 +29,7 @@ class ZmqClient(QObject):
     propulsion_controller_config = pyqtSignal(object)
     dynamixel_registers = pyqtSignal(int, int, object)
     fpga_registers = pyqtSignal(int, int)
+    fpga_registers_crc = pyqtSignal(int, int, int)
     sensors = pyqtSignal(int)
     gpio = pyqtSignal(int)
     debug_goldo = pyqtSignal(int)
@@ -60,14 +61,15 @@ class ZmqClient(QObject):
         self._notifier_rplidar.activated.connect(self._on_sub_socket_rplidar_event)
 
     def send_message(self, message_type, message_body):
-        dbg_msg = struct.pack('<H',message_type) + message_body
-        hexdump(dbg_msg)
-        print()
+        #dbg_msg = struct.pack('<H',message_type) + message_body
+        #hexdump(dbg_msg)
+        #print()
 
         self._push_socket.send_multipart([struct.pack('<H',message_type), message_body])
 
     def send_message_rplidar(self, message_type, message_body):
         print("= send_message_rplidar ========================")
+        print("message_type = {}".format(message_type))
         dbg_msg = struct.pack('<H',message_type) + message_body
         hexdump(dbg_msg)
         print("===============================================")
@@ -105,7 +107,7 @@ class ZmqClient(QObject):
 
         if msg_type == message_types.GetNucleoFirmwareVersion:
             firm_ver = NucleoFirmwareVersion(msg[2:])
-            print("firm_ver : " + firm_ver.s)
+            #print("firm_ver : " + firm_ver.s)
             self.nucleo_firmware_version.emit(firm_ver.s)
 
         if msg_type == message_types.SensorsChange:
@@ -171,6 +173,28 @@ class ZmqClient(QObject):
             apb_addr, apb_data = struct.unpack('<II', msg[2:])
             self.fpga_registers.emit(apb_addr, apb_data)
             
+        if msg_type == message_types.FpgaDbgReadRegCrc:
+            apb_addr, apb_data, crc = struct.unpack('<III', msg[2:])
+            self.fpga_registers_crc.emit(apb_addr, apb_data, crc)
+            
+        if msg_type == message_types.FpgaDbgGetErrCnt:
+            v = struct.unpack('<'+'I'*16, msg[2:])
+            #i=0
+            #print("m_total_spi_frame_cnt = {:>d}".format(v[i])) ; i+=1
+            #print("m_soft_err_cnt = {:>d}".format(v[i]))        ; i+=1
+            #print("m_addr1_crc_err_cnt = {:>d}".format(v[i]))   ; i+=1
+            #print("m_addr2_crc_err_cnt = {:>d}".format(v[i]))   ; i+=1
+            #print("m_write1_crc_err_cnt = {:>d}".format(v[i]))  ; i+=1
+            #print("m_write2_crc_err_cnt = {:>d}".format(v[i]))  ; i+=1
+            #print("m_read1_crc_err_cnt = {:>d}".format(v[i]))   ; i+=1
+            #print("m_read2_crc_err_cnt = {:>d}".format(v[i]))   ; i+=1
+            #print("m_apb_err_cnt = {:>d}".format(v[i]))         ; i+=1
+            # FIXME : TODO : send to fpga dialog
+            
+        if msg_type == message_types.NucleoLog:
+            log = msg[2:].split(bytes([0]),1)[0].decode("utf-8")
+            print("" + log)
+
         if msg_type == 90:
             print(struct.unpack('<BB', msg[2:]))
 

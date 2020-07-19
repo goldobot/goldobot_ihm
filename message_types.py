@@ -18,6 +18,8 @@ GPIODebug=21
 SequenceEvent=22
 MatchRemainingTime=23
 
+NucleoLog=30
+
 DebugGoldo=31
 
 CmdEmergencyStop=32
@@ -85,6 +87,8 @@ DbgRobotSetTrajectoryPoint=180
 FpgaGetVersion=256
 FpgaDbgReadReg=257
 FpgaDbgWriteReg=258
+FpgaDbgReadRegCrc=259
+FpgaDbgGetErrCnt=260
 FpgaCmdServo=272
 FpgaCmdDCMotor=288
 FpgaCmdPumpR=289

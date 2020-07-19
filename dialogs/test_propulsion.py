@@ -217,8 +217,8 @@ class PropulsionTestDialog(QDialog):
         if self._editing_traj: return
         print (self._traj_point_l)
         msg = b''.join([struct.pack('<fff',0.4,0.3,0.3)] + [struct.pack('<ff', p[0]*1e-3, p[1] * 1e-3) for p in self._traj_point_l])
-        self._client.send_message_rplidar(message_types.DbgPropulsionExecuteTrajectory, msg)
-        #self._client.send_message(message_types.DbgPropulsionExecuteTrajectory, msg)
+        #self._client.send_message_rplidar(message_types.DbgPropulsionExecuteTrajectory, msg)
+        self._client.send_message(message_types.DbgPropulsionExecuteTrajectory, msg)
         self._telemetry_buffer = []
         #QTimer.singleShot(5000, self.foo)
 

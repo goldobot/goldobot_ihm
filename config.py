@@ -15,7 +15,7 @@ def align_buffer(buff):
 
 class RobotConfig:
     def __init__(self, path):
-        self.yaml = yaml.load(open(path + '/robot.yaml'))
+        self.yaml = yaml.load(open(path + '/robot.yaml'),Loader=yaml.FullLoader)
         self.path = path
         self.servo_nums = {s['name']:s['id'] for s in self.yaml['servos']}
         self.load_dynamixels_config()

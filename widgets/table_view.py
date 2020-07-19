@@ -14,16 +14,25 @@ from PyQt5.QtGui import QImage, QImageReader, QPixmap
 
 class TableViewWidget(QGraphicsView):
     g_table_view = None
+    g_detect_size = 200
+    #g_detect_text = "position"
+    g_detect_text = "quality"
+    g_rplidar_remanence = False
+
 
     def __init__(self, parent = None, ihm_type='pc'):
         super(TableViewWidget, self).__init__(parent)
         if ihm_type=='pc':
-            self.setFixedSize(900,600)
+            #self.setFixedSize(900,600)
+            self.setFixedSize(960,660)
         elif ihm_type=='pc-mini':
-            self.setFixedSize(600,400)
+            #self.setFixedSize(600,400)
+            self.setFixedSize(640,440)
         else:
-            self.setFixedSize(225,150)
-        self.setSceneRect(QRectF(0,-1500,2000,3000))
+            #self.setFixedSize(225,150)
+            self.setFixedSize(240,165)
+        #self.setSceneRect(QRectF(0,-1500,2000,3000))
+        self.setSceneRect(QRectF(-100,-1600,2200,3200))
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
 
@@ -61,14 +70,15 @@ class TableViewWidget(QGraphicsView):
             QPointF( 100, -85)
             ])
 
-        self._scene = QGraphicsScene(QRectF(0,-1500,2000,3000))
+        #self._scene = QGraphicsScene(QRectF(0,-1500,2000,3000))
+        self._scene = QGraphicsScene(QRectF(-100,-1600,2200,3200))
 
 #        self._big_robot = self._scene.addPolygon(big_robot_poly, QPen(), QBrush(QColor('red')))
 #        self._big_robot.setZValue(1)
         self._little_robot = self._scene.addPolygon(little_robot_poly, QPen(), QBrush(QColor('red')))
         self._little_robot.setZValue(1)
         #self._friend_robot = self._scene.addEllipse(-100, -100, 200, 200, QPen(QBrush(QColor('black')),4), QBrush(QColor('green')))
-        self._friend_robot = self._scene.addEllipse(-100, -100, 200, 200, QPen(QBrush(QColor('black')),4), QBrush(QColor('white')))
+        self._friend_robot = self._scene.addEllipse(-100, -100, TableViewWidget.g_detect_size, TableViewWidget.g_detect_size, QPen(QBrush(QColor('black')),4), QBrush(QColor('white')))
         self._friend_robot.setZValue(1)
         self._friend_robot.setPos(-1 * 1000, -1 * 1000)
         if os.name == 'nt':
@@ -80,7 +90,7 @@ class TableViewWidget(QGraphicsView):
         self._friend_robot_text.setTransform(QTransform(1.0, 0.0, 0.0,  0.0, -1.0, 0.0,   0.0, 0.0, 1.0))
         self._friend_robot_text.setZValue(1)
         #self._adv1_robot = self._scene.addEllipse(-100, -100, 200, 200, QPen(QBrush(QColor('black')),4), QBrush(QColor('white')))
-        self._adv1_robot = self._scene.addEllipse(-100, -100, 200, 200, QPen(QBrush(QColor('black')),4), QBrush(QColor('white')))
+        self._adv1_robot = self._scene.addEllipse(-100, -100, TableViewWidget.g_detect_size, TableViewWidget.g_detect_size, QPen(QBrush(QColor('black')),4), QBrush(QColor('white')))
         self._adv1_robot.setZValue(1)
         self._adv1_robot.setPos(-1 * 1000, -1 * 1000)
         if os.name == 'nt':
@@ -92,7 +102,7 @@ class TableViewWidget(QGraphicsView):
         self._adv1_robot_text.setTransform(QTransform(1.0, 0.0, 0.0,  0.0, -1.0, 0.0,   0.0, 0.0, 1.0))
         self._adv1_robot_text.setZValue(1)
         #self._adv2_robot = self._scene.addEllipse(-100, -100, 200, 200, QPen(QBrush(QColor('black')),4), QBrush(QColor('blue')))
-        self._adv2_robot = self._scene.addEllipse(-100, -100, 200, 200, QPen(QBrush(QColor('black')),4), QBrush(QColor('white')))
+        self._adv2_robot = self._scene.addEllipse(-100, -100, TableViewWidget.g_detect_size, TableViewWidget.g_detect_size, QPen(QBrush(QColor('black')),4), QBrush(QColor('white')))
         self._adv2_robot.setZValue(1)
         self._adv2_robot.setPos(-1 * 1000, -1 * 1000)
         if os.name == 'nt':
@@ -180,8 +190,6 @@ class TableViewWidget(QGraphicsView):
         self._scene.addEllipse(QRectF(1955-35,495-35,70,70),QPen(), QBrush(greenium))
         self._scene.addEllipse(QRectF(1955-35,105-35,70,70),QPen(), QBrush(redium))
 
-        self.rplidar_remanence = False
-
         #dbg_plt_sz = 3
         #self._scene.addEllipse(1000 - dbg_plt_sz, 0 - dbg_plt_sz, 2*dbg_plt_sz, 2*dbg_plt_sz, QPen(QBrush(QColor('white')),4), QBrush(QColor('white')))
 
@@ -258,21 +266,36 @@ class TableViewWidget(QGraphicsView):
         dbg_plt_sz = 3
         if (other_robot.id == 0):
             self._friend_robot.setPos(other_robot.x * 1000, other_robot.y * 1000)
-            self._friend_robot_text.setPlainText('%d'%other_robot.samples)
+            if (TableViewWidget.g_detect_text == "quality"):
+                self._friend_robot_text.setPlainText("%d"%other_robot.samples)
+            elif (TableViewWidget.g_detect_text == "position"):
+                self._friend_robot_text.setPlainText("%d,%d"%(other_robot.x*1000,other_robot.y*1000))
+            else:
+                self._friend_robot_text.setPlainText("")
             self._friend_robot_text.setPos(other_robot.x * 1000 - 60, other_robot.y * 1000 - 40)
-            if self.rplidar_remanence:
+            if TableViewWidget.g_rplidar_remanence:
                 self._scene.addEllipse(other_robot.x * 1000 - dbg_plt_sz, other_robot.y * 1000 - dbg_plt_sz, 2*dbg_plt_sz, 2*dbg_plt_sz, QPen(QBrush(QColor('white')),4), QBrush(QColor('white')))
         elif (other_robot.id == 1):
             self._adv1_robot.setPos(other_robot.x * 1000, other_robot.y * 1000)
-            self._adv1_robot_text.setPlainText('%d'%other_robot.samples)
+            if (TableViewWidget.g_detect_text == "quality"):
+                self._adv1_robot_text.setPlainText("%d"%other_robot.samples)
+            elif (TableViewWidget.g_detect_text == "position"):
+                self._adv1_robot_text.setPlainText("%d,%d"%(other_robot.x*1000,other_robot.y*1000))
+            else:
+                self._adv1_robot_text.setPlainText("")
             self._adv1_robot_text.setPos(other_robot.x * 1000 - 60, other_robot.y * 1000 - 40)
-            if self.rplidar_remanence:
+            if TableViewWidget.g_rplidar_remanence:
                 self._scene.addEllipse(other_robot.x * 1000 - dbg_plt_sz, other_robot.y * 1000 - dbg_plt_sz, 2*dbg_plt_sz, 2*dbg_plt_sz, QPen(QBrush(QColor('white')),4), QBrush(QColor('white')))
         elif (other_robot.id == 2):
             self._adv2_robot.setPos(other_robot.x * 1000, other_robot.y * 1000)
-            self._adv2_robot_text.setPlainText('%d'%other_robot.samples)
+            if (TableViewWidget.g_detect_text == "quality"):
+                self._adv2_robot_text.setPlainText("%d"%other_robot.samples)
+            elif (TableViewWidget.g_detect_text == "position"):
+                self._adv2_robot_text.setPlainText("%d,%d"%(other_robot.x*1000,other_robot.y*1000))
+            else:
+                self._adv2_robot_text.setPlainText("")
             self._adv2_robot_text.setPos(other_robot.x * 1000 - 60, other_robot.y * 1000 - 40)
-            if self.rplidar_remanence:
+            if TableViewWidget.g_rplidar_remanence:
                 self._scene.addEllipse(other_robot.x * 1000 - dbg_plt_sz, other_robot.y * 1000 - dbg_plt_sz, 2*dbg_plt_sz, 2*dbg_plt_sz, QPen(QBrush(QColor('white')),4), QBrush(QColor('white')))
 
     def debug_set_start(self, _new_x, _new_y):
@@ -318,8 +341,10 @@ class TableViewWidget(QGraphicsView):
 
     def mousePressEvent(self, event):
         print ("pix:<{},{}>".format(event.x(),event.y()))
-        realY = 3000.0*(event.x()-450.0)/900.0
-        realX = 2000.0*(event.y())/600.0
+        #realY = 3000.0*(event.x()-450.0)/900.0
+        #realX = 2000.0*(event.y())/600.0
+        realY = 3200.0*(event.x()-480.0)/960.0
+        realX = 2200.0*(event.y()-30.0)/660.0
         print ("real:<{},{}>".format(realX,realY))
         if self._debug_edit_mode:
             self._debug_edit_point_l.append((realX,realY))
