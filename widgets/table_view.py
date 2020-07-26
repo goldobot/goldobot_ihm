@@ -15,8 +15,9 @@ from PyQt5.QtGui import QImage, QImageReader, QPixmap
 class TableViewWidget(QGraphicsView):
     g_table_view = None
     g_detect_size = 200
-    #g_detect_text = "position"
-    g_detect_text = "quality"
+    g_detect_text = "position"
+    #g_detect_text = "quality"
+    #g_detect_text = "none"
     g_rplidar_remanence = False
     g_rplidar_plot_life_ms = 1000
 
@@ -85,7 +86,7 @@ class TableViewWidget(QGraphicsView):
         if os.name == 'nt':
             self._friend_robot_text = self._scene.addText("0123456", QFont("Calibri",80));
         else:
-            self._friend_robot_text = self._scene.addText("0123456", QFont("System",80));
+            self._friend_robot_text = self._scene.addText("0123456", QFont("System",40));
         self._friend_robot_text.setPos(-1 * 1000 - 60, -1 * 1000 - 40)
         self._friend_robot_text.setRotation(-90)
         self._friend_robot_text.setTransform(QTransform(1.0, 0.0, 0.0,  0.0, -1.0, 0.0,   0.0, 0.0, 1.0))
@@ -97,7 +98,7 @@ class TableViewWidget(QGraphicsView):
         if os.name == 'nt':
             self._adv1_robot_text = self._scene.addText("0", QFont("Calibri",80));
         else:
-            self._adv1_robot_text = self._scene.addText("0", QFont("System",80));
+            self._adv1_robot_text = self._scene.addText("0", QFont("System",40));
         self._adv1_robot_text.setPos(-1 * 1000 - 60, -1 * 1000 - 40)
         self._adv1_robot_text.setRotation(-90)
         self._adv1_robot_text.setTransform(QTransform(1.0, 0.0, 0.0,  0.0, -1.0, 0.0,   0.0, 0.0, 1.0))
@@ -109,7 +110,7 @@ class TableViewWidget(QGraphicsView):
         if os.name == 'nt':
             self._adv2_robot_text = self._scene.addText("0", QFont("Calibri",80));
         else:
-            self._adv2_robot_text = self._scene.addText("0", QFont("System",80));
+            self._adv2_robot_text = self._scene.addText("0", QFont("System",40));
         self._adv2_robot_text.setPos(-1 * 1000 - 60, -1 * 1000 - 40)
         self._adv2_robot_text.setRotation(-90)
         self._adv2_robot_text.setTransform(QTransform(1.0, 0.0, 0.0,  0.0, -1.0, 0.0,   0.0, 0.0, 1.0))
@@ -268,6 +269,7 @@ class TableViewWidget(QGraphicsView):
         self._little_robot_y = telemetry.y * 1000
 
     def update_plots(self, my_plot):
+        dbg_plt_sz = 1
         self.last_plot_ts = my_plot.timestamp
         my_plot_ellipse = self._scene.addEllipse(my_plot.x * 1000 - dbg_plt_sz, my_plot.y * 1000 - dbg_plt_sz, 2*dbg_plt_sz, 2*dbg_plt_sz, QPen(QBrush(QColor('red')),4), QBrush(QColor('red')))
         self.plot_graph_l.append((my_plot,my_plot_ellipse))
@@ -275,7 +277,7 @@ class TableViewWidget(QGraphicsView):
             if (self.last_plot_ts-rec[0].timestamp>TableViewWidget.g_rplidar_plot_life_ms):
                 rec_ellipse = rec[1]
                 self._scene.removeItem(rec_ellipse)
-                self.plot_graph_l.delete(rec)
+                self.plot_graph_l.remove(rec)
 
     def update_other_robots(self, other_robot):
         dbg_plt_sz = 3
