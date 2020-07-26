@@ -108,6 +108,8 @@ RobotEndLoadConfigStatus=403
 RplidarStart=1024
 RplidarStop=1025
 
+RplidarPlot=1270
+
 RplidarRobotDetection=1280
 
 RobotStratDbgStartMatch=2048

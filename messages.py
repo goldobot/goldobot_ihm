@@ -35,6 +35,13 @@ class PropulsionTelemetryEx:
         self.left_encoder_acc = unpacked[10]
         self.right_encoder_acc = unpacked[11]
 
+class RplidarPlot:
+    def __init__(self, data):
+        unpacked = struct.unpack('<ihh', data)
+        self.timestamp = unpacked[0]
+        self.x = unpacked[1] * 1.0e-3
+        self.y = unpacked[2] * 1.0e-3
+
 class RplidarRobotDetection:
     def __init__(self, data):
         unpacked = struct.unpack('<iihhhhhhi', data)

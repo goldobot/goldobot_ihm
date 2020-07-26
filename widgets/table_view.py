@@ -18,6 +18,7 @@ class TableViewWidget(QGraphicsView):
     #g_detect_text = "position"
     g_detect_text = "quality"
     g_rplidar_remanence = False
+    g_rplidar_plot_life_ms = 1000
 
 
     def __init__(self, parent = None, ihm_type='pc'):
@@ -206,6 +207,9 @@ class TableViewWidget(QGraphicsView):
         self._little_robot_x = 0
         self._little_robot_y = 0
 
+        self.last_plot_ts = 0
+        self.plot_graph_l = []
+
         TableViewWidget.g_table_view = self
 
     def _add_cubes(self, x, y):
@@ -246,6 +250,7 @@ class TableViewWidget(QGraphicsView):
     def set_client(self, client):
         self._client = client
         self._client.propulsion_telemetry.connect(self.update_telemetry)
+        self._client.rplidar_plot.connect(self.update_plots)
         self._client.rplidar_robot_detection.connect(self.update_other_robots)
         
     def draw_strategy(self,strategy):
@@ -261,6 +266,16 @@ class TableViewWidget(QGraphicsView):
         self._little_robot.setRotation(telemetry.yaw * 180 / math.pi)
         self._little_robot_x = telemetry.x * 1000
         self._little_robot_y = telemetry.y * 1000
+
+    def update_plots(self, my_plot):
+        self.last_plot_ts = my_plot.timestamp
+        my_plot_ellipse = self._scene.addEllipse(my_plot.x * 1000 - dbg_plt_sz, my_plot.y * 1000 - dbg_plt_sz, 2*dbg_plt_sz, 2*dbg_plt_sz, QPen(QBrush(QColor('red')),4), QBrush(QColor('red')))
+        self.plot_graph_l.append((my_plot,my_plot_ellipse))
+        for rec in self.plot_graph_l:
+            if (self.last_plot_ts-rec[0].timestamp>TableViewWidget.g_rplidar_plot_life_ms):
+                rec_ellipse = rec[1]
+                self._scene.removeItem(rec_ellipse)
+                self.plot_graph_l.delete(rec)
 
     def update_other_robots(self, other_robot):
         dbg_plt_sz = 3
