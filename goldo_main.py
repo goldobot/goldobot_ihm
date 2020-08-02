@@ -114,10 +114,31 @@ class MainWindow(QMainWindow):
         self._nucleo_firmware_version = QLabel(self.nucleo_ver_prefix_s + "Unknown")
         self._astar_view = PlotAstarWidget()
 
+        self.zoomL = QLabel()
+        self.zoomL.setText("Zoom")
+        self.zoomL.setDisabled(False)
+
+        self.zoomPlusB = QPushButton()
+        self.zoomPlusB.setText("+")
+        self.zoomPlusB.setDisabled(False)
+        self.zoomPlusB.clicked.connect(self._table_view.zoomPlus)
+
+        self.zoomDefB = QPushButton()
+        self.zoomDefB.setText("o")
+        self.zoomDefB.setDisabled(False)
+        self.zoomDefB.clicked.connect(self._table_view.zoomDef)
+
+        self.zoomMinusB = QPushButton()
+        self.zoomMinusB.setText("-")
+        self.zoomMinusB.setDisabled(False)
+        self.zoomMinusB.clicked.connect(self._table_view.zoomMinus)
+
+
         main_layout = QHBoxLayout()
         table_layout = QVBoxLayout()
         under_table_layout = QHBoxLayout()
         raspi_layout = QGridLayout()
+        right_layout = QVBoxLayout()
 
         self.setCentralWidget(self._main_widget)
 
@@ -137,8 +158,15 @@ class MainWindow(QMainWindow):
         table_layout.addLayout(under_table_layout)
         table_layout.addStretch(1)
 
+        right_layout.addWidget(self.zoomL,1)
+        right_layout.addWidget(self.zoomPlusB,2)
+        right_layout.addWidget(self.zoomDefB,3)
+        right_layout.addWidget(self.zoomMinusB,4)
+        right_layout.addStretch(16)
+
         main_layout.addWidget(self._widget_robot_status)
         main_layout.addLayout(table_layout)
+        main_layout.addLayout(right_layout)
 
         self._main_widget.setLayout(main_layout)
 

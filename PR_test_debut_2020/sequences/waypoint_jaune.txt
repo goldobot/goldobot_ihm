@@ -7,8 +7,9 @@
 
 
 #--position de depart
-#var vec3 start_pose_jaune=(800mm,-1400mm,90deg)
-var vec3 start_pose_jaune=(650mm,-1395mm,90deg)
+#var vec3 start_pose_jaune=(800mm,-1400mm,90deg) # old 2019
+#var vec3 start_pose_jaune=(650mm,-1395mm,90deg) # 2020
+var vec3 start_pose_jaune=(1000mm,-1397mm,90deg) # test
 
 #--test trajectoire courbe (depart jaune)
 var vec2 traj_courbe1=(450mm,-1250mm)

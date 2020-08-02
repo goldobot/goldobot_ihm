@@ -35,8 +35,8 @@ class TableViewWidget(QGraphicsView):
             self.setFixedSize(240,165)
         #self.setSceneRect(QRectF(0,-1500,2000,3000))
         self.setSceneRect(QRectF(-100,-1600,2200,3200))
-        self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        #self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        #self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
 
         redium = QColor.fromCmykF(0,1,1,0.1)
         greenium = QColor.fromCmykF(0.7,0,0.9,0)
@@ -72,8 +72,64 @@ class TableViewWidget(QGraphicsView):
             QPointF( 100, -85)
             ])
 
+        beacon_poly = QPolygonF([
+            QPointF( 50,  50),
+
+            QPointF(-50,  50),
+
+            QPointF(-50,  40),
+            QPointF( 50,  40),
+            QPointF(-50,  40),
+
+            QPointF(-50,  30),
+            QPointF( 50,  30),
+            QPointF(-50,  30),
+
+            QPointF(-50,  20),
+            QPointF( 50,  20),
+            QPointF(-50,  20),
+
+            QPointF(-50,  10),
+            QPointF( 50,  10),
+            QPointF(-50,  10),
+
+            QPointF(-50,   0),
+            QPointF( 50,   0),
+            QPointF(-50,   0),
+
+            QPointF(-50, -10),
+            QPointF( 50, -10),
+            QPointF(-50, -10),
+
+            QPointF(-50, -20),
+            QPointF( 50, -20),
+            QPointF(-50, -20),
+
+            QPointF(-50, -30),
+            QPointF( 50, -30),
+            QPointF(-50, -30),
+
+            QPointF(-50, -40),
+            QPointF( 50, -40),
+            QPointF(-50, -40),
+
+            QPointF(-50, -50),
+
+            QPointF( 50, -50)
+            ])
+
         #self._scene = QGraphicsScene(QRectF(0,-1500,2000,3000))
         self._scene = QGraphicsScene(QRectF(-100,-1600,2200,3200))
+
+        self._beacon_left_middle = self._scene.addPolygon(beacon_poly, QPen(), QBrush(QColor('white')))
+        self._beacon_left_middle.setZValue(1)
+        self._beacon_left_middle.setPos(1000.0, -1573.0)
+        self._beacon_right_back = self._scene.addPolygon(beacon_poly, QPen(), QBrush(QColor('white')))
+        self._beacon_right_back.setZValue(1)
+        self._beacon_right_back.setPos(50.0, 1573.0)
+        self._beacon_right_front = self._scene.addPolygon(beacon_poly, QPen(), QBrush(QColor('white')))
+        self._beacon_right_front.setZValue(1)
+        self._beacon_right_front.setPos(1950.0, 1573.0)
 
 #        self._big_robot = self._scene.addPolygon(big_robot_poly, QPen(), QBrush(QColor('red')))
 #        self._big_robot.setZValue(1)
@@ -118,12 +174,14 @@ class TableViewWidget(QGraphicsView):
         self.setScene(self._scene)
 
         self.rotate(90)
+        self._my_scale = 0.3
         if ihm_type=='pc':
-            self.scale(0.3, -0.3)
+            self._my_scale = 0.3
         elif ihm_type=='pc-mini':
-            self.scale(0.2, -0.2)
+            self._my_scale = 0.2
         else:
-            self.scale(0.075, -0.075)
+            self._my_scale = 0.075
+        self.scale(self._my_scale, -self._my_scale)
 
         #self._scene.addRect(QRectF(0,-1500,2000,3000),QPen(), QBrush(background))
 
@@ -366,5 +424,19 @@ class TableViewWidget(QGraphicsView):
         if self._debug_edit_mode:
             self._debug_edit_point_l.append((realX,realY))
             self.debug_line_to(realX, realY)
+
+    def zoomPlus(self):
+        self._my_scale = 2.0
+        self.scale(self._my_scale, self._my_scale)
+
+    def zoomDef(self):
+        self.resetTransform()
+        self.rotate(90)
+        self._my_scale = 0.3
+        self.scale(self._my_scale, -self._my_scale)
+
+    def zoomMinus(self):
+        self._my_scale = 0.5
+        self.scale(self._my_scale, self._my_scale)
 
 

@@ -162,7 +162,10 @@ class ZmqClient(QObject):
             self.start_of_match.emit(timestamp)
 
         if msg_type == message_types.CommStats:
-            self.comm_stats.emit(struct.unpack('<HHIIIII', msg[2:]))
+            if len(msg[2:]) == 24:
+                self.comm_stats.emit(struct.unpack('<HHIIIII', msg[2:]))
+            else:
+                self.comm_stats.emit(struct.unpack('<HH', msg[2:]))
             pass
 
         if msg_type == message_types.DbgGetOdometryConfig:
