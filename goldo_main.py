@@ -201,7 +201,7 @@ class MainWindow(QMainWindow):
         self._client.send_message(message_types.SetMatchState, struct.pack('<B', 1))
         
     def _on_comm_stats(self, stats):
-        self._status_link_state.setText('download {} {}'.format(*stats))
+        self._status_link_state.setText('download {} {} {} {} {} {} {}'.format(*stats))
         
     def _on_match_state_change(self, state,side):
         self._status_match_state.setText('{} {}'.format(state, side))
@@ -220,6 +220,7 @@ class MainWindow(QMainWindow):
         self._client.send_message(message_types.RobotBeginLoadConfig, b'')
         #Upload codes by packets
         buff = cfg.binary
+        print('config size', len(buff))
         while len(buff) >32:
             self._client.send_message(message_types.RobotLoadConfig, buff[0:32])
             buff = buff[32:]

@@ -1,1 +1,1 @@
-python  main.py --robot-ip 192.168.0.222
+python  main.py --robot-ip raspberrypi01 --config-path PR_test_debut_2020

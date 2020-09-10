@@ -80,7 +80,9 @@ class RobotConfig:
         #RobotConfig
         robot_config_buffer = struct.pack('<ff',
             self.yaml['geometry']['front_length'],
-            self.yaml['geometry']['back_length'])        
+            self.yaml['geometry']['back_length'])
+            
+        # hal config
         
         #OdometryConfig
         odometry_config_buffer = messages.OdometryConfig(yaml=self.yaml['odometry']).serialize()
@@ -111,6 +113,10 @@ class RobotConfig:
         #16 uint16 header
         buff = b''
         offset = 32
+        
+        offset_hal_config = len(buff)
+        buff = align_buffer(buff + hal_config_buffer)
+        
         offset_robot_config = len(buff)
         buff = align_buffer(buff + robot_config_buffer)
         
@@ -136,6 +142,7 @@ class RobotConfig:
         buff += self.sequences.binary        
         
         header = struct.pack('HHHHHHHHHHHHHHHH',
+        offset_hal_config + 32,
         offset_robot_config + 32,
         offset_odometry_config + 32,
         offset_propulsion_config + 32,
@@ -144,7 +151,7 @@ class RobotConfig:
         offset_servos_config + 32,
         offset_sequences + 32,
         offset_arm_torques + 32,
-        0,0,0,0,0,0,0,0)
+        0,0,0,0,0,0,0)
 
         
         # add padding for alignment?
@@ -159,7 +166,7 @@ class RobotConfig:
 
 #Full config format:
 # Offsets table
-# HAL config offset
+# hal config offset
 # robot_config offset
 # odometry_config offset
 # propulsion_config offset
