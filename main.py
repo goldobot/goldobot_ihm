@@ -28,6 +28,7 @@ from dialogs.test_dynamixels import TestDynamixelAx12Dialog
 from dialogs.debug_fpga import DebugFpgaDialog
 from dialogs.sequences import SequencesDialog
 from dialogs.score import ScoreDialog
+from dialogs.test_hal import HalTestDialog
 
 from parse_sequence import SequenceParser
 
@@ -36,6 +37,7 @@ import message_types
 import config
 
 dialogs = [
+    ("Test Hal", HalTestDialog),
     ("Configure Odometry", OdometryConfigDialog),
     ("Configure Propulsion controller", PropulsionControllerConfigDialog),
     ("Test propulsion", PropulsionTestDialog),
@@ -124,9 +126,9 @@ class MainWindow(QMainWindow):
         self._widget_robot_status.set_client(self._client)
         self._table_view.set_client(self._client)
         
-        plt = ControlPlots()
-        plt.show()
-        self.plt = plt
+        #plt = ControlPlots()
+        #plt.show()
+        #self.plt = plt
         #plt.plot_curve([0,2,1])
         
         

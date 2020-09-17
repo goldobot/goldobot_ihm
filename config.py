@@ -4,6 +4,8 @@ from parse_sequence import SequenceParser
 import messages
 import struct
 
+from goldobot_ihm.hal_config import HALConfig
+
 #servos = {s['name']:s['id'] for s in robot_config['servos']}
 
 def align_buffer(buff):
@@ -16,6 +18,7 @@ def align_buffer(buff):
 class RobotConfig:
     def __init__(self, path):
         self.yaml = yaml.load(open(path + '/robot.yaml'),Loader=yaml.FullLoader)
+        self.hal_config = HALConfig(yaml.load(open(path + '/hal.yaml'),Loader=yaml.FullLoader))
         self.path = path
         self.servo_nums = {s['name']:s['id'] for s in self.yaml['servos']}
         self.load_dynamixels_config()
@@ -83,6 +86,7 @@ class RobotConfig:
             self.yaml['geometry']['back_length'])
             
         # hal config
+        hal_config_buffer = self.hal_config.compile()
         
         #OdometryConfig
         odometry_config_buffer = messages.OdometryConfig(yaml=self.yaml['odometry']).serialize()

@@ -1,0 +1,51 @@
+---
+gpio:
+  - name: LD2
+    id: 0
+    pin: PC5
+    mode: OUT_PP
+    
+timer:
+  - name: TIM2
+    prescaler: 1
+    period: 10000
+    
+pwm:
+  - id: 0
+    timer: TIM2
+    channel: CH1
+    pin: PA5
+    dir_pin: PB2
+
+    
+encoder:
+  - name: TIM2
+    id: 0
+    period: 8192
+    ch1_pin: PA1
+    ch2_pin: PA2    
+    
+usart:
+  - name: USART3
+    fd: 1
+    rx_buffer_size: 128
+    tx_buffer_size: 128
+    baudrate: 115200
+    rx_pin: PB11
+    tx_pin: PB10
+    
+i2c:
+  - name: FOO
+    scl_pin: PD15
+    sda_pin: PD14
+    
+spi:
+  - name: SPI2
+    fd: 2
+    sck_pin: PB9
+    mosi_pin: PB10
+    miso_pin: PB11
+    nss_pin: PB12
+    baudrate: 1000000
+    
+   
