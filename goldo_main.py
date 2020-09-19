@@ -102,7 +102,7 @@ class MainWindow(QMainWindow):
         tools_menu.addAction(self._action_upload_config)
 
         self._main_widget = QWidget()
-        self._table_view = TableViewWidget(ihm_type=self._ihm_type)
+        self._table_view = TableViewWidget(ihm_type=self._ihm_type,parent=self)
         self._widget_robot_status = RobotStatusWidget(ihm_type=self._ihm_type)
         self._conf_button = QPushButton('Load Conf')
         self._rplidar_start_button = QPushButton('Start Rplidar')
@@ -133,6 +133,30 @@ class MainWindow(QMainWindow):
         self.zoomMinusB.setDisabled(False)
         self.zoomMinusB.clicked.connect(self._table_view.zoomMinus)
 
+        self.posL = QLabel()
+        self.posL.setText("Pos & dist:")
+        self.posL.setDisabled(False)
+
+        self.posXL = QLabel()
+        self.posXL.setText(" x:")
+        self.posXL.setDisabled(False)
+
+        self.posYL = QLabel()
+        self.posYL.setText(" y:")
+        self.posYL.setDisabled(False)
+
+        self.posXRL = QLabel()
+        self.posXRL.setText(" xr:")
+        self.posXRL.setDisabled(False)
+
+        self.posYRL = QLabel()
+        self.posYRL.setText(" yr:")
+        self.posYRL.setDisabled(False)
+
+        self.posDRL = QLabel()
+        self.posDRL.setText(" dr:")
+        self.posDRL.setDisabled(False)
+
 
         main_layout = QHBoxLayout()
         table_layout = QVBoxLayout()
@@ -158,10 +182,16 @@ class MainWindow(QMainWindow):
         table_layout.addLayout(under_table_layout)
         table_layout.addStretch(1)
 
-        right_layout.addWidget(self.zoomL,1)
-        right_layout.addWidget(self.zoomPlusB,2)
-        right_layout.addWidget(self.zoomDefB,3)
-        right_layout.addWidget(self.zoomMinusB,4)
+        right_layout.addWidget(self.zoomL)
+        right_layout.addWidget(self.zoomPlusB)
+        right_layout.addWidget(self.zoomDefB)
+        right_layout.addWidget(self.zoomMinusB)
+        right_layout.addWidget(self.posL)
+        right_layout.addWidget(self.posXL)
+        right_layout.addWidget(self.posYL)
+        right_layout.addWidget(self.posXRL)
+        right_layout.addWidget(self.posYRL)
+        right_layout.addWidget(self.posDRL)
         right_layout.addStretch(16)
 
         main_layout.addWidget(self._widget_robot_status)

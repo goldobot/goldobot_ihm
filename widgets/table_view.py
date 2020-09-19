@@ -11,6 +11,23 @@ from PyQt5.QtGui import QPolygonF, QPen, QBrush, QColor, QFont, QTransform
 from PyQt5.QtGui import QImage, QImageReader, QPixmap
 
 
+class MyGraphicsScene(QGraphicsScene):
+    def mousePressEvent(self, event):
+        x_mm = event.scenePos().x()
+        y_mm = event.scenePos().y()
+        rel_x_mm = x_mm - self.parent()._little_robot_x
+        rel_y_mm = y_mm - self.parent()._little_robot_y
+        d_mm = math.sqrt(rel_x_mm*rel_x_mm + rel_y_mm*rel_y_mm)
+        #print ("MyGraphicsScene:<{},{}>".format(x_mm,y_mm))
+        disp_window = self.parent().parent().parent()
+        disp_window.posXL.setText(" x: {:>6.1f}".format(x_mm))
+        disp_window.posYL.setText(" y: {:>6.1f}".format(y_mm))
+        disp_window.posXRL.setText(" xr: {:>6.1f}".format(rel_x_mm))
+        disp_window.posYRL.setText(" yr: {:>6.1f}".format(rel_y_mm))
+        disp_window.posDRL.setText(" dr: {:>6.1f}".format(d_mm))
+        if self.parent()._debug_edit_mode:
+            self.parent()._debug_edit_point_l.append((x_mm,y_mm))
+            self.parent().debug_line_to(x_mm,y_mm)
 
 class TableViewWidget(QGraphicsView):
     g_table_view = None
@@ -20,6 +37,7 @@ class TableViewWidget(QGraphicsView):
     #g_detect_text = "none"
     g_rplidar_remanence = False
     g_rplidar_plot_life_ms = 1000
+    g_update_other_robots = False
 
 
     def __init__(self, parent = None, ihm_type='pc'):
@@ -46,19 +64,6 @@ class TableViewWidget(QGraphicsView):
         purple = QColor.fromCmykF(0.5,0.9,0,0.05)
         background = QColor(40,40,40)
         darker = QColor(20,20,20)
-
-#        big_robot_poly = QPolygonF([
-#            QPointF(-135,-151),
-#            QPointF(60,-151),
-#            QPointF(170,-91),
-#            QPointF(170,-45),
-#            QPointF(111,-40),
-#            QPointF(111,40),
-#            QPointF(170,45),
-#            QPointF(170,91),
-#            QPointF(60,151),
-#            QPointF(-135,151)
-#            ])
 
         little_robot_poly = QPolygonF([
             QPointF(  50,   0),
@@ -119,7 +124,8 @@ class TableViewWidget(QGraphicsView):
             ])
 
         #self._scene = QGraphicsScene(QRectF(0,-1500,2000,3000))
-        self._scene = QGraphicsScene(QRectF(-100,-1600,2200,3200))
+        #self._scene = QGraphicsScene(QRectF(-100,-1600,2200,3200))
+        self._scene = MyGraphicsScene(QRectF(-100,-1600,2200,3200),self)
 
         self._beacon_left_middle = self._scene.addPolygon(beacon_poly, QPen(), QBrush(QColor('white')))
         self._beacon_left_middle.setZValue(1)
@@ -329,7 +335,8 @@ class TableViewWidget(QGraphicsView):
     def update_plots(self, my_plot):
         dbg_plt_sz = 1
         self.last_plot_ts = my_plot.timestamp
-        my_plot_ellipse = self._scene.addEllipse(my_plot.x * 1000 - dbg_plt_sz, my_plot.y * 1000 - dbg_plt_sz, 2*dbg_plt_sz, 2*dbg_plt_sz, QPen(QBrush(QColor('red')),4), QBrush(QColor('red')))
+        my_plot_ellipse = self._scene.addEllipse(my_plot.x * 1000 - dbg_plt_sz, my_plot.y * 1000 - dbg_plt_sz, 2*dbg_plt_sz, 2*dbg_plt_sz, QPen(QBrush(QColor('black')),2), QBrush(QColor('red')))
+        my_plot_ellipse.setZValue(100)
         self.plot_graph_l.append((my_plot,my_plot_ellipse))
         for rec in self.plot_graph_l:
             if (self.last_plot_ts-rec[0].timestamp>TableViewWidget.g_rplidar_plot_life_ms):
@@ -338,6 +345,8 @@ class TableViewWidget(QGraphicsView):
                 self.plot_graph_l.remove(rec)
 
     def update_other_robots(self, other_robot):
+        if (not TableViewWidget.g_update_other_robots):
+            return
         dbg_plt_sz = 3
         if (other_robot.id == 0):
             self._friend_robot.setPos(other_robot.x * 1000, other_robot.y * 1000)
@@ -413,17 +422,6 @@ class TableViewWidget(QGraphicsView):
     def debug_stop_edit(self):
         self._debug_edit_mode = False
         return self._debug_edit_point_l
-
-    def mousePressEvent(self, event):
-        print ("pix:<{},{}>".format(event.x(),event.y()))
-        #realY = 3000.0*(event.x()-450.0)/900.0
-        #realX = 2000.0*(event.y())/600.0
-        realY = 3200.0*(event.x()-480.0)/960.0
-        realX = 2200.0*(event.y()-30.0)/660.0
-        print ("real:<{},{}>".format(realX,realY))
-        if self._debug_edit_mode:
-            self._debug_edit_point_l.append((realX,realY))
-            self.debug_line_to(realX, realY)
 
     def zoomPlus(self):
         self._my_scale = 2.0
