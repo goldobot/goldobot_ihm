@@ -61,12 +61,11 @@ class ZmqClient(QObject):
 
         self._notifier_rplidar = QSocketNotifier(self._sub_socket_rplidar.getsockopt(zmq.FD), QSocketNotifier.Read, self)
         self._notifier_rplidar.activated.connect(self._on_sub_socket_rplidar_event)
+        
+        self.odrive_buff = b''
+        self.odrive_seq = 129
 
     def send_message(self, message_type, message_body):
-        #dbg_msg = struct.pack('<H',message_type) + message_body
-        #hexdump(dbg_msg)
-        #print()
-
         self._push_socket.send_multipart([struct.pack('<H',message_type), message_body])
 
     def send_message_rplidar(self, message_type, message_body):
@@ -203,4 +202,13 @@ class ZmqClient(QObject):
 
         if msg_type == 90:
             print(struct.unpack('<BB', msg[2:]))
+        if msg_type == 410:
+            seq = struct.unpack('<H', msg[2:4])[0] & 0xf7fff
+            if seq == self.odrive_seq:
+                self.odrive_buff += msg[4:]
+                offset = len(self.odrive_buff)
+                self.odrive_seq += 1
+                self.send_message(410, struct.pack('<HHHIH', self.odrive_seq, 0x8000, 512, offset, 1))
+                print(self.odrive_buff)
+                
 

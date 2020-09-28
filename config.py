@@ -5,6 +5,7 @@ import messages
 import struct
 
 from goldobot_ihm.hal_config import HALConfig
+from goldobot_ihm.robot_simulator_config import RobotSimulatorConfig
 
 #servos = {s['name']:s['id'] for s in robot_config['servos']}
 
@@ -19,6 +20,7 @@ class RobotConfig:
     def __init__(self, path):
         self.yaml = yaml.load(open(path + '/robot.yaml'),Loader=yaml.FullLoader)
         self.hal_config = HALConfig(yaml.load(open(path + '/hal.yaml'),Loader=yaml.FullLoader))
+        self.robot_simulator_config = RobotSimulatorConfig(self.yaml.get('robot_simulator', {}))
         self.path = path
         self.servo_nums = {s['name']:s['id'] for s in self.yaml['servos']}
         self.load_dynamixels_config()
@@ -81,9 +83,10 @@ class RobotConfig:
         
     def compile(self):
         #RobotConfig
-        robot_config_buffer = struct.pack('<ff',
+        robot_config_buffer = struct.pack('<ffBB',
             self.yaml['geometry']['front_length'],
-            self.yaml['geometry']['back_length'])
+            self.yaml['geometry']['back_length'],
+            1, 1)#todo add proper reading of option
             
         # hal config
         hal_config_buffer = self.hal_config.compile()
@@ -114,52 +117,27 @@ class RobotConfig:
             servos_config_buffer += struct.pack('<BBHHH', s['id'], 1, s['cw_limit'], s['ccw_limit'], s['max_speed'])
         servos_config_buffer += b'\0' * (8 * (16 - len(self.yaml['servos'])))
         
+        self._offsets = []
+        self._buffer = b''
         #16 uint16 header
         buff = b''
         offset = 32
         
-        offset_hal_config = len(buff)
-        buff = align_buffer(buff + hal_config_buffer)
-        
-        offset_robot_config = len(buff)
-        buff = align_buffer(buff + robot_config_buffer)
-        
-        offset_odometry_config = len(buff)
-        buff = align_buffer(buff + odometry_config_buffer)
-        
-        offset_propulsion_config = len(buff)
-        buff = align_buffer(buff + propulsion_config_buffer)
-        
-        offset_arm_config = len(buff)
-        buff = align_buffer(buff + arm_config_buffer)
-        
-        offset_servos_config = len(buff)
-        buff = align_buffer(buff + servos_config_buffer)
-        
-        offset_arm_positions = len(buff)
-        buff = align_buffer(buff + arm_positions_buffer)
-        
-        offset_arm_torques = len(buff)
-        buff = align_buffer(buff + arm_torques_buffer)
-        
-        offset_sequences = len(buff)
-        buff += self.sequences.binary        
-        
-        header = struct.pack('HHHHHHHHHHHHHHHH',
-        offset_hal_config + 32,
-        offset_robot_config + 32,
-        offset_odometry_config + 32,
-        offset_propulsion_config + 32,
-        offset_arm_config + 32,
-        offset_arm_positions + 32,
-        offset_servos_config + 32,
-        offset_sequences + 32,
-        offset_arm_torques + 32,
-        0,0,0,0,0,0,0)
-
+        self._push_buffer(hal_config_buffer)       
+        self._push_buffer(robot_config_buffer)
+        self._push_buffer(self.robot_simulator_config.compile())
+        self._push_buffer(odometry_config_buffer)
+        self._push_buffer(propulsion_config_buffer)
+        self._push_buffer(arm_config_buffer)
+        self._push_buffer(servos_config_buffer)
+        self._push_buffer(arm_positions_buffer)
+        self._push_buffer(arm_torques_buffer)        
+        self._push_buffer(self.sequences.binary)
+        print(*(o + 32 for o in self._offsets + [0] * (16 - len(self._offsets))))
+        header = struct.pack('HHHHHHHHHHHHHHHH', *(o + 32 for o in self._offsets + [0] * (16 - len(self._offsets))))
         
         # add padding for alignment?
-        self.binary = header + buff
+        self.binary = header + self._buffer
         self.crc = compute_crc(self.binary)
         open(self.path+'/robot_config.bin', 'wb').write(self.binary)
         open(self.path+'/robot_config.crc', 'w').write(str(self.crc))
@@ -167,6 +145,10 @@ class RobotConfig:
         for s in self.sequences.sequence_names:
             sn.write(s + '\n')
         sn.close()
+    
+    def _push_buffer(self, buffer):
+        self._offsets.append(len(self._buffer))
+        self._buffer = align_buffer(self._buffer + buffer)
 
 #Full config format:
 # Offsets table

@@ -47,6 +47,8 @@ class DeviceType:
    Gpio = 1
    Timer = 2
    Pwm = 3
+   Uart = 5
+   
    
     
 def align_buffer(buff):
@@ -131,11 +133,13 @@ class UsartConfig(DeviceConfig):
         self.tx_buffer_size = config_dict['tx_buffer_size']
         self.rx_pin = PinConfig(config_dict['rx_pin'])
         self.tx_pin = PinConfig(config_dict['tx_pin'])
+        self.txen_pin = PinConfig(config_dict.get('txen_pin'))
         
     def compile(self):
-        buff = struct.pack('<BB', 1, self.device_id)
+        buff = struct.pack('<BB', DeviceType.Uart, self.device_id)
         buff += struct.pack('<BBHHH', self.fd, 0, self.rx_buffer_size, self.tx_buffer_size, 0)
-        buff += self.rx_pin.compile() + self.tx_pin.compile() + struct.pack('<I', self.baudrate)
+        buff += struct.pack('<I', self.baudrate)
+        buff += self.rx_pin.compile() + self.tx_pin.compile() + self.txen_pin.compile()        
         buff = struct.pack('<H', len(buff) + 2) + buff
         return buff
         
@@ -184,8 +188,7 @@ class HALConfig:
         self.usart = [UsartConfig(v) for v in config_dict.get('usart', [])]        
         #self.i2c = [I2cConfig(v) for v in config_dict.get('i2c', [])]
         #self.spi = [SpiConfig(v) for v in config_dict.get('spi', [])]
-        #self.can = [CanConfig(v) for v in config_dict.get('can', [])]
-        
+        #self.can = [CanConfig(v) for v in config_dict.get('can', [])]        
         
     def compile(self):
         config_buffers = []

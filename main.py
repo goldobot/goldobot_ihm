@@ -65,6 +65,7 @@ class MainWindow(QMainWindow):
         # Create actions
        
         self._action_reset = QAction("Reset")
+        self._action_odrive = QAction("Read ODrive")
         self._action_enter_debug = QAction("Debug enter")
         self._action_exit_debug = QAction("Debug exit")
         self._action_upload_config = QAction("Upload config")
@@ -88,6 +89,7 @@ class MainWindow(QMainWindow):
         tools_menu.addAction(self._action_enter_debug)
         tools_menu.addAction(self._action_exit_debug)
         tools_menu.addAction(self._action_reset)
+        tools_menu.addAction(self._action_odrive)
         tools_menu.addAction(self._action_upload_config)
 
         self._main_widget = QWidget()
@@ -105,6 +107,7 @@ class MainWindow(QMainWindow):
         self._main_widget.setLayout(layout1)
 
         self._action_reset.triggered.connect(self._send_reset) 
+        self._action_odrive.triggered.connect(self._send_odrive) 
         self._action_enter_debug.triggered.connect(self._send_enter_debug) 
         self._action_exit_debug.triggered.connect(self._send_exit_debug)
         self._action_upload_config.triggered.connect(self._upload_config) 
@@ -135,6 +138,13 @@ class MainWindow(QMainWindow):
 
     def _send_reset(self):
         self._client.send_message(message_types.DbgReset, b'')
+        
+    def _send_odrive(self):
+        offset = len(self._client.odrive_buff)
+        self._client.odrive_seq += 1
+        self._client.send_message(410, struct.pack('<HHHIH', self._client.odrive_seq, 0x8000, 512, offset, 1))        
+        
+
         
     def _send_enter_debug(self):
         self._client.send_message(message_types.SetMatchState, struct.pack('<B', 6))
