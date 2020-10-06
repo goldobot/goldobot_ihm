@@ -1,0 +1,1 @@
+python  main.py --robot-ip raspberrypi01 --config-path robot_2020
