@@ -47,7 +47,10 @@ class DeviceType:
    Gpio = 1
    Timer = 2
    Pwm = 3
+   Encoder = 4
    Uart = 5
+   I2c = 6
+   Spi = 7
 
 
 
@@ -116,54 +119,87 @@ class PwmConfig(DeviceConfig):
 class EncoderConfig(DeviceConfig):
     def __init__(self, config_dict):
         super().__init__(config_dict)
+        self.id = config_dict['id']
+        self.reverse_dir = config_dict.get('reverse_dir', False)
+        self.hall_mode = config_dict.get('hall_mode', False)
         self.period = config_dict['period']
+        self.ch1_pin = PinConfig(config_dict.get('ch1_pin'))
+        self.ch2_pin = PinConfig(config_dict.get('ch2_pin'))
+        self.ch3_pin = PinConfig(config_dict.get('ch3_pin'))
 
     def compile(self):
-        buff = struct.pack('<BB', 7, self.device_id)
-        buff += struct.pack('<HH', self.prescaler, self.period)
+        flags = 0
+        if self.reverse_dir:
+            flags |= 0x01
+        if self.hall_mode:
+            flags |= 0x02
+        buff = struct.pack('<BB', DeviceType.Encoder, self.device_id)
+        buff += struct.pack('<BB', self.id, flags)
+        buff += self.ch1_pin.compile()
+        buff += self.ch2_pin.compile()
+        buff += self.ch3_pin.compile()
+        buff += struct.pack('<H', self.period)
         buff = struct.pack('<H', len(buff) + 2) + buff
         return buff
 
-class UsartConfig(DeviceConfig):
+class IODeviceConfig(DeviceConfig):
     def __init__(self, config_dict):
         super().__init__(config_dict)
-        self.fd = config_dict['id']
-        self.baudrate = config_dict['baudrate']
+        self.id = config_dict['id']
         self.rx_buffer_size = config_dict.get('rx_buffer_size', 0)
         self.tx_buffer_size = config_dict.get('tx_buffer_size', 0)
+    @property   
+    def io_flags(self):
+        return 0
+        
+class UsartConfig(IODeviceConfig):
+    def __init__(self, config_dict):
+        super().__init__(config_dict)
+        self.baudrate = config_dict['baudrate']
         self.rx_pin = PinConfig(config_dict['rx_pin'])
         self.tx_pin = PinConfig(config_dict['tx_pin'])
         self.txen_pin = PinConfig(config_dict.get('txen_pin'))
 
     def compile(self):
         buff = struct.pack('<BB', DeviceType.Uart, self.device_id)
-        buff += struct.pack('<BBHHH', self.fd, 0, self.rx_buffer_size, self.tx_buffer_size, 0)
+        buff += struct.pack('<BBHHH', self.id, 0, self.rx_buffer_size, self.tx_buffer_size, self.io_flags)
         buff += struct.pack('<I', self.baudrate)
         buff += self.rx_pin.compile() + self.tx_pin.compile() + self.txen_pin.compile()
         buff = struct.pack('<H', len(buff) + 2) + buff
         return buff
 
-class I2cConfig(DeviceConfig):
+class I2cConfig(IODeviceConfig):
     def __init__(self, config_dict):
         super().__init__(config_dict)
-        self.prescaler = config_dict['prescaler']
-        self.period = config_dict['period']
+        self.timing = config_dict['timing']
+        self.scl_pin = PinConfig(config_dict['scl_pin'])
+        self.sda_pin = PinConfig(config_dict['sda_pin'])
 
     def compile(self):
-        buff = struct.pack('<BB', 7, self.device_id)
-        buff += struct.pack('<HH', self.prescaler, self.period)
+        buff = struct.pack('<BB', DeviceType.I2c, self.device_id)
+        buff += struct.pack('<BBHHH', self.id, 0, self.rx_buffer_size, self.tx_buffer_size, self.io_flags)
+        buff += self.scl_pin.compile() + self.sda_pin.compile()
+        buff += struct.pack('<I', self.timing)
         buff = struct.pack('<H', len(buff) + 2) + buff
         return buff
 
-class SpiConfig(DeviceConfig):
+class SpiConfig(IODeviceConfig):
     def __init__(self, config_dict):
         super().__init__(config_dict)
-        self.prescaler = config_dict['prescaler']
-        self.period = config_dict['period']
+        self.baudrate_prescaler = config_dict['baudrate_prescaler']
+        self.sck_pin = PinConfig(config_dict.get('sck_pin'))
+        self.mosi_pin = PinConfig(config_dict.get('mosi_pin'))
+        self.miso_pin = PinConfig(config_dict.get('miso_pin'))
+        self.nss_pin = PinConfig(config_dict.get('nss_pin'))
 
     def compile(self):
-        buff = struct.pack('<BB', 7, self.device_id)
-        buff += struct.pack('<HH', self.prescaler, self.period)
+        buff = struct.pack('<BB', DeviceType.Spi, self.device_id)
+        buff += struct.pack('<BBHHH', self.id, 0, self.rx_buffer_size, self.tx_buffer_size, self.io_flags)
+        buff += self.sck_pin.compile()
+        buff += self.mosi_pin.compile()
+        buff += self.miso_pin.compile()
+        buff += self.nss_pin.compile()
+        buff += struct.pack('<H', self.baudrate_prescaler)
         buff = struct.pack('<H', len(buff) + 2) + buff
         return buff
 
@@ -186,8 +222,8 @@ class HALConfig:
         self.pwm = [PwmConfig(v) for v in config_dict.get('pwm', [])]
         self.encoder = [EncoderConfig(v) for v in config_dict.get('encoder', [])]
         self.usart = [UsartConfig(v) for v in config_dict.get('uart', [])]
-        #self.i2c = [I2cConfig(v) for v in config_dict.get('i2c', [])]
-        #self.spi = [SpiConfig(v) for v in config_dict.get('spi', [])]
+        self.i2c = [I2cConfig(v) for v in config_dict.get('i2c', [])]
+        self.spi = [SpiConfig(v) for v in config_dict.get('spi', [])]
         #self.can = [CanConfig(v) for v in config_dict.get('can', [])]
 
     def compile(self):
@@ -213,7 +249,25 @@ class HALConfig:
             config_buffer_offsets.append(offset)
             offset += len(buffer)
 
+        for p in self.encoder:
+            buffer = align_buffer(p.compile())
+            config_buffers.append(buffer)
+            config_buffer_offsets.append(offset)
+            offset += len(buffer)
+            
         for p in self.usart:
+            buffer = align_buffer(p.compile())
+            config_buffers.append(buffer)
+            config_buffer_offsets.append(offset)
+            offset += len(buffer)
+            
+        for p in self.i2c:
+            buffer = align_buffer(p.compile())
+            config_buffers.append(buffer)
+            config_buffer_offsets.append(offset)
+            offset += len(buffer)
+            
+        for p in self.spi:
             buffer = align_buffer(p.compile())
             config_buffers.append(buffer)
             config_buffer_offsets.append(offset)
