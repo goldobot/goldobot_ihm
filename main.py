@@ -29,6 +29,7 @@ from dialogs.debug_fpga import DebugFpgaDialog
 from dialogs.sequences import SequencesDialog
 from dialogs.score import ScoreDialog
 from dialogs.test_hal import HalTestDialog
+from dialogs.odrive import ODriveDialog
 
 from parse_sequence import SequenceParser
 
@@ -38,6 +39,7 @@ import config
 
 dialogs = [
     ("Test Hal", HalTestDialog),
+    ("ODrive", ODriveDialog),
     ("Configure Odometry", OdometryConfigDialog),
     ("Configure Propulsion controller", PropulsionControllerConfigDialog),
     ("Test propulsion", PropulsionTestDialog),

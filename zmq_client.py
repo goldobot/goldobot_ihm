@@ -37,6 +37,7 @@ class ZmqClient(QObject):
     debug_goldo = pyqtSignal(int)
     robot_end_load_config_status = pyqtSignal(bool)
     sequence_event = pyqtSignal(int, object)
+    odrive_response = pyqtSignal(int, bytes)
 
     def __init__(self, ip=None, parent = None):
         super(ZmqClient, self).__init__(None)
@@ -77,7 +78,17 @@ class ZmqClient(QObject):
         print()
 
         self._push_socket_rplidar.send_multipart([struct.pack('<H',message_type), message_body])
-
+    
+    def send_message_odrive(self, endpoint_id, expected_response_size, payload, protocol_version):
+        seq = self.odrive_seq
+        self.odrive_seq += 1
+        buff = struct.pack('<HHH', seq, endpoint_id, expected_response_size)
+        buff += payload
+        buff += struct.pack('<H', protocol_version)
+        self.send_message(410, buff)
+        return seq
+        
+        
     def _on_sub_socket_event(self):        
         self._notifier.setEnabled(False)
 
@@ -202,13 +213,13 @@ class ZmqClient(QObject):
 
         if msg_type == 90:
             print(struct.unpack('<BB', msg[2:]))
-        if msg_type == 410:
+        if msg_type == 411:
             seq = struct.unpack('<H', msg[2:4])[0] & 0xf7fff
+            self.odrive_response.emit(seq, msg[4:])
             if seq == self.odrive_seq:
                 self.odrive_buff += msg[4:]
                 offset = len(self.odrive_buff)
                 self.odrive_seq += 1
                 self.send_message(410, struct.pack('<HHHIH', self.odrive_seq, 0x8000, 512, offset, 1))
-                print(self.odrive_buff)
                 
 
