@@ -216,10 +216,3 @@ class ZmqClient(QObject):
         if msg_type == 411:
             seq = struct.unpack('<H', msg[2:4])[0] & 0xf7fff
             self.odrive_response.emit(seq, msg[4:])
-            if seq == self.odrive_seq:
-                self.odrive_buff += msg[4:]
-                offset = len(self.odrive_buff)
-                self.odrive_seq += 1
-                self.send_message(410, struct.pack('<HHHIH', self.odrive_seq, 0x8000, 512, offset, 1))
-                
-
