@@ -93,6 +93,10 @@ uart:
     device: USART1
     id: 2
     baudrate: 1000000
+    rx_blocking: true
+    tx_blocking: true
+    rx_dma: true
+    tx_dma: true
     rx_pin: PA10
     tx_pin: PC4
     txen_pin: PC3
