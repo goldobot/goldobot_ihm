@@ -1,19 +1,16 @@
 import zmq
 import struct
 from PyQt5.QtCore import QObject, QSocketNotifier, pyqtSignal
-import scapy
 
-from messages import NucleoFirmwareVersion
-from messages import PropulsionTelemetry
-from messages import PropulsionTelemetryEx
-from messages import RplidarPlot
-from messages import RplidarRobotDetection
-from messages import OdometryConfig
-from messages import PropulsionControllerConfig
+from goldobot.messages import NucleoFirmwareVersion
+from goldobot.messages import PropulsionTelemetry
+from goldobot.messages import PropulsionTelemetryEx
+from goldobot.messages import RplidarPlot
+from goldobot.messages import RplidarRobotDetection
+from goldobot.messages import OdometryConfig
+from goldobot.messages import PropulsionControllerConfig
 
-from scapy.all import hexdump
-
-import message_types
+from goldobot import message_types
 
 class ZmqClient(QObject):
     nucleo_firmware_version = pyqtSignal(str)
@@ -93,7 +90,6 @@ class ZmqClient(QObject):
         self._notifier.setEnabled(False)
 
         flags = self._sub_socket.getsockopt(zmq.EVENTS)
-
         while flags & zmq.POLLIN:
             received = self._sub_socket.recv_multipart()
             self._on_message_received(b''.join(received))
@@ -110,10 +106,6 @@ class ZmqClient(QObject):
         self._notifier_rplidar.setEnabled(True)
 
     def _on_message_received(self, msg):
-        #print (" len(msg) = {}".format(len(msg)))
-        #hexdump(msg)
-        #print()
-
         self.message_received.emit(msg)
         msg_type = struct.unpack('<H', msg[0:2])[0]
 
@@ -195,17 +187,7 @@ class ZmqClient(QObject):
             
         if msg_type == message_types.FpgaDbgGetErrCnt:
             v = struct.unpack('<'+'I'*16, msg[2:])
-            #i=0
-            #print("m_total_spi_frame_cnt = {:>d}".format(v[i])) ; i+=1
-            #print("m_soft_err_cnt = {:>d}".format(v[i]))        ; i+=1
-            #print("m_addr1_crc_err_cnt = {:>d}".format(v[i]))   ; i+=1
-            #print("m_addr2_crc_err_cnt = {:>d}".format(v[i]))   ; i+=1
-            #print("m_write1_crc_err_cnt = {:>d}".format(v[i]))  ; i+=1
-            #print("m_write2_crc_err_cnt = {:>d}".format(v[i]))  ; i+=1
-            #print("m_read1_crc_err_cnt = {:>d}".format(v[i]))   ; i+=1
-            #print("m_read2_crc_err_cnt = {:>d}".format(v[i]))   ; i+=1
-            #print("m_apb_err_cnt = {:>d}".format(v[i]))         ; i+=1
-            # FIXME : TODO : send to fpga dialog
+
             
         if msg_type == message_types.NucleoLog:
             log = msg[2:].split(bytes([0]),1)[0].decode("utf-8")
@@ -216,10 +198,3 @@ class ZmqClient(QObject):
         if msg_type == 411:
             seq = struct.unpack('<H', msg[2:4])[0] & 0xf7fff
             self.odrive_response.emit(seq, msg[4:])
-            if seq == self.odrive_seq:
-                self.odrive_buff += msg[4:]
-                offset = len(self.odrive_buff)
-                self.odrive_seq += 1
-                self.send_message(410, struct.pack('<HHHIH', self.odrive_seq, 0x8000, 512, offset, 1))
-                
-

@@ -4,10 +4,10 @@ from PyQt5.QtWidgets import QDialog
 from PyQt5.QtWidgets import QTabWidget
 from widgets.properties_editor import PropertiesEditorWidget
 
-from messages import PropulsionControllerConfig
-from messages import PIDConfig
-from messages import PropulsionControllerLowLevelConfig
-import message_types
+from goldobot.messages import PropulsionControllerConfig
+from goldobot.messages import PIDConfig
+from goldobot.messages import PropulsionControllerLowLevelConfig
+from goldobot import message_types
 
 class PropulsionControllerConfigDialog(QDialog):
     def __init__(self, parent = None):

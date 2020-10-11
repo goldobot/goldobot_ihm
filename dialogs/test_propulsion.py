@@ -10,9 +10,9 @@ from PyQt5.QtCore import  QTimer
 from widgets.properties_editor import PropertiesEditorWidget
 from widgets.table_view import TableViewWidget
 
-from messages import PropulsionControllerConfig
-from messages import PIDConfig
-import message_types
+from goldobot.messages import PropulsionControllerConfig
+from goldobot.messages import PIDConfig
+from goldobot import message_types
 
 import struct
 import math

@@ -1,10 +1,11 @@
 import yaml
 from collections import OrderedDict
 from parse_sequence import SequenceParser
-import messages
+from goldobot import messages
 import struct
 
 from goldobot_ihm.hal_config import HALConfig
+from goldobot_ihm.robot_config import RobotConfig as RobotConfig2
 from goldobot_ihm.robot_simulator_config import RobotSimulatorConfig
 
 #servos = {s['name']:s['id'] for s in robot_config['servos']}
@@ -18,8 +19,10 @@ def align_buffer(buff):
 
 class RobotConfig:
     def __init__(self, path):
+        print(path)
         self.yaml = yaml.load(open(path + '/robot.yaml'),Loader=yaml.FullLoader)
         self.hal_config = HALConfig(yaml.load(open(path + '/hal.yaml'),Loader=yaml.FullLoader))
+        self.robot_config = RobotConfig2(self.yaml['robot'])
         self.robot_simulator_config = RobotSimulatorConfig(self.yaml.get('robot_simulator', {}))
         self.path = path
         self.servo_nums = {s['name']:s['id'] for s in self.yaml['servos']}
@@ -83,10 +86,7 @@ class RobotConfig:
         
     def compile(self):
         #RobotConfig
-        robot_config_buffer = struct.pack('<ffBB',
-            self.yaml['geometry']['front_length'],
-            self.yaml['geometry']['back_length'],
-            1, 1)#todo add proper reading of option
+        robot_config_buffer = self.robot_config.compile()
             
         # hal config
         hal_config_buffer = self.hal_config.compile()

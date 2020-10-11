@@ -9,7 +9,7 @@ from PyQt5.QtWidgets import QLineEdit
 from PyQt5.QtWidgets import QTabWidget
 
 import struct
-import message_types
+from goldobot import message_types
 
 ax12_registers = [
     ('model_number',0x00, 2, 'r'),

@@ -1,0 +1,1 @@
+python  main.py --robot-ip 192.168.0.101 --config-path robot_2020

@@ -12,7 +12,7 @@ from widgets.properties_editor import PropertiesEditorWidget
 from widgets.table_view import TableViewWidget
 
 
-import message_types
+from goldobot import message_types
 
 import struct
 import math

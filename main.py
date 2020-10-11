@@ -15,7 +15,7 @@ from PyQt5.QtWidgets import  QHBoxLayout, QComboBox, QMessageBox
 from widgets.table_view import TableViewWidget
 from widgets.plot_dialog import PlotDialog, ControlPlots
 
-from zmq_client import ZmqClient
+from goldobot.zmq_client import ZmqClient
 
 from widgets.robot_status import RobotStatusWidget
 from widgets.properties_editor import PropertiesEditorWidget
@@ -33,9 +33,9 @@ from dialogs.odrive import ODriveDialog
 
 from parse_sequence import SequenceParser
 
-import message_types
+from goldobot import message_types
 
-import config
+from goldobot import config
 
 dialogs = [
     ("Test Hal", HalTestDialog),
@@ -50,36 +50,35 @@ dialogs = [
     ("Test sequences", SequencesDialog),
     ('Score', ScoreDialog)
  ]
-        
+
 class MainWindow(QMainWindow):
     def __init__(self, parent = None):
         super(MainWindow, self).__init__(None)
-        
+
          #Parse arguments
         parser = OptionParser()
         parser.add_option('--robot-ip', default='192.168.1.222')
         parser.add_option('--config-path', default='petit_robot')
         (options, args) = parser.parse_args(sys.argv)
-        
+
         self._client = ZmqClient(ip=options.robot_ip)
         config.load_config(options.config_path)
-        
+
         # Create actions
-       
+
         self._action_reset = QAction("Reset")
-        self._action_odrive = QAction("Read ODrive")
         self._action_enter_debug = QAction("Debug enter")
         self._action_exit_debug = QAction("Debug exit")
         self._action_upload_config = QAction("Upload config")
-        
+
         # Add menu
         tools_menu = self.menuBar().addMenu("Tools")
-        
+
         self._actions = []
         self._dialogs = []
-        
-        
-        
+
+
+
         for d in dialogs:
             action = QAction(d[0])
             widget = d[1]()
@@ -87,11 +86,10 @@ class MainWindow(QMainWindow):
             self._actions.append(action)
             self._dialogs.append(widget)
             action.triggered.connect(widget.show)
-            
+
         tools_menu.addAction(self._action_enter_debug)
         tools_menu.addAction(self._action_exit_debug)
         tools_menu.addAction(self._action_reset)
-        tools_menu.addAction(self._action_odrive)
         tools_menu.addAction(self._action_upload_config)
 
         self._main_widget = QWidget()
@@ -108,58 +106,50 @@ class MainWindow(QMainWindow):
 
         self._main_widget.setLayout(layout1)
 
-        self._action_reset.triggered.connect(self._send_reset) 
-        self._action_odrive.triggered.connect(self._send_odrive) 
-        self._action_enter_debug.triggered.connect(self._send_enter_debug) 
+        self._action_reset.triggered.connect(self._send_reset)
+        self._action_enter_debug.triggered.connect(self._send_enter_debug)
         self._action_exit_debug.triggered.connect(self._send_exit_debug)
-        self._action_upload_config.triggered.connect(self._upload_config) 
+        self._action_upload_config.triggered.connect(self._upload_config)
 
         self._client.robot_end_load_config_status.connect(self._upload_status)
-       
-        
+
+
         for d in self._dialogs:
             d.set_client(self._client)
-                
+
         # Add status bar
         self._status_link_state = QLabel('')
         self.statusBar().addWidget(self._status_link_state)
         self._status_match_state = QLabel('')
         self.statusBar().addWidget(self._status_match_state)
-        
+
         self._client.comm_stats.connect(self._on_comm_stats)
         self._client.match_state_change.connect(self._on_match_state_change)
         self._widget_robot_status.set_client(self._client)
         self._table_view.set_client(self._client)
-        
+
         #plt = ControlPlots()
         #plt.show()
         #self.plt = plt
         #plt.plot_curve([0,2,1])
-        
-        
+
+
 
     def _send_reset(self):
         self._client.send_message(message_types.DbgReset, b'')
-        
-    def _send_odrive(self):
-        offset = len(self._client.odrive_buff)
-        self._client.odrive_seq += 1
-        self._client.send_message(410, struct.pack('<HHHIH', self._client.odrive_seq, 0x8000, 512, offset, 1))        
-        
 
-        
     def _send_enter_debug(self):
         self._client.send_message(message_types.SetMatchState, struct.pack('<B', 6))
-        
+
     def _send_exit_debug(self):
         self._client.send_message(message_types.SetMatchState, struct.pack('<B', 1))
-        
+
     def _on_comm_stats(self, stats):
         self._status_link_state.setText('download {} {}'.format(*stats))
-        
+
     def _on_match_state_change(self, state,side):
         self._status_match_state.setText('{} {}'.format(state, side))
-        
+
     def _upload_sequence(self):
         config.load_dynamixels_config()
         config.load_sequence()
@@ -177,7 +167,7 @@ class MainWindow(QMainWindow):
         self._client.send_message(message_types.RobotLoadConfig, buff)
         #Finish programming
         self._client.send_message(message_types.RobotEndLoadConfig, struct.pack('<H', cfg.crc))
-        
+
     def _upload_status(self, status):
         if status == True:
             QMessageBox.information(self, "Upload config status", "Success")
@@ -193,7 +183,7 @@ if __name__ == '__main__':
 
     main_window = MainWindow()
     main_window.show()
-    
+
     # Ensure that the application quits using CTRL-C
     signal.signal(signal.SIGINT, signal.SIG_DFL)
 

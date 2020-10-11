@@ -4,8 +4,8 @@ from PyQt5.QtWidgets import QDialog
 from PyQt5.QtWidgets import QLineEdit
 from widgets.properties_editor import PropertiesEditorWidget
 
-from messages import OdometryConfig
-import message_types
+from goldobot.messages import OdometryConfig
+from goldobot import message_types
 
 class OdometryConfigDialog(QDialog):
     def __init__(self, parent = None):

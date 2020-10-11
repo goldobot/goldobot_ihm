@@ -1,2 +1,0 @@
-name,slider,arm,wrist
-base,512,512,512

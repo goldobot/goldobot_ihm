@@ -12,8 +12,8 @@ from PyQt5.QtWidgets import QComboBox
 from widgets.properties_editor import PropertiesEditorWidget
 
 import struct
-import message_types
-import config
+from goldobot import message_types
+from goldobot import config
 
 import struct
 import math

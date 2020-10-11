@@ -1,0 +1,135 @@
+robot:
+  propulsion:
+    interface: ODRIVE_UART
+    use_simulator: true
+  geometry:
+    front_length: 106.5
+    back_length: 101.5
+    outline:
+      - [0,116.5]
+      - [10,20]
+robot_simulator:
+  speed_coeff: 1
+  wheels_spacing: 0.3
+  encoders_spacing: 0.4
+  encoders_counts_per_m: 0.5e+5
+  encoders_period: 8192
+odometry:
+  dist_per_count_left: 1.966033264580682e-05
+  dist_per_count_right: 1.9621583742116328e-05
+  encoder_period: 8192
+  update_period: 1.0e-3
+  wheels_spacing: 189.5e-3
+  speed_filter_period: 5.0e-3
+propulsion:
+  pid_static:
+    longi:
+      period: 1.0e-3
+      kp: 5
+      ki: 10
+      kd: 0
+      feed_forward: 0
+      lim_iterm: 0.2
+      lim_dterm: 0
+      min_out: -1
+      max_out: 1
+    speed:
+      period: 1.0e-3
+      kp: 1.0
+      ki: 0.0
+      kd: 0.0
+      feed_forward: 0.64
+      lim_iterm: 0.2
+      lim_dterm: 0.0
+      min_out: -1.0
+      max_out: 1.0
+    yaw:
+      period: 1.0e-3
+      kp: 0.5
+      ki: 2
+      kd: 0
+      feed_forward: 0
+      lim_iterm: 0.2
+      lim_dterm: 0
+      min_out: -1
+      max_out: 1
+    yaw_rate:
+      period: 1.0e-3
+      kp: 0.2
+      ki: 0
+      kd: 0
+      feed_forward: 0.12
+      lim_iterm: 0.2
+      lim_dterm: 0
+      min_out: -1
+      max_out: 1
+  lookahead_time: 0.5
+  lookahead_distance: 0.15
+  static_pwm_limit: 0.5
+  moving_pwm_limit: 0.7
+  reposition_pwm_limit: 0.2
+dynamixels:
+  - name: rail
+    type: mx28
+    id: 81
+    cw_limit: 850
+    ccw_limit: 1850    
+    torque_limit: 512
+  - name: coude
+    id: 82
+    type: mx28
+    cw_limit: 800
+    ccw_limit: 3150   
+    torque_limit: 512
+  - name: tete
+    id: 1
+    type: ax12
+    cw_limit: 250
+    ccw_limit: 850    
+    torque_limit: 512
+servos:
+  - name: griffe_g
+    id: 2
+    max_speed: 40000
+    cw_limit: 19000
+    ccw_limit: 51000 
+  - name: griffe_d
+    id: 1
+    max_speed: 40000
+    cw_limit: 16000
+    ccw_limit: 48000
+  - name: stock_g
+    id: 11
+    max_speed: 40000
+    cw_limit: 250
+    ccw_limit: 850
+  - name: stock_d
+    id: 0
+    max_speed: 40000
+    cw_limit: 250
+    ccw_limit: 850 
+  - name: slider
+    id: 10
+    max_speed: 40000
+    cw_limit: 32600
+    ccw_limit: 45500
+sensors:
+  - name: micro_switch
+    id: 0
+  - name: vacuostat
+    id: 1
+  - name: laser_droit
+    id: 2
+  - name: laser_gauche
+    id: 3
+  - name: rouge_gauche
+    id: 4
+  - name: rouge_droit
+    id: 5
+
+sequence_files:
+  - "sequences/constants.txt"
+  - "sequences/waypoint_jaune.txt"
+  - "sequences/waypoint_violet.txt"
+  - "sequences/sequences.txt"
+  - "sequences/tests.txt"

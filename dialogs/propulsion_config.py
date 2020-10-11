@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import QPushButton
 from PyQt5.QtWidgets import QDialog
 from widgets.properties_editor import PropertiesEditorWidget
 
-from messages import PropulsionControllerConfig
+from goldobot.messages import PropulsionControllerConfig
 
 class PropulsionControllerConfigDialog(QDialog):
     def __init__(self, parent = None):
