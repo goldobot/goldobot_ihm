@@ -11,6 +11,7 @@ from PyQt5.QtWidgets import QComboBox
 
 import json
 import struct
+
 from goldobot import message_types
 from goldobot_ihm.odrive import calc_json_crc, parse_item, ODRIVE_TYPES
 

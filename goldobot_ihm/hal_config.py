@@ -147,10 +147,24 @@ class IODeviceConfig(DeviceConfig):
         super().__init__(config_dict)
         self.id = config_dict['id']
         self.rx_buffer_size = config_dict.get('rx_buffer_size', 0)
-        self.tx_buffer_size = config_dict.get('tx_buffer_size', 0)
+        self.tx_buffer_size = config_dict.get('tx_buffer_size', 0)        
+        self.rx_blocking = config_dict.get('rx_blocking', False)
+        self.tx_blocking = config_dict.get('tx_blocking', False)
+        self.rx_dma = config_dict.get('rx_dma', False)
+        self.tx_dma = config_dict.get('tx_dma', False)
+        
     @property   
     def io_flags(self):
-        return 0
+        flags = 0
+        if self.rx_blocking:
+            flags |= 0x01
+        if self.rx_blocking:
+            flags |= 0x02
+        if self.rx_dma:
+            flags |= 0x04
+        if self.tx_dma:
+            flags |= 0x08
+        return flags
         
 class UsartConfig(IODeviceConfig):
     def __init__(self, config_dict):
