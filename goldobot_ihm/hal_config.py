@@ -158,7 +158,7 @@ class IODeviceConfig(DeviceConfig):
         flags = 0
         if self.rx_blocking:
             flags |= 0x01
-        if self.rx_blocking:
+        if self.tx_blocking:
             flags |= 0x02
         if self.rx_dma:
             flags |= 0x04

@@ -2,7 +2,7 @@
 gpio:
   - id: 0
     name: nucleo_led
-    pin: PC5
+    pin: PA5
     mode: OUT_PP
   - id: 1
     name: nucleo_user_button
@@ -58,14 +58,7 @@ timer:
     prescaler: 1
     period: 10000
 
-pwm:
-  - id: 0
-    name: test
-    device: TIM2
-    channel: CH1
-    pin: PA5
-    dir_pin: PB2
-
+pwm: []
 encoder:
   - id: 0
     name: left_encoder
@@ -93,7 +86,7 @@ uart:
     device: USART1
     id: 2
     baudrate: 1000000
-    rx_blocking: true
+    rx_blocking: false
     tx_blocking: true
     rx_dma: true
     tx_dma: true

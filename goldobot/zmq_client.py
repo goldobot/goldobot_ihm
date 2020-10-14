@@ -1,6 +1,7 @@
 import zmq
 import struct
 from PyQt5.QtCore import QObject, QSocketNotifier, pyqtSignal
+from PyQt5.QtGui import QPixmap
 
 from goldobot.messages import NucleoFirmwareVersion
 from goldobot.messages import PropulsionTelemetry
@@ -35,6 +36,7 @@ class ZmqClient(QObject):
     robot_end_load_config_status = pyqtSignal(bool)
     sequence_event = pyqtSignal(int, object)
     odrive_response = pyqtSignal(int, bytes)
+    camera_image = pyqtSignal(object)
 
     def __init__(self, ip=None, parent = None):
         super(ZmqClient, self).__init__(None)
@@ -47,6 +49,10 @@ class ZmqClient(QObject):
         self._sub_socket_rplidar = self._context.socket(zmq.SUB)
         self._sub_socket_rplidar.connect('tcp://{}:3101'.format(ip))
         self._sub_socket_rplidar.setsockopt(zmq.SUBSCRIBE,b'')
+        
+        self._sub_socket_camera_image = self._context.socket(zmq.SUB)
+        self._sub_socket_camera_image.connect('tcp://{}:3201'.format(ip))
+        self._sub_socket_camera_image.setsockopt(zmq.SUBSCRIBE,b'')
 
         self._push_socket = self._context.socket(zmq.PUB)
         self._push_socket.connect('tcp://{}:3002'.format(ip))
@@ -59,6 +65,9 @@ class ZmqClient(QObject):
 
         self._notifier_rplidar = QSocketNotifier(self._sub_socket_rplidar.getsockopt(zmq.FD), QSocketNotifier.Read, self)
         self._notifier_rplidar.activated.connect(self._on_sub_socket_rplidar_event)
+        
+        self._notifier_camera_image = QSocketNotifier(self._sub_socket_camera_image.getsockopt(zmq.FD), QSocketNotifier.Read, self)
+        self._notifier_camera_image.activated.connect(self._on_sub_socket_camera_image_event)
         
         self.odrive_buff = b''
         self.odrive_seq = 129
@@ -88,13 +97,24 @@ class ZmqClient(QObject):
         
     def _on_sub_socket_event(self):        
         self._notifier.setEnabled(False)
-
         flags = self._sub_socket.getsockopt(zmq.EVENTS)
         while flags & zmq.POLLIN:
             received = self._sub_socket.recv_multipart()
             self._on_message_received(b''.join(received))
             flags = self._sub_socket.getsockopt(zmq.EVENTS)
         self._notifier.setEnabled(True)
+        
+    def _on_sub_socket_camera_image_event(self):        
+        self._notifier_camera_image.setEnabled(False)
+
+        flags = self._sub_socket_camera_image.getsockopt(zmq.EVENTS)
+        while flags & zmq.POLLIN:
+            received = self._sub_socket_camera_image.recv()
+            flags = self._sub_socket_camera_image.getsockopt(zmq.EVENTS)
+            image = QPixmap()
+            image.loadFromData(received)
+            self.camera_image.emit(image)
+        self._notifier_camera_image.setEnabled(True)
 
     def _on_sub_socket_rplidar_event(self):        
         self._notifier_rplidar.setEnabled(False)

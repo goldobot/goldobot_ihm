@@ -127,13 +127,19 @@ class MainWindow(QMainWindow):
         self._client.match_state_change.connect(self._on_match_state_change)
         self._widget_robot_status.set_client(self._client)
         self._table_view.set_client(self._client)
-
+        
+        self._client.camera_image.connect(self._dbg_image)
+        
+        #self._lab = QLabel()
+        #self._lab.show()
         #plt = ControlPlots()
-        #plt.show()
+        #plt.show()qt display QImage
+        
         #self.plt = plt
         #plt.plot_curve([0,2,1])
 
-
+    def _dbg_image(self, image):
+        self._lab.setPixmap(image)
 
     def _send_reset(self):
         self._client.send_message(message_types.DbgReset, b'')

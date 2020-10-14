@@ -60,7 +60,7 @@ class DebugFpgaDialog(QDialog):
 
     def read_registers(self):
         my_addr = int(self._line_edit_apb_addr.text(),16)
-        self._client.send_message(message_types.FpgaDbgReadRegCrc, struct.pack('<I', my_addr))
+        self._client.send_message(message_types.FpgaDbgReadReg, struct.pack('<I', my_addr))
 
     def write_registers(self):
         my_addr = int(self._line_edit_apb_addr.text(),16)

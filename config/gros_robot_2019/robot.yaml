@@ -1,6 +1,6 @@
 robot:
   propulsion:
-    interface: ODRIVE_UART
+    interface: PWM_OUT
     use_simulator: true
   geometry:
     front_length: 106.5
