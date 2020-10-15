@@ -49,6 +49,7 @@ class ODriveDialog(QDialog):
         self._endpoint_select_combobox.currentTextChanged.connect(self._on_endpoint_select_changed)
         self._function_select_combobox.currentTextChanged.connect(self._on_function_select_changed)
         self._read_json_button.clicked.connect(self._read_json)
+        self._selected_endpoint = None
 
     def set_client(self, client):
         self._client = client
@@ -77,8 +78,9 @@ class ODriveDialog(QDialog):
             self._function_select_combobox.addItem(fn)
 
     def _on_endpoint_select_changed(self, text):
-        endpoint = self._endpoints[text]
-        self._endpoint_write_button.setEnabled('w' in endpoint[2])
+        endpoint = self._endpoints.get(text)
+        if endpoint is not None:
+            self._endpoint_write_button.setEnabled('w' in endpoint[2])
         
     def _on_function_select_changed(self, text):
         function = self._functions[text]
@@ -111,7 +113,7 @@ class ODriveDialog(QDialog):
                 del self._seq[0]
                 open('odrive_schema.json', 'wb').write(self._json_schema_buffer)
                 self._update_schema(self._json_schema_buffer)
-        if seq == self._seq.get(self._selected_endpoint[0]):
+        if self._selected_endpoint is not None and seq == self._seq.get(self._selected_endpoint[0]):
             type = ODRIVE_TYPES[self._selected_endpoint[1]]
             value = struct.unpack(type[1], payload)[0]
             self._endpoint_value_lineedit.setText(str(value))

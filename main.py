@@ -130,8 +130,8 @@ class MainWindow(QMainWindow):
         
         self._client.camera_image.connect(self._dbg_image)
         
-        #self._lab = QLabel()
-        #self._lab.show()
+        self._lab = QLabel()
+        self._lab.show()
         #plt = ControlPlots()
         #plt.show()qt display QImage
         
