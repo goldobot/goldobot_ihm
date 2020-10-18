@@ -86,6 +86,7 @@ uart:
     device: USART1
     id: 2
     baudrate: 1000000
+    rx_buffer_size: 128
     rx_blocking: false
     tx_blocking: true
     rx_dma: true

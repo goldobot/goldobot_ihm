@@ -13,6 +13,11 @@ from goldobot.messages import PropulsionControllerConfig
 
 from goldobot import message_types
 
+import goldobot.pb2 as _goldo_pb2
+
+import google.protobuf as _pb
+_sym_db = _pb.symbol_database.Default()
+
 class ZmqClient(QObject):
     nucleo_firmware_version = pyqtSignal(str)
     message_received = pyqtSignal(object)
@@ -69,11 +74,48 @@ class ZmqClient(QObject):
         self._notifier_camera_image = QSocketNotifier(self._sub_socket_camera_image.getsockopt(zmq.FD), QSocketNotifier.Read, self)
         self._notifier_camera_image.activated.connect(self._on_sub_socket_camera_image_event)
         
+        self._socket_main_sub = self._context.socket(zmq.SUB)
+        self._socket_main_sub.connect('tcp://{}:3801'.format(ip))
+        self._socket_main_sub.setsockopt(zmq.SUBSCRIBE,b'')
+        
+        self._socket_main_pub = self._context.socket(zmq.PUB)
+        self._socket_main_pub.connect('tcp://{}:3802'.format(ip))
+        
+        self._notifier_main = QSocketNotifier(self._socket_main_sub.getsockopt(zmq.FD), QSocketNotifier.Read, self)
+        self._notifier_main.activated.connect(self._on_socket_main_sub)
+        
         self.odrive_buff = b''
         self.odrive_seq = 129
 
     def send_message(self, message_type, message_body):
         self._push_socket.send_multipart([struct.pack('<H',message_type), message_body])
+        
+    def publishTopic(self, topic, msg):
+        self._socket_main_pub.send_multipart([topic.encode('utf8'),
+                                              msg.DESCRIPTOR.full_name.encode('utf8'),
+                                              msg.SerializeToString()])
+                                              
+    def _on_socket_main_sub(self):        
+        self._notifier_main.setEnabled(False)
+        socket = self._socket_main_sub
+        flags = socket.getsockopt(zmq.EVENTS)
+        while flags & zmq.POLLIN:
+            topic, full_name, payload = socket.recv_multipart()
+            flags = socket.getsockopt(zmq.EVENTS)
+            topic = topic.decode('utf8')
+            full_name = full_name.decode('utf8')
+            
+            msg_class = _sym_db.GetSymbol(full_name)
+            if msg_class is not None:
+                msg = msg_class()
+                msg.ParseFromString(payload)
+            else:
+                msg = None
+            if topic == 'nucleo/out/os/heartbeat':
+                self.heartbeat.emit(msg.timestamp)
+            if topic == 'nucleo/out/robot/config/load_status':
+                self.robot_end_load_config_status.emit(bool(msg.status))
+        self._notifier_main.setEnabled(True)
 
     def send_message_rplidar(self, message_type, message_body):
         print("= send_message_rplidar ========================")
@@ -88,10 +130,13 @@ class ZmqClient(QObject):
     def send_message_odrive(self, endpoint_id, expected_response_size, payload, protocol_version):
         seq = self.odrive_seq
         self.odrive_seq += 1
-        buff = struct.pack('<HHH', seq, endpoint_id, expected_response_size)
-        buff += payload
-        buff += struct.pack('<H', protocol_version)
-        self.send_message(410, buff)
+        msg = _sym_db.GetSymbol('goldo.nucleo.odrive.Request')
+        msg.sequence_number = seq
+        msg.endpoint_id = endpoint_id
+        msg.expected_response_size = expected_response_size
+        msg.payload = payload
+        msg.protocol_version = protocol_version        
+        self.publishTopic('nucleo/in/odrive/request', msg)
         return seq
         
         
@@ -109,10 +154,13 @@ class ZmqClient(QObject):
 
         flags = self._sub_socket_camera_image.getsockopt(zmq.EVENTS)
         while flags & zmq.POLLIN:
-            received = self._sub_socket_camera_image.recv()
+            topic, body = self._sub_socket_camera_image.recv_multipart()
+            print(topic)
+            image_msg = Image()
+            image_msg.ParseFromString(body)
             flags = self._sub_socket_camera_image.getsockopt(zmq.EVENTS)
             image = QPixmap()
-            image.loadFromData(received)
+            image.loadFromData(image_msg.data)
             self.camera_image.emit(image)
         self._notifier_camera_image.setEnabled(True)
 
@@ -126,6 +174,7 @@ class ZmqClient(QObject):
         self._notifier_rplidar.setEnabled(True)
 
     def _on_message_received(self, msg):
+        return
         self.message_received.emit(msg)
         msg_type = struct.unpack('<H', msg[0:2])[0]
 
@@ -144,17 +193,12 @@ class ZmqClient(QObject):
             print(event_id, msg[3:])
         if msg_type == message_types.DebugGoldo:
             self.debug_goldo.emit(struct.unpack('<I',msg[2:])[0])
-        if msg_type == message_types.RobotEndLoadConfigStatus:
-            self.robot_end_load_config_status.emit(bool(struct.unpack('<B',msg[2:])[0]))
             
         if msg_type == message_types.MainSequenceLoadStatus:
             status = bool(struct.unpack('<B',msg[2:]))
             print('sequence loaded, status: ', status)
             
-        if msg_type == message_types.Heartbeat:
-            timestamp = struct.unpack('<I', msg[2:6])[0]
-            self.heartbeat.emit(timestamp)
-            
+           
         if msg_type == message_types.MatchStateChange:
             state,side = struct.unpack('<BB', msg[2:4])
             self.match_state_change.emit(state,side)

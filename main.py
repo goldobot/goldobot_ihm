@@ -37,6 +37,9 @@ from goldobot import message_types
 
 from goldobot import config
 
+import google.protobuf as _pb
+_sym_db = _pb.symbol_database.Default()
+
 dialogs = [
     ("Test Hal", HalTestDialog),
     ("ODrive", ODriveDialog),
@@ -163,16 +166,15 @@ class MainWindow(QMainWindow):
         cfg = config.robot_config
         #cfg.update_config()
         cfg.compile()
-        #Start programming
-        self._client.send_message(message_types.RobotBeginLoadConfig, b'')
-        #Upload codes by packets
         buff = cfg.binary
-        while len(buff) >32:
-            self._client.send_message(message_types.RobotLoadConfig, buff[0:32])
+        #Start programming
+        self._client.publishTopic('nucleo/in/robot/config/load_begin', _sym_db.GetSymbol('goldo.nucleo.robot.ConfigLoadBegin')(size=len(buff)))
+        #Upload codes by packets        
+        while len(buff) > 0:
+            self._client.publishTopic('nucleo/in/robot/config/load_chunk', _sym_db.GetSymbol('goldo.nucleo.robot.ConfigLoadChunk')(data=buff[0:32]))
             buff = buff[32:]
-        self._client.send_message(message_types.RobotLoadConfig, buff)
         #Finish programming
-        self._client.send_message(message_types.RobotEndLoadConfig, struct.pack('<H', cfg.crc))
+        self._client.publishTopic('nucleo/in/robot/config/load_end', _sym_db.GetSymbol('goldo.nucleo.robot.ConfigLoadEnd')(crc=cfg.crc))
 
     def _upload_status(self, status):
         if status == True:

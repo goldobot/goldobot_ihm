@@ -14,6 +14,10 @@ from goldobot.messages import PropulsionControllerConfig
 from goldobot.messages import PIDConfig
 from goldobot import message_types
 
+import google.protobuf.wrappers_pb2
+import google.protobuf as _pb
+_sym_db = _pb.symbol_database.Default()
+
 import struct
 import math
 
@@ -129,20 +133,19 @@ class PropulsionTestDialog(QDialog):
         self._current_telemetry_ex = telemetry
 
     def _propulsion_enable(self):
-        print(struct.pack('<B',1))
-        self._client.send_message(message_types.DbgSetPropulsionEnable, struct.pack('<B',1))
+        self._client.publishTopic('nucleo/in/propulsion/enable', _sym_db.GetSymbol('google.protobuf.BoolValue')(value=True))
 
     def _propulsion_disable(self):
-        self._client.send_message(message_types.DbgSetPropulsionEnable, struct.pack('<B',0))
+        self._client.publishTopic('nucleo/in/propulsion/enable', _sym_db.GetSymbol('google.protobuf.BoolValue')(value=False))
 
     def _motors_enable(self):
-        self._client.send_message(message_types.DbgSetMotorsEnable, struct.pack('<B',1))
+        self._client.publishTopic('nucleo/in/propulsion/motors/enable', _sym_db.GetSymbol('google.protobuf.BoolValue')(value=True))
 
     def _motors_disable(self):
-        self._client.send_message(message_types.DbgSetMotorsEnable, struct.pack('<B',0))
+        self._client.publishTopic('nucleo/in/propulsion/motors/enable', _sym_db.GetSymbol('google.protobuf.BoolValue')(value=False))
 
     def _set_pwm(self):
-        self._client.send_message(message_types.DbgSetMotorsPwm, struct.pack('<ff',self._left_pwm_spinbox.value() * 0.01, self._right_pwm_spinbox.value() * 0.01 ))
+        self._client.send_message(message_types.DbgSetMotorsPwm, struct.pack('<ff',self._left_pwm_spinbox.value() * 0.1, self._right_pwm_spinbox.value() * 0.1 ))
     
     def _zero_pwm(self):
         self._left_pwm_spinbox.setValue(0)
