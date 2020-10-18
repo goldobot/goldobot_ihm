@@ -133,19 +133,24 @@ class PropulsionTestDialog(QDialog):
         self._current_telemetry_ex = telemetry
 
     def _propulsion_enable(self):
-        self._client.publishTopic('nucleo/in/propulsion/enable', _sym_db.GetSymbol('google.protobuf.BoolValue')(value=True))
+        self._client.publishTopic('nucleo/in/propulsion/enable/set', _sym_db.GetSymbol('google.protobuf.BoolValue')(value=True))
 
     def _propulsion_disable(self):
-        self._client.publishTopic('nucleo/in/propulsion/enable', _sym_db.GetSymbol('google.protobuf.BoolValue')(value=False))
+        self._client.publishTopic('nucleo/in/propulsion/enable/set', _sym_db.GetSymbol('google.protobuf.BoolValue')(value=False))
 
     def _motors_enable(self):
-        self._client.publishTopic('nucleo/in/propulsion/motors/enable', _sym_db.GetSymbol('google.protobuf.BoolValue')(value=True))
+        self._client.publishTopic('nucleo/in/propulsion/motors/enable/set', _sym_db.GetSymbol('google.protobuf.BoolValue')(value=True))
 
     def _motors_disable(self):
-        self._client.publishTopic('nucleo/in/propulsion/motors/enable', _sym_db.GetSymbol('google.protobuf.BoolValue')(value=False))
+        self._client.publishTopic('nucleo/in/propulsion/motors/enable/set', _sym_db.GetSymbol('google.protobuf.BoolValue')(value=False))
 
     def _set_pwm(self):
-        self._client.send_message(message_types.DbgSetMotorsPwm, struct.pack('<ff',self._left_pwm_spinbox.value() * 0.1, self._right_pwm_spinbox.value() * 0.1 ))
+        msg = _sym_db.GetSymbol('goldo.nucleo.propulsion.MotorsVelocitySetpoints')()
+        msg.left_vel = self._left_pwm_spinbox.value() * 0.1
+        msg.right_vel = self._right_pwm_spinbox.value() * 0.1
+        msg.left_current_feedforward = 0
+        msg.right_current_feedforward = 0
+        self._client.publishTopic('nucleo/in/propulsion/motors/velocity_setpoints/set', msg)
     
     def _zero_pwm(self):
         self._left_pwm_spinbox.setValue(0)

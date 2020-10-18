@@ -55,10 +55,6 @@ class ZmqClient(QObject):
         self._sub_socket_rplidar.connect('tcp://{}:3101'.format(ip))
         self._sub_socket_rplidar.setsockopt(zmq.SUBSCRIBE,b'')
         
-        self._sub_socket_camera_image = self._context.socket(zmq.SUB)
-        self._sub_socket_camera_image.connect('tcp://{}:3201'.format(ip))
-        self._sub_socket_camera_image.setsockopt(zmq.SUBSCRIBE,b'')
-
         self._push_socket = self._context.socket(zmq.PUB)
         self._push_socket.connect('tcp://{}:3002'.format(ip))
 
@@ -70,10 +66,7 @@ class ZmqClient(QObject):
 
         self._notifier_rplidar = QSocketNotifier(self._sub_socket_rplidar.getsockopt(zmq.FD), QSocketNotifier.Read, self)
         self._notifier_rplidar.activated.connect(self._on_sub_socket_rplidar_event)
-        
-        self._notifier_camera_image = QSocketNotifier(self._sub_socket_camera_image.getsockopt(zmq.FD), QSocketNotifier.Read, self)
-        self._notifier_camera_image.activated.connect(self._on_sub_socket_camera_image_event)
-        
+               
         self._socket_main_sub = self._context.socket(zmq.SUB)
         self._socket_main_sub.connect('tcp://{}:3801'.format(ip))
         self._socket_main_sub.setsockopt(zmq.SUBSCRIBE,b'')
@@ -114,7 +107,7 @@ class ZmqClient(QObject):
             if topic == 'nucleo/out/os/heartbeat':
                 self.heartbeat.emit(msg.timestamp)
             if topic == 'nucleo/out/robot/config/load_status':
-                self.robot_end_load_config_status.emit(bool(msg.status))
+                self.robot_end_load_config_status.emit(msg.status==0)
         self._notifier_main.setEnabled(True)
 
     def send_message_rplidar(self, message_type, message_body):

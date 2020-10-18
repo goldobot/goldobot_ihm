@@ -1,7 +1,7 @@
 robot:
   propulsion:
     interface: ODRIVE_UART
-    use_simulator: true
+    use_simulator: false
   geometry:
     front_length: 106.5
     back_length: 101.5
@@ -11,7 +11,7 @@ robot:
 robot_simulator:
   speed_coeff: 1
   wheels_spacing: 0.3
-  encoders_spacing: 0.4
+  encoders_spacing: 0.235
   encoders_counts_per_m: 0.5e+5
   encoders_period: 8192
 odometry:
@@ -19,7 +19,7 @@ odometry:
   dist_per_count_right: 1.9621583742116328e-05
   encoder_period: 8192
   update_period: 1.0e-3
-  wheels_spacing: 189.5e-3
+  wheels_spacing: 235.5e-3
   speed_filter_period: 5.0e-3
 propulsion:
   pid_static:

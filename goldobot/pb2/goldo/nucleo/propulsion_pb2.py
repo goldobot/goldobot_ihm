@@ -15,11 +15,11 @@ _sym_db = _symbol_database.Default()
 
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='goldo/nucleo/propulsion.proto',
-  package='goldorak.nucleo.propulsion',
+  package='goldo.nucleo.propulsion',
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x1dgoldo/nucleo/propulsion.proto\x12\x1agoldorak.nucleo.propulsion\"\x83\x01\n\x17MotorsVelocitySetpoints\x12\x10\n\x08left_vel\x18\x01 \x01(\x02\x12\x11\n\tright_vel\x18\x02 \x01(\x02\x12 \n\x18left_current_feedforward\x18\x03 \x01(\x02\x12!\n\x19right_current_feedforward\x18\x04 \x01(\x02\"\xc3\x01\n\x0eOdometryConfig\x12\x17\n\x0f\x65ncoders_period\x18\x01 \x01(\x05\x12\x1b\n\x13\x64ist_per_count_left\x18\x02 \x01(\x02\x12\x1c\n\x14\x64ist_per_count_right\x18\x03 \x01(\x02\x12\x16\n\x0ewheels_spacing\x18\x04 \x01(\x02\x12\x1e\n\x16speed_filter_frequency\x18\x05 \x01(\x02\x12%\n\x1d\x61\x63\x63\x65leration_filter_frequency\x18\x06 \x01(\x02\x62\x06proto3'
+  serialized_pb=b'\n\x1dgoldo/nucleo/propulsion.proto\x12\x17goldo.nucleo.propulsion\"\x83\x01\n\x17MotorsVelocitySetpoints\x12\x10\n\x08left_vel\x18\x01 \x01(\x02\x12\x11\n\tright_vel\x18\x02 \x01(\x02\x12 \n\x18left_current_feedforward\x18\x03 \x01(\x02\x12!\n\x19right_current_feedforward\x18\x04 \x01(\x02\"\xc3\x01\n\x0eOdometryConfig\x12\x17\n\x0f\x65ncoders_period\x18\x01 \x01(\x05\x12\x1b\n\x13\x64ist_per_count_left\x18\x02 \x01(\x02\x12\x1c\n\x14\x64ist_per_count_right\x18\x03 \x01(\x02\x12\x16\n\x0ewheels_spacing\x18\x04 \x01(\x02\x12\x1e\n\x16speed_filter_frequency\x18\x05 \x01(\x02\x12%\n\x1d\x61\x63\x63\x65leration_filter_frequency\x18\x06 \x01(\x02\"f\n\nTrajectory\x12\x39\n\x06points\x18\x01 \x03(\x0b\x32).goldo.nucleo.propulsion.Trajectory.Point\x1a\x1d\n\x05Point\x12\t\n\x01x\x18\x01 \x01(\x02\x12\t\n\x01y\x18\x02 \x01(\x02\"U\n\x0f\x45xecuteRotation\x12\x11\n\tyaw_delta\x18\x01 \x01(\x02\x12\x10\n\x08yaw_rate\x18\x02 \x01(\x02\x12\r\n\x05\x61\x63\x63\x65l\x18\x03 \x01(\x02\x12\x0e\n\x06\x64\x65\x63\x63\x65l\x18\x04 \x01(\x02\"T\n\x12\x45xecuteTranslation\x12\x10\n\x08\x64istance\x18\x01 \x01(\x02\x12\r\n\x05speed\x18\x02 \x01(\x02\x12\r\n\x05\x61\x63\x63\x65l\x18\x03 \x01(\x02\x12\x0e\n\x06\x64\x65\x63\x63\x65l\x18\x04 \x01(\x02\x62\x06proto3'
 )
 
 
@@ -27,35 +27,35 @@ DESCRIPTOR = _descriptor.FileDescriptor(
 
 _MOTORSVELOCITYSETPOINTS = _descriptor.Descriptor(
   name='MotorsVelocitySetpoints',
-  full_name='goldorak.nucleo.propulsion.MotorsVelocitySetpoints',
+  full_name='goldo.nucleo.propulsion.MotorsVelocitySetpoints',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='left_vel', full_name='goldorak.nucleo.propulsion.MotorsVelocitySetpoints.left_vel', index=0,
+      name='left_vel', full_name='goldo.nucleo.propulsion.MotorsVelocitySetpoints.left_vel', index=0,
       number=1, type=2, cpp_type=6, label=1,
       has_default_value=False, default_value=float(0),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='right_vel', full_name='goldorak.nucleo.propulsion.MotorsVelocitySetpoints.right_vel', index=1,
+      name='right_vel', full_name='goldo.nucleo.propulsion.MotorsVelocitySetpoints.right_vel', index=1,
       number=2, type=2, cpp_type=6, label=1,
       has_default_value=False, default_value=float(0),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='left_current_feedforward', full_name='goldorak.nucleo.propulsion.MotorsVelocitySetpoints.left_current_feedforward', index=2,
+      name='left_current_feedforward', full_name='goldo.nucleo.propulsion.MotorsVelocitySetpoints.left_current_feedforward', index=2,
       number=3, type=2, cpp_type=6, label=1,
       has_default_value=False, default_value=float(0),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='right_current_feedforward', full_name='goldorak.nucleo.propulsion.MotorsVelocitySetpoints.right_current_feedforward', index=3,
+      name='right_current_feedforward', full_name='goldo.nucleo.propulsion.MotorsVelocitySetpoints.right_current_feedforward', index=3,
       number=4, type=2, cpp_type=6, label=1,
       has_default_value=False, default_value=float(0),
       message_type=None, enum_type=None, containing_type=None,
@@ -73,56 +73,56 @@ _MOTORSVELOCITYSETPOINTS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=62,
-  serialized_end=193,
+  serialized_start=59,
+  serialized_end=190,
 )
 
 
 _ODOMETRYCONFIG = _descriptor.Descriptor(
   name='OdometryConfig',
-  full_name='goldorak.nucleo.propulsion.OdometryConfig',
+  full_name='goldo.nucleo.propulsion.OdometryConfig',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='encoders_period', full_name='goldorak.nucleo.propulsion.OdometryConfig.encoders_period', index=0,
+      name='encoders_period', full_name='goldo.nucleo.propulsion.OdometryConfig.encoders_period', index=0,
       number=1, type=5, cpp_type=1, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='dist_per_count_left', full_name='goldorak.nucleo.propulsion.OdometryConfig.dist_per_count_left', index=1,
+      name='dist_per_count_left', full_name='goldo.nucleo.propulsion.OdometryConfig.dist_per_count_left', index=1,
       number=2, type=2, cpp_type=6, label=1,
       has_default_value=False, default_value=float(0),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='dist_per_count_right', full_name='goldorak.nucleo.propulsion.OdometryConfig.dist_per_count_right', index=2,
+      name='dist_per_count_right', full_name='goldo.nucleo.propulsion.OdometryConfig.dist_per_count_right', index=2,
       number=3, type=2, cpp_type=6, label=1,
       has_default_value=False, default_value=float(0),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='wheels_spacing', full_name='goldorak.nucleo.propulsion.OdometryConfig.wheels_spacing', index=3,
+      name='wheels_spacing', full_name='goldo.nucleo.propulsion.OdometryConfig.wheels_spacing', index=3,
       number=4, type=2, cpp_type=6, label=1,
       has_default_value=False, default_value=float(0),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='speed_filter_frequency', full_name='goldorak.nucleo.propulsion.OdometryConfig.speed_filter_frequency', index=4,
+      name='speed_filter_frequency', full_name='goldo.nucleo.propulsion.OdometryConfig.speed_filter_frequency', index=4,
       number=5, type=2, cpp_type=6, label=1,
       has_default_value=False, default_value=float(0),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='acceleration_filter_frequency', full_name='goldorak.nucleo.propulsion.OdometryConfig.acceleration_filter_frequency', index=5,
+      name='acceleration_filter_frequency', full_name='goldo.nucleo.propulsion.OdometryConfig.acceleration_filter_frequency', index=5,
       number=6, type=2, cpp_type=6, label=1,
       has_default_value=False, default_value=float(0),
       message_type=None, enum_type=None, containing_type=None,
@@ -140,27 +140,237 @@ _ODOMETRYCONFIG = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=196,
-  serialized_end=391,
+  serialized_start=193,
+  serialized_end=388,
 )
 
+
+_TRAJECTORY_POINT = _descriptor.Descriptor(
+  name='Point',
+  full_name='goldo.nucleo.propulsion.Trajectory.Point',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='x', full_name='goldo.nucleo.propulsion.Trajectory.Point.x', index=0,
+      number=1, type=2, cpp_type=6, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='y', full_name='goldo.nucleo.propulsion.Trajectory.Point.y', index=1,
+      number=2, type=2, cpp_type=6, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=463,
+  serialized_end=492,
+)
+
+_TRAJECTORY = _descriptor.Descriptor(
+  name='Trajectory',
+  full_name='goldo.nucleo.propulsion.Trajectory',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='points', full_name='goldo.nucleo.propulsion.Trajectory.points', index=0,
+      number=1, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[_TRAJECTORY_POINT, ],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=390,
+  serialized_end=492,
+)
+
+
+_EXECUTEROTATION = _descriptor.Descriptor(
+  name='ExecuteRotation',
+  full_name='goldo.nucleo.propulsion.ExecuteRotation',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='yaw_delta', full_name='goldo.nucleo.propulsion.ExecuteRotation.yaw_delta', index=0,
+      number=1, type=2, cpp_type=6, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='yaw_rate', full_name='goldo.nucleo.propulsion.ExecuteRotation.yaw_rate', index=1,
+      number=2, type=2, cpp_type=6, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='accel', full_name='goldo.nucleo.propulsion.ExecuteRotation.accel', index=2,
+      number=3, type=2, cpp_type=6, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='deccel', full_name='goldo.nucleo.propulsion.ExecuteRotation.deccel', index=3,
+      number=4, type=2, cpp_type=6, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=494,
+  serialized_end=579,
+)
+
+
+_EXECUTETRANSLATION = _descriptor.Descriptor(
+  name='ExecuteTranslation',
+  full_name='goldo.nucleo.propulsion.ExecuteTranslation',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='distance', full_name='goldo.nucleo.propulsion.ExecuteTranslation.distance', index=0,
+      number=1, type=2, cpp_type=6, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='speed', full_name='goldo.nucleo.propulsion.ExecuteTranslation.speed', index=1,
+      number=2, type=2, cpp_type=6, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='accel', full_name='goldo.nucleo.propulsion.ExecuteTranslation.accel', index=2,
+      number=3, type=2, cpp_type=6, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='deccel', full_name='goldo.nucleo.propulsion.ExecuteTranslation.deccel', index=3,
+      number=4, type=2, cpp_type=6, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=581,
+  serialized_end=665,
+)
+
+_TRAJECTORY_POINT.containing_type = _TRAJECTORY
+_TRAJECTORY.fields_by_name['points'].message_type = _TRAJECTORY_POINT
 DESCRIPTOR.message_types_by_name['MotorsVelocitySetpoints'] = _MOTORSVELOCITYSETPOINTS
 DESCRIPTOR.message_types_by_name['OdometryConfig'] = _ODOMETRYCONFIG
+DESCRIPTOR.message_types_by_name['Trajectory'] = _TRAJECTORY
+DESCRIPTOR.message_types_by_name['ExecuteRotation'] = _EXECUTEROTATION
+DESCRIPTOR.message_types_by_name['ExecuteTranslation'] = _EXECUTETRANSLATION
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 MotorsVelocitySetpoints = _reflection.GeneratedProtocolMessageType('MotorsVelocitySetpoints', (_message.Message,), {
   'DESCRIPTOR' : _MOTORSVELOCITYSETPOINTS,
   '__module__' : 'goldo.nucleo.propulsion_pb2'
-  # @@protoc_insertion_point(class_scope:goldorak.nucleo.propulsion.MotorsVelocitySetpoints)
+  # @@protoc_insertion_point(class_scope:goldo.nucleo.propulsion.MotorsVelocitySetpoints)
   })
 _sym_db.RegisterMessage(MotorsVelocitySetpoints)
 
 OdometryConfig = _reflection.GeneratedProtocolMessageType('OdometryConfig', (_message.Message,), {
   'DESCRIPTOR' : _ODOMETRYCONFIG,
   '__module__' : 'goldo.nucleo.propulsion_pb2'
-  # @@protoc_insertion_point(class_scope:goldorak.nucleo.propulsion.OdometryConfig)
+  # @@protoc_insertion_point(class_scope:goldo.nucleo.propulsion.OdometryConfig)
   })
 _sym_db.RegisterMessage(OdometryConfig)
+
+Trajectory = _reflection.GeneratedProtocolMessageType('Trajectory', (_message.Message,), {
+
+  'Point' : _reflection.GeneratedProtocolMessageType('Point', (_message.Message,), {
+    'DESCRIPTOR' : _TRAJECTORY_POINT,
+    '__module__' : 'goldo.nucleo.propulsion_pb2'
+    # @@protoc_insertion_point(class_scope:goldo.nucleo.propulsion.Trajectory.Point)
+    })
+  ,
+  'DESCRIPTOR' : _TRAJECTORY,
+  '__module__' : 'goldo.nucleo.propulsion_pb2'
+  # @@protoc_insertion_point(class_scope:goldo.nucleo.propulsion.Trajectory)
+  })
+_sym_db.RegisterMessage(Trajectory)
+_sym_db.RegisterMessage(Trajectory.Point)
+
+ExecuteRotation = _reflection.GeneratedProtocolMessageType('ExecuteRotation', (_message.Message,), {
+  'DESCRIPTOR' : _EXECUTEROTATION,
+  '__module__' : 'goldo.nucleo.propulsion_pb2'
+  # @@protoc_insertion_point(class_scope:goldo.nucleo.propulsion.ExecuteRotation)
+  })
+_sym_db.RegisterMessage(ExecuteRotation)
+
+ExecuteTranslation = _reflection.GeneratedProtocolMessageType('ExecuteTranslation', (_message.Message,), {
+  'DESCRIPTOR' : _EXECUTETRANSLATION,
+  '__module__' : 'goldo.nucleo.propulsion_pb2'
+  # @@protoc_insertion_point(class_scope:goldo.nucleo.propulsion.ExecuteTranslation)
+  })
+_sym_db.RegisterMessage(ExecuteTranslation)
 
 
 # @@protoc_insertion_point(module_scope)

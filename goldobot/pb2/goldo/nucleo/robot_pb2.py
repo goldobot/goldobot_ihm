@@ -19,10 +19,35 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x18goldo/nucleo/robot.proto\x12\x12goldo.nucleo.robot\"\x1f\n\x0f\x43onfigLoadBegin\x12\x0c\n\x04size\x18\x01 \x01(\x05\"\x1f\n\x0f\x43onfigLoadChunk\x12\x0c\n\x04\x64\x61ta\x18\x01 \x01(\x0c\"\x1c\n\rConfigLoadEnd\x12\x0b\n\x03\x63rc\x18\x01 \x01(\x05\x62\x06proto3'
+  serialized_pb=b'\n\x18goldo/nucleo/robot.proto\x12\x12goldo.nucleo.robot\"\x1f\n\x0f\x43onfigLoadBegin\x12\x0c\n\x04size\x18\x01 \x01(\x05\"\x1f\n\x0f\x43onfigLoadChunk\x12\x0c\n\x04\x64\x61ta\x18\x01 \x01(\x0c\"\x1c\n\rConfigLoadEnd\x12\x0b\n\x03\x63rc\x18\x01 \x01(\x05\"p\n\x10\x43onfigLoadStatus\x12;\n\x06status\x18\x01 \x01(\x0e\x32+.goldo.nucleo.robot.ConfigLoadStatus.Status\"\x1f\n\x06Status\x12\x06\n\x02OK\x10\x00\x12\r\n\tCRC_ERROR\x10\x01\x62\x06proto3'
 )
 
 
+
+_CONFIGLOADSTATUS_STATUS = _descriptor.EnumDescriptor(
+  name='Status',
+  full_name='goldo.nucleo.robot.ConfigLoadStatus.Status',
+  filename=None,
+  file=DESCRIPTOR,
+  create_key=_descriptor._internal_create_key,
+  values=[
+    _descriptor.EnumValueDescriptor(
+      name='OK', index=0, number=0,
+      serialized_options=None,
+      type=None,
+      create_key=_descriptor._internal_create_key),
+    _descriptor.EnumValueDescriptor(
+      name='CRC_ERROR', index=1, number=1,
+      serialized_options=None,
+      type=None,
+      create_key=_descriptor._internal_create_key),
+  ],
+  containing_type=None,
+  serialized_options=None,
+  serialized_start=225,
+  serialized_end=256,
+)
+_sym_db.RegisterEnumDescriptor(_CONFIGLOADSTATUS_STATUS)
 
 
 _CONFIGLOADBEGIN = _descriptor.Descriptor(
@@ -120,9 +145,45 @@ _CONFIGLOADEND = _descriptor.Descriptor(
   serialized_end=142,
 )
 
+
+_CONFIGLOADSTATUS = _descriptor.Descriptor(
+  name='ConfigLoadStatus',
+  full_name='goldo.nucleo.robot.ConfigLoadStatus',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='status', full_name='goldo.nucleo.robot.ConfigLoadStatus.status', index=0,
+      number=1, type=14, cpp_type=8, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+    _CONFIGLOADSTATUS_STATUS,
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=144,
+  serialized_end=256,
+)
+
+_CONFIGLOADSTATUS.fields_by_name['status'].enum_type = _CONFIGLOADSTATUS_STATUS
+_CONFIGLOADSTATUS_STATUS.containing_type = _CONFIGLOADSTATUS
 DESCRIPTOR.message_types_by_name['ConfigLoadBegin'] = _CONFIGLOADBEGIN
 DESCRIPTOR.message_types_by_name['ConfigLoadChunk'] = _CONFIGLOADCHUNK
 DESCRIPTOR.message_types_by_name['ConfigLoadEnd'] = _CONFIGLOADEND
+DESCRIPTOR.message_types_by_name['ConfigLoadStatus'] = _CONFIGLOADSTATUS
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 ConfigLoadBegin = _reflection.GeneratedProtocolMessageType('ConfigLoadBegin', (_message.Message,), {
@@ -145,6 +206,13 @@ ConfigLoadEnd = _reflection.GeneratedProtocolMessageType('ConfigLoadEnd', (_mess
   # @@protoc_insertion_point(class_scope:goldo.nucleo.robot.ConfigLoadEnd)
   })
 _sym_db.RegisterMessage(ConfigLoadEnd)
+
+ConfigLoadStatus = _reflection.GeneratedProtocolMessageType('ConfigLoadStatus', (_message.Message,), {
+  'DESCRIPTOR' : _CONFIGLOADSTATUS,
+  '__module__' : 'goldo.nucleo.robot_pb2'
+  # @@protoc_insertion_point(class_scope:goldo.nucleo.robot.ConfigLoadStatus)
+  })
+_sym_db.RegisterMessage(ConfigLoadStatus)
 
 
 # @@protoc_insertion_point(module_scope)
