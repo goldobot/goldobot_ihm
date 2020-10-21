@@ -58,38 +58,22 @@ class RplidarRobotDetection:
 
 class OdometryConfig:
     def __init__(self, data = None, yaml = None):
-        if data is not None:
-            unpacked = struct.unpack('<fffffHH', data)
-            self.dist_per_count_left = unpacked[0]
-            self.dist_per_count_right = unpacked[1]
-            self.wheel_spacing = unpacked[2]
-            self.update_period = unpacked[3]
-            self.speed_filter_period = unpacked[4]
-            self.encoder_period = unpacked[5]
-        else:
-            self.dist_per_count_left = 0
-            self.dist_per_count_right = 0
-            self.wheel_spacing = 1
-            self.update_period = 1
-            self.speed_filter_period = 1
-            self.encoder_period = 0
         if yaml:
             self.dist_per_count_left = yaml['dist_per_count_left']
             self.dist_per_count_right = yaml['dist_per_count_right']
-            self.wheel_spacing = yaml['wheels_spacing']
-            self.update_period = yaml['update_period']
-            self.speed_filter_period = yaml['speed_filter_period']
-            self.encoder_period = yaml['encoder_period']
+            self.wheel_distance_left = yaml['wheel_distance_left']
+            self.wheel_distance_right = yaml['wheel_distance_right']
+            self.speed_filter_frequency = yaml['speed_filter_frequency']
+            self.accel_filter_frequency = yaml['accel_filter_frequency']
 
     def serialize(self):
-        return struct.pack('<fffffHH',
+        return struct.pack('<ffffff',
             self.dist_per_count_left,
             self.dist_per_count_right,
-            self.wheel_spacing,
-            self.update_period,
-            self.speed_filter_period,
-            int(self.encoder_period),
-            0
+            self.wheel_distance_left,
+            self.wheel_distance_right,
+            self.speed_filter_frequency,
+            self.accel_filter_frequency
             )
 
 class PIDConfig:

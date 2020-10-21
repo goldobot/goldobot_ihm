@@ -7,6 +7,9 @@ from widgets.properties_editor import PropertiesEditorWidget
 from goldobot.messages import OdometryConfig
 from goldobot import message_types
 
+import google.protobuf as _pb
+_sym_db = _pb.symbol_database.Default()
+
 class OdometryConfigDialog(QDialog):
     def __init__(self, parent = None):
         super(OdometryConfigDialog, self).__init__(None)
@@ -20,14 +23,14 @@ class OdometryConfigDialog(QDialog):
 
         layout = QGridLayout()
 
-        props = PropertiesEditorWidget(OdometryConfig,
+        props = PropertiesEditorWidget(_sym_db.GetSymbol('goldo.nucleo.propulsion.OdometryConfig'),
             [
             ('dist_per_count_left', float,),
             ('dist_per_count_right', float,),
-            ('wheel_spacing', float,),
-            ('update_period', float,),
-            ('speed_filter_period', float,),
-            ('encoder_period', float,)
+            ('wheel_distance_left', float,),
+            ('wheel_distance_right', float,),
+            ('speed_filter_frequency', float,),
+            ('accel_filter_frequency', float,)
             ])
         layout.addWidget(props,0,0,1,2)
         self._properties = props       
@@ -57,12 +60,12 @@ class OdometryConfigDialog(QDialog):
 
     def on_get_button_clicked(self):
         if self._client is not None:
-            self._client.send_message(message_types.DbgGetOdometryConfig,b'')
+            self._client.publishTopic('nucleo/in/odometry/config/get', _sym_db.GetSymbol('google.protobuf.BoolValue')())
 
     def on_set_button_clicked(self):
         props = self._properties.get_value()
         if self._client is not None:
-            self._client.send_message(message_types.DbgSetOdometryConfig,props.serialize())
+            self._client.publishTopic('nucleo/in/odometry/config/set', props)
 
     def _on_telemetry(self, telemetry):
         diff_left = telemetry.left_encoder - self._encoder_left_prev

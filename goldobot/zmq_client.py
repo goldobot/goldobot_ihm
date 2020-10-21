@@ -108,6 +108,9 @@ class ZmqClient(QObject):
                 self.heartbeat.emit(msg.timestamp)
             if topic == 'nucleo/out/robot/config/load_status':
                 self.robot_end_load_config_status.emit(msg.status==0)
+            if topic == 'nucleo/out/odometry/config':
+                self.odometry_config.emit(msg)
+
         self._notifier_main.setEnabled(True)
 
     def send_message_rplidar(self, message_type, message_body):

@@ -17,10 +17,12 @@ robot_simulator:
 odometry:
   dist_per_count_left: 1.966033264580682e-05
   dist_per_count_right: 1.9621583742116328e-05
-  encoder_period: 8192
   update_period: 1.0e-3
-  wheels_spacing: 235.5e-3
-  speed_filter_period: 5.0e-3
+  wheel_distance_left: 235.5e-3
+  wheel_distance_right: 0
+  speed_filter_frequency: 100
+  accel_filter_frequency: 50
+  
 propulsion:
   pid_static:
     longi:

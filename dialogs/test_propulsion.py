@@ -14,7 +14,6 @@ from goldobot.messages import PropulsionControllerConfig
 from goldobot.messages import PIDConfig
 from goldobot import message_types
 
-import google.protobuf.wrappers_pb2
 import google.protobuf as _pb
 _sym_db = _pb.symbol_database.Default()
 
