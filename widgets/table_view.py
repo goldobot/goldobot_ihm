@@ -263,10 +263,10 @@ class TableViewWidget(QGraphicsView):
 #        self._big_robot.setRotation(telemetry.yaw * 180 / math.pi)
 #        self._big_robot_x = telemetry.x * 1000
 #        self._big_robot_y = telemetry.y * 1000
-        self._little_robot.setPos(telemetry.x * 1000, telemetry.y * 1000)
-        self._little_robot.setRotation(telemetry.yaw * 180 / math.pi)
-        self._little_robot_x = telemetry.x * 1000
-        self._little_robot_y = telemetry.y * 1000
+        self._little_robot.setPos(telemetry.pose.position.x * 1000, telemetry.pose.position.y * 1000)
+        self._little_robot.setRotation(telemetry.pose.yaw * 180 / math.pi)
+        self._little_robot_x = telemetry.pose.position.x * 1000
+        self._little_robot_y = telemetry.pose.position.y * 1000
 
     def update_plots(self, my_plot):
         dbg_plt_sz = 1

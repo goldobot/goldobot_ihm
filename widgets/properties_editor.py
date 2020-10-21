@@ -1,4 +1,5 @@
 import math
+from operator import attrgetter
 from PyQt5.QtWidgets import QWidget, QLineEdit, QLabel, QGridLayout
 
 class PropertiesEditorWidget(QWidget):
@@ -28,11 +29,11 @@ class PropertiesEditorWidget(QWidget):
     def set_value(self, obj):
         for i in range(len(self._properties)):
             k, t = self._properties[i]
-            val=getattr(obj,k)
-            if (k=='x') or (k=='y'):
+            val=attrgetter(k)(obj)
+            if (k=='pose.position.x') or (k=='pose.position.y'):
                 val=val*1000.0
                 self._widgets[i].setText("%.1f"%val)
-            elif k=='yaw':
+            elif k=='pose.yaw':
                 val=val*180.0/math.pi
                 self._widgets[i].setText("%.1f"%val)
             else:

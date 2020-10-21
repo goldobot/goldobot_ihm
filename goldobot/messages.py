@@ -5,23 +5,6 @@ class NucleoFirmwareVersion:
     def __init__(self, data):
         self.s = data.split(bytes([0]),1)[0].decode("utf-8")
 
-class PropulsionTelemetry:
-    def __init__(self, data):
-        unpacked = struct.unpack('<hhhhhhhHHbbBB', data)
-        self.x = unpacked[0] * 0.25e-3
-        self.y = unpacked[1] * 0.25e-3
-        self.yaw = unpacked[2] * math.pi / 32767
-        self.speed = unpacked[3] * 1e-3
-        self.yaw_rate = unpacked[4] * 1e-3
-        self.acceleration = unpacked[5] * 1e-3
-        self.angular_acceleration = unpacked[6] * 1e-3
-        self.left_encoder = unpacked[7]
-        self.right_encoder = unpacked[8]
-        self.left_pwm = unpacked[9] *1e-2
-        self.right_pwm = unpacked[10] * 1e-2
-        self.state = unpacked[11]
-        self.error = unpacked[12]
-
 class PropulsionTelemetryEx:
     def __init__(self, data):
         unpacked = struct.unpack('<hhhhhhhhhhii', data)

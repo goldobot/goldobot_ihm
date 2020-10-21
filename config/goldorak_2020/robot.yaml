@@ -1,7 +1,7 @@
 robot:
   propulsion:
     interface: ODRIVE_UART
-    use_simulator: false
+    use_simulator: true
   geometry:
     front_length: 106.5
     back_length: 101.5

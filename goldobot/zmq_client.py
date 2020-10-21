@@ -4,7 +4,6 @@ from PyQt5.QtCore import QObject, QSocketNotifier, pyqtSignal
 from PyQt5.QtGui import QPixmap
 
 from goldobot.messages import NucleoFirmwareVersion
-from goldobot.messages import PropulsionTelemetry
 from goldobot.messages import PropulsionTelemetryEx
 from goldobot.messages import RplidarPlot
 from goldobot.messages import RplidarRobotDetection
@@ -110,6 +109,8 @@ class ZmqClient(QObject):
                 self.robot_end_load_config_status.emit(msg.status==0)
             if topic == 'nucleo/out/odometry/config':
                 self.odometry_config.emit(msg)
+            if topic == 'nucleo/out/propulsion/telemetry':
+                self.propulsion_telemetry.emit(msg)
 
         self._notifier_main.setEnabled(True)
 
@@ -199,10 +200,7 @@ class ZmqClient(QObject):
             state,side = struct.unpack('<BB', msg[2:4])
             self.match_state_change.emit(state,side)
 
-        if msg_type == message_types.PropulsionTelemetry:
-            telemetry = PropulsionTelemetry(msg[2:])
-            self.propulsion_telemetry.emit(telemetry)
-
+        
         if msg_type == message_types.PropulsionTelemetryEx:
             telemetry = PropulsionTelemetryEx(msg[2:])
             self.propulsion_telemetry_ex.emit(telemetry)
@@ -227,8 +225,6 @@ class ZmqClient(QObject):
             #self.comm_stats.emit(struct.unpack('<HHIIIII', msg[2:]))
             pass
 
-        if msg_type == message_types.DbgGetOdometryConfig:
-            self.odometry_config.emit(OdometryConfig(msg[2:]))
 
         if msg_type == message_types.DbgGetPropulsionConfig:
             self.propulsion_controller_config.emit(PropulsionControllerConfig(msg[2:]))
