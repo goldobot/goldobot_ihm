@@ -12,12 +12,16 @@ from PyQt5.QtWidgets import QComboBox
 import json
 import struct
 
-from goldobot import message_types
 from goldobot_ihm.odrive import calc_json_crc, parse_item, ODRIVE_TYPES
+
+import google.protobuf as _pb
+_sym_db = _pb.symbol_database.Default()
 
 class ODriveDialog(QDialog):
     def __init__(self, parent = None):
         super().__init__(None)
+        
+        self.odrive_seq = 129
 
         layout = QGridLayout()
 
@@ -89,21 +93,37 @@ class ODriveDialog(QDialog):
     def _read_endpoint(self):
         endpoint = self._endpoints[self._endpoint_select_combobox.currentText()]
         type = ODRIVE_TYPES[endpoint[1]]
-        self._seq[endpoint[0]] = self._client.send_message_odrive(endpoint[0] | 0x8000, type[0], b'', self._schema_crc)
+        self._seq[endpoint[0]] = self._send_request(endpoint[0] | 0x8000, type[0], b'', self._schema_crc)
         self._selected_endpoint = endpoint
 
     def _write_endpoint(self):
         endpoint = self._endpoints[self._endpoint_select_combobox.currentText()]
         type = ODRIVE_TYPES[endpoint[1]]
         val = struct.pack(type[1], type[2](self._endpoint_value_lineedit.text()))
-        self._client.send_message_odrive(endpoint[0], 0, val, self._schema_crc)
+        self._send_request(endpoint[0], 0, val, self._schema_crc)
+        
+    def _send_request(self, endpoint_id, expected_response_size, payload, protocol_version):
+        seq = self.odrive_seq
+        self.odrive_seq += 1
+        msg = _sym_db.GetSymbol('goldo.nucleo.odrive.RequestPacket')()
+        msg.sequence_number = seq
+        msg.endpoint_id = endpoint_id
+        msg.expected_response_size = expected_response_size
+        msg.payload = payload
+        msg.protocol_version = protocol_version
+        print(msg)
+        self._client.publishTopic('nucleo/in/odrive/request', msg)
+        return seq
 
     def _read_json(self):
         self._reading_json = True
         self._json_schema_buffer = b''
-        self._seq[0] = self._client.send_message_odrive(0x8000, 512, struct.pack('<I',0), 1)
+        self._seq[0] = self._send_request(0x8000, 512, struct.pack('<I',0), 1)
 
-    def _on_odrive_response(self, seq, payload):
+    def _on_odrive_response(self, msg):
+        print(msg)
+        seq = msg.sequence_number
+        payload = msg.payload
         if seq == self._seq.get(0):
             self._json_schema_buffer += payload
             if len(payload):
@@ -121,6 +141,6 @@ class ODriveDialog(QDialog):
 
     def read_registers(self):
         my_addr = int(self._line_edit_apb_addr.text(),16)
-        self._client.send_message(message_types.FpgaDbgReadRegCrc, struct.pack('<I', my_addr))
+        self._send_request(message_types.FpgaDbgReadRegCrc, struct.pack('<I', my_addr))
 
 

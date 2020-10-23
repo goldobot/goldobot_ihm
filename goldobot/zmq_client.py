@@ -39,7 +39,7 @@ class ZmqClient(QObject):
     debug_goldo = pyqtSignal(int)
     robot_end_load_config_status = pyqtSignal(bool)
     sequence_event = pyqtSignal(int, object)
-    odrive_response = pyqtSignal(int, bytes)
+    odrive_response = pyqtSignal(object)
     camera_image = pyqtSignal(object)
 
     def __init__(self, ip=None, parent = None):
@@ -58,9 +58,7 @@ class ZmqClient(QObject):
         
         self._notifier_main = QSocketNotifier(self._socket_main_sub.getsockopt(zmq.FD), QSocketNotifier.Read, self)
         self._notifier_main.activated.connect(self._on_socket_main_sub)
-        
-        self.odrive_buff = b''
-        self.odrive_seq = 129
+       
 
     def send_message(self, message_type, message_body):
         self._push_socket.send_multipart([struct.pack('<H',message_type), message_body])
@@ -90,6 +88,8 @@ class ZmqClient(QObject):
                 self.heartbeat.emit(msg.timestamp)
             if topic == 'nucleo/out/robot/config/load_status':
                 self.robot_end_load_config_status.emit(msg.status==0)
+            if topic == 'nucleo/out/odrive/response':
+                self.odrive_response.emit(msg)
             if topic == 'nucleo/out/odometry/config':
                 self.odometry_config.emit(msg)
             if topic == 'nucleo/out/propulsion/telemetry':
@@ -110,17 +110,7 @@ class ZmqClient(QObject):
 
         self._push_socket_rplidar.send_multipart([struct.pack('<H',message_type), message_body])
     
-    def send_message_odrive(self, endpoint_id, expected_response_size, payload, protocol_version):
-        seq = self.odrive_seq
-        self.odrive_seq += 1
-        msg = _sym_db.GetSymbol('goldo.nucleo.odrive.Request')
-        msg.sequence_number = seq
-        msg.endpoint_id = endpoint_id
-        msg.expected_response_size = expected_response_size
-        msg.payload = payload
-        msg.protocol_version = protocol_version        
-        self.publishTopic('nucleo/in/odrive/request', msg)
-        return seq
+    
 
     def _on_message_received(self, msg):
         return

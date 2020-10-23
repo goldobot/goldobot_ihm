@@ -68,6 +68,7 @@ class OdometryConfigDialog(QDialog):
             self._client.publishTopic('nucleo/in/odometry/config/set', props)
 
     def _on_telemetry(self, telemetry):
+        self._telemetry = telemetry
         diff_left = telemetry.left_encoder - self._encoder_left_prev
         diff_right = telemetry.right_encoder - self._encoder_right_prev
 
@@ -95,8 +96,8 @@ class OdometryConfigDialog(QDialog):
         self._wid_right_encoder.setText(str(self._encoder_right_acc))
 
     def _on_reset_counts_clicked(self):
-        self._left_encoder_base = self._telemetry_ex.left_encoder_acc
-        self._right_encoder_base = self._telemetry_ex.right_encoder_acc
+        self._left_encoder_base = self._telemetry.left_encoder
+        self._right_encoder_base = self._telemetry.right_encoder
         self._encoder_left_acc = 0
         self._encoder_right_acc = 0
         self._wid_left_encoder.setText(str(self._encoder_left_acc))
