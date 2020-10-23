@@ -167,6 +167,9 @@ class MainWindow(QMainWindow):
         #cfg.update_config()
         cfg.compile()
         buff = cfg.binary
+        cfg_proto = _sym_db.GetSymbol('goldo.nucleo.robot.Config')(data=buff, crc=cfg.crc)
+        cfg_proto.sequence_names.extend(cfg.sequences.sequence_names)
+        self._client.publishTopic('config/test/put', cfg_proto)
         #Start programming
         self._client.publishTopic('nucleo/in/robot/config/load_begin', _sym_db.GetSymbol('goldo.nucleo.robot.ConfigLoadBegin')(size=len(buff)))
         #Upload codes by packets        

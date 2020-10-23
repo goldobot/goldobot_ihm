@@ -85,10 +85,27 @@ class PropulsionTestDialog(QDialog):
 
         layout.addWidget(self._button_set_pose, 10,0)
         layout.addWidget(self._button_reposition, 11,0)
+        
+        # translation command
+        self._execute_translation_button = QPushButton('translation')
+        self._execute_translation_edit = QLineEdit('0')
+        self._execute_translation_button.clicked.connect(self._execute_translation)
+        
+        layout.addWidget(self._execute_translation_button, 12,0)
+        layout.addWidget(self._execute_translation_edit, 12,1)
+        
+        # rotation command
+        self._execute_rotation_button = QPushButton('rotation')
+        self._execute_rotation_edit = QLineEdit('0')
+        self._execute_rotation_button.clicked.connect(self._execute_rotation)
+        
+        layout.addWidget(self._execute_rotation_button, 13,0)
+        layout.addWidget(self._execute_rotation_edit, 13,1)
+        
 
-        layout.addWidget(self._start_traj_edit_button, 12,0)
-        layout.addWidget(self._end_traj_edit_button, 12,1)
-        layout.addWidget(self._execute_trajectory_button, 13,0)
+        layout.addWidget(self._start_traj_edit_button, 14,0)
+        layout.addWidget(self._end_traj_edit_button, 14,1)
+        layout.addWidget(self._execute_trajectory_button, 15,0)
 
         self.setLayout(layout)
         
@@ -160,7 +177,11 @@ class PropulsionTestDialog(QDialog):
         x = int(self._pose_x_edit.text()) * 1e-3
         y = int(self._pose_y_edit.text()) * 1e-3
         yaw = int(self._pose_yaw_edit.text()) * math.pi / 180
-        self._client.send_message(message_types.DbgPropulsionSetPose, struct.pack('<fff', x, y, yaw))
+        msg = _sym_db.GetSymbol('goldo.common.geometry.Pose')()
+        msg.position.x = x
+        msg.position.y = y
+        msg.yaw = yaw
+        self._client.publishTopic('nucleo/in/propulsion/pose/set', msg)
 
     def _reposition_forward(self):
         self._client.send_message(message_types.DbgPropulsionExecuteReposition, struct.pack('<bffff', 1, 0.2, 0, -1, 1.500))
@@ -185,6 +206,20 @@ class PropulsionTestDialog(QDialog):
         self._telemetry_buffer = []
         QTimer.singleShot(10000, self.foo)
 
+    def _execute_translation(self):
+        if self._client is not None:
+            msg = _sym_db.GetSymbol('goldo.nucleo.propulsion.ExecuteTranslation')(
+                distance = int(self._execute_translation_edit.text()) * 1e-3,
+                speed = 1)
+            self._client.publishTopic('nucleo/in/propulsion/execute_translation', msg)
+            
+    def _execute_rotation(self):
+        if self._client is not None:
+            msg = _sym_db.GetSymbol('goldo.nucleo.propulsion.ExecuteRotation')(
+                yaw_delta = int(self._execute_rotation_edit.text()) * math.pi/180,
+                yaw_rate = 1)
+            self._client.publishTopic('nucleo/in/propulsion/execute_rotation', msg)
+            
     def _test_trajectory(self):
         points = [(0,0), (500, 0)]
         msg = b''.join([struct.pack('<fff',0.2,0.2,0.2)] + [struct.pack('<ff', p[0]*1e-3, p[1] * 1e-3) for p in points])

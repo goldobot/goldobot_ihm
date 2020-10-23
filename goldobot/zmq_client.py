@@ -46,26 +46,9 @@ class ZmqClient(QObject):
         super(ZmqClient, self).__init__(None)
         self._context = zmq.Context()
 
-        self._sub_socket = self._context.socket(zmq.SUB)
-        self._sub_socket.connect('tcp://{}:3001'.format(ip))
-        self._sub_socket.setsockopt(zmq.SUBSCRIBE,b'')
-
-        self._sub_socket_rplidar = self._context.socket(zmq.SUB)
-        self._sub_socket_rplidar.connect('tcp://{}:3101'.format(ip))
-        self._sub_socket_rplidar.setsockopt(zmq.SUBSCRIBE,b'')
-        
         self._push_socket = self._context.socket(zmq.PUB)
         self._push_socket.connect('tcp://{}:3002'.format(ip))
-
-        self._push_socket_rplidar = self._context.socket(zmq.PUB)
-        self._push_socket_rplidar.connect('tcp://{}:3102'.format(ip))
-
-        self._notifier = QSocketNotifier(self._sub_socket.getsockopt(zmq.FD), QSocketNotifier.Read, self)
-        self._notifier.activated.connect(self._on_sub_socket_event)
-
-        self._notifier_rplidar = QSocketNotifier(self._sub_socket_rplidar.getsockopt(zmq.FD), QSocketNotifier.Read, self)
-        self._notifier_rplidar.activated.connect(self._on_sub_socket_rplidar_event)
-               
+        
         self._socket_main_sub = self._context.socket(zmq.SUB)
         self._socket_main_sub.connect('tcp://{}:3801'.format(ip))
         self._socket_main_sub.setsockopt(zmq.SUBSCRIBE,b'')
@@ -111,6 +94,9 @@ class ZmqClient(QObject):
                 self.odometry_config.emit(msg)
             if topic == 'nucleo/out/propulsion/telemetry':
                 self.propulsion_telemetry.emit(msg)
+            if topic == 'nucleo/out/propulsion/config':
+                self.propulsion_controller_config.emit(msg)     
+                
 
         self._notifier_main.setEnabled(True)
 
@@ -135,40 +121,6 @@ class ZmqClient(QObject):
         msg.protocol_version = protocol_version        
         self.publishTopic('nucleo/in/odrive/request', msg)
         return seq
-        
-        
-    def _on_sub_socket_event(self):        
-        self._notifier.setEnabled(False)
-        flags = self._sub_socket.getsockopt(zmq.EVENTS)
-        while flags & zmq.POLLIN:
-            received = self._sub_socket.recv_multipart()
-            self._on_message_received(b''.join(received))
-            flags = self._sub_socket.getsockopt(zmq.EVENTS)
-        self._notifier.setEnabled(True)
-        
-    def _on_sub_socket_camera_image_event(self):        
-        self._notifier_camera_image.setEnabled(False)
-
-        flags = self._sub_socket_camera_image.getsockopt(zmq.EVENTS)
-        while flags & zmq.POLLIN:
-            topic, body = self._sub_socket_camera_image.recv_multipart()
-            print(topic)
-            image_msg = Image()
-            image_msg.ParseFromString(body)
-            flags = self._sub_socket_camera_image.getsockopt(zmq.EVENTS)
-            image = QPixmap()
-            image.loadFromData(image_msg.data)
-            self.camera_image.emit(image)
-        self._notifier_camera_image.setEnabled(True)
-
-    def _on_sub_socket_rplidar_event(self):        
-        self._notifier_rplidar.setEnabled(False)
-        flags = self._sub_socket_rplidar.getsockopt(zmq.EVENTS)
-        while flags & zmq.POLLIN:
-            received = self._sub_socket_rplidar.recv_multipart()
-            self._on_message_received(b''.join(received))
-            flags = self._sub_socket_rplidar.getsockopt(zmq.EVENTS)
-        self._notifier_rplidar.setEnabled(True)
 
     def _on_message_received(self, msg):
         return
@@ -224,10 +176,6 @@ class ZmqClient(QObject):
         if msg_type == message_types.CommStats:
             #self.comm_stats.emit(struct.unpack('<HHIIIII', msg[2:]))
             pass
-
-
-        if msg_type == message_types.DbgGetPropulsionConfig:
-            self.propulsion_controller_config.emit(PropulsionControllerConfig(msg[2:]))
 
         if msg_type == message_types.DbgDynamixelGetRegisters:
             id_, address = struct.unpack('<BB', msg[2:4])

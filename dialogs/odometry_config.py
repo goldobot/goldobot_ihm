@@ -60,7 +60,7 @@ class OdometryConfigDialog(QDialog):
 
     def on_get_button_clicked(self):
         if self._client is not None:
-            self._client.publishTopic('nucleo/in/odometry/config/get', _sym_db.GetSymbol('google.protobuf.BoolValue')())
+            self._client.publishTopic('nucleo/in/odometry/config/get', _sym_db.GetSymbol('google.protobuf.Empty')())
 
     def on_set_button_clicked(self):
         props = self._properties.get_value()

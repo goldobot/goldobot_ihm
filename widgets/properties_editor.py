@@ -36,6 +36,10 @@ class PropertiesEditorWidget(QWidget):
             elif k=='pose.yaw':
                 val=val*180.0/math.pi
                 self._widgets[i].setText("%.1f"%val)
+            elif k=='pose.speed':
+                self._widgets[i].setText("%.2f"%val)
+            elif k=='pose.yaw_rate':
+                self._widgets[i].setText("%.2f"%val)
             else:
                 self._widgets[i].setText(str(val))
 

@@ -1,13 +1,52 @@
 from PyQt5.QtWidgets import QGridLayout
 from PyQt5.QtWidgets import QPushButton
 from PyQt5.QtWidgets import QDialog
-from PyQt5.QtWidgets import QTabWidget
+from PyQt5.QtWidgets import QTabWidget, QWidget
 from widgets.properties_editor import PropertiesEditorWidget
 
 from goldobot.messages import PropulsionControllerConfig
 from goldobot.messages import PIDConfig
 from goldobot.messages import PropulsionControllerLowLevelConfig
 from goldobot import message_types
+
+import google.protobuf as _pb
+_sym_db = _pb.symbol_database.Default()
+
+PIDConfig =  _sym_db.GetSymbol('goldo.nucleo.propulsion.PIDConfig')()
+
+class PropulsionLowLevelPIDConfigWidget(QTabWidget):
+    def __init__(self, parent = None):
+        super().__init__(parent)
+        
+        pid_props = [            
+            ('kp', float,),
+            ('kd', float,),
+            ('ki', float,),            
+            ('lim_i', float,),
+            ('lim_d', float,),
+            ('d_filter_frequency', float,),
+            ('out_min', float,),
+            ('out_max', float,)
+            ]        
+
+        self._speed_props = PropertiesEditorWidget(PIDConfig, pid_props)
+        self.addTab(self._speed_props, "speed")
+        
+        self._longi_props = PropertiesEditorWidget(PIDConfig, pid_props)
+        self.addTab(self._longi_props, "longi")
+
+        self._yaw_rate_props = PropertiesEditorWidget(PIDConfig, pid_props)
+        self.addTab(self._yaw_rate_props, "yaw_rate")
+
+        self._yaw_props = PropertiesEditorWidget(PIDConfig, pid_props)
+        self.addTab(self._yaw_props, "yaw")
+        
+    def setValue(self, val):
+        self._speed_props.set_value(val.speed)
+        self._yaw_rate_props.set_value(val.yaw_rate)
+        self._longi_props.set_value(val.longi)
+        self._yaw_props.set_value(val.yaw)
+    
 
 class PropulsionControllerConfigDialog(QDialog):
     def __init__(self, parent = None):
@@ -18,47 +57,13 @@ class PropulsionControllerConfigDialog(QDialog):
         self._set_button = QPushButton('Set')
 
         layout = QGridLayout()
-
-        pid_props = [
-            ('period', float,),
-            ('kp', float,),
-            ('kd', float,),
-            ('ki', float,),
-            ('feed_forward', float,),
-            ('lim_iterm', float,),
-            ('lim_dterm', float,),
-            ('min_output', float,),
-            ('max_output', float,)
-            ]
-
-        tab_widget = QTabWidget()
-
-        self._speed_pid_props = PropertiesEditorWidget(PIDConfig, pid_props)
-        tab_widget.addTab(self._speed_pid_props, "speed_s")
         
-        self._translation_pid_props = PropertiesEditorWidget(PIDConfig,pid_props)
-        tab_widget.addTab(self._translation_pid_props, "trans_s")
-
-        self._yaw_rate_pid_props = PropertiesEditorWidget(PIDConfig,pid_props)
-        tab_widget.addTab(self._yaw_rate_pid_props, "yaw_rate_s")
-
-        self._yaw_pid_props = PropertiesEditorWidget(PIDConfig,pid_props)
-        tab_widget.addTab(self._yaw_pid_props, "yaw_s")
-        
-        # cruise config
-        self._speed_pid_cruise_props = PropertiesEditorWidget(PIDConfig, pid_props)
-        tab_widget.addTab(self._speed_pid_cruise_props, "speed_c")
-        
-        self._translation_pid_cruise_props = PropertiesEditorWidget(PIDConfig,pid_props)
-        tab_widget.addTab(self._translation_pid_cruise_props, "trans_c")
-
-        self._yaw_rate_pid_cruise_props = PropertiesEditorWidget(PIDConfig,pid_props)
-        tab_widget.addTab(self._yaw_rate_pid_cruise_props, "yaw_rate_c")
-
-        self._yaw_pid_cruise_props = PropertiesEditorWidget(PIDConfig,pid_props)
-        tab_widget.addTab(self._yaw_pid_cruise_props, "yaw_c")
+        tab_widget = PropulsionLowLevelPIDConfigWidget()       
+      
 
         layout.addWidget(tab_widget,0,0,1,2)
+        
+        self._pid_config_widget = tab_widget
 
         self._props = PropertiesEditorWidget(PropulsionControllerConfig, [
             ('lookahead_distance', float,),
@@ -82,7 +87,7 @@ class PropulsionControllerConfigDialog(QDialog):
 
     def on_get_button_clicked(self):
         if self._client is not None:
-            self._client.send_message(message_types.DbgGetPropulsionConfig,b'')
+            self._client.publishTopic('nucleo/in/propulsion/config/get', _sym_db.GetSymbol('google.protobuf.Empty')())
 
     def on_set_button_clicked(self):
         config = self._props.get_value()
@@ -105,6 +110,9 @@ class PropulsionControllerConfigDialog(QDialog):
             self._client.send_message(message_types.DbgSetPropulsionConfig,config.serialize())
 
     def update_propulsion_controller_config(self, config):
+        print(config)
+        self._pid_config_widget.setValue(config.pid_configs[0])
+        return
         self._speed_pid_props.set_value(config.config_static.speed_pid_config)
         self._yaw_rate_pid_props.set_value(config.config_static.yaw_rate_pid_config)
         self._translation_pid_props.set_value(config.config_static.translation_pid_config)

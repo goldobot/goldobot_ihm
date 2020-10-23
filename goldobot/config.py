@@ -8,6 +8,8 @@ from goldobot_ihm.hal_config import HALConfig
 from goldobot_ihm.robot_config import RobotConfig as RobotConfig2
 from goldobot_ihm.robot_simulator_config import RobotSimulatorConfig
 
+from goldobot import pb2
+
 #servos = {s['name']:s['id'] for s in robot_config['servos']}
 
 def align_buffer(buff):
@@ -92,10 +94,10 @@ class RobotConfig:
         hal_config_buffer = self.hal_config.compile()
         
         #OdometryConfig
-        odometry_config_buffer = messages.OdometryConfig(yaml=self.yaml['odometry']).serialize()
+        odometry_config_buffer = pb2.serialize(pb2.from_dict('goldo.nucleo.propulsion.OdometryConfig', self.yaml['odometry']))
         
         #Propulsion config
-        propulsion_config_buffer = messages.PropulsionControllerConfig(yaml=self.yaml['propulsion']).serialize()
+        propulsion_config_buffer = pb2.serialize(pb2.from_dict('goldo.nucleo.propulsion.PropulsionControllerConfig', self.yaml['propulsion']))
         
         tid = {'ax12':2, 'mx28':3}
         #Arm servo configs
