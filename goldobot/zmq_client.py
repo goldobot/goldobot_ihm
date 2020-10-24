@@ -95,7 +95,10 @@ class ZmqClient(QObject):
             if topic == 'nucleo/out/propulsion/telemetry':
                 self.propulsion_telemetry.emit(msg)
             if topic == 'nucleo/out/propulsion/config':
-                self.propulsion_controller_config.emit(msg)     
+                self.propulsion_controller_config.emit(msg)  
+            if topic == 'nucleo/out/fpga/reg':
+                self.fpga_registers.emit(msg.apb_address, msg.apb_value)
+                
                 
 
         self._notifier_main.setEnabled(True)
@@ -170,18 +173,6 @@ class ZmqClient(QObject):
         if msg_type == message_types.DbgDynamixelGetRegisters:
             id_, address = struct.unpack('<BB', msg[2:4])
             self.dynamixel_registers.emit(id_, address, msg[4:])
-
-        if msg_type == message_types.FpgaDbgReadReg:
-            apb_addr, apb_data = struct.unpack('<II', msg[2:])
-            self.fpga_registers.emit(apb_addr, apb_data)
-            
-        if msg_type == message_types.FpgaDbgReadRegCrc:
-            apb_addr, apb_data, crc = struct.unpack('<III', msg[2:])
-            self.fpga_registers_crc.emit(apb_addr, apb_data, crc)
-            
-        if msg_type == message_types.FpgaDbgGetErrCnt:
-            v = struct.unpack('<'+'I'*16, msg[2:])
-
             
         if msg_type == message_types.NucleoLog:
             log = msg[2:].split(bytes([0]),1)[0].decode("utf-8")

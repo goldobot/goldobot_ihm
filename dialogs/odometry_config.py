@@ -4,9 +4,6 @@ from PyQt5.QtWidgets import QDialog
 from PyQt5.QtWidgets import QLineEdit
 from widgets.properties_editor import PropertiesEditorWidget
 
-from goldobot.messages import OdometryConfig
-from goldobot import message_types
-
 import google.protobuf as _pb
 _sym_db = _pb.symbol_database.Default()
 

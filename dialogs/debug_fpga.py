@@ -8,9 +8,8 @@ from PyQt5.QtWidgets import QCheckBox
 from PyQt5.QtWidgets import QLineEdit
 from PyQt5.QtWidgets import QTabWidget
 
-import struct
-from goldobot import message_types
-
+import google.protobuf as _pb
+_sym_db = _pb.symbol_database.Default()
 
 class DebugFpgaDialog(QDialog):
     def __init__(self, parent = None):
@@ -56,11 +55,12 @@ class DebugFpgaDialog(QDialog):
         self._client = client
         self._client.fpga_registers.connect(self._on_fpga_registers)
         self._client.fpga_registers_crc.connect(self._on_fpga_registers_crc)
-        self._client.send_message(message_types.FpgaDbgReadReg, struct.pack('<I', 0x8000800c))
+        #self._client.send_message(message_types.FpgaDbgReadReg, struct.pack('<I', 0x8000800c))
 
     def read_registers(self):
         my_addr = int(self._line_edit_apb_addr.text(),16)
-        self._client.send_message(message_types.FpgaDbgReadReg, struct.pack('<I', my_addr))
+        msg = _sym_db.GetSymbol('goldo.nucleo.fpga.RegRead')(apb_address = my_addr)
+        self._client.publishTopic('nucleo/in/fpga/reg/read', msg)
 
     def write_registers(self):
         my_addr = int(self._line_edit_apb_addr.text(),16)
