@@ -111,7 +111,6 @@ class ODriveDialog(QDialog):
         msg.expected_response_size = expected_response_size
         msg.payload = payload
         msg.protocol_version = protocol_version
-        print(msg)
         self._client.publishTopic('nucleo/in/odrive/request', msg)
         return seq
 

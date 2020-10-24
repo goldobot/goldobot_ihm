@@ -20,7 +20,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x19goldo/nucleo/odrive.proto\x12\x13goldo.nucleo.odrive\x1a\x17goldo/pb2_options.proto\"\xa0\x01\n\rRequestPacket\x12\x1d\n\x0fsequence_number\x18\x01 \x01(\rB\x04\x80\xb5\x18\x05\x12\x19\n\x0b\x65ndpoint_id\x18\x02 \x01(\rB\x04\x80\xb5\x18\x05\x12$\n\x16\x65xpected_response_size\x18\x03 \x01(\rB\x04\x80\xb5\x18\x05\x12\x0f\n\x07payload\x18\x04 \x01(\x0c\x12\x1e\n\x10protocol_version\x18\x05 \x01(\rB\x04\x80\xb5\x18\x05\"@\n\x0eResponsePacket\x12\x1d\n\x0fsequence_number\x18\x01 \x01(\rB\x04\x80\xb5\x18\x05\x12\x0f\n\x07payload\x18\x04 \x01(\x0c\x62\x06proto3'
+  serialized_pb=b'\n\x19goldo/nucleo/odrive.proto\x12\x13goldo.nucleo.odrive\x1a\x17goldo/pb2_options.proto\"\xa0\x01\n\rRequestPacket\x12\x1d\n\x0fsequence_number\x18\x01 \x01(\rB\x04\x80\xb5\x18\x05\x12\x19\n\x0b\x65ndpoint_id\x18\x02 \x01(\rB\x04\x80\xb5\x18\x05\x12$\n\x16\x65xpected_response_size\x18\x03 \x01(\rB\x04\x80\xb5\x18\x05\x12\x0f\n\x07payload\x18\x04 \x01(\x0c\x12\x1e\n\x10protocol_version\x18\x05 \x01(\rB\x04\x80\xb5\x18\x05\"@\n\x0eResponsePacket\x12\x1d\n\x0fsequence_number\x18\x01 \x01(\rB\x04\x80\xb5\x18\x05\x12\x0f\n\x07payload\x18\x04 \x01(\x0c\"\xbb\x01\n\tTelemetry\x12\x1a\n\x12\x61xis0_vel_estimate\x18\x01 \x01(\x02\x12\x1a\n\x12\x61xis1_vel_estimate\x18\x02 \x01(\x02\x12\x19\n\x0b\x61xis0_error\x18\x03 \x01(\x07\x42\x04\x80\xb5\x18\x07\x12\x19\n\x0b\x61xis1_error\x18\x04 \x01(\x07\x42\x04\x80\xb5\x18\x07\x12\x1f\n\x11\x61xis0_motor_error\x18\x05 \x01(\x07\x42\x04\x80\xb5\x18\x07\x12\x1f\n\x11\x61xis1_motor_error\x18\x06 \x01(\x07\x42\x04\x80\xb5\x18\x07\x62\x06proto3'
   ,
   dependencies=[goldo_dot_pb2__options__pb2.DESCRIPTOR,])
 
@@ -125,8 +125,76 @@ _RESPONSEPACKET = _descriptor.Descriptor(
   serialized_end=302,
 )
 
+
+_TELEMETRY = _descriptor.Descriptor(
+  name='Telemetry',
+  full_name='goldo.nucleo.odrive.Telemetry',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='axis0_vel_estimate', full_name='goldo.nucleo.odrive.Telemetry.axis0_vel_estimate', index=0,
+      number=1, type=2, cpp_type=6, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='axis1_vel_estimate', full_name='goldo.nucleo.odrive.Telemetry.axis1_vel_estimate', index=1,
+      number=2, type=2, cpp_type=6, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='axis0_error', full_name='goldo.nucleo.odrive.Telemetry.axis0_error', index=2,
+      number=3, type=7, cpp_type=3, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=b'\200\265\030\007', file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='axis1_error', full_name='goldo.nucleo.odrive.Telemetry.axis1_error', index=3,
+      number=4, type=7, cpp_type=3, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=b'\200\265\030\007', file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='axis0_motor_error', full_name='goldo.nucleo.odrive.Telemetry.axis0_motor_error', index=4,
+      number=5, type=7, cpp_type=3, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=b'\200\265\030\007', file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='axis1_motor_error', full_name='goldo.nucleo.odrive.Telemetry.axis1_motor_error', index=5,
+      number=6, type=7, cpp_type=3, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=b'\200\265\030\007', file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=305,
+  serialized_end=492,
+)
+
 DESCRIPTOR.message_types_by_name['RequestPacket'] = _REQUESTPACKET
 DESCRIPTOR.message_types_by_name['ResponsePacket'] = _RESPONSEPACKET
+DESCRIPTOR.message_types_by_name['Telemetry'] = _TELEMETRY
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 RequestPacket = _reflection.GeneratedProtocolMessageType('RequestPacket', (_message.Message,), {
@@ -143,10 +211,21 @@ ResponsePacket = _reflection.GeneratedProtocolMessageType('ResponsePacket', (_me
   })
 _sym_db.RegisterMessage(ResponsePacket)
 
+Telemetry = _reflection.GeneratedProtocolMessageType('Telemetry', (_message.Message,), {
+  'DESCRIPTOR' : _TELEMETRY,
+  '__module__' : 'goldo.nucleo.odrive_pb2'
+  # @@protoc_insertion_point(class_scope:goldo.nucleo.odrive.Telemetry)
+  })
+_sym_db.RegisterMessage(Telemetry)
+
 
 _REQUESTPACKET.fields_by_name['sequence_number']._options = None
 _REQUESTPACKET.fields_by_name['endpoint_id']._options = None
 _REQUESTPACKET.fields_by_name['expected_response_size']._options = None
 _REQUESTPACKET.fields_by_name['protocol_version']._options = None
 _RESPONSEPACKET.fields_by_name['sequence_number']._options = None
+_TELEMETRY.fields_by_name['axis0_error']._options = None
+_TELEMETRY.fields_by_name['axis1_error']._options = None
+_TELEMETRY.fields_by_name['axis0_motor_error']._options = None
+_TELEMETRY.fields_by_name['axis1_motor_error']._options = None
 # @@protoc_insertion_point(module_scope)

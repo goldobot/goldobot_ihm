@@ -95,13 +95,15 @@ class _MessageCodec:
             else:
                 self._add_field(field)
         self._size = struct.calcsize(self._struct_fmt)
+        self._unpack = struct.Struct(self._struct_fmt).unpack
+        self._pack = struct.Struct(self._struct_fmt).pack
         
     def serialize(self, msg):
-        return struct.pack(self._struct_fmt, *(c.get(msg) for c in self._field_codecs))
+        return self._pack(*(c.get(msg) for c in self._field_codecs))
         
     def deserialize(self, payload):
         msg = self._msg_type()
-        vals = struct.unpack(self._struct_fmt, payload)
+        vals = self._unpack(payload)
         for i in range(len(self._field_codecs)):            
             self._field_codecs[i].set(msg, vals[i])
         return msg
