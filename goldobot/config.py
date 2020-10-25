@@ -9,6 +9,8 @@ from goldobot_ihm.robot_config import RobotConfig as RobotConfig2
 from goldobot_ihm.robot_simulator_config import RobotSimulatorConfig
 
 from goldobot import pb2
+import google.protobuf as _pb
+_sym_db = _pb.symbol_database.Default()
 
 #servos = {s['name']:s['id'] for s in robot_config['servos']}
 
@@ -27,8 +29,11 @@ class RobotConfig:
         self.robot_config = RobotConfig2(self.yaml['robot'])
         self.robot_simulator_config = RobotSimulatorConfig(self.yaml.get('robot_simulator', {}))
         self.path = path
-        self.servo_nums = {s['name']:s['id'] for s in self.yaml['servos']}
-        self.load_dynamixels_config()
+        
+        self.servos_config = pb2.from_dict('goldo.nucleo.robot.ServosConfig', { 'servos' : self.yaml['servos'] })
+        
+        self.servo_nums = {s.name: s.id for s in self.servos_config.servos}
+        #self.load_dynamixels_config()
         if 'dc_motors' in self.yaml:
             self.dc_motors_indices = {s['name']:s['id'] for s in self.yaml['dc_motors']}
         else:
@@ -101,23 +106,24 @@ class RobotConfig:
         
         tid = {'ax12':2, 'mx28':3}
         #Arm servo configs
-        arm_config_buffer = struct.pack('<H', len(self.yaml['dynamixels']))
-        for s in self.yaml['dynamixels']:
-            servo_buffer = struct.pack('<BBHHH', s['id'], tid[s['type']],0,0,0)
-            arm_config_buffer += servo_buffer
-        arm_config_buffer += b'\0' * 8 * (16-len(self.yaml['dynamixels']))
-        arm_config_buffer += struct.pack('<HH', 32,len(self.dynamixels_torques))
-        arm_config_buffer += b'\0' * 8
+        #arm_config_buffer = struct.pack('<H', len(self.yaml['dynamixels']))
+        #for s in self.yaml.get('dynamixels', []):
+        #    servo_buffer = struct.pack('<BBHHH', s['id'], tid[s['type']],0,0,0)
+        #    arm_config_buffer += servo_buffer
+        #arm_config_buffer += b'\0' * 8 * (16-len(self.yaml['dynamixels']))
+        #arm_config_buffer += struct.pack('<HH', 32,len(self.dynamixels_torques))
+        #arm_config_buffer += b'\0' * 8
+        arm_config_buffer = b''
         
-        arm_positions_buffer = b''.join([b''.join([struct.pack('<H', t) for t in s]) for s in self.dynamixels_positions.values()])
-        arm_positions_buffer += b'\0' * (len(self.yaml['dynamixels']) * 2 * 64 - len(arm_positions_buffer))
-        arm_torques_buffer = b''.join([b''.join([struct.pack('<H', t) for t in s]) for s in self.dynamixels_torques.values()])
+        #arm_positions_buffer = b''.join([b''.join([struct.pack('<H', t) for t in s]) for s in self.dynamixels_positions.values()])
+        #arm_positions_buffer += b'\0' * (len(self.yaml['dynamixels']) * 2 * 64 - len(arm_positions_buffer))
+        #arm_torques_buffer = b''.join([b''.join([struct.pack('<H', t) for t in s]) for s in self.dynamixels_torques.values()])
         
+        arm_positions_buffer = b''
+        arm_positions_buffer = b''
+        arm_torques_buffer = b''
         #Servo config buffer
-        servos_config_buffer = struct.pack('<H', len(self.yaml['servos']))
-        for s in self.yaml['servos']:
-            servos_config_buffer += struct.pack('<BBHHH', s['id'], 1, s['cw_limit'], s['ccw_limit'], s['max_speed'])
-        servos_config_buffer += b'\0' * (8 * (16 - len(self.yaml['servos'])))
+        servos_config_buffer = struct.pack('<H', len(self.servos_config.servos)) + b''.join([pb2.serialize(s) for s in self.servos_config.servos])
         
         self._offsets = []
         self._buffer = b''
@@ -147,6 +153,11 @@ class RobotConfig:
         for s in self.sequences.sequence_names:
             sn.write(s + '\n')
         sn.close()
+        
+        self.proto = _sym_db.GetSymbol('goldo.nucleo.robot.Config')(data=self.binary, crc=self.crc)
+        self.proto.sequence_names.extend(self.sequences.sequence_names)
+        self.proto.servo_names.extend([s.name for s in self.servos_config.servos])
+        print(self.proto)
     
     def _push_buffer(self, buffer):
         self._offsets.append(len(self._buffer))

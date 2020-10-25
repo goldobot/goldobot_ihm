@@ -4,6 +4,10 @@ from pathlib import Path as _Path
 _pb_dir = str(_Path(__file__).parent)
 if _pb_dir not in _sys.path:
     _sys.path.append(_pb_dir)
+    
+# Set protobuf implementation to cpp
+import os as _os
+#_os.environ['PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION'] = 'cpp'
 
 import goldo
 import google.protobuf as _pb

@@ -64,51 +64,22 @@ propulsion:
   static_pwm_limit: 10
   cruise_pwm_limit: 10
   reposition_pwm_limit: 10
-dynamixels:
-  - name: rail
-    type: mx28
-    id: 81
-    cw_limit: 850
-    ccw_limit: 1850    
-    torque_limit: 512
-  - name: coude
-    id: 82
-    type: mx28
-    cw_limit: 800
-    ccw_limit: 3150   
-    torque_limit: 512
-  - name: tete
-    id: 1
-    type: ax12
-    cw_limit: 250
-    ccw_limit: 850    
-    torque_limit: 512
 servos:
   - name: griffe_g
     id: 2
+    type: STANDARD
     max_speed: 40000
+    max_torque: 10
+    cw_limit: 19000
+    ccw_limit: 51000
+  - name: test
+    id: 3
+    type: DYNAMIXEL_AX12
+    max_speed: 0x1020
+    max_torque: 10
     cw_limit: 19000
     ccw_limit: 51000 
-  - name: griffe_d
-    id: 1
-    max_speed: 40000
-    cw_limit: 16000
-    ccw_limit: 48000
-  - name: stock_g
-    id: 11
-    max_speed: 40000
-    cw_limit: 250
-    ccw_limit: 850
-  - name: stock_d
-    id: 0
-    max_speed: 40000
-    cw_limit: 250
-    ccw_limit: 850 
-  - name: slider
-    id: 10
-    max_speed: 40000
-    cw_limit: 32600
-    ccw_limit: 45500
+  
 sensors:
   - name: micro_switch
     id: 0
@@ -125,7 +96,4 @@ sensors:
 
 sequence_files:
   - "sequences/constants.txt"
-  - "sequences/waypoint_jaune.txt"
-  - "sequences/waypoint_violet.txt"
-  - "sequences/sequences.txt"
-  - "sequences/tests.txt"
+  

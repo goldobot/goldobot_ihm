@@ -1,5 +1,24 @@
 from PyQt5.QtWidgets import QWidget, QLineEdit, QPushButton, QGridLayout, QLabel, QGridLayout, QFrame
 from widgets.properties_editor import PropertiesEditorWidget
+import math
+
+_controller_state = {
+    0: 'Inactive',
+    1: 'Stopped',
+    2: 'FollowTrajectory',
+    3: 'Rotate',
+    4: 'Reposition',
+    5: 'ManualControl',
+    6: 'EmergencyStop',
+    7: 'Error'
+    }
+    
+_controller_error = {
+    0: 'None',
+    1: 'EmergencyStop',
+    2: 'RobotBlocked',
+    3: 'TrackingError'
+    }
 
 class RobotStatusWidget(QWidget):
     def __init__(self, parent = None, ihm_type='pc'):
@@ -34,19 +53,19 @@ class RobotStatusWidget(QWidget):
         if ihm_type=='pc':
             self._telemetry_props = PropertiesEditorWidget(None,
                 [
-                ('pose.position.x', float,),
-                ('pose.position.y', float,),
-                ('pose.yaw', float,),
-                ('pose.speed', float,),
-                ('pose.yaw_rate', float,),
+                ('pose.position.x', float, lambda x: '{:0>6.1f}'.format(x *1000.0)),
+                ('pose.position.y', float, lambda x: '{:0>6.1f}'.format(x *1000.0)),
+                ('pose.yaw', float, lambda x: '{:0>5.1f}'.format(x * 180.0/math.pi)),
+                ('pose.speed', float, '{:0>3.2f}'),
+                ('pose.yaw_rate', float, '{:0>3.2f}'),
                 ('pose.acceleration', float),
                 ('pose.angular_acceleration', float),
-                ('left_encoder', float,),
-                ('right_encoder', float,),
+                ('left_encoder', float, '{:0>4}'),
+                ('right_encoder', float, '{:0>4}'),
                 ('left_pwm', float,),
                 ('right_pwm', float,),
-                ('state', int),
-                ('error',int)
+                ('state', int, lambda x: _controller_state[x]),
+                ('error',int,  lambda x: _controller_error[x])
                 ],True)
         else:
             self._telemetry_props = PropertiesEditorWidget(None,

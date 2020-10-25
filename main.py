@@ -46,7 +46,7 @@ dialogs = [
     ("Configure Odometry", OdometryConfigDialog),
     ("Configure Propulsion controller", PropulsionControllerConfigDialog),
     ("Test propulsion", PropulsionTestDialog),
-    ("Test arms", TestArmsDialog),
+    #("Test arms", TestArmsDialog),
     ("Test dynamixels", TestDynamixelAx12Dialog),
     ("Test actionneurs", TestActuatorsDialog),
     ("Debug FPGA", DebugFpgaDialog),

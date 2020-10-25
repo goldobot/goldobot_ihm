@@ -21,7 +21,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x17goldo/pb2_options.proto\x12\x11goldo.pb2_options\x1a google/protobuf/descriptor.proto*\x91\x01\n\x07\x43ppType\x12\x0b\n\x07UNKNOWN\x10\x00\x12\x08\n\x04\x42OOL\x10\x01\x12\x08\n\x04INT8\x10\x02\x12\t\n\x05UINT8\x10\x03\x12\t\n\x05INT16\x10\x04\x12\n\n\x06UINT16\x10\x05\x12\t\n\x05INT32\x10\x06\x12\n\n\x06UINT32\x10\x07\x12\t\n\x05INT64\x10\x08\x12\n\n\x06UINT64\x10\t\x12\t\n\x05\x46LOAT\x10\n\x12\n\n\x06\x44OUBLE\x10\x0b:M\n\x08\x63pp_type\x12\x1d.google.protobuf.FieldOptions\x18\xd0\x86\x03 \x01(\x0e\x32\x1a.goldo.pb2_options.CppType:2\n\tmax_count\x12\x1d.google.protobuf.FieldOptions\x18\xd1\x86\x03 \x01(\x05:4\n\x0b\x66ixed_count\x12\x1d.google.protobuf.FieldOptions\x18\xd2\x86\x03 \x01(\x08\x62\x06proto3'
+  serialized_pb=b'\n\x17goldo/pb2_options.proto\x12\x11goldo.pb2_options\x1a google/protobuf/descriptor.proto*\x9b\x01\n\x07\x43ppType\x12\x0b\n\x07UNKNOWN\x10\x00\x12\x08\n\x04\x42OOL\x10\x01\x12\x08\n\x04INT8\x10\x02\x12\t\n\x05UINT8\x10\x03\x12\t\n\x05INT16\x10\x04\x12\n\n\x06UINT16\x10\x05\x12\t\n\x05INT32\x10\x06\x12\n\n\x06UINT32\x10\x07\x12\t\n\x05INT64\x10\x08\x12\n\n\x06UINT64\x10\t\x12\t\n\x05\x46LOAT\x10\n\x12\n\n\x06\x44OUBLE\x10\x0b\x12\x08\n\x04VOID\x10\x0c:M\n\x08\x63pp_type\x12\x1d.google.protobuf.FieldOptions\x18\xd0\x86\x03 \x01(\x0e\x32\x1a.goldo.pb2_options.CppType:2\n\tmax_count\x12\x1d.google.protobuf.FieldOptions\x18\xd1\x86\x03 \x01(\x05:4\n\x0b\x66ixed_count\x12\x1d.google.protobuf.FieldOptions\x18\xd2\x86\x03 \x01(\x08\x62\x06proto3'
   ,
   dependencies=[google_dot_protobuf_dot_descriptor__pb2.DESCRIPTOR,])
 
@@ -92,11 +92,16 @@ _CPPTYPE = _descriptor.EnumDescriptor(
       serialized_options=None,
       type=None,
       create_key=_descriptor._internal_create_key),
+    _descriptor.EnumValueDescriptor(
+      name='VOID', index=12, number=12,
+      serialized_options=None,
+      type=None,
+      create_key=_descriptor._internal_create_key),
   ],
   containing_type=None,
   serialized_options=None,
   serialized_start=81,
-  serialized_end=226,
+  serialized_end=236,
 )
 _sym_db.RegisterEnumDescriptor(_CPPTYPE)
 
@@ -113,6 +118,7 @@ INT64 = 8
 UINT64 = 9
 FLOAT = 10
 DOUBLE = 11
+VOID = 12
 
 CPP_TYPE_FIELD_NUMBER = 50000
 cpp_type = _descriptor.FieldDescriptor(
