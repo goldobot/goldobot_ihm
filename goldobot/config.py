@@ -157,7 +157,6 @@ class RobotConfig:
         self.proto = _sym_db.GetSymbol('goldo.nucleo.robot.Config')(data=self.binary, crc=self.crc)
         self.proto.sequence_names.extend(self.sequences.sequence_names)
         self.proto.servo_names.extend([s.name for s in self.servos_config.servos])
-        print(self.proto)
     
     def _push_buffer(self, buffer):
         self._offsets.append(len(self._buffer))

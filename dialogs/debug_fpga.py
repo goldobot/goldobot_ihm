@@ -65,7 +65,8 @@ class DebugFpgaDialog(QDialog):
     def write_registers(self):
         my_addr = int(self._line_edit_apb_addr.text(),16)
         my_data = int(self._line_edit_apb_data.text(),16)
-        self._client.send_message(message_types.FpgaDbgWriteReg, struct.pack('<II', my_addr, my_data))
+        msg = _sym_db.GetSymbol('goldo.nucleo.fpga.RegWrite')(apb_address = my_addr, apb_value = my_data)
+        self._client.publishTopic('nucleo/in/fpga/reg/write', msg)
 
     def get_err_cnt(self):
         self._client.send_message(message_types.FpgaDbgGetErrCnt, bytes())

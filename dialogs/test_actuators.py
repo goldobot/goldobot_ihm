@@ -18,6 +18,9 @@ from goldobot import config
 import struct
 import math
 
+import google.protobuf as _pb
+_sym_db = _pb.symbol_database.Default()
+
 class ActuatorValuesWidget(QWidget):
     def __init__(self, actuators):
         super(ActuatorValuesWidget, self).__init__()
@@ -99,9 +102,11 @@ class TestActuatorsDialog(QDialog):
         self.button_go.clicked.connect(self._go)
 
     def _go(self):
-        self._client.send_message(message_types.FpgaCmdServo,
-        struct.pack('<BHB', self.combobox_servo.currentIndex(), self.spinbox_value.value(), 100))
-        print(self.combobox_servo.currentIndex(), self.spinbox_value.value())
+        servo_id = self.combobox_servo.currentIndex()
+        position = self.spinbox_value.value()
+        msg = _sym_db.GetSymbol('goldo.nucleo.servos.Move')(servo_id=servo_id, position=position, speed=0xffff)
+        self._client.publishTopic('nucleo/in/servo/move', msg)
+
         
     def set_client(self, client):
         self._client = client

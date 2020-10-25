@@ -20,7 +20,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x17goldo/nucleo/fpga.proto\x12\x11goldo.nucleo.fpga\x1a\x17goldo/pb2_options.proto\"$\n\x07RegRead\x12\x19\n\x0b\x61pb_address\x18\x01 \x01(\x07\x42\x04\x80\xb5\x18\x07\"C\n\rRegReadStatus\x12\x19\n\x0b\x61pb_address\x18\x01 \x01(\x07\x42\x04\x80\xb5\x18\x07\x12\x17\n\tapb_value\x18\x02 \x01(\rB\x04\x80\xb5\x18\x07\">\n\x08RegWrite\x12\x19\n\x0b\x61pb_address\x18\x01 \x01(\x07\x42\x04\x80\xb5\x18\x07\x12\x17\n\tapb_value\x18\x02 \x01(\rB\x04\x80\xb5\x18\x07\x62\x06proto3'
+  serialized_pb=b'\n\x17goldo/nucleo/fpga.proto\x12\x11goldo.nucleo.fpga\x1a\x17goldo/pb2_options.proto\"$\n\x07RegRead\x12\x19\n\x0b\x61pb_address\x18\x01 \x01(\x07\x42\x04\x80\xb5\x18\x07\"C\n\rRegReadStatus\x12\x19\n\x0b\x61pb_address\x18\x01 \x01(\x07\x42\x04\x80\xb5\x18\x07\x12\x17\n\tapb_value\x18\x02 \x01(\x07\x42\x04\x80\xb5\x18\x07\">\n\x08RegWrite\x12\x19\n\x0b\x61pb_address\x18\x01 \x01(\x07\x42\x04\x80\xb5\x18\x07\x12\x17\n\tapb_value\x18\x02 \x01(\x07\x42\x04\x80\xb5\x18\x07\x62\x06proto3'
   ,
   dependencies=[goldo_dot_pb2__options__pb2.DESCRIPTOR,])
 
@@ -76,7 +76,7 @@ _REGREADSTATUS = _descriptor.Descriptor(
       serialized_options=b'\200\265\030\007', file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='apb_value', full_name='goldo.nucleo.fpga.RegReadStatus.apb_value', index=1,
-      number=2, type=13, cpp_type=3, label=1,
+      number=2, type=7, cpp_type=3, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -115,7 +115,7 @@ _REGWRITE = _descriptor.Descriptor(
       serialized_options=b'\200\265\030\007', file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='apb_value', full_name='goldo.nucleo.fpga.RegWrite.apb_value', index=1,
-      number=2, type=13, cpp_type=3, label=1,
+      number=2, type=7, cpp_type=3, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
