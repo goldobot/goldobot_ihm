@@ -88,7 +88,7 @@ class _MessageCodec:
     def __init__(self, msg_type):
         self._msg_type = msg_type
         self._descriptor = msg_type.DESCRIPTOR
-        self._struct_fmt = ''
+        self._struct_fmt = '<'
         self._field_codecs = []
         self._is_fixed_size = True
 
@@ -114,7 +114,7 @@ class _MessageCodec:
         for i in range(len(self._field_codecs)):            
             self._field_codecs[i].set(msg, vals[i])
         return msg
-
+        
     def _add_repeated(self, field):
         options = field.GetOptions()
         if options.HasExtension(_opts.fixed_count):

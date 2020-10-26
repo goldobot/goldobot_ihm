@@ -21,7 +21,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x18goldo/nucleo/robot.proto\x12\x12goldo.nucleo.robot\x1a\x17goldo/pb2_options.proto\"%\n\x0f\x43onfigLoadBegin\x12\x12\n\x04size\x18\x01 \x01(\rB\x04\x80\xb5\x18\x05\"\x1f\n\x0f\x43onfigLoadChunk\x12\x0c\n\x04\x64\x61ta\x18\x01 \x01(\x0c\"\"\n\rConfigLoadEnd\x12\x11\n\x03\x63rc\x18\x01 \x01(\rB\x04\x80\xb5\x18\x05\"v\n\x10\x43onfigLoadStatus\x12\x41\n\x06status\x18\x01 \x01(\x0e\x32+.goldo.nucleo.robot.ConfigLoadStatus.StatusB\x04\x80\xb5\x18\x03\"\x1f\n\x06Status\x12\x06\n\x02OK\x10\x00\x12\r\n\tCRC_ERROR\x10\x01\"\xca\x01\n\x0bServoConfig\x12\x31\n\x04type\x18\x01 \x01(\x0e\x32\x1d.goldo.nucleo.robot.ServoTypeB\x04\x80\xb5\x18\x03\x12\x10\n\x02id\x18\x02 \x01(\x05\x42\x04\x80\xb5\x18\x03\x12\x16\n\x08\x63w_limit\x18\x03 \x01(\x05\x42\x04\x80\xb5\x18\x05\x12\x17\n\tccw_limit\x18\x04 \x01(\x05\x42\x04\x80\xb5\x18\x05\x12\x17\n\tmax_speed\x18\x05 \x01(\x05\x42\x04\x80\xb5\x18\x05\x12\x18\n\nmax_torque\x18\x06 \x01(\x05\x42\x04\x80\xb5\x18\x05\x12\x12\n\x04name\x18@ \x01(\tB\x04\x80\xb5\x18\x0c\"?\n\x0cServosConfig\x12/\n\x06servos\x18\x01 \x03(\x0b\x32\x1f.goldo.nucleo.robot.ServoConfig\"f\n\x06\x43onfig\x12\x0c\n\x04\x64\x61ta\x18\x01 \x01(\x0c\x12\x0b\n\x03\x63rc\x18\x02 \x01(\r\x12\x16\n\x0esequence_names\x18\x03 \x03(\t\x12\x13\n\x0bservo_names\x18\x04 \x03(\t\x12\x14\n\x0csensor_names\x18\x05 \x03(\t*N\n\tServoType\x12\x0b\n\x07UNKNOWN\x10\x00\x12\x0c\n\x08STANDARD\x10\x01\x12\x12\n\x0e\x44YNAMIXEL_AX12\x10\x02\x12\x12\n\x0e\x44YNAMIXEL_MX28\x10\x03\x62\x06proto3'
+  serialized_pb=b'\n\x18goldo/nucleo/robot.proto\x12\x12goldo.nucleo.robot\x1a\x17goldo/pb2_options.proto\"%\n\x0f\x43onfigLoadBegin\x12\x12\n\x04size\x18\x01 \x01(\rB\x04\x80\xb5\x18\x05\"\x1f\n\x0f\x43onfigLoadChunk\x12\x0c\n\x04\x64\x61ta\x18\x01 \x01(\x0c\"\"\n\rConfigLoadEnd\x12\x11\n\x03\x63rc\x18\x01 \x01(\rB\x04\x80\xb5\x18\x05\"v\n\x10\x43onfigLoadStatus\x12\x41\n\x06status\x18\x01 \x01(\x0e\x32+.goldo.nucleo.robot.ConfigLoadStatus.StatusB\x04\x80\xb5\x18\x03\"\x1f\n\x06Status\x12\x06\n\x02OK\x10\x00\x12\r\n\tCRC_ERROR\x10\x01\"\xca\x01\n\x0bServoConfig\x12\x31\n\x04type\x18\x01 \x01(\x0e\x32\x1d.goldo.nucleo.robot.ServoTypeB\x04\x80\xb5\x18\x03\x12\x10\n\x02id\x18\x02 \x01(\x05\x42\x04\x80\xb5\x18\x03\x12\x16\n\x08\x63w_limit\x18\x03 \x01(\x05\x42\x04\x80\xb5\x18\x05\x12\x17\n\tccw_limit\x18\x04 \x01(\x05\x42\x04\x80\xb5\x18\x05\x12\x17\n\tmax_speed\x18\x05 \x01(\x05\x42\x04\x80\xb5\x18\x05\x12\x18\n\nmax_torque\x18\x06 \x01(\x05\x42\x04\x80\xb5\x18\x05\x12\x12\n\x04name\x18@ \x01(\tB\x04\x80\xb5\x18\x0c\"?\n\x0cServosConfig\x12/\n\x06servos\x18\x01 \x03(\x0b\x32\x1f.goldo.nucleo.robot.ServoConfig\"\x9a\x02\n\x06\x43onfig\x12\x0c\n\x04\x64\x61ta\x18\x01 \x01(\x0c\x12\x0b\n\x03\x63rc\x18\x02 \x01(\r\x12\x16\n\x0esequence_names\x18\x03 \x03(\t\x12;\n\tservo_ids\x18\x04 \x03(\x0b\x32(.goldo.nucleo.robot.Config.ServoIdsEntry\x12=\n\nsensor_ids\x18\x05 \x03(\x0b\x32).goldo.nucleo.robot.Config.SensorIdsEntry\x1a/\n\rServoIdsEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x05:\x02\x38\x01\x1a\x30\n\x0eSensorIdsEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x05:\x02\x38\x01*N\n\tServoType\x12\x0b\n\x07UNKNOWN\x10\x00\x12\x0c\n\x08STANDARD\x10\x01\x12\x12\n\x0e\x44YNAMIXEL_AX12\x10\x02\x12\x12\n\x0e\x44YNAMIXEL_MX28\x10\x03\x62\x06proto3'
   ,
   dependencies=[goldo_dot_pb2__options__pb2.DESCRIPTOR,])
 
@@ -55,8 +55,8 @@ _SERVOTYPE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=675,
-  serialized_end=753,
+  serialized_start=856,
+  serialized_end=934,
 )
 _sym_db.RegisterEnumDescriptor(_SERVOTYPE)
 
@@ -328,6 +328,82 @@ _SERVOSCONFIG = _descriptor.Descriptor(
 )
 
 
+_CONFIG_SERVOIDSENTRY = _descriptor.Descriptor(
+  name='ServoIdsEntry',
+  full_name='goldo.nucleo.robot.Config.ServoIdsEntry',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='key', full_name='goldo.nucleo.robot.Config.ServoIdsEntry.key', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='value', full_name='goldo.nucleo.robot.Config.ServoIdsEntry.value', index=1,
+      number=2, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=b'8\001',
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=757,
+  serialized_end=804,
+)
+
+_CONFIG_SENSORIDSENTRY = _descriptor.Descriptor(
+  name='SensorIdsEntry',
+  full_name='goldo.nucleo.robot.Config.SensorIdsEntry',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='key', full_name='goldo.nucleo.robot.Config.SensorIdsEntry.key', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='value', full_name='goldo.nucleo.robot.Config.SensorIdsEntry.value', index=1,
+      number=2, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=b'8\001',
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=806,
+  serialized_end=854,
+)
+
 _CONFIG = _descriptor.Descriptor(
   name='Config',
   full_name='goldo.nucleo.robot.Config',
@@ -358,15 +434,15 @@ _CONFIG = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='servo_names', full_name='goldo.nucleo.robot.Config.servo_names', index=3,
-      number=4, type=9, cpp_type=9, label=3,
+      name='servo_ids', full_name='goldo.nucleo.robot.Config.servo_ids', index=3,
+      number=4, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='sensor_names', full_name='goldo.nucleo.robot.Config.sensor_names', index=4,
-      number=5, type=9, cpp_type=9, label=3,
+      name='sensor_ids', full_name='goldo.nucleo.robot.Config.sensor_ids', index=4,
+      number=5, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -374,7 +450,7 @@ _CONFIG = _descriptor.Descriptor(
   ],
   extensions=[
   ],
-  nested_types=[],
+  nested_types=[_CONFIG_SERVOIDSENTRY, _CONFIG_SENSORIDSENTRY, ],
   enum_types=[
   ],
   serialized_options=None,
@@ -383,14 +459,18 @@ _CONFIG = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=571,
-  serialized_end=673,
+  serialized_start=572,
+  serialized_end=854,
 )
 
 _CONFIGLOADSTATUS.fields_by_name['status'].enum_type = _CONFIGLOADSTATUS_STATUS
 _CONFIGLOADSTATUS_STATUS.containing_type = _CONFIGLOADSTATUS
 _SERVOCONFIG.fields_by_name['type'].enum_type = _SERVOTYPE
 _SERVOSCONFIG.fields_by_name['servos'].message_type = _SERVOCONFIG
+_CONFIG_SERVOIDSENTRY.containing_type = _CONFIG
+_CONFIG_SENSORIDSENTRY.containing_type = _CONFIG
+_CONFIG.fields_by_name['servo_ids'].message_type = _CONFIG_SERVOIDSENTRY
+_CONFIG.fields_by_name['sensor_ids'].message_type = _CONFIG_SENSORIDSENTRY
 DESCRIPTOR.message_types_by_name['ConfigLoadBegin'] = _CONFIGLOADBEGIN
 DESCRIPTOR.message_types_by_name['ConfigLoadChunk'] = _CONFIGLOADCHUNK
 DESCRIPTOR.message_types_by_name['ConfigLoadEnd'] = _CONFIGLOADEND
@@ -444,11 +524,27 @@ ServosConfig = _reflection.GeneratedProtocolMessageType('ServosConfig', (_messag
 _sym_db.RegisterMessage(ServosConfig)
 
 Config = _reflection.GeneratedProtocolMessageType('Config', (_message.Message,), {
+
+  'ServoIdsEntry' : _reflection.GeneratedProtocolMessageType('ServoIdsEntry', (_message.Message,), {
+    'DESCRIPTOR' : _CONFIG_SERVOIDSENTRY,
+    '__module__' : 'goldo.nucleo.robot_pb2'
+    # @@protoc_insertion_point(class_scope:goldo.nucleo.robot.Config.ServoIdsEntry)
+    })
+  ,
+
+  'SensorIdsEntry' : _reflection.GeneratedProtocolMessageType('SensorIdsEntry', (_message.Message,), {
+    'DESCRIPTOR' : _CONFIG_SENSORIDSENTRY,
+    '__module__' : 'goldo.nucleo.robot_pb2'
+    # @@protoc_insertion_point(class_scope:goldo.nucleo.robot.Config.SensorIdsEntry)
+    })
+  ,
   'DESCRIPTOR' : _CONFIG,
   '__module__' : 'goldo.nucleo.robot_pb2'
   # @@protoc_insertion_point(class_scope:goldo.nucleo.robot.Config)
   })
 _sym_db.RegisterMessage(Config)
+_sym_db.RegisterMessage(Config.ServoIdsEntry)
+_sym_db.RegisterMessage(Config.SensorIdsEntry)
 
 
 _CONFIGLOADBEGIN.fields_by_name['size']._options = None
@@ -461,4 +557,6 @@ _SERVOCONFIG.fields_by_name['ccw_limit']._options = None
 _SERVOCONFIG.fields_by_name['max_speed']._options = None
 _SERVOCONFIG.fields_by_name['max_torque']._options = None
 _SERVOCONFIG.fields_by_name['name']._options = None
+_CONFIG_SERVOIDSENTRY._options = None
+_CONFIG_SENSORIDSENTRY._options = None
 # @@protoc_insertion_point(module_scope)

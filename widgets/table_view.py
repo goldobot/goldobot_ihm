@@ -210,6 +210,8 @@ class TableViewWidget(QGraphicsView):
 
         self.last_plot_ts = 0
         self.plot_graph_l = []
+        
+        self._plot_items = []
 
         TableViewWidget.g_table_view = self
 
@@ -270,7 +272,15 @@ class TableViewWidget(QGraphicsView):
 
     def update_plots(self, my_plot):
         dbg_plt_sz = 1
-        self.last_plot_ts = my_plot.timestamp
+        for i in self._plot_items:
+            self._scene.removeItem(i)
+        self._plot_items = []
+            
+        #self.last_plot_ts = my_plot.timestamp
+        for pt in my_plot.points:
+            itm = self._scene.addEllipse(pt.x * 1000 - dbg_plt_sz, pt.y * 1000 - dbg_plt_sz, 2*dbg_plt_sz, 2*dbg_plt_sz, QPen(QBrush(QColor('red')),4), QBrush(QColor('red')))
+            self._plot_items.append(itm)
+        return
         my_plot_ellipse = self._scene.addEllipse(my_plot.x * 1000 - dbg_plt_sz, my_plot.y * 1000 - dbg_plt_sz, 2*dbg_plt_sz, 2*dbg_plt_sz, QPen(QBrush(QColor('red')),4), QBrush(QColor('red')))
         self.plot_graph_l.append((my_plot,my_plot_ellipse))
         for rec in self.plot_graph_l:

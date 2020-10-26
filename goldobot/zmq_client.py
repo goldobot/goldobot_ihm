@@ -98,22 +98,10 @@ class ZmqClient(QObject):
                 self.propulsion_controller_config.emit(msg)  
             if topic == 'nucleo/out/fpga/reg':
                 self.fpga_registers.emit(msg.apb_address, msg.apb_value)
-                
-                
-
+            if topic == 'rplidar/out/scan':
+                self.rplidar_plot.emit(msg)
         self._notifier_main.setEnabled(True)
 
-    def send_message_rplidar(self, message_type, message_body):
-        print("= send_message_rplidar ========================")
-        print("message_type = {}".format(message_type))
-        dbg_msg = struct.pack('<H',message_type) + message_body
-        hexdump(dbg_msg)
-        print("===============================================")
-        print()
-
-        self._push_socket_rplidar.send_multipart([struct.pack('<H',message_type), message_body])
-    
-    
 
     def _on_message_received(self, msg):
         return
@@ -135,12 +123,7 @@ class ZmqClient(QObject):
             print(event_id, msg[3:])
         if msg_type == message_types.DebugGoldo:
             self.debug_goldo.emit(struct.unpack('<I',msg[2:])[0])
-            
-        if msg_type == message_types.MainSequenceLoadStatus:
-            status = bool(struct.unpack('<B',msg[2:]))
-            print('sequence loaded, status: ', status)
-            
-           
+ 
         if msg_type == message_types.MatchStateChange:
             state,side = struct.unpack('<BB', msg[2:4])
             self.match_state_change.emit(state,side)
@@ -180,6 +163,3 @@ class ZmqClient(QObject):
 
         if msg_type == 90:
             print(struct.unpack('<BB', msg[2:]))
-        if msg_type == 411:
-            seq = struct.unpack('<H', msg[2:4])[0] & 0xf7fff
-            self.odrive_response.emit(seq, msg[4:])
