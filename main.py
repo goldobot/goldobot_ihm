@@ -30,6 +30,7 @@ from dialogs.sequences import SequencesDialog
 from dialogs.score import ScoreDialog
 from dialogs.test_hal import HalTestDialog
 from dialogs.odrive import ODriveDialog
+from dialogs.test_rplidar import TestRPLidarDialog
 
 from parse_sequence import SequenceParser
 
@@ -46,7 +47,7 @@ dialogs = [
     ("Configure Odometry", OdometryConfigDialog),
     ("Configure Propulsion controller", PropulsionControllerConfigDialog),
     ("Test propulsion", PropulsionTestDialog),
-    #("Test arms", TestArmsDialog),
+    ("Test RPLidar", TestRPLidarDialog),
     ("Test dynamixels", TestDynamixelAx12Dialog),
     ("Test actionneurs", TestActuatorsDialog),
     ("Debug FPGA", DebugFpgaDialog),
