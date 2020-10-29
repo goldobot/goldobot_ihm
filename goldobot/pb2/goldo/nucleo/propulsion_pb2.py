@@ -22,7 +22,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x1dgoldo/nucleo/propulsion.proto\x12\x17goldo.nucleo.propulsion\x1a\x1bgoldo/common/geometry.proto\x1a\x17goldo/pb2_options.proto\"\xda\x01\n\tTelemetry\x12)\n\x04pose\x18\x01 \x01(\x0b\x32\x1b.goldo.common.geometry.Pose\x12\x14\n\x0cleft_encoder\x18\x02 \x01(\r\x12\x15\n\rright_encoder\x18\x03 \x01(\r\x12\x10\n\x08left_pwm\x18\x04 \x01(\x02\x12\x11\n\tright_pwm\x18\x05 \x01(\x02\x12\x41\n\x05state\x18\x06 \x01(\x0e\x32\x32.goldo.nucleo.propulsion.PropulsionControllerState\x12\r\n\x05\x65rror\x18\x07 \x01(\r\"\x83\x01\n\x17MotorsVelocitySetpoints\x12\x10\n\x08left_vel\x18\x01 \x01(\x02\x12\x11\n\tright_vel\x18\x02 \x01(\x02\x12 \n\x18left_current_feedforward\x18\x03 \x01(\x02\x12!\n\x19right_current_feedforward\x18\x04 \x01(\x02\"\xc6\x01\n\x0eOdometryConfig\x12\x1b\n\x13\x64ist_per_count_left\x18\x01 \x01(\x02\x12\x1c\n\x14\x64ist_per_count_right\x18\x02 \x01(\x02\x12\x1b\n\x13wheel_distance_left\x18\x03 \x01(\x02\x12\x1c\n\x14wheel_distance_right\x18\x04 \x01(\x02\x12\x1e\n\x16speed_filter_frequency\x18\x05 \x01(\x02\x12\x1e\n\x16\x61\x63\x63\x65l_filter_frequency\x18\x06 \x01(\x02\"\x8b\x01\n\tPIDConfig\x12\n\n\x02kp\x18\x01 \x01(\x02\x12\n\n\x02ki\x18\x02 \x01(\x02\x12\n\n\x02kd\x18\x03 \x01(\x02\x12\r\n\x05lim_i\x18\x04 \x01(\x02\x12\r\n\x05lim_d\x18\x05 \x01(\x02\x12\x1a\n\x12\x64_filter_frequency\x18\x06 \x01(\x02\x12\x0f\n\x07out_min\x18\x07 \x01(\x02\x12\x0f\n\x07out_max\x18\x08 \x01(\x02\"\xea\x01\n\x1bPropulsionLowLevelPIDConfig\x12\x31\n\x05speed\x18\x01 \x01(\x0b\x32\".goldo.nucleo.propulsion.PIDConfig\x12\x31\n\x05longi\x18\x02 \x01(\x0b\x32\".goldo.nucleo.propulsion.PIDConfig\x12\x34\n\x08yaw_rate\x18\x03 \x01(\x0b\x32\".goldo.nucleo.propulsion.PIDConfig\x12/\n\x03yaw\x18\x04 \x01(\x0b\x32\".goldo.nucleo.propulsion.PIDConfig\"Z\n\"PropulsionLowLevelControllerConfig\x12\x17\n\x0fwheels_distance\x18\x01 \x01(\x02\x12\x1b\n\x13motors_speed_factor\x18\x02 \x01(\x02\"\xce\x02\n\x1aPropulsionControllerConfig\x12U\n\x10low_level_config\x18\x01 \x01(\x0b\x32;.goldo.nucleo.propulsion.PropulsionLowLevelControllerConfig\x12S\n\x0bpid_configs\x18\x02 \x03(\x0b\x32\x34.goldo.nucleo.propulsion.PropulsionLowLevelPIDConfigB\x08\x88\xb5\x18\x04\x90\xb5\x18\x01\x12\x1a\n\x12lookahead_distance\x18\x03 \x01(\x02\x12\x16\n\x0elookahead_time\x18\x04 \x01(\x02\x12\x18\n\x10static_pwm_limit\x18\x05 \x01(\x02\x12\x18\n\x10\x63ruise_pwm_limit\x18\x06 \x01(\x02\x12\x1c\n\x14reposition_pwm_limit\x18\x07 \x01(\x02\"P\n\x11\x45xecuteTrajectory\x12\r\n\x05speed\x18\x01 \x01(\x02\x12,\n\x06points\x18\x02 \x03(\x0b\x32\x1c.goldo.common.geometry.Point\"6\n\x0f\x45xecuteRotation\x12\x11\n\tyaw_delta\x18\x01 \x01(\x02\x12\x10\n\x08yaw_rate\x18\x02 \x01(\x02\"5\n\x12\x45xecuteTranslation\x12\x10\n\x08\x64istance\x18\x01 \x01(\x02\x12\r\n\x05speed\x18\x02 \x01(\x02*\x9c\x01\n\x19PropulsionControllerState\x12\x0c\n\x08INACTIVE\x10\x00\x12\x0b\n\x07STOPPED\x10\x01\x12\x15\n\x11\x46OLLOW_TRAJECTORY\x10\x02\x12\n\n\x06ROTATE\x10\x03\x12\x0e\n\nREPOSITION\x10\x04\x12\x12\n\x0eMANUAL_CONTROL\x10\x05\x12\x12\n\x0e\x45MERGENCY_STOP\x10\x06\x12\t\n\x05\x45RROR\x10\x07\x62\x06proto3'
+  serialized_pb=b'\n\x1dgoldo/nucleo/propulsion.proto\x12\x17goldo.nucleo.propulsion\x1a\x1bgoldo/common/geometry.proto\x1a\x17goldo/pb2_options.proto\"\xda\x01\n\tTelemetry\x12)\n\x04pose\x18\x01 \x01(\x0b\x32\x1b.goldo.common.geometry.Pose\x12\x14\n\x0cleft_encoder\x18\x02 \x01(\r\x12\x15\n\rright_encoder\x18\x03 \x01(\r\x12\x10\n\x08left_pwm\x18\x04 \x01(\x02\x12\x11\n\tright_pwm\x18\x05 \x01(\x02\x12\x41\n\x05state\x18\x06 \x01(\x0e\x32\x32.goldo.nucleo.propulsion.PropulsionControllerState\x12\r\n\x05\x65rror\x18\x07 \x01(\r\"\xab\x01\n\x0bTelemetryEx\x12\x30\n\x0btarget_pose\x18\x01 \x01(\x0b\x32\x1b.goldo.common.geometry.Pose\x12\x13\n\x0b\x65rror_longi\x18\x02 \x01(\x02\x12\x15\n\rerror_lateral\x18\x03 \x01(\x02\x12\x11\n\terror_yaw\x18\x04 \x01(\x02\x12\x13\n\x0b\x65rror_speed\x18\x05 \x01(\x02\x12\x16\n\x0e\x65rror_yaw_rate\x18\x06 \x01(\x02\"\x83\x01\n\x17MotorsVelocitySetpoints\x12\x10\n\x08left_vel\x18\x01 \x01(\x02\x12\x11\n\tright_vel\x18\x02 \x01(\x02\x12 \n\x18left_current_feedforward\x18\x03 \x01(\x02\x12!\n\x19right_current_feedforward\x18\x04 \x01(\x02\"b\n\x12\x41\x63\x63\x65lerationLimits\x12\r\n\x05\x61\x63\x63\x65l\x18\x01 \x01(\x02\x12\x0e\n\x06\x64\x65\x63\x63\x65l\x18\x02 \x01(\x02\x12\x15\n\rangular_accel\x18\x03 \x01(\x02\x12\x16\n\x0e\x61ngular_deccel\x18\x04 \x01(\x02\"\xc6\x01\n\x0eOdometryConfig\x12\x1b\n\x13\x64ist_per_count_left\x18\x01 \x01(\x02\x12\x1c\n\x14\x64ist_per_count_right\x18\x02 \x01(\x02\x12\x1b\n\x13wheel_distance_left\x18\x03 \x01(\x02\x12\x1c\n\x14wheel_distance_right\x18\x04 \x01(\x02\x12\x1e\n\x16speed_filter_frequency\x18\x05 \x01(\x02\x12\x1e\n\x16\x61\x63\x63\x65l_filter_frequency\x18\x06 \x01(\x02\"\x8b\x01\n\tPIDConfig\x12\n\n\x02kp\x18\x01 \x01(\x02\x12\n\n\x02ki\x18\x02 \x01(\x02\x12\n\n\x02kd\x18\x03 \x01(\x02\x12\r\n\x05lim_i\x18\x04 \x01(\x02\x12\r\n\x05lim_d\x18\x05 \x01(\x02\x12\x1a\n\x12\x64_filter_frequency\x18\x06 \x01(\x02\x12\x0f\n\x07out_min\x18\x07 \x01(\x02\x12\x0f\n\x07out_max\x18\x08 \x01(\x02\"\xea\x01\n\x1bPropulsionLowLevelPIDConfig\x12\x31\n\x05speed\x18\x01 \x01(\x0b\x32\".goldo.nucleo.propulsion.PIDConfig\x12\x31\n\x05longi\x18\x02 \x01(\x0b\x32\".goldo.nucleo.propulsion.PIDConfig\x12\x34\n\x08yaw_rate\x18\x03 \x01(\x0b\x32\".goldo.nucleo.propulsion.PIDConfig\x12/\n\x03yaw\x18\x04 \x01(\x0b\x32\".goldo.nucleo.propulsion.PIDConfig\"Z\n\"PropulsionLowLevelControllerConfig\x12\x17\n\x0fwheels_distance\x18\x01 \x01(\x02\x12\x1b\n\x13motors_speed_factor\x18\x02 \x01(\x02\"\xce\x02\n\x1aPropulsionControllerConfig\x12U\n\x10low_level_config\x18\x01 \x01(\x0b\x32;.goldo.nucleo.propulsion.PropulsionLowLevelControllerConfig\x12S\n\x0bpid_configs\x18\x02 \x03(\x0b\x32\x34.goldo.nucleo.propulsion.PropulsionLowLevelPIDConfigB\x08\x88\xb5\x18\x04\x90\xb5\x18\x01\x12\x1a\n\x12lookahead_distance\x18\x03 \x01(\x02\x12\x16\n\x0elookahead_time\x18\x04 \x01(\x02\x12\x18\n\x10static_pwm_limit\x18\x05 \x01(\x02\x12\x18\n\x10\x63ruise_pwm_limit\x18\x06 \x01(\x02\x12\x1c\n\x14reposition_pwm_limit\x18\x07 \x01(\x02\"P\n\x11\x45xecuteTrajectory\x12\r\n\x05speed\x18\x01 \x01(\x02\x12,\n\x06points\x18\x02 \x03(\x0b\x32\x1c.goldo.common.geometry.Point\"6\n\x0f\x45xecuteRotation\x12\x11\n\tyaw_delta\x18\x01 \x01(\x02\x12\x10\n\x08yaw_rate\x18\x02 \x01(\x02\"5\n\x14\x45xecuteFaceDirection\x12\x0b\n\x03yaw\x18\x01 \x01(\x02\x12\x10\n\x08yaw_rate\x18\x02 \x01(\x02\"5\n\x12\x45xecuteTranslation\x12\x10\n\x08\x64istance\x18\x01 \x01(\x02\x12\r\n\x05speed\x18\x02 \x01(\x02\"O\n\x0e\x45xecutePointTo\x12\x10\n\x08yaw_rate\x18\x01 \x01(\x02\x12+\n\x05point\x18\x02 \x01(\x0b\x32\x1c.goldo.common.geometry.Point\"K\n\rExecuteMoveTo\x12\r\n\x05speed\x18\x01 \x01(\x02\x12+\n\x05point\x18\x02 \x01(\x0b\x32\x1c.goldo.common.geometry.Point*\x9c\x01\n\x19PropulsionControllerState\x12\x0c\n\x08INACTIVE\x10\x00\x12\x0b\n\x07STOPPED\x10\x01\x12\x15\n\x11\x46OLLOW_TRAJECTORY\x10\x02\x12\n\n\x06ROTATE\x10\x03\x12\x0e\n\nREPOSITION\x10\x04\x12\x12\n\x0eMANUAL_CONTROL\x10\x05\x12\x12\n\x0e\x45MERGENCY_STOP\x10\x06\x12\t\n\x05\x45RROR\x10\x07\x62\x06proto3'
   ,
   dependencies=[goldo_dot_common_dot_geometry__pb2.DESCRIPTOR,goldo_dot_pb2__options__pb2.DESCRIPTOR,])
 
@@ -76,8 +76,8 @@ _PROPULSIONCONTROLLERSTATE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=1670,
-  serialized_end=1826,
+  serialized_start=2157,
+  serialized_end=2313,
 )
 _sym_db.RegisterEnumDescriptor(_PROPULSIONCONTROLLERSTATE)
 
@@ -167,6 +167,73 @@ _TELEMETRY = _descriptor.Descriptor(
 )
 
 
+_TELEMETRYEX = _descriptor.Descriptor(
+  name='TelemetryEx',
+  full_name='goldo.nucleo.propulsion.TelemetryEx',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='target_pose', full_name='goldo.nucleo.propulsion.TelemetryEx.target_pose', index=0,
+      number=1, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='error_longi', full_name='goldo.nucleo.propulsion.TelemetryEx.error_longi', index=1,
+      number=2, type=2, cpp_type=6, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='error_lateral', full_name='goldo.nucleo.propulsion.TelemetryEx.error_lateral', index=2,
+      number=3, type=2, cpp_type=6, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='error_yaw', full_name='goldo.nucleo.propulsion.TelemetryEx.error_yaw', index=3,
+      number=4, type=2, cpp_type=6, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='error_speed', full_name='goldo.nucleo.propulsion.TelemetryEx.error_speed', index=4,
+      number=5, type=2, cpp_type=6, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='error_yaw_rate', full_name='goldo.nucleo.propulsion.TelemetryEx.error_yaw_rate', index=5,
+      number=6, type=2, cpp_type=6, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=334,
+  serialized_end=505,
+)
+
+
 _MOTORSVELOCITYSETPOINTS = _descriptor.Descriptor(
   name='MotorsVelocitySetpoints',
   full_name='goldo.nucleo.propulsion.MotorsVelocitySetpoints',
@@ -215,8 +282,61 @@ _MOTORSVELOCITYSETPOINTS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=334,
-  serialized_end=465,
+  serialized_start=508,
+  serialized_end=639,
+)
+
+
+_ACCELERATIONLIMITS = _descriptor.Descriptor(
+  name='AccelerationLimits',
+  full_name='goldo.nucleo.propulsion.AccelerationLimits',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='accel', full_name='goldo.nucleo.propulsion.AccelerationLimits.accel', index=0,
+      number=1, type=2, cpp_type=6, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='deccel', full_name='goldo.nucleo.propulsion.AccelerationLimits.deccel', index=1,
+      number=2, type=2, cpp_type=6, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='angular_accel', full_name='goldo.nucleo.propulsion.AccelerationLimits.angular_accel', index=2,
+      number=3, type=2, cpp_type=6, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='angular_deccel', full_name='goldo.nucleo.propulsion.AccelerationLimits.angular_deccel', index=3,
+      number=4, type=2, cpp_type=6, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=641,
+  serialized_end=739,
 )
 
 
@@ -282,8 +402,8 @@ _ODOMETRYCONFIG = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=468,
-  serialized_end=666,
+  serialized_start=742,
+  serialized_end=940,
 )
 
 
@@ -363,8 +483,8 @@ _PIDCONFIG = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=669,
-  serialized_end=808,
+  serialized_start=943,
+  serialized_end=1082,
 )
 
 
@@ -416,8 +536,8 @@ _PROPULSIONLOWLEVELPIDCONFIG = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=811,
-  serialized_end=1045,
+  serialized_start=1085,
+  serialized_end=1319,
 )
 
 
@@ -455,8 +575,8 @@ _PROPULSIONLOWLEVELCONTROLLERCONFIG = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1047,
-  serialized_end=1137,
+  serialized_start=1321,
+  serialized_end=1411,
 )
 
 
@@ -529,8 +649,8 @@ _PROPULSIONCONTROLLERCONFIG = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1140,
-  serialized_end=1474,
+  serialized_start=1414,
+  serialized_end=1748,
 )
 
 
@@ -568,8 +688,8 @@ _EXECUTETRAJECTORY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1476,
-  serialized_end=1556,
+  serialized_start=1750,
+  serialized_end=1830,
 )
 
 
@@ -607,8 +727,47 @@ _EXECUTEROTATION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1558,
-  serialized_end=1612,
+  serialized_start=1832,
+  serialized_end=1886,
+)
+
+
+_EXECUTEFACEDIRECTION = _descriptor.Descriptor(
+  name='ExecuteFaceDirection',
+  full_name='goldo.nucleo.propulsion.ExecuteFaceDirection',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='yaw', full_name='goldo.nucleo.propulsion.ExecuteFaceDirection.yaw', index=0,
+      number=1, type=2, cpp_type=6, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='yaw_rate', full_name='goldo.nucleo.propulsion.ExecuteFaceDirection.yaw_rate', index=1,
+      number=2, type=2, cpp_type=6, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=1888,
+  serialized_end=1941,
 )
 
 
@@ -646,12 +805,91 @@ _EXECUTETRANSLATION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1614,
-  serialized_end=1667,
+  serialized_start=1943,
+  serialized_end=1996,
+)
+
+
+_EXECUTEPOINTTO = _descriptor.Descriptor(
+  name='ExecutePointTo',
+  full_name='goldo.nucleo.propulsion.ExecutePointTo',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='yaw_rate', full_name='goldo.nucleo.propulsion.ExecutePointTo.yaw_rate', index=0,
+      number=1, type=2, cpp_type=6, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='point', full_name='goldo.nucleo.propulsion.ExecutePointTo.point', index=1,
+      number=2, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=1998,
+  serialized_end=2077,
+)
+
+
+_EXECUTEMOVETO = _descriptor.Descriptor(
+  name='ExecuteMoveTo',
+  full_name='goldo.nucleo.propulsion.ExecuteMoveTo',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='speed', full_name='goldo.nucleo.propulsion.ExecuteMoveTo.speed', index=0,
+      number=1, type=2, cpp_type=6, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='point', full_name='goldo.nucleo.propulsion.ExecuteMoveTo.point', index=1,
+      number=2, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=2079,
+  serialized_end=2154,
 )
 
 _TELEMETRY.fields_by_name['pose'].message_type = goldo_dot_common_dot_geometry__pb2._POSE
 _TELEMETRY.fields_by_name['state'].enum_type = _PROPULSIONCONTROLLERSTATE
+_TELEMETRYEX.fields_by_name['target_pose'].message_type = goldo_dot_common_dot_geometry__pb2._POSE
 _PROPULSIONLOWLEVELPIDCONFIG.fields_by_name['speed'].message_type = _PIDCONFIG
 _PROPULSIONLOWLEVELPIDCONFIG.fields_by_name['longi'].message_type = _PIDCONFIG
 _PROPULSIONLOWLEVELPIDCONFIG.fields_by_name['yaw_rate'].message_type = _PIDCONFIG
@@ -659,8 +897,12 @@ _PROPULSIONLOWLEVELPIDCONFIG.fields_by_name['yaw'].message_type = _PIDCONFIG
 _PROPULSIONCONTROLLERCONFIG.fields_by_name['low_level_config'].message_type = _PROPULSIONLOWLEVELCONTROLLERCONFIG
 _PROPULSIONCONTROLLERCONFIG.fields_by_name['pid_configs'].message_type = _PROPULSIONLOWLEVELPIDCONFIG
 _EXECUTETRAJECTORY.fields_by_name['points'].message_type = goldo_dot_common_dot_geometry__pb2._POINT
+_EXECUTEPOINTTO.fields_by_name['point'].message_type = goldo_dot_common_dot_geometry__pb2._POINT
+_EXECUTEMOVETO.fields_by_name['point'].message_type = goldo_dot_common_dot_geometry__pb2._POINT
 DESCRIPTOR.message_types_by_name['Telemetry'] = _TELEMETRY
+DESCRIPTOR.message_types_by_name['TelemetryEx'] = _TELEMETRYEX
 DESCRIPTOR.message_types_by_name['MotorsVelocitySetpoints'] = _MOTORSVELOCITYSETPOINTS
+DESCRIPTOR.message_types_by_name['AccelerationLimits'] = _ACCELERATIONLIMITS
 DESCRIPTOR.message_types_by_name['OdometryConfig'] = _ODOMETRYCONFIG
 DESCRIPTOR.message_types_by_name['PIDConfig'] = _PIDCONFIG
 DESCRIPTOR.message_types_by_name['PropulsionLowLevelPIDConfig'] = _PROPULSIONLOWLEVELPIDCONFIG
@@ -668,7 +910,10 @@ DESCRIPTOR.message_types_by_name['PropulsionLowLevelControllerConfig'] = _PROPUL
 DESCRIPTOR.message_types_by_name['PropulsionControllerConfig'] = _PROPULSIONCONTROLLERCONFIG
 DESCRIPTOR.message_types_by_name['ExecuteTrajectory'] = _EXECUTETRAJECTORY
 DESCRIPTOR.message_types_by_name['ExecuteRotation'] = _EXECUTEROTATION
+DESCRIPTOR.message_types_by_name['ExecuteFaceDirection'] = _EXECUTEFACEDIRECTION
 DESCRIPTOR.message_types_by_name['ExecuteTranslation'] = _EXECUTETRANSLATION
+DESCRIPTOR.message_types_by_name['ExecutePointTo'] = _EXECUTEPOINTTO
+DESCRIPTOR.message_types_by_name['ExecuteMoveTo'] = _EXECUTEMOVETO
 DESCRIPTOR.enum_types_by_name['PropulsionControllerState'] = _PROPULSIONCONTROLLERSTATE
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
@@ -679,12 +924,26 @@ Telemetry = _reflection.GeneratedProtocolMessageType('Telemetry', (_message.Mess
   })
 _sym_db.RegisterMessage(Telemetry)
 
+TelemetryEx = _reflection.GeneratedProtocolMessageType('TelemetryEx', (_message.Message,), {
+  'DESCRIPTOR' : _TELEMETRYEX,
+  '__module__' : 'goldo.nucleo.propulsion_pb2'
+  # @@protoc_insertion_point(class_scope:goldo.nucleo.propulsion.TelemetryEx)
+  })
+_sym_db.RegisterMessage(TelemetryEx)
+
 MotorsVelocitySetpoints = _reflection.GeneratedProtocolMessageType('MotorsVelocitySetpoints', (_message.Message,), {
   'DESCRIPTOR' : _MOTORSVELOCITYSETPOINTS,
   '__module__' : 'goldo.nucleo.propulsion_pb2'
   # @@protoc_insertion_point(class_scope:goldo.nucleo.propulsion.MotorsVelocitySetpoints)
   })
 _sym_db.RegisterMessage(MotorsVelocitySetpoints)
+
+AccelerationLimits = _reflection.GeneratedProtocolMessageType('AccelerationLimits', (_message.Message,), {
+  'DESCRIPTOR' : _ACCELERATIONLIMITS,
+  '__module__' : 'goldo.nucleo.propulsion_pb2'
+  # @@protoc_insertion_point(class_scope:goldo.nucleo.propulsion.AccelerationLimits)
+  })
+_sym_db.RegisterMessage(AccelerationLimits)
 
 OdometryConfig = _reflection.GeneratedProtocolMessageType('OdometryConfig', (_message.Message,), {
   'DESCRIPTOR' : _ODOMETRYCONFIG,
@@ -735,12 +994,33 @@ ExecuteRotation = _reflection.GeneratedProtocolMessageType('ExecuteRotation', (_
   })
 _sym_db.RegisterMessage(ExecuteRotation)
 
+ExecuteFaceDirection = _reflection.GeneratedProtocolMessageType('ExecuteFaceDirection', (_message.Message,), {
+  'DESCRIPTOR' : _EXECUTEFACEDIRECTION,
+  '__module__' : 'goldo.nucleo.propulsion_pb2'
+  # @@protoc_insertion_point(class_scope:goldo.nucleo.propulsion.ExecuteFaceDirection)
+  })
+_sym_db.RegisterMessage(ExecuteFaceDirection)
+
 ExecuteTranslation = _reflection.GeneratedProtocolMessageType('ExecuteTranslation', (_message.Message,), {
   'DESCRIPTOR' : _EXECUTETRANSLATION,
   '__module__' : 'goldo.nucleo.propulsion_pb2'
   # @@protoc_insertion_point(class_scope:goldo.nucleo.propulsion.ExecuteTranslation)
   })
 _sym_db.RegisterMessage(ExecuteTranslation)
+
+ExecutePointTo = _reflection.GeneratedProtocolMessageType('ExecutePointTo', (_message.Message,), {
+  'DESCRIPTOR' : _EXECUTEPOINTTO,
+  '__module__' : 'goldo.nucleo.propulsion_pb2'
+  # @@protoc_insertion_point(class_scope:goldo.nucleo.propulsion.ExecutePointTo)
+  })
+_sym_db.RegisterMessage(ExecutePointTo)
+
+ExecuteMoveTo = _reflection.GeneratedProtocolMessageType('ExecuteMoveTo', (_message.Message,), {
+  'DESCRIPTOR' : _EXECUTEMOVETO,
+  '__module__' : 'goldo.nucleo.propulsion_pb2'
+  # @@protoc_insertion_point(class_scope:goldo.nucleo.propulsion.ExecuteMoveTo)
+  })
+_sym_db.RegisterMessage(ExecuteMoveTo)
 
 
 _PROPULSIONCONTROLLERCONFIG.fields_by_name['pid_configs']._options = None

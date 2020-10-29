@@ -104,7 +104,7 @@ class TestActuatorsDialog(QDialog):
     def _go(self):
         servo_id = self.combobox_servo.currentIndex()
         position = self.spinbox_value.value()
-        msg = _sym_db.GetSymbol('goldo.nucleo.servos.Move')(servo_id=servo_id, position=position, speed=0xffff)
+        msg = _sym_db.GetSymbol('goldo.nucleo.servos.Move')(servo_id=servo_id, position=position, speed=0x000f)
         self._client.publishTopic('nucleo/in/servo/move', msg)
 
         

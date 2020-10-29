@@ -43,6 +43,9 @@ class ODriveDialog(QDialog):
         
         self._read_json_button = QPushButton('Read JSON')
         layout.addWidget(self._read_json_button,3,0)
+        
+        self._calibrate_button = QPushButton('Calibrate')
+        layout.addWidget(self._calibrate_button,3,1)
 
         self.setLayout(layout)
 
@@ -53,6 +56,7 @@ class ODriveDialog(QDialog):
         self._endpoint_select_combobox.currentTextChanged.connect(self._on_endpoint_select_changed)
         self._function_select_combobox.currentTextChanged.connect(self._on_function_select_changed)
         self._read_json_button.clicked.connect(self._read_json)
+        self._calibrate_button.clicked.connect(self._calibrate)
         self._selected_endpoint = None
 
     def set_client(self, client):
@@ -118,9 +122,11 @@ class ODriveDialog(QDialog):
         self._reading_json = True
         self._json_schema_buffer = b''
         self._seq[0] = self._send_request(0x8000, 512, struct.pack('<I',0), 1)
+        
+    def _calibrate(self):
+        self._client.publishTopic('nucleo/in/propulsion/calibrate_odrive', _sym_db.GetSymbol('google.protobuf.Empty')())
 
     def _on_odrive_response(self, msg):
-        print(msg)
         seq = msg.sequence_number
         payload = msg.payload
         if seq == self._seq.get(0):

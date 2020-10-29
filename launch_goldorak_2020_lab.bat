@@ -1,1 +1,1 @@
-python  main.py --robot-ip 192.168.0.100 --config-path config/goldorak_2020
+python  main.py --robot-ip 192.168.1.211 --config-path config/goldorak_2020

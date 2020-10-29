@@ -211,14 +211,14 @@ class PropulsionTestDialog(QDialog):
             msg = _sym_db.GetSymbol('goldo.nucleo.propulsion.ExecuteTranslation')(
                 distance = int(self._execute_translation_edit.text()) * 1e-3,
                 speed = 1)
-            self._client.publishTopic('nucleo/in/propulsion/execute_translation', msg)
+            self._client.publishTopic('nucleo/in/propulsion/cmd/translation', msg)
             
     def _execute_rotation(self):
         if self._client is not None:
             msg = _sym_db.GetSymbol('goldo.nucleo.propulsion.ExecuteRotation')(
                 yaw_delta = int(self._execute_rotation_edit.text()) * math.pi/180,
                 yaw_rate = 1)
-            self._client.publishTopic('nucleo/in/propulsion/execute_rotation', msg)
+            self._client.publishTopic('nucleo/in/propulsion/cmd/rotation', msg)
             
     def _test_trajectory(self):
         points = [(0,0), (500, 0)]

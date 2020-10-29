@@ -152,7 +152,7 @@ class MainWindow(QMainWindow):
         self._client.send_message(message_types.SetMatchState, struct.pack('<B', 6))
 
     def _send_exit_debug(self):
-        self._client.send_message(message_types.SetMatchState, struct.pack('<B', 1))
+        self._client.publishTopic('nucleo/in/match/timer/start', _sym_db.GetSymbol('google.protobuf.Empty')())
 
     def _on_comm_stats(self, stats):
         self._status_link_state.setText('download {} {}'.format(*stats))
@@ -168,9 +168,7 @@ class MainWindow(QMainWindow):
         #cfg.update_config()
         cfg.compile()
         buff = cfg.binary
-        cfg_proto = _sym_db.GetSymbol('goldo.nucleo.robot.Config')(data=buff, crc=cfg.crc)
-        cfg_proto.sequence_names.extend(cfg.sequences.sequence_names)
-        self._client.publishTopic('config/test/put', cfg_proto)
+        self._client.publishTopic('config/test/put', cfg.proto)
         #Start programming
         self._client.publishTopic('nucleo/in/robot/config/load_begin', _sym_db.GetSymbol('goldo.nucleo.robot.ConfigLoadBegin')(size=len(buff)))
         #Upload codes by packets        

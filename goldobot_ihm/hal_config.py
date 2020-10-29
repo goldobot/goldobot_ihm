@@ -82,6 +82,8 @@ class GpioConfig(DeviceConfig):
         self.id = config_dict['id']
         self.pin = PinConfig(config_dict['pin'])
         self.dir = {'IN': 0, 'OUT_PP': 1, 'OUT_OD': 2}[config_dict['mode']]
+        if config_dict.get('pull', None) == 'UP':
+            self.dir |= 0x04
 
     def compile(self):
         buff = struct.pack('<BB', DeviceType.Gpio, periph_num['GPIO'])

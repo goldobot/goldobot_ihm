@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x1dgoldo/camera/detections.proto\x12\x0cgoldo.camera\"\xbd\x01\n\nDetections\x12\x36\n\ndetections\x18\x01 \x03(\x0b\x32\".goldo.camera.Detections.Detection\x1aw\n\tDetection\x12\x0e\n\x06tag_id\x18\x01 \x01(\x05\x12:\n\x07\x63orners\x18\x02 \x03(\x0b\x32).goldo.camera.Detections.Detection.Corner\x1a\x1e\n\x06\x43orner\x12\t\n\x01x\x18\x01 \x01(\x05\x12\t\n\x01y\x18\x02 \x01(\x05\x62\x06proto3'
+  serialized_pb=b'\n\x1dgoldo/camera/detections.proto\x12\x0cgoldo.camera\"\xd6\x01\n\nDetections\x12\x36\n\ndetections\x18\x01 \x03(\x0b\x32\".goldo.camera.Detections.Detection\x1a\x8f\x01\n\tDetection\x12\x0e\n\x06tag_id\x18\x01 \x01(\x05\x12:\n\x07\x63orners\x18\x02 \x03(\x0b\x32).goldo.camera.Detections.Detection.Corner\x12\n\n\x02ux\x18\x03 \x01(\x02\x12\n\n\x02uy\x18\x04 \x01(\x02\x1a\x1e\n\x06\x43orner\x12\t\n\x01x\x18\x01 \x01(\x05\x12\t\n\x01y\x18\x02 \x01(\x05\x62\x06proto3'
 )
 
 
@@ -59,8 +59,8 @@ _DETECTIONS_DETECTION_CORNER = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=207,
-  serialized_end=237,
+  serialized_start=232,
+  serialized_end=262,
 )
 
 _DETECTIONS_DETECTION = _descriptor.Descriptor(
@@ -85,6 +85,20 @@ _DETECTIONS_DETECTION = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='ux', full_name='goldo.camera.Detections.Detection.ux', index=2,
+      number=3, type=2, cpp_type=6, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='uy', full_name='goldo.camera.Detections.Detection.uy', index=3,
+      number=4, type=2, cpp_type=6, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -97,8 +111,8 @@ _DETECTIONS_DETECTION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=118,
-  serialized_end=237,
+  serialized_start=119,
+  serialized_end=262,
 )
 
 _DETECTIONS = _descriptor.Descriptor(
@@ -129,7 +143,7 @@ _DETECTIONS = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=48,
-  serialized_end=237,
+  serialized_end=262,
 )
 
 _DETECTIONS_DETECTION_CORNER.containing_type = _DETECTIONS_DETECTION

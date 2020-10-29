@@ -44,11 +44,11 @@ gpio:
     name: tof_ds_4
     pin: PC16
     mode: OUT_PP
-  - id: 10
+  - id: 11
     name: ext_io_5
     pin: PA4
     mode: IN
-  - id: 10
+  - id: 12
     name: ext_io_6
     pin: PF1
     mode: IN
@@ -79,6 +79,7 @@ uart:
     id: 1
     rx_buffer_size: 512
     tx_buffer_size: 512
+    rx_dma: true
     baudrate: 500000
     rx_pin: PB11
     tx_pin: PB10

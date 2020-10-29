@@ -156,7 +156,14 @@ class RobotConfig:
         
         self.proto = _sym_db.GetSymbol('goldo.nucleo.robot.Config')(data=self.binary, crc=self.crc)
         self.proto.sequence_names.extend(self.sequences.sequence_names)
-        self.proto.servo_names.extend([s.name for s in self.servos_config.servos])
+        
+        _i = 0
+        for s in self.servos_config.servos:
+            self.proto.servo_ids[s.name] = _i
+            _i += 1            
+        for s in self.yaml['sensors']:
+            self.proto.sensor_ids[s['name']] = s['id']
+        self.proto.rplidar_config.CopyFrom(pb2.from_dict('goldo.nucleo.robot.RPLidarConfig', self.yaml['rplidar']))
     
     def _push_buffer(self, buffer):
         self._offsets.append(len(self._buffer))

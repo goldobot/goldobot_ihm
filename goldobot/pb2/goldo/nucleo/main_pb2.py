@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x17goldo/nucleo/main.proto\x12\x0cgoldo.nucleo\"\x1e\n\tHeartbeat\x12\x11\n\ttimestamp\x18\x01 \x01(\x07\x62\x06proto3'
+  serialized_pb=b'\n\x17goldo/nucleo/main.proto\x12\x0cgoldo.nucleo\"\x1e\n\tHeartbeat\x12\x11\n\ttimestamp\x18\x01 \x01(\x07\"*\n\x0cSensorsState\x12\x0c\n\x04gpio\x18\x01 \x01(\x07\x12\x0c\n\x04\x66pga\x18\x02 \x01(\x07\"}\n\rWatchdogState\x12\x0c\n\x04main\x18\x01 \x01(\x08\x12\x12\n\npropulsion\x18\x02 \x01(\x08\x12\x0c\n\x04\x66pga\x18\x03 \x01(\x08\x12\x13\n\x0bodrive_comm\x18\x04 \x01(\x08\x12\x17\n\x0f\x64ynamixels_comm\x18\x05 \x01(\x08\x12\x0e\n\x06servos\x18\x06 \x01(\x08\"_\n\x11\x46reeRTOSHeapStats\x12\"\n\x1axAvailableHeapSpaceInBytes\x18\x01 \x01(\x07\x12&\n\x1exSizeOfLargestFreeBlockInBytes\x18\x02 \x01(\x07\x62\x06proto3'
 )
 
 
@@ -56,7 +56,155 @@ _HEARTBEAT = _descriptor.Descriptor(
   serialized_end=71,
 )
 
+
+_SENSORSSTATE = _descriptor.Descriptor(
+  name='SensorsState',
+  full_name='goldo.nucleo.SensorsState',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='gpio', full_name='goldo.nucleo.SensorsState.gpio', index=0,
+      number=1, type=7, cpp_type=3, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='fpga', full_name='goldo.nucleo.SensorsState.fpga', index=1,
+      number=2, type=7, cpp_type=3, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=73,
+  serialized_end=115,
+)
+
+
+_WATCHDOGSTATE = _descriptor.Descriptor(
+  name='WatchdogState',
+  full_name='goldo.nucleo.WatchdogState',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='main', full_name='goldo.nucleo.WatchdogState.main', index=0,
+      number=1, type=8, cpp_type=7, label=1,
+      has_default_value=False, default_value=False,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='propulsion', full_name='goldo.nucleo.WatchdogState.propulsion', index=1,
+      number=2, type=8, cpp_type=7, label=1,
+      has_default_value=False, default_value=False,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='fpga', full_name='goldo.nucleo.WatchdogState.fpga', index=2,
+      number=3, type=8, cpp_type=7, label=1,
+      has_default_value=False, default_value=False,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='odrive_comm', full_name='goldo.nucleo.WatchdogState.odrive_comm', index=3,
+      number=4, type=8, cpp_type=7, label=1,
+      has_default_value=False, default_value=False,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='dynamixels_comm', full_name='goldo.nucleo.WatchdogState.dynamixels_comm', index=4,
+      number=5, type=8, cpp_type=7, label=1,
+      has_default_value=False, default_value=False,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='servos', full_name='goldo.nucleo.WatchdogState.servos', index=5,
+      number=6, type=8, cpp_type=7, label=1,
+      has_default_value=False, default_value=False,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=117,
+  serialized_end=242,
+)
+
+
+_FREERTOSHEAPSTATS = _descriptor.Descriptor(
+  name='FreeRTOSHeapStats',
+  full_name='goldo.nucleo.FreeRTOSHeapStats',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='xAvailableHeapSpaceInBytes', full_name='goldo.nucleo.FreeRTOSHeapStats.xAvailableHeapSpaceInBytes', index=0,
+      number=1, type=7, cpp_type=3, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='xSizeOfLargestFreeBlockInBytes', full_name='goldo.nucleo.FreeRTOSHeapStats.xSizeOfLargestFreeBlockInBytes', index=1,
+      number=2, type=7, cpp_type=3, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=244,
+  serialized_end=339,
+)
+
 DESCRIPTOR.message_types_by_name['Heartbeat'] = _HEARTBEAT
+DESCRIPTOR.message_types_by_name['SensorsState'] = _SENSORSSTATE
+DESCRIPTOR.message_types_by_name['WatchdogState'] = _WATCHDOGSTATE
+DESCRIPTOR.message_types_by_name['FreeRTOSHeapStats'] = _FREERTOSHEAPSTATS
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 Heartbeat = _reflection.GeneratedProtocolMessageType('Heartbeat', (_message.Message,), {
@@ -65,6 +213,27 @@ Heartbeat = _reflection.GeneratedProtocolMessageType('Heartbeat', (_message.Mess
   # @@protoc_insertion_point(class_scope:goldo.nucleo.Heartbeat)
   })
 _sym_db.RegisterMessage(Heartbeat)
+
+SensorsState = _reflection.GeneratedProtocolMessageType('SensorsState', (_message.Message,), {
+  'DESCRIPTOR' : _SENSORSSTATE,
+  '__module__' : 'goldo.nucleo.main_pb2'
+  # @@protoc_insertion_point(class_scope:goldo.nucleo.SensorsState)
+  })
+_sym_db.RegisterMessage(SensorsState)
+
+WatchdogState = _reflection.GeneratedProtocolMessageType('WatchdogState', (_message.Message,), {
+  'DESCRIPTOR' : _WATCHDOGSTATE,
+  '__module__' : 'goldo.nucleo.main_pb2'
+  # @@protoc_insertion_point(class_scope:goldo.nucleo.WatchdogState)
+  })
+_sym_db.RegisterMessage(WatchdogState)
+
+FreeRTOSHeapStats = _reflection.GeneratedProtocolMessageType('FreeRTOSHeapStats', (_message.Message,), {
+  'DESCRIPTOR' : _FREERTOSHEAPSTATS,
+  '__module__' : 'goldo.nucleo.main_pb2'
+  # @@protoc_insertion_point(class_scope:goldo.nucleo.FreeRTOSHeapStats)
+  })
+_sym_db.RegisterMessage(FreeRTOSHeapStats)
 
 
 # @@protoc_insertion_point(module_scope)

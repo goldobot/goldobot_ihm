@@ -13,6 +13,8 @@ _sym_db = _symbol_database.Default()
 
 
 from goldo import pb2_options_pb2 as goldo_dot_pb2__options__pb2
+from goldo import rplidar_pb2 as goldo_dot_rplidar__pb2
+from google.protobuf import wrappers_pb2 as google_dot_protobuf_dot_wrappers__pb2
 
 
 DESCRIPTOR = _descriptor.FileDescriptor(
@@ -21,9 +23,9 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x18goldo/nucleo/robot.proto\x12\x12goldo.nucleo.robot\x1a\x17goldo/pb2_options.proto\"%\n\x0f\x43onfigLoadBegin\x12\x12\n\x04size\x18\x01 \x01(\rB\x04\x80\xb5\x18\x05\"\x1f\n\x0f\x43onfigLoadChunk\x12\x0c\n\x04\x64\x61ta\x18\x01 \x01(\x0c\"\"\n\rConfigLoadEnd\x12\x11\n\x03\x63rc\x18\x01 \x01(\rB\x04\x80\xb5\x18\x05\"v\n\x10\x43onfigLoadStatus\x12\x41\n\x06status\x18\x01 \x01(\x0e\x32+.goldo.nucleo.robot.ConfigLoadStatus.StatusB\x04\x80\xb5\x18\x03\"\x1f\n\x06Status\x12\x06\n\x02OK\x10\x00\x12\r\n\tCRC_ERROR\x10\x01\"\xca\x01\n\x0bServoConfig\x12\x31\n\x04type\x18\x01 \x01(\x0e\x32\x1d.goldo.nucleo.robot.ServoTypeB\x04\x80\xb5\x18\x03\x12\x10\n\x02id\x18\x02 \x01(\x05\x42\x04\x80\xb5\x18\x03\x12\x16\n\x08\x63w_limit\x18\x03 \x01(\x05\x42\x04\x80\xb5\x18\x05\x12\x17\n\tccw_limit\x18\x04 \x01(\x05\x42\x04\x80\xb5\x18\x05\x12\x17\n\tmax_speed\x18\x05 \x01(\x05\x42\x04\x80\xb5\x18\x05\x12\x18\n\nmax_torque\x18\x06 \x01(\x05\x42\x04\x80\xb5\x18\x05\x12\x12\n\x04name\x18@ \x01(\tB\x04\x80\xb5\x18\x0c\"?\n\x0cServosConfig\x12/\n\x06servos\x18\x01 \x03(\x0b\x32\x1f.goldo.nucleo.robot.ServoConfig\"\x9a\x02\n\x06\x43onfig\x12\x0c\n\x04\x64\x61ta\x18\x01 \x01(\x0c\x12\x0b\n\x03\x63rc\x18\x02 \x01(\r\x12\x16\n\x0esequence_names\x18\x03 \x03(\t\x12;\n\tservo_ids\x18\x04 \x03(\x0b\x32(.goldo.nucleo.robot.Config.ServoIdsEntry\x12=\n\nsensor_ids\x18\x05 \x03(\x0b\x32).goldo.nucleo.robot.Config.SensorIdsEntry\x1a/\n\rServoIdsEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x05:\x02\x38\x01\x1a\x30\n\x0eSensorIdsEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x05:\x02\x38\x01*N\n\tServoType\x12\x0b\n\x07UNKNOWN\x10\x00\x12\x0c\n\x08STANDARD\x10\x01\x12\x12\n\x0e\x44YNAMIXEL_AX12\x10\x02\x12\x12\n\x0e\x44YNAMIXEL_MX28\x10\x03\x62\x06proto3'
+  serialized_pb=b'\n\x18goldo/nucleo/robot.proto\x12\x12goldo.nucleo.robot\x1a\x17goldo/pb2_options.proto\x1a\x13goldo/rplidar.proto\x1a\x1egoogle/protobuf/wrappers.proto\"%\n\x0f\x43onfigLoadBegin\x12\x12\n\x04size\x18\x01 \x01(\rB\x04\x80\xb5\x18\x05\"\x1f\n\x0f\x43onfigLoadChunk\x12\x0c\n\x04\x64\x61ta\x18\x01 \x01(\x0c\"\"\n\rConfigLoadEnd\x12\x11\n\x03\x63rc\x18\x01 \x01(\rB\x04\x80\xb5\x18\x05\"v\n\x10\x43onfigLoadStatus\x12\x41\n\x06status\x18\x01 \x01(\x0e\x32+.goldo.nucleo.robot.ConfigLoadStatus.StatusB\x04\x80\xb5\x18\x03\"\x1f\n\x06Status\x12\x06\n\x02OK\x10\x00\x12\r\n\tCRC_ERROR\x10\x01\"\xca\x01\n\x0bServoConfig\x12\x31\n\x04type\x18\x01 \x01(\x0e\x32\x1d.goldo.nucleo.robot.ServoTypeB\x04\x80\xb5\x18\x03\x12\x10\n\x02id\x18\x02 \x01(\x05\x42\x04\x80\xb5\x18\x03\x12\x16\n\x08\x63w_limit\x18\x03 \x01(\x05\x42\x04\x80\xb5\x18\x05\x12\x17\n\tccw_limit\x18\x04 \x01(\x05\x42\x04\x80\xb5\x18\x05\x12\x17\n\tmax_speed\x18\x05 \x01(\x05\x42\x04\x80\xb5\x18\x05\x12\x18\n\nmax_torque\x18\x06 \x01(\x05\x42\x04\x80\xb5\x18\x05\x12\x12\n\x04name\x18@ \x01(\tB\x04\x80\xb5\x18\x0c\"?\n\x0cServosConfig\x12/\n\x06servos\x18\x01 \x03(\x0b\x32\x1f.goldo.nucleo.robot.ServoConfig\"R\n\rRPLidarConfig\x12\x14\n\x0ctheta_offset\x18\x01 \x01(\x02\x12+\n\ttresholds\x18\x02 \x01(\x0b\x32\x18.goldo.rplidar.Tresholds\"\xd5\x02\n\x06\x43onfig\x12\x0c\n\x04\x64\x61ta\x18\x01 \x01(\x0c\x12\x0b\n\x03\x63rc\x18\x02 \x01(\r\x12\x16\n\x0esequence_names\x18\x03 \x03(\t\x12;\n\tservo_ids\x18\x04 \x03(\x0b\x32(.goldo.nucleo.robot.Config.ServoIdsEntry\x12=\n\nsensor_ids\x18\x05 \x03(\x0b\x32).goldo.nucleo.robot.Config.SensorIdsEntry\x12\x39\n\x0erplidar_config\x18\x32 \x01(\x0b\x32!.goldo.nucleo.robot.RPLidarConfig\x1a/\n\rServoIdsEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x05:\x02\x38\x01\x1a\x30\n\x0eSensorIdsEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x05:\x02\x38\x01*N\n\tServoType\x12\x0b\n\x07UNKNOWN\x10\x00\x12\x0c\n\x08STANDARD\x10\x01\x12\x12\n\x0e\x44YNAMIXEL_AX12\x10\x02\x12\x12\n\x0e\x44YNAMIXEL_MX28\x10\x03\x62\x06proto3'
   ,
-  dependencies=[goldo_dot_pb2__options__pb2.DESCRIPTOR,])
+  dependencies=[goldo_dot_pb2__options__pb2.DESCRIPTOR,goldo_dot_rplidar__pb2.DESCRIPTOR,google_dot_protobuf_dot_wrappers__pb2.DESCRIPTOR,])
 
 _SERVOTYPE = _descriptor.EnumDescriptor(
   name='ServoType',
@@ -55,8 +57,8 @@ _SERVOTYPE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=856,
-  serialized_end=934,
+  serialized_start=1052,
+  serialized_end=1130,
 )
 _sym_db.RegisterEnumDescriptor(_SERVOTYPE)
 
@@ -87,8 +89,8 @@ _CONFIGLOADSTATUS_STATUS = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=268,
-  serialized_end=299,
+  serialized_start=321,
+  serialized_end=352,
 )
 _sym_db.RegisterEnumDescriptor(_CONFIGLOADSTATUS_STATUS)
 
@@ -120,8 +122,8 @@ _CONFIGLOADBEGIN = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=73,
-  serialized_end=110,
+  serialized_start=126,
+  serialized_end=163,
 )
 
 
@@ -152,8 +154,8 @@ _CONFIGLOADCHUNK = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=112,
-  serialized_end=143,
+  serialized_start=165,
+  serialized_end=196,
 )
 
 
@@ -184,8 +186,8 @@ _CONFIGLOADEND = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=145,
-  serialized_end=179,
+  serialized_start=198,
+  serialized_end=232,
 )
 
 
@@ -217,8 +219,8 @@ _CONFIGLOADSTATUS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=181,
-  serialized_end=299,
+  serialized_start=234,
+  serialized_end=352,
 )
 
 
@@ -291,8 +293,8 @@ _SERVOCONFIG = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=302,
-  serialized_end=504,
+  serialized_start=355,
+  serialized_end=557,
 )
 
 
@@ -323,8 +325,47 @@ _SERVOSCONFIG = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=506,
-  serialized_end=569,
+  serialized_start=559,
+  serialized_end=622,
+)
+
+
+_RPLIDARCONFIG = _descriptor.Descriptor(
+  name='RPLidarConfig',
+  full_name='goldo.nucleo.robot.RPLidarConfig',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='theta_offset', full_name='goldo.nucleo.robot.RPLidarConfig.theta_offset', index=0,
+      number=1, type=2, cpp_type=6, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='tresholds', full_name='goldo.nucleo.robot.RPLidarConfig.tresholds', index=1,
+      number=2, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=624,
+  serialized_end=706,
 )
 
 
@@ -362,8 +403,8 @@ _CONFIG_SERVOIDSENTRY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=757,
-  serialized_end=804,
+  serialized_start=953,
+  serialized_end=1000,
 )
 
 _CONFIG_SENSORIDSENTRY = _descriptor.Descriptor(
@@ -400,8 +441,8 @@ _CONFIG_SENSORIDSENTRY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=806,
-  serialized_end=854,
+  serialized_start=1002,
+  serialized_end=1050,
 )
 
 _CONFIG = _descriptor.Descriptor(
@@ -447,6 +488,13 @@ _CONFIG = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='rplidar_config', full_name='goldo.nucleo.robot.Config.rplidar_config', index=5,
+      number=50, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -459,24 +507,27 @@ _CONFIG = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=572,
-  serialized_end=854,
+  serialized_start=709,
+  serialized_end=1050,
 )
 
 _CONFIGLOADSTATUS.fields_by_name['status'].enum_type = _CONFIGLOADSTATUS_STATUS
 _CONFIGLOADSTATUS_STATUS.containing_type = _CONFIGLOADSTATUS
 _SERVOCONFIG.fields_by_name['type'].enum_type = _SERVOTYPE
 _SERVOSCONFIG.fields_by_name['servos'].message_type = _SERVOCONFIG
+_RPLIDARCONFIG.fields_by_name['tresholds'].message_type = goldo_dot_rplidar__pb2._TRESHOLDS
 _CONFIG_SERVOIDSENTRY.containing_type = _CONFIG
 _CONFIG_SENSORIDSENTRY.containing_type = _CONFIG
 _CONFIG.fields_by_name['servo_ids'].message_type = _CONFIG_SERVOIDSENTRY
 _CONFIG.fields_by_name['sensor_ids'].message_type = _CONFIG_SENSORIDSENTRY
+_CONFIG.fields_by_name['rplidar_config'].message_type = _RPLIDARCONFIG
 DESCRIPTOR.message_types_by_name['ConfigLoadBegin'] = _CONFIGLOADBEGIN
 DESCRIPTOR.message_types_by_name['ConfigLoadChunk'] = _CONFIGLOADCHUNK
 DESCRIPTOR.message_types_by_name['ConfigLoadEnd'] = _CONFIGLOADEND
 DESCRIPTOR.message_types_by_name['ConfigLoadStatus'] = _CONFIGLOADSTATUS
 DESCRIPTOR.message_types_by_name['ServoConfig'] = _SERVOCONFIG
 DESCRIPTOR.message_types_by_name['ServosConfig'] = _SERVOSCONFIG
+DESCRIPTOR.message_types_by_name['RPLidarConfig'] = _RPLIDARCONFIG
 DESCRIPTOR.message_types_by_name['Config'] = _CONFIG
 DESCRIPTOR.enum_types_by_name['ServoType'] = _SERVOTYPE
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
@@ -522,6 +573,13 @@ ServosConfig = _reflection.GeneratedProtocolMessageType('ServosConfig', (_messag
   # @@protoc_insertion_point(class_scope:goldo.nucleo.robot.ServosConfig)
   })
 _sym_db.RegisterMessage(ServosConfig)
+
+RPLidarConfig = _reflection.GeneratedProtocolMessageType('RPLidarConfig', (_message.Message,), {
+  'DESCRIPTOR' : _RPLIDARCONFIG,
+  '__module__' : 'goldo.nucleo.robot_pb2'
+  # @@protoc_insertion_point(class_scope:goldo.nucleo.robot.RPLidarConfig)
+  })
+_sym_db.RegisterMessage(RPLidarConfig)
 
 Config = _reflection.GeneratedProtocolMessageType('Config', (_message.Message,), {
 
