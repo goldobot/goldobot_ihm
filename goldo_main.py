@@ -157,6 +157,14 @@ class MainWindow(QMainWindow):
         self.posDRL.setText(" dr:")
         self.posDRL.setDisabled(False)
 
+        self.posDbg1L = QLabel()
+        self.posDbg1L.setText(" DEBUG: ")
+        self.posDbg1L.setDisabled(False)
+
+        self.posDbg2L = QLabel()
+        self.posDbg2L.setText(" DEBUG: ")
+        self.posDbg2L.setDisabled(False)
+
 
         main_layout = QHBoxLayout()
         table_layout = QVBoxLayout()
@@ -192,6 +200,8 @@ class MainWindow(QMainWindow):
         right_layout.addWidget(self.posXRL)
         right_layout.addWidget(self.posYRL)
         right_layout.addWidget(self.posDRL)
+        right_layout.addWidget(self.posDbg1L)
+        right_layout.addWidget(self.posDbg2L)
         right_layout.addStretch(16)
 
         main_layout.addWidget(self._widget_robot_status)

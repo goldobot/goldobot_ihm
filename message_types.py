@@ -118,5 +118,5 @@ RobotStratDbgResumeMatch=2050
 RobotStratDbgAstarMap=2051
 RobotStratDbgTestAstar=2052
 
-
+DebugGoldoVect=4096
 

@@ -19,6 +19,7 @@ class PropertiesEditorWidget(QWidget):
                 layout.addWidget(QLabel(k+' (°)'),i,0)
             else:
                 layout.addWidget(QLabel(k),i,0)
+            wid.setFixedWidth(100)
             layout.addWidget(wid,i,1)
             self._widgets.append(wid)
             i+=1

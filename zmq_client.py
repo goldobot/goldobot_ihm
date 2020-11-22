@@ -62,6 +62,8 @@ class ZmqClient(QObject):
         self._notifier_rplidar = QSocketNotifier(self._sub_socket_rplidar.getsockopt(zmq.FD), QSocketNotifier.Read, self)
         self._notifier_rplidar.activated.connect(self._on_sub_socket_rplidar_event)
 
+        self._debug_goldo_fd = open("log/debug_goldo.txt","wt")
+
     def send_message(self, message_type, message_body):
         #dbg_msg = struct.pack('<H',message_type) + message_body
         #hexdump(dbg_msg)
@@ -106,6 +108,7 @@ class ZmqClient(QObject):
 
         self.message_received.emit(msg)
         msg_type = struct.unpack('<H', msg[0:2])[0]
+        #print(msg_type)
 
         if msg_type == message_types.GetNucleoFirmwareVersion:
             firm_ver = NucleoFirmwareVersion(msg[2:])
@@ -122,6 +125,15 @@ class ZmqClient(QObject):
             print(event_id, msg[3:])
         if msg_type == message_types.DebugGoldo:
             self.debug_goldo.emit(struct.unpack('<I',msg[2:])[0])
+        if msg_type == message_types.DebugGoldoVect:
+            vec = struct.unpack('<'+'i'*4,msg[2:])
+            my_log = ""
+            for val in vec:
+                my_log += "{:12.3f} ".format(0.001*val)
+            my_log += "\n"
+            #print (my_log)
+            self._debug_goldo_fd.write(my_log)
+            self._debug_goldo_fd.flush()
         if msg_type == message_types.RobotEndLoadConfigStatus:
             self.robot_end_load_config_status.emit(bool(struct.unpack('<B',msg[2:])[0]))
             

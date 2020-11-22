@@ -1,3 +1,9 @@
+#  dist_per_count_left: 1.966033264580682e-05
+#  dist_per_count_right: 1.9621583742116328e-05
+#  wheels_spacing: 189.5e-3
+#  wheels_spacing(1): 189.25e-3 => 88.8
+#  wheels_spacing(2): 189.24e-3 => 89.4
+#  wheels_spacing(3): 189.23e-3 => 90.1 - ASSYMETRY! (86.2)
 geometry:
   front_length: 106.5
   back_length: 101.5
@@ -5,11 +11,11 @@ geometry:
     - [0,116.5]
     - [10,20]
 odometry:
-  dist_per_count_left: -1.966033264580682e-05
-  dist_per_count_right: -1.9621583742116328e-05
-  encoder_period: 8192
+  dist_per_count_left: 1.96402839301916e-05
+  dist_per_count_right: 1.9632949210414e-05
+  encoder_period: 32768
   update_period: 1.0e-3
-  wheels_spacing: 189.5e-3
+  wheels_spacing: 189.25e-3
   speed_filter_period: 5.0e-3
 propulsion:
   pid_static:
