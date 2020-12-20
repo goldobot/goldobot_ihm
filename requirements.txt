@@ -1,6 +1,6 @@
-matplotlib
-PyQt5
-pyzmq
-PyYAML
-scapy
+matplotlib>=3.3.0,<3.4.0
+PyQt5>=5.15.0,<5.16.0
+pyzmq>=20.0.0,<20.1.0
+PyYAML>=5.3.0,<5.4.0
+protobuf>=3.14.0,<3.15.0
 
