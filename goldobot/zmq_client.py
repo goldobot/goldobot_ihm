@@ -34,6 +34,7 @@ class ZmqClient(QObject):
     dynamixel_registers = pyqtSignal(int, int, object)
     fpga_registers = pyqtSignal(int, int)
     fpga_registers_crc = pyqtSignal(int, int, int)
+    asserv_plot = pyqtSignal(int, int)
     sensors = pyqtSignal(int)
     gpio = pyqtSignal(int)
     debug_goldo = pyqtSignal(int)
@@ -59,6 +60,7 @@ class ZmqClient(QObject):
         self._notifier_main = QSocketNotifier(self._socket_main_sub.getsockopt(zmq.FD), QSocketNotifier.Read, self)
         self._notifier_main.activated.connect(self._on_socket_main_sub)
        
+        self._goldo_log_fd = open("goldo_log.txt","wt")
 
     def send_message(self, message_type, message_body):
         self._push_socket.send_multipart([struct.pack('<H',message_type), message_body])
@@ -100,6 +102,16 @@ class ZmqClient(QObject):
                 self.fpga_registers.emit(msg.apb_address, msg.apb_value)
             if topic == 'rplidar/out/scan':
                 self.rplidar_plot.emit(msg)
+            if topic == 'nucleo/out/dbg_goldo':
+                #print("nucleo/out/dbg_goldo : {:8x}".format(msg.value))
+                val = msg.value
+                ts = val & 0xffff0000
+                ts = ts >> 16
+                pos = val & 0x0000ffff
+                if pos & 0x00008000 == 0x00008000: pos -= 0x10000
+                self._goldo_log_fd.write("{} {}\n". format(ts,pos))
+                self._goldo_log_fd.flush()
+                self.asserv_plot.emit(ts, pos)
         self._notifier_main.setEnabled(True)
 
 

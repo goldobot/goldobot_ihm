@@ -27,6 +27,7 @@ from dialogs.test_arms import TestArmsDialog
 from dialogs.test_actuators import TestActuatorsDialog
 from dialogs.test_dynamixels import TestDynamixelAx12Dialog
 from dialogs.debug_fpga import DebugFpgaDialog
+from dialogs.debug_asserv import DebugAsservDialog
 from dialogs.sequences import SequencesDialog
 from dialogs.score import ScoreDialog
 from dialogs.test_hal import HalTestDialog
@@ -52,6 +53,7 @@ dialogs = [
     ("Test dynamixels", TestDynamixelAx12Dialog),
     ("Test actionneurs", TestActuatorsDialog),
     ("Debug FPGA", DebugFpgaDialog),
+    ("Debug asserv", DebugAsservDialog),
     ("Test sequences", SequencesDialog),
     ('Score', ScoreDialog)
  ]

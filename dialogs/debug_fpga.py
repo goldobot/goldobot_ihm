@@ -42,14 +42,17 @@ class DebugFpgaDialog(QDialog):
         self._button_write_registers = QPushButton('Write')
         layout.addWidget(self._button_write_registers, 4, 1)
 
-        self._button_get_err_cnt = QPushButton('GetErrCnt')
-        layout.addWidget(self._button_get_err_cnt, 5, 0)
+        self._button_dbg_goldo = QPushButton('DbgGoldo')
+        layout.addWidget(self._button_dbg_goldo, 5, 0)
+        self._line_edit_dbg_goldo = QLineEdit()
+        self._line_edit_dbg_goldo.setText("{:>08x}".format(0))
+        layout.addWidget(self._line_edit_dbg_goldo,5,1)
 
         self.setLayout(layout)
 
         self._button_read_registers.clicked.connect(self.read_registers)
         self._button_write_registers.clicked.connect(self.write_registers)
-        self._button_get_err_cnt.clicked.connect(self.get_err_cnt)
+        self._button_dbg_goldo.clicked.connect(self.dbg_goldo)
 
     def set_client(self, client):
         self._client = client
@@ -68,8 +71,13 @@ class DebugFpgaDialog(QDialog):
         msg = _sym_db.GetSymbol('goldo.nucleo.fpga.RegWrite')(apb_address = my_addr, apb_value = my_data)
         self._client.publishTopic('nucleo/in/fpga/reg/write', msg)
 
-    def get_err_cnt(self):
-        self._client.send_message(message_types.FpgaDbgGetErrCnt, bytes())
+    def dbg_goldo(self):
+        #self._client.send_message(message_types.FpgaDbgGetErrCnt, bytes())
+        val = int(self._line_edit_dbg_goldo.text(),16)
+        #msg = _sym_db.GetSymbol('google.protobuf.UInt32Value')(value = 0x00000030)
+        msg = _sym_db.GetSymbol('google.protobuf.UInt32Value')(value = val)
+        print("{:8x}".format(msg.value))
+        self._client.publishTopic('nucleo/in/dbg_goldo', msg)
 
     def _on_fpga_registers(self, apb_addr, apb_data):
         self._line_edit_apb_addr.setText("{:>08x}".format(apb_addr&0xffffffff))
