@@ -22,6 +22,10 @@ class DebugAsservDialog(QDialog):
     default_Kp_val = 4.0
     default_Ki_val = 0.0625
     default_Kd_val = 1.0
+    default_range_val = 4095
+    default_clamp_val = 448
+    default_bltrig_val = 80
+    default_goto_speed_val = 40
 
     def __init__(self, parent = None):
         super(DebugAsservDialog, self).__init__(None)
@@ -81,6 +85,54 @@ class DebugAsservDialog(QDialog):
         self._button_set_Kd = QPushButton('Set')
         self._button_set_Kd.setFixedWidth(100)
         ctrl_layout.addWidget(self._button_set_Kd, li, 2)
+        li += 1
+
+        self._label_range = QLabel('Range')
+        self._label_range.setFixedWidth(100)
+        ctrl_layout.addWidget(self._label_range, li, 0)
+        self._line_edit_range = QLineEdit()
+        self._line_edit_range.setFixedWidth(100)
+        self._line_edit_range.setText("{:>d}".format(DebugAsservDialog.default_range_val))
+        ctrl_layout.addWidget(self._line_edit_range, li, 1)
+        self._button_set_range = QPushButton('Set')
+        self._button_set_range.setFixedWidth(100)
+        ctrl_layout.addWidget(self._button_set_range, li, 2)
+        li += 1
+
+        self._label_clamp = QLabel('Clamp')
+        self._label_clamp.setFixedWidth(100)
+        ctrl_layout.addWidget(self._label_clamp, li, 0)
+        self._line_edit_clamp = QLineEdit()
+        self._line_edit_clamp.setFixedWidth(100)
+        self._line_edit_clamp.setText("{:>d}".format(DebugAsservDialog.default_clamp_val))
+        ctrl_layout.addWidget(self._line_edit_clamp, li, 1)
+        self._button_set_clamp = QPushButton('Set')
+        self._button_set_clamp.setFixedWidth(100)
+        ctrl_layout.addWidget(self._button_set_clamp, li, 2)
+        li += 1
+
+        self._label_bltrig = QLabel('Bltrig')
+        self._label_bltrig.setFixedWidth(100)
+        ctrl_layout.addWidget(self._label_bltrig, li, 0)
+        self._line_edit_bltrig = QLineEdit()
+        self._line_edit_bltrig.setFixedWidth(100)
+        self._line_edit_bltrig.setText("{:>d}".format(DebugAsservDialog.default_bltrig_val))
+        ctrl_layout.addWidget(self._line_edit_bltrig, li, 1)
+        self._button_set_bltrig = QPushButton('Set')
+        self._button_set_bltrig.setFixedWidth(100)
+        ctrl_layout.addWidget(self._button_set_bltrig, li, 2)
+        li += 1
+
+        self._label_goto_speed = QLabel('Speed')
+        self._label_goto_speed.setFixedWidth(100)
+        ctrl_layout.addWidget(self._label_goto_speed, li, 0)
+        self._line_edit_goto_speed = QLineEdit()
+        self._line_edit_goto_speed.setFixedWidth(100)
+        self._line_edit_goto_speed.setText("{:>d}".format(DebugAsservDialog.default_goto_speed_val))
+        ctrl_layout.addWidget(self._line_edit_goto_speed, li, 1)
+        self._button_set_goto_speed = QPushButton('Set')
+        self._button_set_goto_speed.setFixedWidth(100)
+        ctrl_layout.addWidget(self._button_set_goto_speed, li, 2)
         li += 1
 
         self._button_homing = QPushButton('Homing')
@@ -162,6 +214,10 @@ class DebugAsservDialog(QDialog):
         self._button_set_Kp.clicked.connect(self.set_Kp)
         self._button_set_Ki.clicked.connect(self.set_Ki)
         self._button_set_Kd.clicked.connect(self.set_Kd)
+        self._button_set_range.clicked.connect(self.set_range)
+        self._button_set_clamp.clicked.connect(self.set_clamp)
+        self._button_set_bltrig.clicked.connect(self.set_bltrig)
+        self._button_set_goto_speed.clicked.connect(self.set_goto_speed)
         self._button_homing.clicked.connect(lambda:self.cmd_generic("Homing",0x50000000))
         self._button_jump.clicked.connect(self.cmd_jump)
         self._button_jump_zero.clicked.connect(self.cmd_jump_zero)
@@ -207,6 +263,50 @@ class DebugAsservDialog(QDialog):
         Kd_cmd = self.conv_fp_k_cmd(Kd_float, 0x40000000)
         print ("Kd_cmd = {:>08x}".format(Kd_cmd))
         msg = _sym_db.GetSymbol('goldo.nucleo.fpga.RegWrite')(apb_address = self.fpga_cmd_reg, apb_value = Kd_cmd)
+        self._client.publishTopic('nucleo/in/fpga/reg/write', msg)
+
+    def set_range(self):
+        new_range = int(self._line_edit_range.text())
+        if ((new_range<0) or (new_range>4095)):
+            print ("Illegal range : {:d}".format(new_range))
+            return
+        print ("new_range = {:d}".format(new_range))
+        cmd = (new_range<<16) | 0x80000000
+        print ("cmd = {:>08x}".format(cmd))
+        msg = _sym_db.GetSymbol('goldo.nucleo.fpga.RegWrite')(apb_address = self.fpga_cmd_reg, apb_value = cmd)
+        self._client.publishTopic('nucleo/in/fpga/reg/write', msg)
+
+    def set_clamp(self):
+        new_clamp = int(self._line_edit_clamp.text())
+        if ((new_clamp<0) or (new_clamp>511)):
+            print ("Illegal clamp : {:d}".format(new_clamp))
+            return
+        print ("new_clamp = {:d}".format(new_clamp))
+        cmd = (new_clamp) | 0x80000000
+        print ("cmd = {:>08x}".format(cmd))
+        msg = _sym_db.GetSymbol('goldo.nucleo.fpga.RegWrite')(apb_address = self.fpga_cmd_reg, apb_value = cmd)
+        self._client.publishTopic('nucleo/in/fpga/reg/write', msg)
+
+    def set_bltrig(self):
+        new_bltrig = int(self._line_edit_bltrig.text())
+        if ((new_bltrig<0) or (new_bltrig>4095)):
+            print ("Illegal bltrig : {:d}".format(new_bltrig))
+            return
+        print ("new_bltrig = {:d}".format(new_bltrig))
+        cmd = (new_bltrig<<16) | 0x90000000
+        print ("cmd = {:>08x}".format(cmd))
+        msg = _sym_db.GetSymbol('goldo.nucleo.fpga.RegWrite')(apb_address = self.fpga_cmd_reg, apb_value = cmd)
+        self._client.publishTopic('nucleo/in/fpga/reg/write', msg)
+
+    def set_goto_speed(self):
+        new_goto_speed = int(self._line_edit_goto_speed.text())
+        if ((new_goto_speed<0) or (new_goto_speed>4095)):
+            print ("Illegal goto_speed : {:d}".format(new_goto_speed))
+            return
+        print ("new_goto_speed = {:d}".format(new_goto_speed))
+        cmd = (new_goto_speed) | 0x90000000
+        print ("cmd = {:>08x}".format(cmd))
+        msg = _sym_db.GetSymbol('goldo.nucleo.fpga.RegWrite')(apb_address = self.fpga_cmd_reg, apb_value = cmd)
         self._client.publishTopic('nucleo/in/fpga/reg/write', msg)
 
     def cmd_jump(self):
