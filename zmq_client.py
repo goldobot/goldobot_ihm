@@ -6,6 +6,7 @@ import scapy
 from messages import NucleoFirmwareVersion
 from messages import PropulsionTelemetry
 from messages import PropulsionTelemetryEx
+from messages import GoldoTelemetry
 from messages import RplidarPlot
 from messages import RplidarRobotDetection
 from messages import OdometryConfig
@@ -24,6 +25,7 @@ class ZmqClient(QObject):
     comm_stats = pyqtSignal(object)
     propulsion_telemetry = pyqtSignal(object)
     propulsion_telemetry_ex = pyqtSignal(object)
+    goldo_telemetry = pyqtSignal(object)
     rplidar_plot = pyqtSignal(object)
     rplidar_robot_detection = pyqtSignal(object)
     astar_dbg_map = pyqtSignal(object)
@@ -63,6 +65,10 @@ class ZmqClient(QObject):
         self._notifier_rplidar.activated.connect(self._on_sub_socket_rplidar_event)
 
         self._debug_goldo_fd = open("log/debug_goldo.txt","wt")
+        self._debug_goldo_left_old = 0
+        self._debug_goldo_right_old = 0
+        self._debug_goldo_left_acc = 0
+        self._debug_goldo_right_acc = 0
 
     def send_message(self, message_type, message_body):
         #dbg_msg = struct.pack('<H',message_type) + message_body
@@ -117,23 +123,86 @@ class ZmqClient(QObject):
 
         if msg_type == message_types.SensorsChange:
             self.sensors.emit(struct.unpack('<I',msg[2:])[0])
+
         if msg_type == message_types.GPIODebug:
             self.gpio.emit(struct.unpack('<I',msg[2:])[0])
+
         if msg_type == message_types.SequenceEvent:
             event_id = struct.unpack('<B',msg[2:3])[0]
             self.sequence_event.emit(event_id, msg[3:])
             print(event_id, msg[3:])
+
         if msg_type == message_types.DebugGoldo:
             self.debug_goldo.emit(struct.unpack('<I',msg[2:])[0])
+
         if msg_type == message_types.DebugGoldoVect:
-            vec = struct.unpack('<'+'i'*4,msg[2:])
+            vec = struct.unpack('<'+'IhhiHH',msg[2:])
             my_log = ""
-            for val in vec:
-                my_log += "{:12.3f} ".format(0.001*val)
+            my_log += "{:12.3f} ".format(0.001*vec[0])
+            my_log += "{:12.3f} ".format(0.001*vec[1])
+            my_log += "{:12.3f} ".format(0.001*vec[2])
+            my_log += "{:12.3f} ".format(0.001*vec[3])
+            left = vec[4]
+            right = vec[5]
+            delta_left = left - self._debug_goldo_left_old
+            if (self._debug_goldo_left_old>24576) and (left<8192):
+                delta_left += 32768
+            elif (self._debug_goldo_left_old<8192) and (left>24576):
+                delta_left -= 32768
+            delta_right = right - self._debug_goldo_right_old
+            if (self._debug_goldo_right_old>24576) and (right<8192):
+                delta_right += 32768
+            elif (self._debug_goldo_right_old<8192) and (right>24576):
+                delta_right -= 32768
+            self._debug_goldo_left_acc += delta_left
+            self._debug_goldo_right_acc += delta_right
+            my_log += "{:6d} ".format(self._debug_goldo_left_acc)
+            my_log += "{:6d} ".format(self._debug_goldo_right_acc)
+            my_log += "{:6d} ".format(delta_left)
+            my_log += "{:6d} ".format(delta_right)
             my_log += "\n"
             #print (my_log)
             self._debug_goldo_fd.write(my_log)
             self._debug_goldo_fd.flush()
+            self._debug_goldo_left_old = left
+            self._debug_goldo_right_old = right
+
+        if msg_type == message_types.DebugGoldoVectSimple:
+            vec = struct.unpack('<'+'IHH',msg[2:])
+            my_log = ""
+            my_log += "{:12.3f} ".format(0.001*vec[0])
+            my_log += "{:12.3f} ".format(0.0)
+            my_log += "{:12.3f} ".format(0.0)
+            my_log += "{:12.3f} ".format(0.0)
+            left = vec[1]
+            right = vec[2]
+            delta_left = left - self._debug_goldo_left_old
+            if (self._debug_goldo_left_old>24576) and (left<8192):
+                delta_left += 32768
+            elif (self._debug_goldo_left_old<8192) and (left>24576):
+                delta_left -= 32768
+            delta_right = right - self._debug_goldo_right_old
+            if (self._debug_goldo_right_old>24576) and (right<8192):
+                delta_right += 32768
+            elif (self._debug_goldo_right_old<8192) and (right>24576):
+                delta_right -= 32768
+            self._debug_goldo_left_acc += delta_left
+            self._debug_goldo_right_acc += delta_right
+            my_log += "{:6d} ".format(self._debug_goldo_left_acc)
+            my_log += "{:6d} ".format(self._debug_goldo_right_acc)
+            my_log += "{:6d} ".format(delta_left)
+            my_log += "{:6d} ".format(delta_right)
+            my_log += "\n"
+            #print (my_log)
+            self._debug_goldo_fd.write(my_log)
+            self._debug_goldo_fd.flush()
+            self._debug_goldo_left_old = left
+            self._debug_goldo_right_old = right
+
+        if msg_type == message_types.DebugGoldoVectAsserv:
+            telemetry = GoldoTelemetry(msg[2:])
+            self.goldo_telemetry.emit(telemetry)
+
         if msg_type == message_types.RobotEndLoadConfigStatus:
             self.robot_end_load_config_status.emit(bool(struct.unpack('<B',msg[2:])[0]))
             

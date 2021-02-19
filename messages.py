@@ -35,6 +35,17 @@ class PropulsionTelemetryEx:
         self.left_encoder_acc = unpacked[10]
         self.right_encoder_acc = unpacked[11]
 
+class GoldoTelemetry:
+    def __init__(self, data):
+        unpacked = struct.unpack('<Ihhihhi', data)
+        self.ts = 0.001 * unpacked[0]
+        self.x = 0.001 * unpacked[1]
+        self.y = 0.001 * unpacked[2]
+        self.theta_rad = 0.001 * unpacked[3]
+        self.target_x = 0.001 * unpacked[4]
+        self.target_y = 0.001 * unpacked[5]
+        self.target_theta_rad = 0.001 * unpacked[6]
+
 class RplidarPlot:
     def __init__(self, data):
         unpacked = struct.unpack('<ihh', data)

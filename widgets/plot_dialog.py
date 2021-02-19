@@ -37,6 +37,10 @@ class PlotDialog(QtWidgets.QWidget):
         self.axes.plot(points, '*-')
         self.canvas.draw()
         
+    def plot_curve_with_ts(self,ts,points):
+        self.axes.plot(ts, points, '-')
+        self.canvas.draw()
+        
 class ControlPlots(QtWidgets.QDialog):
     def __init__(self,  parent=None):
         super(ControlPlots, self).__init__(parent)

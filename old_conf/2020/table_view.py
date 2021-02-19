@@ -1,5 +1,6 @@
 import math
 import os
+import time
 
 from PyQt5.QtCore import QObject, pyqtSignal, QSize, QRectF, QPointF, Qt
 
@@ -9,6 +10,8 @@ from PyQt5.QtWidgets import QGraphicsPixmapItem
 
 from PyQt5.QtGui import QPolygonF, QPen, QBrush, QColor, QFont, QTransform
 from PyQt5.QtGui import QImage, QImageReader, QPixmap
+
+from PyQt5.QtCore import QTimer
 
 
 class MyGraphicsScene(QGraphicsScene):
@@ -37,9 +40,7 @@ class TableViewWidget(QGraphicsView):
     #g_detect_text = "none"
     g_rplidar_remanence = False
     g_rplidar_plot_life_ms = 1000
-    g_update_other_robots = False
-    g_show_theme = False
-    g_debug = False
+    g_update_other_robots = True
 
 
     def __init__(self, parent = None, ihm_type='pc'):
@@ -143,13 +144,6 @@ class TableViewWidget(QGraphicsView):
 #        self._big_robot.setZValue(1)
         self._little_robot = self._scene.addPolygon(little_robot_poly, QPen(), QBrush(QColor('red')))
         self._little_robot.setZValue(1)
-        # FIXME : DEBUG
-        if TableViewWidget.g_debug:
-            dbg_plt_sz = 0.2
-            self._little_robot_center = self._scene.addEllipse(1000.0 - dbg_plt_sz, -1397.0 - dbg_plt_sz, 2*dbg_plt_sz, 2*dbg_plt_sz, QPen(QBrush(QColor('black')),0.1), QBrush(QColor('yellow')))
-            self._little_robot_center.setZValue(100)
-            new_p = self._scene.addEllipse(1000.0 - dbg_plt_sz, -1397.0 - dbg_plt_sz, 2*dbg_plt_sz, 2*dbg_plt_sz, QPen(QBrush(QColor('black')),0.1), QBrush(QColor('yellow')))
-            new_p.setZValue(100)
         #self._friend_robot = self._scene.addEllipse(-100, -100, 200, 200, QPen(QBrush(QColor('black')),4), QBrush(QColor('green')))
         self._friend_robot = self._scene.addEllipse(-100, -100, TableViewWidget.g_detect_size, TableViewWidget.g_detect_size, QPen(QBrush(QColor('black')),4), QBrush(QColor('white')))
         self._friend_robot.setZValue(1)
@@ -200,19 +194,16 @@ class TableViewWidget(QGraphicsView):
 
         #self._scene.addRect(QRectF(0,-1500,2000,3000),QPen(), QBrush(background))
 
-        if TableViewWidget.g_show_theme:
-            f=open("widgets/table_2020_600x400.png","rb")
-            my_buff=f.read()
-            test_img_pixmap2 = QPixmap()
-            test_img_pixmap2.loadFromData(my_buff)
-            #self.setPixmap(test_img_pixmap2)
-            self._bg_img = QGraphicsPixmapItem(test_img_pixmap2)
-            self._bg_img.setTransform(QTransform(1.0, 0.0, 0.0,  0.0, -1.0, 0.0,   0.0, 0.0, 0.2))
-            self._bg_img.setRotation(-90)
-            self._bg_img.setPos(0, -1500)
-            self._scene.addItem(self._bg_img);
-        else:
-            self._scene.addRect(QRectF(0,-1500,2000,3000))
+        f=open("widgets/table_2020_600x400.png","rb")
+        my_buff=f.read()
+        test_img_pixmap2 = QPixmap()
+        test_img_pixmap2.loadFromData(my_buff)
+        #self.setPixmap(test_img_pixmap2)
+        self._bg_img = QGraphicsPixmapItem(test_img_pixmap2)
+        self._bg_img.setTransform(QTransform(1.0, 0.0, 0.0,  0.0, -1.0, 0.0,   0.0, 0.0, 0.2))
+        self._bg_img.setRotation(-90)
+        self._bg_img.setPos(0, -1500)
+        self._scene.addItem(self._bg_img);
 
         # Scenario 2020
 
@@ -283,14 +274,12 @@ class TableViewWidget(QGraphicsView):
 #        self._big_robot_y = 0
         self._little_robot_x = 0
         self._little_robot_y = 0
-        self._little_robot_theta = 0
-        self._dbg_x_mm = 0
-        self._dbg_y_mm = 0
-        self._dbg_shift_rot_mm = 0
-        self._dbg_rot_cnt = 0
 
-        self.last_plot_ts = 0
         self.plot_graph_l = []
+
+        self.plot_timer = QTimer(self)
+        self.plot_timer.timeout.connect(self.kill_old_plots)
+        self.plot_timer.start(100)
 
         TableViewWidget.g_table_view = self
 
@@ -348,49 +337,16 @@ class TableViewWidget(QGraphicsView):
         self._little_robot.setRotation(telemetry.yaw * 180 / math.pi)
         self._little_robot_x = telemetry.x * 1000
         self._little_robot_y = telemetry.y * 1000
-        # FIXME : DEBUG
-        if TableViewWidget.g_debug:
-            new_theta = telemetry.yaw * 180 / math.pi
-            self._little_robot_center.setPos(telemetry.x * 1000, telemetry.y * 1000)
-            dbg_plt_sz = 0.2
-            delta_x_mm = (telemetry.x * 1000 - self._dbg_x_mm)
-            delta_y_mm = (telemetry.y * 1000 - self._dbg_y_mm)
-            delta_d_mm = math.sqrt(delta_x_mm*delta_x_mm + delta_y_mm*delta_y_mm)
-            if (delta_d_mm > 0.1):
-                self._dbg_x_mm = telemetry.x * 1000
-                self._dbg_y_mm = telemetry.y * 1000
-                new_p = self._scene.addEllipse(self._dbg_x_mm-dbg_plt_sz, self._dbg_y_mm-dbg_plt_sz, 2*dbg_plt_sz, 2*dbg_plt_sz, QPen(QBrush(QColor('black')),0.1), QBrush(QColor('yellow')))
-                new_p.setZValue(100)
-            delta_center_x_mm = (telemetry.x * 1000 - 1000.0)
-            delta_center_y_mm = (telemetry.y * 1000 + 1397.0)
-            delta_center_R_mm = math.sqrt(delta_center_x_mm*delta_center_x_mm + delta_center_y_mm*delta_center_y_mm)
-            if (self._dbg_shift_rot_mm<delta_center_R_mm) and (delta_center_R_mm<1000.0):
-                self._dbg_shift_rot_mm = delta_center_R_mm
-            disp_window = self.parent().parent()
-            disp_window.posDbg1L.setText(" DEBUG : shift_rot={:>9.3f}".format(self._dbg_shift_rot_mm))
-            old_theta = self._little_robot_theta
-            theta_treshold = 90.01
-            #theta_treshold = 89.99
-            if ((old_theta>85.0) and (old_theta<theta_treshold)):
-                if ((new_theta>=theta_treshold)):
-                    #print ("old_theta={:f}".format(old_theta))
-                    #print ("new_theta={:f}".format(new_theta))
-                    self._dbg_rot_cnt += 1
-            elif ((old_theta>=theta_treshold) and (old_theta<95.0)):
-                if ((new_theta<theta_treshold)):
-                    self._dbg_rot_cnt -= 1
-            disp_window.posDbg2L.setText(" DEBUG : rot_cnt={:d}".format(self._dbg_rot_cnt))
-            self._little_robot_theta = new_theta
-
 
     def update_plots(self, my_plot):
         dbg_plt_sz = 1
-        self.last_plot_ts = my_plot.timestamp
-        my_plot_ellipse = self._scene.addEllipse(my_plot.x * 1000 - dbg_plt_sz, my_plot.y * 1000 - dbg_plt_sz, 2*dbg_plt_sz, 2*dbg_plt_sz, QPen(QBrush(QColor('black')),2), QBrush(QColor('red')))
+        my_plot_ellipse = self._scene.addEllipse(my_plot.x * 1000 - dbg_plt_sz, my_plot.y * 1000 - dbg_plt_sz, 2*dbg_plt_sz, 2*dbg_plt_sz, QPen(QBrush(QColor('blue')),0.1), QBrush(QColor('yellow')))
         my_plot_ellipse.setZValue(100)
-        self.plot_graph_l.append((my_plot,my_plot_ellipse))
+        self.plot_graph_l.append((my_plot,my_plot_ellipse,time.time()))
+
+    def kill_old_plots(self):
         for rec in self.plot_graph_l:
-            if (self.last_plot_ts-rec[0].timestamp>TableViewWidget.g_rplidar_plot_life_ms):
+            if (((time.time()-rec[2])*1000.0)>TableViewWidget.g_rplidar_plot_life_ms):
                 rec_ellipse = rec[1]
                 self._scene.removeItem(rec_ellipse)
                 self.plot_graph_l.remove(rec)
@@ -442,10 +398,7 @@ class TableViewWidget(QGraphicsView):
             self._debug_edit_point_l.append((_new_x,_new_y))
 
     def debug_line_to(self, _new_x, _new_y):
-        if TableViewWidget.g_show_theme:
-            my_segm = self._scene.addLine(self.debug_cur_x, self.debug_cur_y, _new_x, _new_y, QPen(QColor(255,255,255)));
-        else:
-            my_segm = self._scene.addLine(self.debug_cur_x, self.debug_cur_y, _new_x, _new_y, QPen(QColor(128,128,128)));
+        my_segm = self._scene.addLine(self.debug_cur_x, self.debug_cur_y, _new_x, _new_y, QPen(QColor(255,255,255)));
         self._traj_segm_l.append(my_segm)
         self.debug_cur_x = _new_x
         self.debug_cur_y = _new_y

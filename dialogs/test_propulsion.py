@@ -5,7 +5,9 @@ from PyQt5.QtWidgets import QTabWidget
 from PyQt5.QtWidgets import QSpinBox
 from PyQt5.QtWidgets import QLabel
 from PyQt5.QtWidgets import QLineEdit
-from PyQt5.QtCore import  QTimer
+from PyQt5.QtWidgets import QShortcut
+from PyQt5.QtCore import Qt, QTimer
+from PyQt5.QtGui import QKeySequence
 
 from widgets.properties_editor import PropertiesEditorWidget
 from widgets.table_view import TableViewWidget
@@ -34,12 +36,9 @@ class PropulsionTestDialog(QDialog):
         self._set_pwm_button = QPushButton('set pwm')
         self._zero_pwm_button = QPushButton('zero pwm')
 
-        self._position_steps_button = QPushButton('position steps')
-        self._speed_steps_button = QPushButton('speed steps')
-        self._yaw_rate_steps_button = QPushButton('yaw rate steps')
-        self._yaw_steps_button = QPushButton('yaw steps')
+        self._execute_translation_button = QPushButton('translation')
         self._execute_rotation_button = QPushButton('rotation')
-        self._execute_trajectory_button = QPushButton('trajectory')
+        self._goldo_traj_button = QPushButton('trajectory')
         self._start_traj_edit_button = QPushButton('start_traj_edit')
         self._end_traj_edit_button = QPushButton('end_traj_edit')
 
@@ -49,43 +48,62 @@ class PropulsionTestDialog(QDialog):
         self._button_set_pose = QPushButton('set pose')
         self._button_reposition = QPushButton('reposition')
 
+        self._F11_shortcut = QShortcut(QKeySequence(Qt.Key_F11), self)
+        self._F11_shortcut.activated.connect(self._test_prop_goldo_start)
+        self._F12_shortcut = QShortcut(QKeySequence(Qt.Key_F12), self)
+        self._F12_shortcut.activated.connect(self._test_prop_goldo_stop)
+
+        li = 0
+
         layout = QGridLayout()
-        layout.addWidget(self._propulsion_enable_button,0,0)
-        layout.addWidget(self._propulsion_disable_button,0,1)
+        layout.addWidget(self._propulsion_enable_button,li,0)
+        layout.addWidget(self._propulsion_disable_button,li,1)
+        li += 1
 
-        layout.addWidget(self._motors_enable_button,1,0)
-        layout.addWidget(self._motors_disable_button,1,1)
+        layout.addWidget(self._motors_enable_button,li,0)
+        layout.addWidget(self._motors_disable_button,li,1)
+        li += 1
 
-        layout.addWidget(QLabel('left pwm'),2,0)
-        layout.addWidget(self._left_pwm_spinbox,3,0)
+        layout.addWidget(QLabel('left pwm'),li,0)
+        layout.addWidget(QLabel('right pwm'),li,1)
+        li += 1
 
-        layout.addWidget(QLabel('right pwm'),2,1)
-        layout.addWidget(self._right_pwm_spinbox,3,1)
+        layout.addWidget(self._left_pwm_spinbox,li,0)
+        layout.addWidget(self._right_pwm_spinbox,li,1)
+        li += 1
 
-        layout.addWidget(self._set_pwm_button,4,0)
-        layout.addWidget(self._zero_pwm_button,4,1)
+        layout.addWidget(self._set_pwm_button,li,0)
+        layout.addWidget(self._zero_pwm_button,li,1)
+        li += 1
 
-        #layout.addWidget(self._set_pwm_button,5,0)
-        layout.addWidget(self._speed_steps_button,5,0)
-        layout.addWidget(self._yaw_rate_steps_button,5,1)
-        layout.addWidget(self._yaw_steps_button,6,1)
-        layout.addWidget(self._position_steps_button,6,0)
+        layout.addWidget(self._execute_translation_button,li,0)
+        li += 1
 
-        layout.addWidget(QLabel('x(mm)'),7,0)
-        layout.addWidget(self._pose_x_edit,7,1)
+        layout.addWidget(self._execute_rotation_button,li,0)
+        li += 1
 
-        layout.addWidget(QLabel('y(mm)'),8,0)
-        layout.addWidget(self._pose_y_edit,8,1)
+        layout.addWidget(QLabel('x(mm)'),li,0)
+        layout.addWidget(self._pose_x_edit,li,1)
+        li += 1
+
+        layout.addWidget(QLabel('y(mm)'),li,0)
+        layout.addWidget(self._pose_y_edit,li,1)
+        li += 1
         
-        layout.addWidget(QLabel('yaw(deg)'),9,0)
-        layout.addWidget(self._pose_yaw_edit,9,1)
+        layout.addWidget(QLabel('yaw(deg)'),li,0)
+        layout.addWidget(self._pose_yaw_edit,li,1)
+        li += 1
 
-        layout.addWidget(self._button_set_pose, 10,0)
-        layout.addWidget(self._button_reposition, 11,0)
+        layout.addWidget(self._button_set_pose,li,0)
+        layout.addWidget(self._button_reposition,li,1)
+        li += 1
 
-        layout.addWidget(self._start_traj_edit_button, 12,0)
-        layout.addWidget(self._end_traj_edit_button, 12,1)
-        layout.addWidget(self._execute_trajectory_button, 13,0)
+        layout.addWidget(self._start_traj_edit_button,li,0)
+        layout.addWidget(self._end_traj_edit_button,li,1)
+        li += 1
+
+        layout.addWidget(self._goldo_traj_button,li,0)
+        li += 1
 
         self.setLayout(layout)
         
@@ -96,18 +114,15 @@ class PropulsionTestDialog(QDialog):
         self._set_pwm_button.clicked.connect(self._set_pwm)
         self._zero_pwm_button.clicked.connect(self._zero_pwm)
 
-        self._position_steps_button.clicked.connect(self._position_steps)
-        self._speed_steps_button.clicked.connect(self._speed_steps)
-        self._yaw_rate_steps_button.clicked.connect(self._yaw_rate_steps)
-        self._yaw_steps_button.clicked.connect(self._yaw_steps)
+        self._execute_translation_button.clicked.connect(self._execute_translation)
+        self._execute_rotation_button.clicked.connect(self._execute_rotation)
 
         self._button_set_pose.clicked.connect(self._set_pose)
         self._button_reposition.clicked.connect(self._reposition_forward)
 
         self._start_traj_edit_button.clicked.connect(self._start_traj_edit)
         self._end_traj_edit_button.clicked.connect(self._end_traj_edit)
-        #self._execute_trajectory_button.clicked.connect(self._test_trajectory)
-        self._execute_trajectory_button.clicked.connect(self._test_traj_goldo)
+        self._goldo_traj_button.clicked.connect(self._test_traj_goldo)
 
         self._telemetry_buffer = []
         self._current_telemetry = None
@@ -118,31 +133,26 @@ class PropulsionTestDialog(QDialog):
 
     def set_client(self, client):
         self._client = client
-        self._client.propulsion_telemetry.connect(self._on_telemetry)
-        self._client.propulsion_telemetry_ex.connect(self._on_telemetry_ex)
+        self._client.goldo_telemetry.connect(self._on_goldo_telemetry)
 
-    def _on_telemetry(self, telemetry):
-        self._telemetry_buffer.append((telemetry, self._current_telemetry_ex))
-        self._current_telemetry = telemetry
-
-    def _on_telemetry_ex(self, telemetry):
-        self._current_telemetry_ex = telemetry
+    def _on_goldo_telemetry(self, telemetry):
+        self._telemetry_buffer.append(telemetry)
 
     def _propulsion_enable(self):
         print(struct.pack('<B',1))
-        self._client.send_message(message_types.DbgSetPropulsionEnable, struct.pack('<B',1))
+        self._client.send_message(message_types.PropulsionSetEnable, struct.pack('<B',1))
 
     def _propulsion_disable(self):
-        self._client.send_message(message_types.DbgSetPropulsionEnable, struct.pack('<B',0))
+        self._client.send_message(message_types.PropulsionSetEnable, struct.pack('<B',0))
 
     def _motors_enable(self):
-        self._client.send_message(message_types.DbgSetMotorsEnable, struct.pack('<B',1))
+        self._client.send_message(message_types.SetMotorsEnable, struct.pack('<B',1))
 
     def _motors_disable(self):
-        self._client.send_message(message_types.DbgSetMotorsEnable, struct.pack('<B',0))
+        self._client.send_message(message_types.SetMotorsEnable, struct.pack('<B',0))
 
     def _set_pwm(self):
-        self._client.send_message(message_types.DbgSetMotorsPwm, struct.pack('<ff',self._left_pwm_spinbox.value() * 0.01, self._right_pwm_spinbox.value() * 0.01 ))
+        self._client.send_message(message_types.SetMotorsPwm, struct.pack('<ff',self._left_pwm_spinbox.value() * 0.01, self._right_pwm_spinbox.value() * 0.01 ))
     
     def _zero_pwm(self):
         self._left_pwm_spinbox.setValue(0)
@@ -153,55 +163,39 @@ class PropulsionTestDialog(QDialog):
         x = int(self._pose_x_edit.text()) * 1e-3
         y = int(self._pose_y_edit.text()) * 1e-3
         yaw = int(self._pose_yaw_edit.text()) * math.pi / 180
-        self._client.send_message(message_types.DbgPropulsionSetPose, struct.pack('<fff', x, y, yaw))
+        self._client.send_message(message_types.PropulsionSetPose, struct.pack('<fff', x, y, yaw))
 
     def _reposition_forward(self):
-        self._client.send_message(message_types.DbgPropulsionExecuteReposition, struct.pack('<bffff', 1, 0.2, 0, -1, 1.500))
+        self._client.send_message(message_types.PropulsionExecuteReposition, struct.pack('<bffff', 1, 0.2, 0, -1, 1.500))
 
-    def _speed_steps(self):
-        self._client.send_message(message_types.DbgPropulsionTest, struct.pack('<B',0))
+    def _execute_rotation(self):
+        delta_yaw = math.pi/4
+        yaw_rate = 0.2
+        accel = 0.2
+        deccel = 0.2
+        self._client.send_message(message_types.DbgPropulsionExecuteRotation, struct.pack('<ffff',delta_yaw,yaw_rate,accel,deccel))
         self._telemetry_buffer = []
-        QTimer.singleShot(5000, self.foo)
+        QTimer.singleShot(9000, self._plot_rotation)
 
-    def _position_steps(self):
-        self._client.send_message(message_types.DbgPropulsionTest, struct.pack('<B',2))
+    def _execute_translation(self):
+        dist = 0.4
+        speed = 0.2
+        accel = 0.2
+        deccel = 0.2
+        self._client.send_message(message_types.DbgPropulsionExecuteTranslation, struct.pack('<ffff',dist,speed,accel,deccel))
         self._telemetry_buffer = []
-        QTimer.singleShot(9000, self.foo)
+        # FIXME : TODO
+        #QTimer.singleShot(9000, self._plot_translation)
 
-    def _yaw_rate_steps(self):
-        self._client.send_message(message_types.DbgPropulsionTest, struct.pack('<B',1))
-        self._telemetry_buffer = []
-        QTimer.singleShot(5000, self.foo)
-
-    def _yaw_steps(self):
-        self._client.send_message(message_types.DbgPropulsionTest, struct.pack('<B',3))
-        self._telemetry_buffer = []
-        QTimer.singleShot(10000, self.foo)
-
-    def _test_trajectory(self):
-        points = [(0,0), (500, 0)]
-        msg = b''.join([struct.pack('<fff',0.2,0.2,0.2)] + [struct.pack('<ff', p[0]*1e-3, p[1] * 1e-3) for p in points])
-        self._client.send_message(message_types.DbgPropulsionExecuteTrajectory, msg)
-        self._telemetry_buffer = []
-        QTimer.singleShot(5000, self.foo)
-
-
-    def foo(self):
+    def _plot_rotation(self):
         self._plt_widget = PlotDialog()
-        self._plt_widget.plot_curve(0,[t[1].target_x for t in self._telemetry_buffer])
-        self._plt_widget.plot_curve(0,[t[0].x for t in self._telemetry_buffer])
-
-        self._plt_widget.plot_curve(1,[t[1].target_speed for t in self._telemetry_buffer])
-        self._plt_widget.plot_curve(1,[t[0].speed for t in self._telemetry_buffer])
-
-        self._plt_widget.plot_curve(2,[t[1].target_yaw for t in self._telemetry_buffer])
-        self._plt_widget.plot_curve(2,[t[0].yaw for t in self._telemetry_buffer])
-
-        self._plt_widget.plot_curve(3,[t[1].target_yaw_rate for t in self._telemetry_buffer])
-        self._plt_widget.plot_curve(3,[t[0].yaw_rate for t in self._telemetry_buffer])
-
+        ts_vec = [t.ts for t in self._telemetry_buffer]
+        theta_vec = [t.theta_rad for t in self._telemetry_buffer]
+        target_theta_vec = [t.target_theta_rad for t in self._telemetry_buffer]
+        self._plt_widget.plot_curve_with_ts(ts_vec, theta_vec)
+        self._plt_widget.plot_curve_with_ts(ts_vec, target_theta_vec)
         self._plt_widget.show()
-        self._telemetry_buffer = []
+        #self._telemetry_buffer = []
 
     def _start_traj_edit(self):
         self._editing_traj = True
@@ -217,8 +211,18 @@ class PropulsionTestDialog(QDialog):
         if self._editing_traj: return
         print (self._traj_point_l)
         msg = b''.join([struct.pack('<fff',0.4,0.3,0.3)] + [struct.pack('<ff', p[0]*1e-3, p[1] * 1e-3) for p in self._traj_point_l])
-        #self._client.send_message_rplidar(message_types.DbgPropulsionExecuteTrajectory, msg)
-        self._client.send_message(message_types.DbgPropulsionExecuteTrajectory, msg)
+        #self._client.send_message_rplidar(message_types.PropulsionExecuteTrajectory, msg)
+        self._client.send_message(message_types.PropulsionExecuteTrajectory, msg)
         self._telemetry_buffer = []
-        #QTimer.singleShot(5000, self.foo)
+
+    def _test_prop_goldo_start(self):
+        print ("_test_prop_goldo_start")
+        self._client.send_message(message_types.PropulsionSetEnable, struct.pack('<B',0))
+        self._client.send_message(message_types.SetMotorsEnable, struct.pack('<B',1))
+        self._client.send_message(message_types.DbgSetMotorsPwm, struct.pack('<ff',self._left_pwm_spinbox.value() * 0.01, self._right_pwm_spinbox.value() * 0.01 ))
+
+    def _test_prop_goldo_stop(self):
+        print ("_test_prop_goldo_stop")
+        self._client.send_message(message_types.DbgSetMotorsPwm, struct.pack('<ff', 0.0, 0.0))
+        self._client.send_message(message_types.SetMotorsEnable, struct.pack('<B',0))
 
