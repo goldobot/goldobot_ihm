@@ -11,9 +11,10 @@ from google.protobuf import symbol_database as _symbol_database
 _sym_db = _symbol_database.Default()
 
 
-from goldo import pb2_options_pb2 as goldo_dot_pb2__options__pb2
 from goldo.nucleo import hal_pb2 as goldo_dot_nucleo_dot_hal__pb2
+from goldo.nucleo import odometry_pb2 as goldo_dot_nucleo_dot_odometry__pb2
 from goldo.nucleo import servos_pb2 as goldo_dot_nucleo_dot_servos__pb2
+from goldo import pb2_options_pb2 as goldo_dot_pb2__options__pb2
 
 
 DESCRIPTOR = _descriptor.FileDescriptor(
@@ -22,9 +23,9 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x12goldo/nucleo.proto\x12\x0cgoldo.nucleo\x1a\x17goldo/pb2_options.proto\x1a\x16goldo/nucleo/hal.proto\x1a\x19goldo/nucleo/servos.proto\"j\n\x0cNucleoConfig\x12(\n\x03hal\x18\x01 \x01(\x0b\x32\x1b.goldo.nucleo.hal.HalConfig\x12\x30\n\x06servos\x18\x06 \x03(\x0b\x32 .goldo.nucleo.servos.ServoConfigb\x06proto3'
+  serialized_pb=b'\n\x12goldo/nucleo.proto\x12\x0cgoldo.nucleo\x1a\x16goldo/nucleo/hal.proto\x1a\x1bgoldo/nucleo/odometry.proto\x1a\x19goldo/nucleo/servos.proto\x1a\x17goldo/pb2_options.proto\"\xa3\x01\n\x0cNucleoConfig\x12(\n\x03hal\x18\x01 \x01(\x0b\x32\x1b.goldo.nucleo.hal.HalConfig\x12\x37\n\x08odometry\x18\x04 \x01(\x0b\x32%.goldo.nucleo.odometry.OdometryConfig\x12\x30\n\x06servos\x18\x06 \x03(\x0b\x32 .goldo.nucleo.servos.ServoConfigb\x06proto3'
   ,
-  dependencies=[goldo_dot_pb2__options__pb2.DESCRIPTOR,goldo_dot_nucleo_dot_hal__pb2.DESCRIPTOR,goldo_dot_nucleo_dot_servos__pb2.DESCRIPTOR,])
+  dependencies=[goldo_dot_nucleo_dot_hal__pb2.DESCRIPTOR,goldo_dot_nucleo_dot_odometry__pb2.DESCRIPTOR,goldo_dot_nucleo_dot_servos__pb2.DESCRIPTOR,goldo_dot_pb2__options__pb2.DESCRIPTOR,])
 
 
 
@@ -45,7 +46,14 @@ _NUCLEOCONFIG = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='servos', full_name='goldo.nucleo.NucleoConfig.servos', index=1,
+      name='odometry', full_name='goldo.nucleo.NucleoConfig.odometry', index=1,
+      number=4, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='servos', full_name='goldo.nucleo.NucleoConfig.servos', index=2,
       number=6, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
@@ -63,11 +71,12 @@ _NUCLEOCONFIG = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=112,
-  serialized_end=218,
+  serialized_start=142,
+  serialized_end=305,
 )
 
 _NUCLEOCONFIG.fields_by_name['hal'].message_type = goldo_dot_nucleo_dot_hal__pb2._HALCONFIG
+_NUCLEOCONFIG.fields_by_name['odometry'].message_type = goldo_dot_nucleo_dot_odometry__pb2._ODOMETRYCONFIG
 _NUCLEOCONFIG.fields_by_name['servos'].message_type = goldo_dot_nucleo_dot_servos__pb2._SERVOCONFIG
 DESCRIPTOR.message_types_by_name['NucleoConfig'] = _NUCLEOCONFIG
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)

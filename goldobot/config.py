@@ -112,7 +112,7 @@ class RobotConfig:
         hal_config_buffer = self.hal_config.compile()
         
         #OdometryConfig
-        odometry_config_buffer = pb2.serialize(pb2.from_dict('goldo.nucleo.propulsion.OdometryConfig', self.yaml['odometry']))
+        odometry_config_buffer = pb2.serialize(self.config_proto.odometry)
         
         #Propulsion config
         propulsion_config_buffer = pb2.serialize(pb2.from_dict('goldo.nucleo.propulsion.PropulsionControllerConfig', self.yaml['propulsion']))
