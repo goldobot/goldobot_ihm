@@ -29,7 +29,6 @@ class RobotConfig:
         
         
         self.yaml = yaml.load(open(path + '/robot.yaml'),Loader=yaml.FullLoader)
-        #self.hal_config = HALConfig(yaml.load(open(path + '/hal.yaml'),Loader=yaml.FullLoader))
         self.robot_config = RobotConfig2(self.yaml['robot'])
         self.robot_simulator_config = RobotSimulatorConfig(self.yaml.get('robot_simulator', {}))
         self.path = path
@@ -37,11 +36,16 @@ class RobotConfig:
         #load nucleo config protobuf
         nucleo_config = _sym_db.GetSymbol('goldo.nucleo.NucleoConfig')()
         ParseDict(yaml.load(open(path + '/hal.yaml'),Loader=yaml.FullLoader), nucleo_config, ignore_unknown_fields=True)
+        ParseDict(yaml.load(open(path + '/robot.yaml'),Loader=yaml.FullLoader), nucleo_config, ignore_unknown_fields=True)
         print(nucleo_config)
         self.hal_config = HALConfig(nucleo_config.hal)
-        self.servos_config = pb2.from_dict('goldo.nucleo.robot.ServosConfig', { 'servos' : self.yaml['servos'] })
+        self.config_proto = nucleo_config
         
-        self.servo_nums = {s.name: s.id for s in self.servos_config.servos}
+        
+        
+        #self.servos_config = pb2.from_dict('goldo.nucleo.robot.ServosConfig', { 'servos' : self.yaml['servos'] })
+        
+        #self.servo_nums = {s.name: s.id for s in self.servos_config.servos}
         #self.load_dynamixels_config()
         if 'dc_motors' in self.yaml:
             self.dc_motors_indices = {s['name']:s['id'] for s in self.yaml['dc_motors']}
@@ -132,7 +136,7 @@ class RobotConfig:
         arm_positions_buffer = b''
         arm_torques_buffer = b''
         #Servo config buffer
-        servos_config_buffer = struct.pack('<H', len(self.servos_config.servos)) + b''.join([pb2.serialize(s) for s in self.servos_config.servos])
+        servos_config_buffer = struct.pack('<H', len(self.config_proto.servos)) + b''.join([pb2.serialize(s) for s in self.config_proto.servos])
         
         self._offsets = []
         self._buffer = b''
@@ -167,7 +171,7 @@ class RobotConfig:
         self.proto.sequence_names.extend(self.sequences.sequence_names)
         
         _i = 0
-        for s in self.servos_config.servos:
+        for s in self.config_proto.servos:
             self.proto.servo_ids[s.name] = _i
             _i += 1            
         for s in self.yaml['sensors']:
