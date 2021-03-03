@@ -6,7 +6,6 @@ import struct
 
 from .hal_config import HALConfig
 from goldobot_ihm.robot_config import RobotConfig as RobotConfig2
-from goldobot_ihm.robot_simulator_config import RobotSimulatorConfig
 
 from goldobot import pb2
 import google.protobuf as _pb
@@ -14,7 +13,6 @@ _sym_db = _pb.symbol_database.Default()
 
 from google.protobuf.json_format import ParseDict
 
-#servos = {s['name']:s['id'] for s in robot_config['servos']}
 
 def align_buffer(buff):
     k = len(buff) % 8
@@ -30,7 +28,6 @@ class RobotConfig:
         
         self.yaml = yaml.load(open(path + '/robot.yaml'),Loader=yaml.FullLoader)
         self.robot_config = RobotConfig2(self.yaml['robot'])
-        self.robot_simulator_config = RobotSimulatorConfig(self.yaml.get('robot_simulator', {}))
         self.path = path
         
         #load nucleo config protobuf
@@ -41,24 +38,10 @@ class RobotConfig:
         self.hal_config = HALConfig(nucleo_config.hal)
         self.config_proto = nucleo_config
         
-        
-        
-        #self.servos_config = pb2.from_dict('goldo.nucleo.robot.ServosConfig', { 'servos' : self.yaml['servos'] })
-        
-        #self.servo_nums = {s.name: s.id for s in self.servos_config.servos}
-        #self.load_dynamixels_config()
-        if 'dc_motors' in self.yaml:
-            self.dc_motors_indices = {s['name']:s['id'] for s in self.yaml['dc_motors']}
-        else:
-            self.dc_motors_indices = {}
-        if 'sensors' in self.yaml:
-            self.sensors_indices = {s['name']:s['id'] for s in self.yaml['sensors']}
-        else:
-            self.sensors_indices = {}
-        if 'gpios' in self.yaml:
-            self.gpio_indices = {s['name']:s['id'] for s in self.yaml['gpios']}
-        else:
-            self.gpio_indices = {}
+        self.dc_motors_indices = {}
+        self.sensors_indices = {s.name:s.id for s in self.config_proto.sensors}
+        self.gpio_indices = {s.name:s.id for s in self.config_proto.hal.gpio}
+        print(self.gpio_indices)
         self.load_sequences()
         
     def update_config(self):
@@ -115,22 +98,9 @@ class RobotConfig:
         odometry_config_buffer = pb2.serialize(self.config_proto.odometry)
         
         #Propulsion config
-        propulsion_config_buffer = pb2.serialize(pb2.from_dict('goldo.nucleo.propulsion.PropulsionControllerConfig', self.yaml['propulsion']))
+        propulsion_config_buffer = pb2.serialize(self.config_proto.propulsion)
         
-        tid = {'ax12':2, 'mx28':3}
-        #Arm servo configs
-        #arm_config_buffer = struct.pack('<H', len(self.yaml['dynamixels']))
-        #for s in self.yaml.get('dynamixels', []):
-        #    servo_buffer = struct.pack('<BBHHH', s['id'], tid[s['type']],0,0,0)
-        #    arm_config_buffer += servo_buffer
-        #arm_config_buffer += b'\0' * 8 * (16-len(self.yaml['dynamixels']))
-        #arm_config_buffer += struct.pack('<HH', 32,len(self.dynamixels_torques))
-        #arm_config_buffer += b'\0' * 8
         arm_config_buffer = b''
-        
-        #arm_positions_buffer = b''.join([b''.join([struct.pack('<H', t) for t in s]) for s in self.dynamixels_positions.values()])
-        #arm_positions_buffer += b'\0' * (len(self.yaml['dynamixels']) * 2 * 64 - len(arm_positions_buffer))
-        #arm_torques_buffer = b''.join([b''.join([struct.pack('<H', t) for t in s]) for s in self.dynamixels_torques.values()])
         
         arm_positions_buffer = b''
         arm_positions_buffer = b''
@@ -146,7 +116,7 @@ class RobotConfig:
         
         self._push_buffer(hal_config_buffer)       
         self._push_buffer(robot_config_buffer)
-        self._push_buffer(self.robot_simulator_config.compile())
+        self._push_buffer(pb2.serialize(self.config_proto.robot_simulator))
         self._push_buffer(odometry_config_buffer)
         self._push_buffer(propulsion_config_buffer)
         self._push_buffer(arm_config_buffer)
@@ -174,8 +144,8 @@ class RobotConfig:
         for s in self.config_proto.servos:
             self.proto.servo_ids[s.name] = _i
             _i += 1            
-        for s in self.yaml['sensors']:
-            self.proto.sensor_ids[s['name']] = s['id']
+        for s in self.config_proto.sensors:
+            self.proto.sensor_ids[s.name] = s.id
         self.proto.rplidar_config.CopyFrom(pb2.from_dict('goldo.nucleo.robot.RPLidarConfig', self.yaml['rplidar']))
     
     def _push_buffer(self, buffer):
