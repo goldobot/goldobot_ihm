@@ -1,4 +1,5 @@
 import struct
+from google.protobuf.json_format import MessageToDict
 
 gpio_port_nums = {
    'PA': 0,
@@ -63,7 +64,7 @@ def align_buffer(buff):
 
 class PinConfig:
     def __init__(self, pin_name = None):
-        if pin_name is not None:
+        if pin_name not in [None, '']:
             self.port = gpio_port_nums[pin_name[0:2]]
             self.pin = int(pin_name[2:])
         else:
@@ -232,7 +233,8 @@ class CanConfig(DeviceConfig):
         return buff
 
 class HALConfig:
-    def __init__(self, config_dict):
+    def __init__(self, config_proto):
+        config_dict = MessageToDict(config_proto, including_default_value_fields =True, preserving_proto_field_name=True)
         self.gpio = [GpioConfig(v) for v in config_dict.get('gpio', [])]
         self.timer = [TimerConfig(v) for v in config_dict.get('timer', [])]
         self.pwm = [PwmConfig(v) for v in config_dict.get('pwm', [])]

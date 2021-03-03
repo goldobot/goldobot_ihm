@@ -9,6 +9,7 @@ _types = {
     _fd.TYPE_BOOL: '?',
     _fd.TYPE_SINT32: 'i',
     _fd.TYPE_INT32: 'I',
+    _fd.TYPE_FIXED32: 'I',
     _fd.TYPE_SINT64: 'q',
     _fd.TYPE_INT64: 'Q',
     _fd.TYPE_FLOAT: 'f',
@@ -138,7 +139,7 @@ class _MessageCodec:
         elif field.type in _types:
             self._struct_fmt += _types[field.type]
         else:
-            print('ERROR')
+            print('ERROR', field.type)
         self._field_codecs.append(_AttrFieldCodec(field.name))
     
 def serialize(msg):

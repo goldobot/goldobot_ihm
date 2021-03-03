@@ -4,13 +4,15 @@ from parse_sequence import SequenceParser
 from goldobot import messages
 import struct
 
-from goldobot_ihm.hal_config import HALConfig
+from .hal_config import HALConfig
 from goldobot_ihm.robot_config import RobotConfig as RobotConfig2
 from goldobot_ihm.robot_simulator_config import RobotSimulatorConfig
 
 from goldobot import pb2
 import google.protobuf as _pb
 _sym_db = _pb.symbol_database.Default()
+
+from google.protobuf.json_format import ParseDict
 
 #servos = {s['name']:s['id'] for s in robot_config['servos']}
 
@@ -24,12 +26,19 @@ def align_buffer(buff):
 class RobotConfig:
     def __init__(self, path):
         print(path)
+        
+        
         self.yaml = yaml.load(open(path + '/robot.yaml'),Loader=yaml.FullLoader)
-        self.hal_config = HALConfig(yaml.load(open(path + '/hal.yaml'),Loader=yaml.FullLoader))
+        #self.hal_config = HALConfig(yaml.load(open(path + '/hal.yaml'),Loader=yaml.FullLoader))
         self.robot_config = RobotConfig2(self.yaml['robot'])
         self.robot_simulator_config = RobotSimulatorConfig(self.yaml.get('robot_simulator', {}))
         self.path = path
         
+        #load nucleo config protobuf
+        nucleo_config = _sym_db.GetSymbol('goldo.nucleo.NucleoConfig')()
+        ParseDict(yaml.load(open(path + '/hal.yaml'),Loader=yaml.FullLoader), nucleo_config, ignore_unknown_fields=True)
+        print(nucleo_config)
+        self.hal_config = HALConfig(nucleo_config.hal)
         self.servos_config = pb2.from_dict('goldo.nucleo.robot.ServosConfig', { 'servos' : self.yaml['servos'] })
         
         self.servo_nums = {s.name: s.id for s in self.servos_config.servos}
