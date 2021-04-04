@@ -224,6 +224,12 @@ class MainWindow(QMainWindow):
         self._F1_shortcut = QShortcut(QKeySequence(Qt.Key_F1), self)
         self._F1_shortcut.activated.connect(self._get_nucleo_firmware_version)
 
+        # FIXME : DEBUG : pour l'ergonomie des tests d'asserv..
+        self._F2_shortcut = QShortcut(QKeySequence(Qt.Key_F2), self)
+        self._goldo_test_propulsion = PropulsionTestDialog()
+        self._goldo_test_propulsion.set_client(self._client)
+        self._F2_shortcut.activated.connect(self._goldo_test_propulsion.show)
+
         self._F5_shortcut = QShortcut(QKeySequence(Qt.Key_F5), self)
         self._F5_shortcut.activated.connect(self._upload_config)
 

@@ -36,17 +36,20 @@ class PropulsionTestDialog(QDialog):
         self._set_pwm_button = QPushButton('set pwm')
         self._zero_pwm_button = QPushButton('zero pwm')
 
-        self._execute_translation_button = QPushButton('translation')
-        self._execute_rotation_button = QPushButton('rotation')
-        self._goldo_traj_button = QPushButton('trajectory')
-        self._start_traj_edit_button = QPushButton('start_traj_edit')
-        self._end_traj_edit_button = QPushButton('end_traj_edit')
+        self._delta_d_edit = QLineEdit('400')
+        self._delta_yaw_edit = QLineEdit('180.0')
+        self._execute_translation_button = QPushButton('translation (mm)')
+        self._execute_rotation_button = QPushButton('rotation (deg)')
 
         self._pose_x_edit = QLineEdit('0')
         self._pose_y_edit = QLineEdit('0')
         self._pose_yaw_edit = QLineEdit('0')
         self._button_set_pose = QPushButton('set pose')
         self._button_reposition = QPushButton('reposition')
+
+        self._goldo_traj_button = QPushButton('trajectory')
+        self._start_traj_edit_button = QPushButton('start_traj_edit')
+        self._end_traj_edit_button = QPushButton('end_traj_edit')
 
         self._F11_shortcut = QShortcut(QKeySequence(Qt.Key_F11), self)
         self._F11_shortcut.activated.connect(self._test_prop_goldo_start)
@@ -77,20 +80,22 @@ class PropulsionTestDialog(QDialog):
         li += 1
 
         layout.addWidget(self._execute_translation_button,li,0)
+        layout.addWidget(self._delta_d_edit,li,1)
         li += 1
 
         layout.addWidget(self._execute_rotation_button,li,0)
+        layout.addWidget(self._delta_yaw_edit,li,1)
         li += 1
 
-        layout.addWidget(QLabel('x(mm)'),li,0)
+        layout.addWidget(QLabel('pose x(mm)'),li,0)
         layout.addWidget(self._pose_x_edit,li,1)
         li += 1
 
-        layout.addWidget(QLabel('y(mm)'),li,0)
+        layout.addWidget(QLabel('pose y(mm)'),li,0)
         layout.addWidget(self._pose_y_edit,li,1)
         li += 1
         
-        layout.addWidget(QLabel('yaw(deg)'),li,0)
+        layout.addWidget(QLabel('pose yaw(deg)'),li,0)
         layout.addWidget(self._pose_yaw_edit,li,1)
         li += 1
 
@@ -169,16 +174,26 @@ class PropulsionTestDialog(QDialog):
         self._client.send_message(message_types.PropulsionExecuteReposition, struct.pack('<bffff', 1, 0.2, 0, -1, 1.500))
 
     def _execute_rotation(self):
-        delta_yaw = math.pi/4
-        yaw_rate = 0.2
-        accel = 0.2
-        deccel = 0.2
-        self._client.send_message(message_types.DbgPropulsionExecuteRotation, struct.pack('<ffff',delta_yaw,yaw_rate,accel,deccel))
+        delta_yaw_str = self._delta_yaw_edit.text()
+        is_jump = "$" in delta_yaw_str
+        delta_yaw = math.pi * float(delta_yaw_str.strip("$")) / 180.0
+        # ROT?
+        yaw_rate = 3.5
+        accel = 10.0
+        deccel = 10.0
+        # TRAJ?
+        #yaw_rate = 3.5
+        #accel = 2.0
+        #deccel = 2.0
+        if (is_jump):
+            pass # FIXME : TODO
+        else:
+            self._client.send_message(message_types.DbgPropulsionExecuteRotation, struct.pack('<ffff',delta_yaw,yaw_rate,accel,deccel))
         self._telemetry_buffer = []
-        QTimer.singleShot(9000, self._plot_rotation)
+        QTimer.singleShot(5000, self._plot_rotation)
 
     def _execute_translation(self):
-        dist = 0.4
+        dist = int(self._delta_d_edit.text()) * 1e-3
         speed = 0.2
         accel = 0.2
         deccel = 0.2
@@ -189,9 +204,30 @@ class PropulsionTestDialog(QDialog):
 
     def _plot_rotation(self):
         self._plt_widget = PlotDialog()
+        l = len (self._telemetry_buffer)
         ts_vec = [t.ts for t in self._telemetry_buffer]
         theta_vec = [t.theta_rad for t in self._telemetry_buffer]
+        th_off = 0.0
+        new_theta_vec = []
+        for i in range(0,l-1):
+            new_theta_vec.append(theta_vec[i]+th_off)
+            if (theta_vec[i+1]-theta_vec[i])<-270.0:
+                th_off += 360.0
+            elif (theta_vec[i+1]-theta_vec[i])>270.0:
+                th_off -= 360.0
+        new_theta_vec.append(theta_vec[l-1]+th_off)
+        theta_vec = new_theta_vec
         target_theta_vec = [t.target_theta_rad for t in self._telemetry_buffer]
+        th_off = 0.0
+        new_target_theta_vec = []
+        for i in range(0,l-1):
+            new_target_theta_vec.append(target_theta_vec[i]+th_off)
+            if (target_theta_vec[i+1]-target_theta_vec[i])<-270.0:
+                th_off += 360.0
+            elif (target_theta_vec[i+1]-target_theta_vec[i])>270.0:
+                th_off -= 360.0
+        new_target_theta_vec.append(target_theta_vec[l-1]+th_off)
+        target_theta_vec = new_target_theta_vec
         self._plt_widget.plot_curve_with_ts(ts_vec, theta_vec)
         self._plt_widget.plot_curve_with_ts(ts_vec, target_theta_vec)
         self._plt_widget.show()
