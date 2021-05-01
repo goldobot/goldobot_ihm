@@ -96,7 +96,7 @@ propulsion:
       period: 1.0e-3
       kp: 1.0
       ki: 0.0
-      kd: 0.16
+      kd: 0.0
       feed_forward: 0
       lim_iterm: 1.0
       lim_dterm: 1.0
@@ -104,9 +104,9 @@ propulsion:
       max_out: 1
     yaw_rate:
       period: 1.0e-3
-      kp: 0
-      ki: 0
-      kd: 0
+      kp: 0.16
+      ki: 0.0
+      kd: 0.0
       feed_forward: 0.02
       lim_iterm: 0.2
       lim_dterm: 0
