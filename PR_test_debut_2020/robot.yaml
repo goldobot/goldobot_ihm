@@ -5,6 +5,17 @@
 #  wheels_spacing(2): 189.24e-3 => 89.4
 #  wheels_spacing(3): 189.23e-3 => 90.1 - ASSYMETRY! (86.2)
 #  yaw feed_forward: 0.278
+#  yaw Ku = 2.06 ?
+#  yaw Tu = 0.4 ?
+#  yaw ZN:
+#   - P:      Kp = 0.50*Ku = 1.03
+#   - PI:     Kp = 0.45*Ku = 0.927;  Ti = 0.8*Tu = 0.32; Ki = 0.54*Ku/Tu = 2.781;  Td = 0; Kd = 0;
+#   - PD:     Kp = 0.80*Ku = 1.648;  Ti = 0; Ki = 0;                               Td = 0.125*Tu = 0.05;  Kd = 0.100*Ku*Tu = 0.0824;
+#   - PID:    Kp = 0.60*Ku = 1.236;  Ti = 0.5*Tu = 0.20; Ki = 1.20*Ku/Tu = 6.18;   Td = 0.125*Tu = 0.05;  Kd = 0.075*Ku*Tu = 0.0618;
+#   - PIR:    Kp = 0.70*Ku = 1.442;  Ti = 0.4*Tu = 0.16; Ki = 1.75*Ku/Tu = 9.0125; Td = 0.150*Tu = 0.06;  Kd = 0.105*Ku*Tu = 0.08652;
+#   - oversh: Kp = 0.33*Ku = 0.6798; Ti = 0.5*Tu = 0.20; Ki = 0.66*Ku/Tu = 3.3990; Td = 0.330*Tu = 0.132; Kd = 0.110*Ku*Tu = 0.09064;
+#   - no_ov:  Kp = 0.20*Ku = 0.4120; Ti = 0.5*Tu = 0.20; Ki = 0.40*Ku/Tu = 2.0600; Td = 0.330*Tu = 0.132; Kd = 0.066*Ku*Tu = 0.05438;
+
 geometry:
   front_length: 106.5
   back_length: 101.5
@@ -22,12 +33,94 @@ propulsion:
   pid_static:
     longi:
       period: 1.0e-3
+      kp: 5.0
+      ki: 10.0
+      kd: 0.0
+      feed_forward: 0
+      lim_iterm: 1.0
+      lim_dterm: 1.0
+      min_out: -1
+      max_out: 1
+    speed:
+      period: 1.0e-3
+      kp: 1.0
+      ki: 0.0
+      kd: 0.0
+      feed_forward: 0.0
+      lim_iterm: 0.2
+      lim_dterm: 0.0
+      min_out: -1.0
+      max_out: 1.0
+    yaw:
+      period: 1.0e-3
+      kp: 1.0
+      ki: 0.4
+      kd: 0.16
+      feed_forward: 0
+      lim_iterm: 1.0
+      lim_dterm: 1.0
+      min_out: -1
+      max_out: 1
+    yaw_rate:
+      period: 1.0e-3
+      kp: 0
+      ki: 0
+      kd: 0
+      feed_forward: 0.0
+      lim_iterm: 0.2
+      lim_dterm: 0
+      min_out: -1
+      max_out: 1
+  pid_cruise:
+    longi:
+      period: 1.0e-3
+      kp: 7.0
+      ki: 14.0
+      kd: 1.6
+      feed_forward: 0
+      lim_iterm: 1.0
+      lim_dterm: 1.0
+      min_out: -1
+      max_out: 1
+    speed:
+      period: 1.0e-3
+      kp: 0.0
+      ki: 0.0
+      kd: 0.0
+      feed_forward: 0.80
+      lim_iterm: 0.2
+      lim_dterm: 0.0
+      min_out: -1.0
+      max_out: 1.0
+    yaw:
+      period: 1.0e-3
+      kp: 1.0
+      ki: 0.0
+      kd: 0.16
+      feed_forward: 0
+      lim_iterm: 1.0
+      lim_dterm: 1.0
+      min_out: -1
+      max_out: 1
+    yaw_rate:
+      period: 1.0e-3
+      kp: 0
+      ki: 0
+      kd: 0
+      feed_forward: 0.02
+      lim_iterm: 0.2
+      lim_dterm: 0
+      min_out: -1
+      max_out: 1
+  pid_rotate:
+    longi:
+      period: 1.0e-3
       kp: 5
       ki: 10
       kd: 0
       feed_forward: 0
       lim_iterm: 0.2
-      lim_dterm: 0
+      lim_dterm: 1.0
       min_out: -1
       max_out: 1
     speed:

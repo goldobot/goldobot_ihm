@@ -130,7 +130,7 @@ class ZmqClient(QObject):
         if msg_type == message_types.SequenceEvent:
             event_id = struct.unpack('<B',msg[2:3])[0]
             self.sequence_event.emit(event_id, msg[3:])
-            print(event_id, msg[3:])
+            print("MSG: SequenceEvent {} {}".format(event_id, msg[3:]))
 
         if msg_type == message_types.DebugGoldo:
             self.debug_goldo.emit(struct.unpack('<I',msg[2:])[0])
@@ -286,5 +286,7 @@ class ZmqClient(QObject):
             print("" + log)
 
         if msg_type == 90:
-            print(struct.unpack('<BB', msg[2:]))
+            #print(struct.unpack('<BB', msg[2:]))
+            prop_states = struct.unpack('<BB', msg[2:])
+            print("PROP_STATE : {} -> {}".format(prop_states[1], prop_states[0]))
 

@@ -38,6 +38,7 @@ class PropulsionTestDialog(QDialog):
 
         self._delta_d_edit = QLineEdit('400')
         self._delta_yaw_edit = QLineEdit('180.0')
+        #self._delta_yaw_edit = QLineEdit('5.0')
         self._execute_translation_button = QPushButton('translation (mm)')
         self._execute_rotation_button = QPushButton('rotation (deg)')
 
@@ -175,7 +176,6 @@ class PropulsionTestDialog(QDialog):
 
     def _execute_rotation(self):
         delta_yaw_str = self._delta_yaw_edit.text()
-        is_jump = "$" in delta_yaw_str
         delta_yaw = math.pi * float(delta_yaw_str.strip("$")) / 180.0
         # ROT?
         yaw_rate = 3.5
@@ -185,22 +185,22 @@ class PropulsionTestDialog(QDialog):
         #yaw_rate = 3.5
         #accel = 2.0
         #deccel = 2.0
-        if (is_jump):
-            pass # FIXME : TODO
-        else:
-            self._client.send_message(message_types.DbgPropulsionExecuteRotation, struct.pack('<ffff',delta_yaw,yaw_rate,accel,deccel))
+        # Ziegler-Nichols
+        #yaw_rate = 1000.0
+        #accel = 10000.0
+        #deccel = 10000.0
+        self._client.send_message(message_types.DbgPropulsionExecuteRotation, struct.pack('<ffff',delta_yaw,yaw_rate,accel,deccel))
         self._telemetry_buffer = []
         QTimer.singleShot(5000, self._plot_rotation)
 
     def _execute_translation(self):
         dist = int(self._delta_d_edit.text()) * 1e-3
-        speed = 0.2
-        accel = 0.2
-        deccel = 0.2
+        speed = 0.6
+        accel = 0.6
+        deccel = 0.6
         self._client.send_message(message_types.DbgPropulsionExecuteTranslation, struct.pack('<ffff',dist,speed,accel,deccel))
         self._telemetry_buffer = []
-        # FIXME : TODO
-        #QTimer.singleShot(9000, self._plot_translation)
+        QTimer.singleShot(5000, self._plot_translation)
 
     def _plot_rotation(self):
         self._plt_widget = PlotDialog()
@@ -230,6 +230,17 @@ class PropulsionTestDialog(QDialog):
         target_theta_vec = new_target_theta_vec
         self._plt_widget.plot_curve_with_ts(ts_vec, theta_vec)
         self._plt_widget.plot_curve_with_ts(ts_vec, target_theta_vec)
+        self._plt_widget.show()
+        #self._telemetry_buffer = []
+
+    def _plot_translation(self):
+        self._plt_widget = PlotDialog()
+        l = len (self._telemetry_buffer)
+        ts_vec = [t.ts for t in self._telemetry_buffer]
+        d_vec = [math.sqrt(t.x*t.x+t.y*t.y) for t in self._telemetry_buffer]
+        target_d_vec = [math.sqrt(t.target_x*t.target_x+t.target_y*t.target_y) for t in self._telemetry_buffer]
+        self._plt_widget.plot_curve_with_ts(ts_vec, d_vec)
+        self._plt_widget.plot_curve_with_ts(ts_vec, target_d_vec)
         self._plt_widget.show()
         #self._telemetry_buffer = []
 

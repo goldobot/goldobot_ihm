@@ -176,8 +176,8 @@ class PropulsionControllerConfig:
             self.repositioning_pwm_limit = unpacked[4]
         if yaml is not None:
             self.config_static = PropulsionControllerLowLevelConfig(yaml = yaml['pid_static'])
-            self.config_cruise = PropulsionControllerLowLevelConfig(yaml = yaml['pid_static'])
-            self.config_rotate = PropulsionControllerLowLevelConfig(yaml = yaml['pid_static'])
+            self.config_cruise = PropulsionControllerLowLevelConfig(yaml = yaml['pid_cruise'])
+            self.config_rotate = PropulsionControllerLowLevelConfig(yaml = yaml['pid_rotate'])
             self.lookahead_distance = yaml['lookahead_distance']
             self.lookahead_time = yaml['lookahead_time']
             self.static_pwm_limit = yaml['static_pwm_limit']
