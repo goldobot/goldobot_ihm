@@ -39,7 +39,9 @@ class TableViewWidget(QGraphicsView):
     g_rplidar_plot_life_ms = 1000
     g_update_other_robots = False
     g_show_theme = False
-    g_debug = False
+    g_debug = True
+    g_dbg_plt_sz = 1.2
+    g_dbg_pen_sz = 0.8
 
 
     def __init__(self, parent = None, ihm_type='pc'):
@@ -145,10 +147,11 @@ class TableViewWidget(QGraphicsView):
         self._little_robot.setZValue(1)
         # FIXME : DEBUG
         if TableViewWidget.g_debug:
-            dbg_plt_sz = 0.2
-            self._little_robot_center = self._scene.addEllipse(1000.0 - dbg_plt_sz, -1397.0 - dbg_plt_sz, 2*dbg_plt_sz, 2*dbg_plt_sz, QPen(QBrush(QColor('black')),0.1), QBrush(QColor('yellow')))
+            dbg_plt_sz = TableViewWidget.g_dbg_plt_sz
+            dbg_pen_sz = TableViewWidget.g_dbg_pen_sz
+            self._little_robot_center = self._scene.addEllipse(1000.0 - dbg_plt_sz, -1397.0 - dbg_plt_sz, 2*dbg_plt_sz, 2*dbg_plt_sz, QPen(QBrush(QColor('black')),dbg_pen_sz), QBrush(QColor('yellow')))
             self._little_robot_center.setZValue(100)
-            new_p = self._scene.addEllipse(1000.0 - dbg_plt_sz, -1397.0 - dbg_plt_sz, 2*dbg_plt_sz, 2*dbg_plt_sz, QPen(QBrush(QColor('black')),0.1), QBrush(QColor('yellow')))
+            new_p = self._scene.addEllipse(1000.0 - dbg_plt_sz, -1397.0 - dbg_plt_sz, 2*dbg_plt_sz, 2*dbg_plt_sz, QPen(QBrush(QColor('black')),dbg_pen_sz), QBrush(QColor('yellow')))
             new_p.setZValue(100)
         #self._friend_robot = self._scene.addEllipse(-100, -100, 200, 200, QPen(QBrush(QColor('black')),4), QBrush(QColor('green')))
         self._friend_robot = self._scene.addEllipse(-100, -100, TableViewWidget.g_detect_size, TableViewWidget.g_detect_size, QPen(QBrush(QColor('black')),4), QBrush(QColor('white')))
@@ -352,14 +355,15 @@ class TableViewWidget(QGraphicsView):
         if TableViewWidget.g_debug:
             new_theta = telemetry.yaw * 180 / math.pi
             self._little_robot_center.setPos(telemetry.x * 1000, telemetry.y * 1000)
-            dbg_plt_sz = 0.2
+            dbg_plt_sz = TableViewWidget.g_dbg_plt_sz
+            dbg_pen_sz = TableViewWidget.g_dbg_pen_sz
             delta_x_mm = (telemetry.x * 1000 - self._dbg_x_mm)
             delta_y_mm = (telemetry.y * 1000 - self._dbg_y_mm)
             delta_d_mm = math.sqrt(delta_x_mm*delta_x_mm + delta_y_mm*delta_y_mm)
             if (delta_d_mm > 0.1):
                 self._dbg_x_mm = telemetry.x * 1000
                 self._dbg_y_mm = telemetry.y * 1000
-                new_p = self._scene.addEllipse(self._dbg_x_mm-dbg_plt_sz, self._dbg_y_mm-dbg_plt_sz, 2*dbg_plt_sz, 2*dbg_plt_sz, QPen(QBrush(QColor('black')),0.1), QBrush(QColor('yellow')))
+                new_p = self._scene.addEllipse(self._dbg_x_mm-dbg_plt_sz, self._dbg_y_mm-dbg_plt_sz, 2*dbg_plt_sz, 2*dbg_plt_sz, QPen(QBrush(QColor('black')),dbg_pen_sz), QBrush(QColor('yellow')))
                 new_p.setZValue(100)
             delta_center_x_mm = (telemetry.x * 1000 - 1000.0)
             delta_center_y_mm = (telemetry.y * 1000 + 1397.0)
