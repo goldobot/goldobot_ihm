@@ -108,5 +108,5 @@ var int chargeur_gauche_calage=30000
 #							Capteur
 ####################################################################
 
-#--position capteur (décalage capteur par rapport au centre du robot)
+#--position capteur (decalage capteur par rapport au centre du robot)
 var vec2 rouge_lateral=(0,96mm)
