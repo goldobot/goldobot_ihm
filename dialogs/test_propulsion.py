@@ -129,6 +129,7 @@ class PropulsionTestDialog(QDialog):
         self._start_traj_edit_button.clicked.connect(self._start_traj_edit)
         self._end_traj_edit_button.clicked.connect(self._end_traj_edit)
         self._goldo_traj_button.clicked.connect(self._test_traj_goldo)
+        #self._goldo_traj_button.clicked.connect(self._test_traj_goldo_debug)
 
         self._telemetry_buffer = []
         self._current_telemetry = None
@@ -137,9 +138,17 @@ class PropulsionTestDialog(QDialog):
         self._editing_traj = False
         self._traj_point_l = [(0.0,0.0)]
 
+        self.debug_lat_error = 0.0
+        self.debug_lat_error_min = 0.0
+        self.debug_lat_error_max = 0.0
+        self.debug_lat_error_acc = 0.0
+        self.debug_lat_error_ns = 0
+        self.debug_lat_error_mean = 0.0
+
     def set_client(self, client):
         self._client = client
         self._client.goldo_telemetry.connect(self._on_goldo_telemetry)
+        self._client.propulsion_telemetry_ex.connect(self._update_telemetry_ex)
 
     def _on_goldo_telemetry(self, telemetry):
         self._telemetry_buffer.append(telemetry)
@@ -237,8 +246,13 @@ class PropulsionTestDialog(QDialog):
         self._plt_widget = PlotDialog()
         l = len (self._telemetry_buffer)
         ts_vec = [t.ts for t in self._telemetry_buffer]
-        d_vec = [math.sqrt(t.x*t.x+t.y*t.y) for t in self._telemetry_buffer]
-        target_d_vec = [math.sqrt(t.target_x*t.target_x+t.target_y*t.target_y) for t in self._telemetry_buffer]
+        t = self._telemetry_buffer[0]
+        x0 = t.x
+        y0 = t.y
+        tg_x0 = t.target_x
+        tg_y0 = t.target_y
+        d_vec = [math.sqrt((t.x-x0)*(t.x-x0)+(t.y-y0)*(t.y-y0)) for t in self._telemetry_buffer]
+        target_d_vec = [math.sqrt((t.target_x-tg_x0)*(t.target_x-tg_x0)+(t.target_y-tg_y0)*(t.target_y-tg_y0)) for t in self._telemetry_buffer]
         self._plt_widget.plot_curve_with_ts(ts_vec, d_vec)
         self._plt_widget.plot_curve_with_ts(ts_vec, target_d_vec)
         self._plt_widget.show()
@@ -259,8 +273,55 @@ class PropulsionTestDialog(QDialog):
         print (self._traj_point_l)
         msg = b''.join([struct.pack('<fff',0.4,0.3,0.3)] + [struct.pack('<ff', p[0]*1e-3, p[1] * 1e-3) for p in self._traj_point_l])
         #self._client.send_message_rplidar(message_types.PropulsionExecuteTrajectory, msg)
-        self._client.send_message(message_types.PropulsionExecuteTrajectory, msg)
+        self._client.send_message(message_types.DbgPropulsionExecuteTrajectory, msg)
         self._telemetry_buffer = []
+        self._clear_telemetry_stats()
+        QTimer.singleShot(20000, self._print_telemetry_stats)
+
+    def _test_traj_goldo_debug(self):
+        if self._editing_traj: return
+        self._traj_point_l = [( 1000.0, -1397.0),
+                              ( 1000.0,  -800.0),
+                              (  820.0,  -500.0),
+                              (  540.0,  -320.0),
+                              (  420.0,    30.0),
+                              (  650.0,   470.0),
+                              (  960.0,   560.0),
+                              ( 1260.0,   450.0),
+                              ( 1400.0,    90.0),
+                              ( 1250.0,  -300.0),
+                              (  960.0,  -400.0),
+                              (  700.0,  -240.0),
+                              (  620.0,   140.0)]
+        print (self._traj_point_l)
+        msg = b''.join([struct.pack('<fff',0.4,0.3,0.3)] + [struct.pack('<ff', p[0]*1e-3, p[1] * 1e-3) for p in self._traj_point_l])
+        #self._client.send_message_rplidar(message_types.PropulsionExecuteTrajectory, msg)
+        self._client.send_message(message_types.DbgPropulsionExecuteTrajectory, msg)
+        self._telemetry_buffer = []
+        self._clear_telemetry_stats()
+        QTimer.singleShot(20000, self._print_telemetry_stats)
+
+    def _print_telemetry_stats(self):
+        print("lat_error          = {}".format(self.debug_lat_error))
+        print("lat_error_min      = {}".format(self.debug_lat_error_min))
+        print("lat_error_max      = {}".format(self.debug_lat_error_max))
+        print("lat_error_mean     = {}".format(self.debug_lat_error_mean))
+
+    def _update_telemetry_ex(self, telemetry_ex):
+        self.debug_lat_error = abs(telemetry_ex.lateral_error)
+        self.debug_lat_error_min = min(self.debug_lat_error_min, self.debug_lat_error)
+        self.debug_lat_error_max = max(self.debug_lat_error_max, self.debug_lat_error)
+        self.debug_lat_error_acc += self.debug_lat_error
+        self.debug_lat_error_ns += 1
+        self.debug_lat_error_mean = self.debug_lat_error_acc / self.debug_lat_error_ns
+
+    def _clear_telemetry_stats(self):
+        self.debug_lat_error = 0.0
+        self.debug_lat_error_min = 0.0
+        self.debug_lat_error_max = 0.0
+        self.debug_lat_error_acc = 0.0
+        self.debug_lat_error_ns = 0
+        self.debug_lat_error_mean = 0.0
 
     def _test_prop_goldo_start(self):
         print ("_test_prop_goldo_start")
@@ -272,4 +333,5 @@ class PropulsionTestDialog(QDialog):
         print ("_test_prop_goldo_stop")
         self._client.send_message(message_types.DbgSetMotorsPwm, struct.pack('<ff', 0.0, 0.0))
         self._client.send_message(message_types.SetMotorsEnable, struct.pack('<B',0))
+
 

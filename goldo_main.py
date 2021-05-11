@@ -4,6 +4,7 @@ import math
 import struct
 import config
 import subprocess
+import yaml
 
 from optparse import OptionParser
 
@@ -108,9 +109,11 @@ class MainWindow(QMainWindow):
         self._rplidar_start_button = QPushButton('Start Rplidar')
         self._rplidar_stop_button = QPushButton('Stop Rplidar')
         self._dbg_strat_go_button = QPushButton('Debug Strat GO!')
-        self._dbg_strat_clear_err_button = QPushButton('Clear error')
+        self._dbg_strat_clear_err_button = QPushButton('Clear error (Strat)')
         self._dbg_strat_pause_button = QPushButton('Debug Strat pause')
         self._dbg_strat_resume_button = QPushButton('Debug Strat resume')
+        self._dbg_strat_display_button = QPushButton('Display Strat')
+        self._dbg_strat_fname_edit = QLineEdit('')
         self._nucleo_firmware_version = QLabel(self.nucleo_ver_prefix_s + "Unknown")
         self._astar_view = PlotAstarWidget()
 
@@ -180,9 +183,13 @@ class MainWindow(QMainWindow):
         raspi_layout.addWidget(self._dbg_strat_clear_err_button,  2, 2)
         raspi_layout.addWidget(self._dbg_strat_pause_button,      3, 1)
         raspi_layout.addWidget(self._dbg_strat_resume_button,     3, 2)
+        if self._ihm_type != "raspi":
+            raspi_layout.addWidget(self._dbg_strat_display_button,    4, 1)
+            raspi_layout.addWidget(self._dbg_strat_fname_edit,        4, 2)
 
         under_table_layout.addLayout(raspi_layout)
-        under_table_layout.addWidget(self._astar_view)
+        if self._ihm_type != "raspi":
+            under_table_layout.addWidget(self._astar_view)
 
         table_layout.addWidget(self._nucleo_firmware_version)
         table_layout.addWidget(self._table_view)
@@ -206,7 +213,8 @@ class MainWindow(QMainWindow):
 
         main_layout.addWidget(self._widget_robot_status)
         main_layout.addLayout(table_layout)
-        main_layout.addLayout(right_layout)
+        if self._ihm_type != "raspi":
+            main_layout.addLayout(right_layout)
 
         self._main_widget.setLayout(main_layout)
 
@@ -240,6 +248,7 @@ class MainWindow(QMainWindow):
         self._dbg_strat_clear_err_button.clicked.connect(self._dbg_strat_clear_err_control)
         self._dbg_strat_pause_button.clicked.connect(self._dbg_strat_pause_control)
         self._dbg_strat_resume_button.clicked.connect(self._dbg_strat_resume_control)
+        self._dbg_strat_display_button.clicked.connect(self._dbg_strat_display)
 
         self._client.robot_end_load_config_status.connect(self._upload_status)
         self._client.nucleo_firmware_version.connect(self._display_nucleo_firmware_version)
@@ -324,10 +333,36 @@ class MainWindow(QMainWindow):
         self._client.send_message_rplidar(message_types.PropulsionClearError, b'')
 
     def _dbg_strat_pause_control(self):
-            self._client.send_message_rplidar(message_types.RobotStratDbgPauseMatch, b'')
+        self._client.send_message_rplidar(message_types.RobotStratDbgPauseMatch, b'')
 
     def _dbg_strat_resume_control(self):
-            self._client.send_message_rplidar(message_types.RobotStratDbgResumeMatch, b'')
+        self._client.send_message_rplidar(message_types.RobotStratDbgResumeMatch, b'')
+
+    def _dbg_strat_display(self):
+        strat_fname = self._dbg_strat_fname_edit.text()
+        print ("Debug strat file : {}".format(strat_fname))
+        try:
+            strat_fd = open(strat_fname)
+        except:
+            print ("No such file or directory: {}".format(strat_fname))
+        strat_yaml = yaml.load(strat_fd,Loader=yaml.FullLoader)
+        print (strat_yaml)
+        idx=0
+        for act in strat_yaml["dbg_task"]["actions"]:
+            act_type = act["type"]
+            print ("act {} : {}".format(idx,act_type))
+            if act_type == "TRAJ":
+                first_wp = True
+                for wp in act["param_traj"]["wp"]:
+                    my_x = wp[0]
+                    my_y = wp[1]
+                    print ("<{:>10.3f} {:>10.3f}>".format(my_x,my_y))
+                    if first_wp:
+                        TableViewWidget.g_table_view.debug_set_start(my_x,my_y)
+                    else:
+                        TableViewWidget.g_table_view.debug_line_to(my_x,my_y)
+                    first_wp = False
+            idx += 1
 
     def _get_nucleo_firmware_version(self):
         self._client.send_message(message_types.GetNucleoFirmwareVersion, b'')

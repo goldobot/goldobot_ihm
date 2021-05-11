@@ -46,6 +46,13 @@ class GoldoTelemetry:
         self.target_y = 0.001 * unpacked[5]
         self.target_theta_rad = 0.001 * unpacked[6]
 
+class GoldoDebugVec:
+    def __init__(self, data):
+        unpacked = struct.unpack('<Ihhihh', data)
+        self.ts = 0.001 * unpacked[0]
+        self.x = 0.001 * unpacked[1]
+        self.y = 0.001 * unpacked[2]
+
 class RplidarPlot:
     def __init__(self, data):
         unpacked = struct.unpack('<ihh', data)

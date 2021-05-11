@@ -7,6 +7,7 @@ from messages import NucleoFirmwareVersion
 from messages import PropulsionTelemetry
 from messages import PropulsionTelemetryEx
 from messages import GoldoTelemetry
+from messages import GoldoDebugVec
 from messages import RplidarPlot
 from messages import RplidarRobotDetection
 from messages import OdometryConfig
@@ -26,6 +27,7 @@ class ZmqClient(QObject):
     propulsion_telemetry = pyqtSignal(object)
     propulsion_telemetry_ex = pyqtSignal(object)
     goldo_telemetry = pyqtSignal(object)
+    goldo_debug_traj = pyqtSignal(object)
     rplidar_plot = pyqtSignal(object)
     rplidar_robot_detection = pyqtSignal(object)
     astar_dbg_map = pyqtSignal(object)
@@ -202,6 +204,10 @@ class ZmqClient(QObject):
         if msg_type == message_types.DebugGoldoVectAsserv:
             telemetry = GoldoTelemetry(msg[2:])
             self.goldo_telemetry.emit(telemetry)
+
+        if msg_type == message_types.DebugGoldoVectTraj:
+            dbg_vec = GoldoDebugVec(msg[2:])
+            self.goldo_debug_traj.emit(dbg_vec)
 
         if msg_type == message_types.RobotEndLoadConfigStatus:
             self.robot_end_load_config_status.emit(bool(struct.unpack('<B',msg[2:])[0]))

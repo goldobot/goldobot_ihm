@@ -37,7 +37,7 @@ class TableViewWidget(QGraphicsView):
     #g_detect_text = "none"
     g_rplidar_remanence = False
     g_rplidar_plot_life_ms = 1000
-    g_update_other_robots = False
+    g_update_other_robots = True
     g_show_theme = False
     g_debug = True
     g_dbg_plt_sz = 1.2
@@ -289,6 +289,10 @@ class TableViewWidget(QGraphicsView):
         self._little_robot_theta = 0
         self._dbg_x_mm = 0
         self._dbg_y_mm = 0
+        self._dbg_target_x_mm = 0
+        self._dbg_target_y_mm = 0
+        self._dbg_traj_x_mm = 0
+        self._dbg_traj_y_mm = 0
         self._dbg_shift_rot_mm = 0
         self._dbg_rot_cnt = 0
 
@@ -335,6 +339,8 @@ class TableViewWidget(QGraphicsView):
     def set_client(self, client):
         self._client = client
         self._client.propulsion_telemetry.connect(self.update_telemetry)
+        self._client.propulsion_telemetry_ex.connect(self.update_telemetry_ex)
+        self._client.goldo_debug_traj.connect(self.update_goldo_debug_traj)
         self._client.rplidar_plot.connect(self.update_plots)
         self._client.rplidar_robot_detection.connect(self.update_other_robots)
         
@@ -385,6 +391,36 @@ class TableViewWidget(QGraphicsView):
                     self._dbg_rot_cnt -= 1
             disp_window.posDbg2L.setText(" DEBUG : rot_cnt={:d}".format(self._dbg_rot_cnt))
             self._little_robot_theta = new_theta
+
+
+    def update_telemetry_ex(self, telemetry_ex):
+        #return # FIXME : DEBUG
+        if TableViewWidget.g_debug:
+            dbg_plt_sz = TableViewWidget.g_dbg_plt_sz
+            dbg_pen_sz = TableViewWidget.g_dbg_pen_sz
+            delta_x_mm = (telemetry_ex.target_x * 1000 - self._dbg_target_x_mm)
+            delta_y_mm = (telemetry_ex.target_y * 1000 - self._dbg_target_y_mm)
+            delta_d_mm = math.sqrt(delta_x_mm*delta_x_mm + delta_y_mm*delta_y_mm)
+            if (delta_d_mm > 0.1):
+                self._dbg_target_x_mm = telemetry_ex.target_x * 1000
+                self._dbg_target_y_mm = telemetry_ex.target_y * 1000
+                new_p = self._scene.addEllipse(self._dbg_target_x_mm-dbg_plt_sz, self._dbg_target_y_mm-dbg_plt_sz, 2*dbg_plt_sz, 2*dbg_plt_sz, QPen(QBrush(QColor('blue')),dbg_pen_sz), QBrush(QColor('red')))
+                new_p.setZValue(100)
+
+
+    def update_goldo_debug_traj(self, dbg_vec):
+        return # FIXME : DEBUG
+        if TableViewWidget.g_debug:
+            dbg_plt_sz = TableViewWidget.g_dbg_plt_sz
+            dbg_pen_sz = TableViewWidget.g_dbg_pen_sz
+            delta_x_mm = (dbg_vec.x * 1000 - self._dbg_traj_x_mm)
+            delta_y_mm = (dbg_vec.y * 1000 - self._dbg_traj_y_mm)
+            delta_d_mm = math.sqrt(delta_x_mm*delta_x_mm + delta_y_mm*delta_y_mm)
+            if (delta_d_mm > 0.1):
+                self._dbg_traj_x_mm = dbg_vec.x * 1000
+                self._dbg_traj_y_mm = dbg_vec.y * 1000
+                new_p = self._scene.addEllipse(self._dbg_traj_x_mm-dbg_plt_sz, self._dbg_traj_y_mm-dbg_plt_sz, 2*dbg_plt_sz, 2*dbg_plt_sz, QPen(QBrush(QColor('blue')),dbg_pen_sz), QBrush(QColor('red')))
+                new_p.setZValue(100)
 
 
     def update_plots(self, my_plot):

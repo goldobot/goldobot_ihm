@@ -1,6 +1,8 @@
 from PyQt5.QtWidgets import QWidget, QLineEdit, QPushButton, QGridLayout, QLabel, QGridLayout, QFrame
 from widgets.properties_editor import PropertiesEditorWidget
 
+import message_types
+
 class RobotStatusWidget(QWidget):
     def __init__(self, parent = None, ihm_type='pc'):
         super(RobotStatusWidget, self).__init__(None)
@@ -8,7 +10,8 @@ class RobotStatusWidget(QWidget):
         self._time_wid = QLineEdit()
         self._x_wid = QLineEdit()
         self._y_wid = QLineEdit()
-        self._button = QPushButton('Emergency Stop')
+        self._emergency_stop_button = QPushButton('Emergency Stop')
+        self._clear_error_button = QPushButton('Clear error (Nucleo)')
         self._robot_state_wid = QLineEdit('')
         self._robot_side_wid = QLineEdit('')
         self._sensors_wid = QLabel()
@@ -37,14 +40,8 @@ class RobotStatusWidget(QWidget):
                 ('x', float,),
                 ('y', float,),
                 ('yaw', float,),
-                ('speed', float,),
-                ('yaw_rate', float,),
-                ('acceleration', float),
-                ('angular_acceleration', float),
                 ('left_encoder', float,),
                 ('right_encoder', float,),
-                ('left_pwm', float,),
-                ('right_pwm', float,),
                 ('state', int),
                 ('error',int)
                 ],True)
@@ -53,7 +50,9 @@ class RobotStatusWidget(QWidget):
                 [
                 ('x', float,),
                 ('y', float,),
-                ('yaw', float,)
+                ('yaw', float,),
+                ('state', int),
+                ('error',int)
                 ],True)
 
         if ihm_type=='pc':
@@ -62,8 +61,6 @@ class RobotStatusWidget(QWidget):
                 ('target_x', float,),
                 ('target_y', float,),
                 ('target_yaw', float,),
-                ('target_speed', float,),
-                ('target_yaw_rate', float,),
                 ('longitudinal_error', float,),
                 ('lateral_error', float,)  
                 ],True)
@@ -74,9 +71,11 @@ class RobotStatusWidget(QWidget):
 
         layout.addWidget(self._telemetry_props,3,0,1,2)
         layout.addWidget(self._telemetry_ex_props,4,0,1,2)
-        layout.addWidget(self._button,5,0,1,2)
+        layout.addWidget(self._emergency_stop_button,5,0,1,2)
+        layout.addWidget(self._clear_error_button,6,0,1,2)
         self.setLayout(layout)
-        self._button.clicked.connect(self._on_emergency_stop_button_clicked)
+        self._emergency_stop_button.clicked.connect(self._on_emergency_stop_button_clicked)
+        self._clear_error_button.clicked.connect(self._on_clear_error_button_clicked)
         self._sensors_wid.setText('sensors')
 
         self.goldo_dbg_info = 0
@@ -123,12 +122,16 @@ class RobotStatusWidget(QWidget):
             }
         sides =  {
         0:'Unknown',
-        1: 'Yellow',
-        2:'Purple'
+        1:'Blue',
+        2:'Yellow'
         }
         self._robot_state_wid.setText(states[state])
         self._robot_side_wid.setText(sides[side])
 
 
     def _on_emergency_stop_button_clicked(self):
-        self._client.send_message(16,b'')
+        self._client.send_message(message_types.CmdEmergencyStop,b'')
+
+    def _on_clear_error_button_clicked(self):
+        self._client.send_message(message_types.PropulsionClearError,b'')
+

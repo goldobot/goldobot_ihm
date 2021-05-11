@@ -72,6 +72,7 @@ PropulsionMeasurePoint=101
 DbgSetMotorsPwm=102
 DbgPropulsionExecuteRotation=103
 DbgPropulsionExecuteTranslation=104
+DbgPropulsionExecuteTrajectory=105
 
 DbgReset=127
 
@@ -125,4 +126,5 @@ RobotStratDbgTestAstar=2052
 DebugGoldoVect=4096
 DebugGoldoVectSimple=4097
 DebugGoldoVectAsserv=4098
+DebugGoldoVectTraj=4099
 
