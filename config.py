@@ -14,8 +14,11 @@ def align_buffer(buff):
         return buff + b'\0' * (8-k)
 
 class RobotConfig:
-    def __init__(self, path):
-        self.yaml = yaml.load(open(path + '/robot.yaml'),Loader=yaml.FullLoader)
+    def __init__(self, path, no_yaml_loader):
+        if no_yaml_loader:
+            self.yaml = yaml.load(open(path + '/robot.yaml'))
+        else:
+            self.yaml = yaml.load(open(path + '/robot.yaml'),Loader=yaml.FullLoader)
         self.path = path
         self.servo_nums = {s['name']:s['id'] for s in self.yaml['servos']}
         self.load_dynamixels_config()
@@ -169,9 +172,9 @@ class RobotConfig:
 # sequences_config offset
 # arms torque offset
 
-def load_config(path):
+def load_config(path, no_yaml_loader):
     global robot_config
-    robot_config = RobotConfig(path)
+    robot_config = RobotConfig(path, no_yaml_loader)
 
 def compute_crc(buffer):
     crc = 0

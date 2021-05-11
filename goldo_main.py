@@ -69,7 +69,8 @@ class MainWindow(QMainWindow):
             super(MainWindow, self).__init__(None)
         
         self._client = ZmqClient(ip=options.robot_ip)
-        config.load_config(options.config_path)
+        no_yaml_loader = (self._ihm_type == "raspi")
+        config.load_config(options.config_path,no_yaml_loader)
 
         # Create actions
         self._action_reset = QAction("Reset",self)
@@ -345,7 +346,10 @@ class MainWindow(QMainWindow):
             strat_fd = open(strat_fname)
         except:
             print ("No such file or directory: {}".format(strat_fname))
-        strat_yaml = yaml.load(strat_fd,Loader=yaml.FullLoader)
+        if self._ihm_type == "raspi":
+            strat_yaml = yaml.load(strat_fd)
+        else:
+            strat_yaml = yaml.load(strat_fd,Loader=yaml.FullLoader)
         print (strat_yaml)
         idx=0
         for act in strat_yaml["dbg_task"]["actions"]:
