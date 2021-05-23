@@ -86,11 +86,7 @@ class OdometryConfigDialog(QDialog):
         self._wid_right_encoder.setText(str(self._encoder_right_acc))
 
     def _on_telemetry_ex(self, telemetry):
-        self._telemetry_ex = telemetry
-        self._encoder_left_acc = telemetry.left_encoder_acc - self._left_encoder_base
-        self._encoder_right_acc = telemetry.right_encoder_acc - self._right_encoder_base
-        self._wid_left_encoder.setText(str(self._encoder_left_acc))
-        self._wid_right_encoder.setText(str(self._encoder_right_acc))
+        self._telemetry_ex = telemetry        
 
     def _on_reset_counts_clicked(self):
         self._left_encoder_base = self._telemetry.left_encoder

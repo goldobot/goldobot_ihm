@@ -21,7 +21,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x1dgoldo/nucleo/dynamixels.proto\x12\x17goldo.nucleo.dynamixels\x1a\x17goldo/pb2_options.proto\"\x8b\x01\n\rRequestPacket\x12\x1e\n\x10protocol_version\x18\x01 \x01(\rB\x04\x80\xb5\x18\x03\x12\x10\n\x02id\x18\x02 \x01(\rB\x04\x80\xb5\x18\x03\x12\x37\n\x07\x63ommand\x18\x03 \x01(\x0e\x32 .goldo.nucleo.dynamixels.CommandB\x04\x80\xb5\x18\x03\x12\x0f\n\x07payload\x18\x04 \x01(\x0c\"n\n\x0eResponsePacket\x12\x1e\n\x10protocol_version\x18\x01 \x01(\rB\x04\x80\xb5\x18\x03\x12\x10\n\x02id\x18\x02 \x01(\rB\x04\x80\xb5\x18\x03\x12\x19\n\x0b\x65rror_flags\x18\x03 \x01(\rB\x04\x80\xb5\x18\x03\x12\x0f\n\x07payload\x18\x04 \x01(\x0c*\xc8\x01\n\x07\x43ommand\x12\x0b\n\x07UNKNOWN\x10\x00\x12\x08\n\x04PING\x10\x01\x12\x08\n\x04READ\x10\x02\x12\t\n\x05WRITE\x10\x03\x12\r\n\tREG_WRITE\x10\x04\x12\n\n\x06\x41\x43TION\x10\x05\x12\x11\n\rFACTORY_RESET\x10\x06\x12\n\n\x06REBOOT\x10\x08\x12\t\n\x05\x43LEAR\x10\x10\x12\n\n\x06STATUS\x10U\x12\x0e\n\tSYNC_READ\x10\x82\x01\x12\x0f\n\nSYNC_WRITE\x10\x83\x01\x12\x0e\n\tBULK_READ\x10\x92\x01\x12\x0f\n\nBULK_WRITE\x10\x93\x01\x62\x06proto3'
+  serialized_pb=b'\n\x1dgoldo/nucleo/dynamixels.proto\x12\x17goldo.nucleo.dynamixels\x1a\x17goldo/pb2_options.proto\"\xaa\x01\n\rRequestPacket\x12\x1d\n\x0fsequence_number\x18\x01 \x01(\rB\x04\x80\xb5\x18\x05\x12\x1e\n\x10protocol_version\x18\x02 \x01(\rB\x04\x80\xb5\x18\x03\x12\x10\n\x02id\x18\x03 \x01(\rB\x04\x80\xb5\x18\x03\x12\x37\n\x07\x63ommand\x18\x04 \x01(\x0e\x32 .goldo.nucleo.dynamixels.CommandB\x04\x80\xb5\x18\x03\x12\x0f\n\x07payload\x18\x05 \x01(\x0c\"\x8d\x01\n\x0eResponsePacket\x12\x1d\n\x0fsequence_number\x18\x01 \x01(\rB\x04\x80\xb5\x18\x05\x12\x1e\n\x10protocol_version\x18\x02 \x01(\rB\x04\x80\xb5\x18\x03\x12\x10\n\x02id\x18\x03 \x01(\rB\x04\x80\xb5\x18\x03\x12\x19\n\x0b\x65rror_flags\x18\x04 \x01(\rB\x04\x80\xb5\x18\x03\x12\x0f\n\x07payload\x18\x05 \x01(\x0c*\xc8\x01\n\x07\x43ommand\x12\x0b\n\x07UNKNOWN\x10\x00\x12\x08\n\x04PING\x10\x01\x12\x08\n\x04READ\x10\x02\x12\t\n\x05WRITE\x10\x03\x12\r\n\tREG_WRITE\x10\x04\x12\n\n\x06\x41\x43TION\x10\x05\x12\x11\n\rFACTORY_RESET\x10\x06\x12\n\n\x06REBOOT\x10\x08\x12\t\n\x05\x43LEAR\x10\x10\x12\n\n\x06STATUS\x10U\x12\x0e\n\tSYNC_READ\x10\x82\x01\x12\x0f\n\nSYNC_WRITE\x10\x83\x01\x12\x0e\n\tBULK_READ\x10\x92\x01\x12\x0f\n\nBULK_WRITE\x10\x93\x01\x62\x06proto3'
   ,
   dependencies=[goldo_dot_pb2__options__pb2.DESCRIPTOR,])
 
@@ -105,8 +105,8 @@ _COMMAND = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=338,
-  serialized_end=538,
+  serialized_start=401,
+  serialized_end=601,
 )
 _sym_db.RegisterEnumDescriptor(_COMMAND)
 
@@ -137,29 +137,36 @@ _REQUESTPACKET = _descriptor.Descriptor(
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='protocol_version', full_name='goldo.nucleo.dynamixels.RequestPacket.protocol_version', index=0,
+      name='sequence_number', full_name='goldo.nucleo.dynamixels.RequestPacket.sequence_number', index=0,
       number=1, type=13, cpp_type=3, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=b'\200\265\030\003', file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+      serialized_options=b'\200\265\030\005', file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='id', full_name='goldo.nucleo.dynamixels.RequestPacket.id', index=1,
+      name='protocol_version', full_name='goldo.nucleo.dynamixels.RequestPacket.protocol_version', index=1,
       number=2, type=13, cpp_type=3, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=b'\200\265\030\003', file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='command', full_name='goldo.nucleo.dynamixels.RequestPacket.command', index=2,
-      number=3, type=14, cpp_type=8, label=1,
+      name='id', full_name='goldo.nucleo.dynamixels.RequestPacket.id', index=2,
+      number=3, type=13, cpp_type=3, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=b'\200\265\030\003', file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='payload', full_name='goldo.nucleo.dynamixels.RequestPacket.payload', index=3,
-      number=4, type=12, cpp_type=9, label=1,
+      name='command', full_name='goldo.nucleo.dynamixels.RequestPacket.command', index=3,
+      number=4, type=14, cpp_type=8, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=b'\200\265\030\003', file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='payload', full_name='goldo.nucleo.dynamixels.RequestPacket.payload', index=4,
+      number=5, type=12, cpp_type=9, label=1,
       has_default_value=False, default_value=b"",
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -177,7 +184,7 @@ _REQUESTPACKET = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=84,
-  serialized_end=223,
+  serialized_end=254,
 )
 
 
@@ -190,29 +197,36 @@ _RESPONSEPACKET = _descriptor.Descriptor(
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='protocol_version', full_name='goldo.nucleo.dynamixels.ResponsePacket.protocol_version', index=0,
+      name='sequence_number', full_name='goldo.nucleo.dynamixels.ResponsePacket.sequence_number', index=0,
       number=1, type=13, cpp_type=3, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=b'\200\265\030\003', file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+      serialized_options=b'\200\265\030\005', file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='id', full_name='goldo.nucleo.dynamixels.ResponsePacket.id', index=1,
+      name='protocol_version', full_name='goldo.nucleo.dynamixels.ResponsePacket.protocol_version', index=1,
       number=2, type=13, cpp_type=3, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=b'\200\265\030\003', file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='error_flags', full_name='goldo.nucleo.dynamixels.ResponsePacket.error_flags', index=2,
+      name='id', full_name='goldo.nucleo.dynamixels.ResponsePacket.id', index=2,
       number=3, type=13, cpp_type=3, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=b'\200\265\030\003', file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='payload', full_name='goldo.nucleo.dynamixels.ResponsePacket.payload', index=3,
-      number=4, type=12, cpp_type=9, label=1,
+      name='error_flags', full_name='goldo.nucleo.dynamixels.ResponsePacket.error_flags', index=3,
+      number=4, type=13, cpp_type=3, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=b'\200\265\030\003', file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='payload', full_name='goldo.nucleo.dynamixels.ResponsePacket.payload', index=4,
+      number=5, type=12, cpp_type=9, label=1,
       has_default_value=False, default_value=b"",
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -229,8 +243,8 @@ _RESPONSEPACKET = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=225,
-  serialized_end=335,
+  serialized_start=257,
+  serialized_end=398,
 )
 
 _REQUESTPACKET.fields_by_name['command'].enum_type = _COMMAND
@@ -254,9 +268,11 @@ ResponsePacket = _reflection.GeneratedProtocolMessageType('ResponsePacket', (_me
 _sym_db.RegisterMessage(ResponsePacket)
 
 
+_REQUESTPACKET.fields_by_name['sequence_number']._options = None
 _REQUESTPACKET.fields_by_name['protocol_version']._options = None
 _REQUESTPACKET.fields_by_name['id']._options = None
 _REQUESTPACKET.fields_by_name['command']._options = None
+_RESPONSEPACKET.fields_by_name['sequence_number']._options = None
 _RESPONSEPACKET.fields_by_name['protocol_version']._options = None
 _RESPONSEPACKET.fields_by_name['id']._options = None
 _RESPONSEPACKET.fields_by_name['error_flags']._options = None

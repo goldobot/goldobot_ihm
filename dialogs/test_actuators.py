@@ -75,8 +75,8 @@ class TestActuatorsDialog(QDialog):
         self._button = QPushButton('set actuator')
         servos = []
         i = 0
-        for s in config.robot_config.yaml['servos']:
-            servos.append((s['name'], i))
+        for s in config.robot_config.config_proto.servos:
+            servos.append((s.name, i))
             i += 1
         self._servo_values = ActuatorValuesWidget(servos)
         self._button_go = QPushButton('go')
@@ -91,8 +91,8 @@ class TestActuatorsDialog(QDialog):
         
         self.button_go = QPushButton('go')
         self.spinbox_value.setRange(0, 0x40000)
-        for s in config.robot_config.yaml['servos']:
-            self.combobox_servo.addItem(s['name'])
+        for s in config.robot_config.config_proto.servos:
+            self.combobox_servo.addItem(s.name)
         
         
         layout.addWidget(self.combobox_servo, 0,0)

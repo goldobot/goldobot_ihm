@@ -65,7 +65,9 @@ class ZmqClient(QObject):
     def send_message(self, message_type, message_body):
         self._push_socket.send_multipart([struct.pack('<H',message_type), message_body])
         
-    def publishTopic(self, topic, msg):
+    def publishTopic(self, topic, msg = None):
+        if msg is None:
+            msg = _sym_db.GetSymbol('google.protobuf.Empty')()
         self._socket_main_pub.send_multipart([topic.encode('utf8'),
                                               msg.DESCRIPTOR.full_name.encode('utf8'),
                                               msg.SerializeToString()])
@@ -86,6 +88,8 @@ class ZmqClient(QObject):
                 msg.ParseFromString(payload)
             else:
                 msg = None
+            if topic.startswith('nucleo'):
+                print(topic)
             if topic == 'nucleo/out/os/heartbeat':
                 self.heartbeat.emit(msg.timestamp)
             if topic == 'nucleo/out/robot/config/load_status':
@@ -96,6 +100,8 @@ class ZmqClient(QObject):
                 self.odometry_config.emit(msg)
             if topic == 'nucleo/out/propulsion/telemetry':
                 self.propulsion_telemetry.emit(msg)
+            if topic == 'nucleo/out/propulsion/telemetry_ex':
+                 self.propulsion_telemetry_ex.emit(msg)
             if topic == 'nucleo/out/propulsion/config':
                 self.propulsion_controller_config.emit(msg)  
             if topic == 'nucleo/out/fpga/reg':

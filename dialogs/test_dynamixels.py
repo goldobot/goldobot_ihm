@@ -41,6 +41,7 @@ class TestDynamixelAx12Dialog(QDialog):
     def __init__(self, parent = None):
         super(TestDynamixelAx12Dialog, self).__init__(None)
         self._registers = ax12_registers
+        self._sequence_number = 0
 
         layout = QGridLayout()
         self._spinbox_id = QSpinBox()
@@ -75,7 +76,18 @@ class TestDynamixelAx12Dialog(QDialog):
         id_ = self._spinbox_id.value()
         for k, a, s, r in self._registers:
             self._client.send_message(77,struct.pack('<BBB',id_, a, s))
+            return
 
+    def read_register(self, id_, address, size):
+        self._sequence_number = (self._sequence_number + 1) % 2**16
+        msg = _sym_db.GetSymbol('goldo.nucleo.dynamixels.RequestPacketV1')(
+                sequence_number=self._sequence_number,
+                id=id_,
+                command=0x02,
+                payload=struct.pack('BB', address, size)
+                )
+        self._client.publishTopic('nucleo/in/dynamixels/request', msg)
+            
     def write_registers(self):
         id_ = self._spinbox_id.value()
         for k, a, s, r in self._registers:

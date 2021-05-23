@@ -78,13 +78,16 @@ class RobotStatusWidget(QWidget):
         if ihm_type=='pc':
             self._telemetry_ex_props = PropertiesEditorWidget(None,
                 [
-                ('target_x', float,),
-                ('target_y', float,),
-                ('target_yaw', float,),
-                ('target_speed', float,),
-                ('target_yaw_rate', float,),
-                ('longitudinal_error', float,),
-                ('lateral_error', float,)  
+                #('target_x', float,),
+                #('target_y', float,),
+                #('target_yaw', float,),
+                #('target_speed', float,),
+                #('target_yaw_rate', float,),
+                ('error_longi', float,'{:0>1.2f}'),
+                ('error_lateral', float,'{:0>1.2f}'),
+                ('error_yaw', float,'{:0>1.2f}'),
+                ('error_speed', float,'{:0>1.2f}'),
+                ('error_yaw_rate', float,'{:0>1.2f}')                
                 ],True)
         else:
             self._telemetry_ex_props = PropertiesEditorWidget(None,
@@ -115,6 +118,7 @@ class RobotStatusWidget(QWidget):
 
     def update_telemetry(self, telemetry):
         self._telemetry_props.set_value(telemetry)
+        
     def update_telemetry_ex(self, telemetry_ex):
         self._telemetry_ex_props.set_value(telemetry_ex)
         

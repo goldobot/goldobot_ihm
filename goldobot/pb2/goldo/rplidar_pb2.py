@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x13goldo/rplidar.proto\x12\rgoldo.rplidar\"\x9f\x01\n\x05Zones\x12\x12\n\nfront_near\x18\x01 \x01(\x08\x12\x12\n\nright_near\x18\x02 \x01(\x08\x12\x11\n\tback_near\x18\x03 \x01(\x08\x12\x11\n\tleft_near\x18\x04 \x01(\x08\x12\x11\n\tfront_far\x18\x05 \x01(\x08\x12\x11\n\tright_far\x18\x06 \x01(\x08\x12\x10\n\x08\x62\x61\x63k_far\x18\x07 \x01(\x08\x12\x10\n\x08left_far\x18\x08 \x01(\x08\"3\n\tTresholds\x12\x0c\n\x04near\x18\x01 \x01(\x02\x12\x0b\n\x03mid\x18\x02 \x01(\x02\x12\x0b\n\x03\x66\x61r\x18\x03 \x01(\x02\x62\x06proto3'
+  serialized_pb=b'\n\x13goldo/rplidar.proto\x12\rgoldo.rplidar\"\x9f\x01\n\x05Zones\x12\x12\n\nfront_near\x18\x01 \x01(\x08\x12\x12\n\nright_near\x18\x02 \x01(\x08\x12\x11\n\tback_near\x18\x03 \x01(\x08\x12\x11\n\tleft_near\x18\x04 \x01(\x08\x12\x11\n\tfront_far\x18\x05 \x01(\x08\x12\x11\n\tright_far\x18\x06 \x01(\x08\x12\x10\n\x08\x62\x61\x63k_far\x18\x07 \x01(\x08\x12\x10\n\x08left_far\x18\x08 \x01(\x08\"3\n\tTresholds\x12\x0c\n\x04near\x18\x01 \x01(\x02\x12\x0b\n\x03mid\x18\x02 \x01(\x02\x12\x0b\n\x03\x66\x61r\x18\x03 \x01(\x02\"R\n\rRPLidarConfig\x12\x14\n\x0ctheta_offset\x18\x01 \x01(\x02\x12+\n\ttresholds\x18\x02 \x01(\x0b\x32\x18.goldo.rplidar.Tresholdsb\x06proto3'
 )
 
 
@@ -151,8 +151,49 @@ _TRESHOLDS = _descriptor.Descriptor(
   serialized_end=251,
 )
 
+
+_RPLIDARCONFIG = _descriptor.Descriptor(
+  name='RPLidarConfig',
+  full_name='goldo.rplidar.RPLidarConfig',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='theta_offset', full_name='goldo.rplidar.RPLidarConfig.theta_offset', index=0,
+      number=1, type=2, cpp_type=6, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='tresholds', full_name='goldo.rplidar.RPLidarConfig.tresholds', index=1,
+      number=2, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=253,
+  serialized_end=335,
+)
+
+_RPLIDARCONFIG.fields_by_name['tresholds'].message_type = _TRESHOLDS
 DESCRIPTOR.message_types_by_name['Zones'] = _ZONES
 DESCRIPTOR.message_types_by_name['Tresholds'] = _TRESHOLDS
+DESCRIPTOR.message_types_by_name['RPLidarConfig'] = _RPLIDARCONFIG
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 Zones = _reflection.GeneratedProtocolMessageType('Zones', (_message.Message,), {
@@ -168,6 +209,13 @@ Tresholds = _reflection.GeneratedProtocolMessageType('Tresholds', (_message.Mess
   # @@protoc_insertion_point(class_scope:goldo.rplidar.Tresholds)
   })
 _sym_db.RegisterMessage(Tresholds)
+
+RPLidarConfig = _reflection.GeneratedProtocolMessageType('RPLidarConfig', (_message.Message,), {
+  'DESCRIPTOR' : _RPLIDARCONFIG,
+  '__module__' : 'goldo.rplidar_pb2'
+  # @@protoc_insertion_point(class_scope:goldo.rplidar.RPLidarConfig)
+  })
+_sym_db.RegisterMessage(RPLidarConfig)
 
 
 # @@protoc_insertion_point(module_scope)

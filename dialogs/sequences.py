@@ -95,16 +95,16 @@ class SequencesDialog(QDialog):
         self._client = client
         
     def _update_sequence_names(self):
-        sequences = config.robot_config.sequences
+        config_proto = config.robot_config.robot_config
+
         self._combobox_sequence_id.clear()        
-        for k in sequences.sequence_names:
+        for k in config_proto.sequences_names:
             self._combobox_sequence_id.addItem(k)
         
     def _upload(self):
         config.robot_config.update_config()     
         self._update_sequence_names()
         sequences = config.robot_config.sequences
-     
             
         buff = sequences.binary
 
@@ -127,8 +127,8 @@ class SequencesDialog(QDialog):
             i += 1
 
     def _execute(self):
-        seq_id = self._combobox_sequence_id.currentIndex()
-        self._client.send_message(43, struct.pack('<H', seq_id))
+        seq_name = self._combobox_sequence_id.currentText()
+        self._client.publishTopic('robot/sequence/{}/execute'.format(seq_name))
         
     def _abort(self):
         self._client.send_message(45, b'')

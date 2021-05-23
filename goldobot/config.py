@@ -1,11 +1,14 @@
 import yaml
+import pathlib
 from collections import OrderedDict
 from parse_sequence import SequenceParser
 from goldobot import messages
 import struct
 
+import runpy
+import inspect
+
 from .hal_config import HALConfig
-from goldobot_ihm.robot_config import RobotConfig as RobotConfig2
 
 from goldobot import pb2
 import google.protobuf as _pb
@@ -20,32 +23,49 @@ def align_buffer(buff):
         return buff
     else:
         return buff + b'\0' * (8-k)
+        
+class SequencesRobot(object):
+    def __init__(self):
+        self._sequences = {}
+        self._sequence_names = []
+
+    def sequence(self, func):
+        self._sequences[func.__name__] = func
+        self._sequence_names.append(func.__name__)
+        #print(inspect.getfullargspec(func))
+        
 
 class RobotConfig:
     def __init__(self, path):
-        print(path)
+        self.path = pathlib.Path(path)
+        self.update_config()
         
         
-        self.yaml = yaml.load(open(path + '/robot.yaml'),Loader=yaml.FullLoader)
-        self.robot_config = RobotConfig2(self.yaml['robot'])
-        self.path = path
-        
+    def update_config(self):
         #load nucleo config protobuf
-        nucleo_config = _sym_db.GetSymbol('goldo.nucleo.NucleoConfig')()
-        ParseDict(yaml.load(open(path + '/hal.yaml'),Loader=yaml.FullLoader), nucleo_config, ignore_unknown_fields=True)
-        ParseDict(yaml.load(open(path + '/robot.yaml'),Loader=yaml.FullLoader), nucleo_config, ignore_unknown_fields=True)
-        print(nucleo_config)
+        self.robot_config = _sym_db.GetSymbol('goldo.robot.RobotConfig')()
+        nucleo_config = self.robot_config.nucleo
+        self.yaml = yaml.load(open(self.path / 'nucleo.yaml'),Loader=yaml.FullLoader)
+        
+        ParseDict(yaml.load(open(self.path / 'hal.yaml'),Loader=yaml.FullLoader), nucleo_config, ignore_unknown_fields=True)
+        ParseDict(yaml.load(open(self.path / 'nucleo.yaml'),Loader=yaml.FullLoader), nucleo_config, ignore_unknown_fields=True)
+        ParseDict(yaml.load(open(self.path / 'robot.yaml'),Loader=yaml.FullLoader), self.robot_config, ignore_unknown_fields=True)
         self.hal_config = HALConfig(nucleo_config.hal)
         self.config_proto = nucleo_config
+
+        robot = SequencesRobot()
+        runpy.run_path(self.path / 'sequences.py', {'robot': robot})
+        self.robot_config.sequences_names.extend(robot._sequence_names)
+        
+        sequences_file = _sym_db.GetSymbol('goldo.robot.SequencesFile')()
+        sequences_file.path = 'sequences.py'
+        sequences_file.body = open(self.path / 'sequences.py').read()
+        self.robot_config.sequences_files.extend([sequences_file])
+        
         
         self.dc_motors_indices = {}
         self.sensors_indices = {s.name:s.id for s in self.config_proto.sensors}
         self.gpio_indices = {s.name:s.id for s in self.config_proto.hal.gpio}
-        print(self.gpio_indices)
-        self.load_sequences()
-        
-    def update_config(self):
-        self.load_dynamixels_config()
         self.load_sequences()
         
     def load_dynamixels_config(self):
@@ -83,23 +103,18 @@ class RobotConfig:
     def load_sequences(self):
         parser = SequenceParser()
         parser.config = self
-        for f in self.yaml['sequence_files']:
-            parser.parse_file(self.path + '/' + f)
+        #for f in self.yaml['sequence_files']:
+        #    parser.parse_file(self.path + '/' + f)
         self.sequences = parser.compile()
         
     def compile(self):
         #RobotConfig
-        robot_config_buffer = self.robot_config.compile()
-            
+        robot_config_buffer = pb2.serialize(self.config_proto.robot)
+        print(robot_config_buffer, len(robot_config_buffer))
         # hal config
-        hal_config_buffer = self.hal_config.compile()
-        
-        #OdometryConfig
-        odometry_config_buffer = pb2.serialize(self.config_proto.odometry)
-        
-        #Propulsion config
-        propulsion_config_buffer = pb2.serialize(self.config_proto.propulsion)
-        
+        hal_config_buffer = self.hal_config.compile()        
+    
+
         arm_config_buffer = b''
         
         arm_positions_buffer = b''
@@ -117,8 +132,8 @@ class RobotConfig:
         self._push_buffer(hal_config_buffer)       
         self._push_buffer(robot_config_buffer)
         self._push_buffer(pb2.serialize(self.config_proto.robot_simulator))
-        self._push_buffer(odometry_config_buffer)
-        self._push_buffer(propulsion_config_buffer)
+        self._push_buffer(pb2.serialize(self.config_proto.odometry))
+        self._push_buffer(pb2.serialize(self.config_proto.propulsion))
         self._push_buffer(arm_config_buffer)
         self._push_buffer(servos_config_buffer)
         self._push_buffer(arm_positions_buffer)
@@ -130,9 +145,9 @@ class RobotConfig:
         # add padding for alignment?
         self.binary = header + self._buffer
         self.crc = compute_crc(self.binary)
-        open(self.path+'/robot_config.bin', 'wb').write(self.binary)
-        open(self.path+'/robot_config.crc', 'w').write(str(self.crc))
-        sn = open(self.path+'/sequence_names.txt','w')
+        open(self.path / 'robot_config.bin', 'wb').write(self.binary)
+        open(self.path / 'robot_config.crc', 'w').write(str(self.crc))
+        sn = open(self.path / 'sequence_names.txt','w')
         for s in self.sequences.sequence_names:
             sn.write(s + '\n')
         sn.close()
@@ -167,7 +182,7 @@ class RobotConfig:
 def load_config(path):
     global robot_config
     robot_config = RobotConfig(path)
-
+    
 def compute_crc(buffer):
     crc = 0
     for b in buffer:

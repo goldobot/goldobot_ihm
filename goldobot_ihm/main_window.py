@@ -163,24 +163,17 @@ class MainWindow(QMainWindow):
     def _upload_sequence(self):
         config.load_dynamixels_config()
         config.load_sequence()
+        
     def _upload_config(self):
         cfg = config.robot_config
-        #cfg.update_config()
-        cfg.compile()
-        buff = cfg.binary
-        self._client.publishTopic('config/test/put', cfg.proto)
-        #Start programming
-        self._client.publishTopic('nucleo/in/robot/config/load_begin', _sym_db.GetSymbol('goldo.nucleo.robot.ConfigLoadBegin')(size=len(buff)))
-        #Upload codes by packets        
-        while len(buff) > 0:
-            self._client.publishTopic('nucleo/in/robot/config/load_chunk', _sym_db.GetSymbol('goldo.nucleo.robot.ConfigLoadChunk')(data=buff[0:32]))
-            buff = buff[32:]
-        #Finish programming
-        self._client.publishTopic('nucleo/in/robot/config/load_end', _sym_db.GetSymbol('goldo.nucleo.robot.ConfigLoadEnd')(crc=cfg.crc))
+        cfg.update_config()        
+        self._client.publishTopic('config/test/put', cfg.robot_config)
+        self._client.publishTopic('gui/out/commands/config_nucleo')        
 
     def _upload_status(self, status):
         if status == True:
             QMessageBox.information(self, "Upload config status", "Success")
+            self._client.publishTopic('nucleo/in/propulsion/simulation/enable', _sym_db.GetSymbol('google.protobuf.BoolValue')(value=True))
         else:
             QMessageBox.critical(self, "Upload config status", "Failure")
 
