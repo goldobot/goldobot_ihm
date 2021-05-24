@@ -1,0 +1,11 @@
+####################################################################
+# Comment
+####################################################################
+
+const vec3 start_pose_jaune=(650mm,-1395mm,90deg)
+var int score = 0
+
+sequence test_arm_speed
+  push 100
+  call_c propulsion.set_pose
+end sequence

@@ -173,7 +173,7 @@ class MainWindow(QMainWindow):
     def _upload_status(self, status):
         if status == True:
             QMessageBox.information(self, "Upload config status", "Success")
-            self._client.publishTopic('nucleo/in/propulsion/simulation/enable', _sym_db.GetSymbol('google.protobuf.BoolValue')(value=True))
+            #self._client.publishTopic('nucleo/in/propulsion/simulation/enable', _sym_db.GetSymbol('google.protobuf.BoolValue')(value=True))
         else:
             QMessageBox.critical(self, "Upload config status", "Failure")
 

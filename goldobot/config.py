@@ -47,8 +47,8 @@ class RobotConfig:
         nucleo_config = self.robot_config.nucleo
         self.yaml = yaml.load(open(self.path / 'nucleo.yaml'),Loader=yaml.FullLoader)
         
-        ParseDict(yaml.load(open(self.path / 'hal.yaml'),Loader=yaml.FullLoader), nucleo_config, ignore_unknown_fields=True)
-        ParseDict(yaml.load(open(self.path / 'nucleo.yaml'),Loader=yaml.FullLoader), nucleo_config, ignore_unknown_fields=True)
+        ParseDict(yaml.load(open(self.path / 'hal.yaml'),Loader=yaml.FullLoader), self.robot_config, ignore_unknown_fields=True)
+        ParseDict(yaml.load(open(self.path / 'nucleo.yaml'),Loader=yaml.FullLoader), self.robot_config, ignore_unknown_fields=True)
         ParseDict(yaml.load(open(self.path / 'robot.yaml'),Loader=yaml.FullLoader), self.robot_config, ignore_unknown_fields=True)
         self.hal_config = HALConfig(nucleo_config.hal)
         self.config_proto = nucleo_config
