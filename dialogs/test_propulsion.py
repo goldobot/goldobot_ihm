@@ -148,6 +148,12 @@ class PropulsionTestDialog(QDialog):
     def _on_telemetry_ex(self, telemetry):
         self._current_telemetry_ex = telemetry
 
+    def _propulsion_simulation_enable(self):
+        self._client.publishTopic('nucleo/in/propulsion/simulation/enable', _sym_db.GetSymbol('google.protobuf.BoolValue')(value=True))
+        
+    def _propulsion_simulation_disable(self):
+        self._client.publishTopic('nucleo/in/propulsion/simulation/enable', _sym_db.GetSymbol('google.protobuf.BoolValue')(value=True))
+        
     def _propulsion_enable(self):
         self._client.publishTopic('nucleo/in/propulsion/enable/set', _sym_db.GetSymbol('google.protobuf.BoolValue')(value=True))
 

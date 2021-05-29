@@ -5,12 +5,17 @@ from PyQt5.QtCore import QObject, pyqtSignal, QSize, QRectF, QPointF, Qt
 
 from PyQt5.QtWidgets import QGraphicsView
 from PyQt5.QtWidgets import QGraphicsScene
+from PyQt5.QtWidgets import QGraphicsItem
 from PyQt5.QtWidgets import QGraphicsPixmapItem
 
 from PyQt5.QtGui import QPolygonF, QPen, QBrush, QColor, QFont, QTransform
 from PyQt5.QtGui import QImage, QImageReader, QPixmap
 
-
+class Robot(QGraphicsItem):
+    def __init__(self, parent, config):
+        super().__init__(parent)
+        self.addPolygon(little_robot_poly, QPen(), QBrush(QColor('red')))
+        
 
 class TableViewWidget(QGraphicsView):
     g_table_view = None
@@ -37,6 +42,8 @@ class TableViewWidget(QGraphicsView):
         self.setSceneRect(QRectF(-100,-1600,2200,3200))
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        
+        self._robots = {}
 
         redium = QColor.fromCmykF(0,1,1,0.1)
         greenium = QColor.fromCmykF(0.7,0,0.9,0)
@@ -77,6 +84,7 @@ class TableViewWidget(QGraphicsView):
 
 #        self._big_robot = self._scene.addPolygon(big_robot_poly, QPen(), QBrush(QColor('red')))
 #        self._big_robot.setZValue(1)
+        #self._robots['little'] = Robot(self._scene)
         self._little_robot = self._scene.addPolygon(little_robot_poly, QPen(), QBrush(QColor('red')))
         self._little_robot.setZValue(1)
         #self._friend_robot = self._scene.addEllipse(-100, -100, 200, 200, QPen(QBrush(QColor('black')),4), QBrush(QColor('green')))
@@ -214,31 +222,6 @@ class TableViewWidget(QGraphicsView):
         self._plot_items = []
 
         TableViewWidget.g_table_view = self
-
-    def _add_cubes(self, x, y):
-        self._scene.addRect(QRectF(x-29, y-29,58,58))
-        self._scene.addRect(QRectF(x-87, y-29,58,58))
-        self._scene.addRect(QRectF(x+29, y-29,58,58))
-        self._scene.addRect(QRectF(x-29, y-87,58,58))
-        self._scene.addRect(QRectF(x-29, y+29,58,58))
-
-    def add_points_for_cubes(self, x, y, dist):
-        points = [
-        (x-87-dist,y),
-        (x,y + 87 + dist),
-        (x+87 + dist,y),
-        (x,y - 87 - dist)]
-        self.add_points(points)
-
-    def add_points_for_cubes_2(self, x, y, dist):
-        radius = math.ceil(math.sqrt(29**2+87**2)) + dist
-        foo = math.ceil(dist/math.sqrt(2))
-        points = [
-        (x-radius,y),
-        (x-foo,y+foo),
-        (x,y+radius),
-        ]
-        self.add_points(points)
 
 
     def add_points(self, points):
