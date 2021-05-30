@@ -3,6 +3,7 @@ nucleo:
   enabled_tasks:
     - propulsion
     - odrive_comm
+    - dynamixels_comm
   propulsion_task:
     motor_controller: ODriveUART
     update_period_ms: 1

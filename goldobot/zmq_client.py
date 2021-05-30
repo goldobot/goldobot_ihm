@@ -72,6 +72,9 @@ class ZmqClient(QObject):
                                               msg.DESCRIPTOR.full_name.encode('utf8'),
                                               msg.SerializeToString()])
                                               
+    def registerListener(self, topic, callback):
+        pass
+                                              
     def _on_socket_main_sub(self):        
         self._notifier_main.setEnabled(False)
         socket = self._socket_main_sub
@@ -89,7 +92,7 @@ class ZmqClient(QObject):
             else:
                 msg = None
             if topic.startswith('nucleo'):
-                print(topic)
+                pass #print(topic)
             if topic == 'nucleo/out/os/heartbeat':
                 self.heartbeat.emit(msg.timestamp)
             if topic == 'nucleo/out/robot/config/load_status':
