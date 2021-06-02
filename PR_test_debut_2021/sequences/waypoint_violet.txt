@@ -8,7 +8,8 @@
 
 #--position de depart
 #var vec3 start_pose_violet=(450mm,1250mm,-90deg)
-var vec3 start_pose_violet=(800mm,1400mm,-90deg)
+#var vec3 start_pose_violet=(800mm,1400mm,-90deg)
+var vec3 start_pose_violet=(650mm,1395mm,-90deg) # 2020
 
 #--test trajectoire courbe (depart violet)
 var vec2 traj_courbe1=(450mm,1250mm)

@@ -352,6 +352,8 @@ class MainWindow(QMainWindow):
             strat_yaml = yaml.load(strat_fd,Loader=yaml.FullLoader)
         print (strat_yaml)
         idx=0
+        my_x = 0
+        my_y = 0
         for act in strat_yaml["dbg_task"]["actions"]:
             act_type = act["type"]
             print ("act {} : {}".format(idx,act_type))
@@ -360,12 +362,19 @@ class MainWindow(QMainWindow):
                 for wp in act["param_traj"]["wp"]:
                     my_x = wp[0]
                     my_y = wp[1]
-                    print ("<{:>10.3f} {:>10.3f}>".format(my_x,my_y))
+                    print ("  <{:>10.3f} {:>10.3f}>".format(my_x,my_y))
                     if first_wp:
                         TableViewWidget.g_table_view.debug_set_start(my_x,my_y)
                     else:
                         TableViewWidget.g_table_view.debug_line_to(my_x,my_y)
                     first_wp = False
+            elif act_type == "GOTO_ASTAR":
+                TableViewWidget.g_table_view.debug_set_start(my_x,my_y)
+                wp = act["param_goto_astar"]["target"]
+                my_x = wp[0]
+                my_y = wp[1]
+                print ("  <{:>10.3f} {:>10.3f}>".format(my_x,my_y))
+                TableViewWidget.g_table_view.debug_line_to(my_x,my_y,0,0,255)
             idx += 1
 
     def _get_nucleo_firmware_version(self):

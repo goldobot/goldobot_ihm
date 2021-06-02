@@ -84,12 +84,13 @@ var int servo_slider_droit_range=45700
 var int servo_slider_droit_overshoot=46000
 
 #--position CoSe (cale mobile avant)
-var int servo_griffe_gauche_attack=20000
-var int servo_griffe_gauche_retrait=51000
+var int servo_griffe_gauche_attack=51000
+var int servo_griffe_gauche_retrait=27000
 var int servo_griffe_gauche_goldenium=28000
 var int servo_griffe_gauche_accelerateur=45000
-var int servo_griffe_droit_attack=47000
-var int servo_griffe_droit_retrait=16000
+var int servo_griffe_droit_attack=16000
+#var int servo_griffe_droit_retrait=47000
+var int servo_griffe_droit_retrait=40000
 var int servo_griffe_droit_goldenium=39000
 var int servo_griffe_droit_accelerateur=22000
 

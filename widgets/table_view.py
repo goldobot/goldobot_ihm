@@ -481,11 +481,12 @@ class TableViewWidget(QGraphicsView):
         if self._debug_edit_mode:
             self._debug_edit_point_l.append((_new_x,_new_y))
 
-    def debug_line_to(self, _new_x, _new_y):
+    def debug_line_to(self, _new_x, _new_y, _r=0, _g=0, _b=0):
         if TableViewWidget.g_show_theme:
             my_segm = self._scene.addLine(self.debug_cur_x, self.debug_cur_y, _new_x, _new_y, QPen(QColor(255,255,255)));
         else:
-            my_segm = self._scene.addLine(self.debug_cur_x, self.debug_cur_y, _new_x, _new_y, QPen(QColor(128,128,128)));
+            #my_segm = self._scene.addLine(self.debug_cur_x, self.debug_cur_y, _new_x, _new_y, QPen(QColor(128,128,128)));
+            my_segm = self._scene.addLine(self.debug_cur_x, self.debug_cur_y, _new_x, _new_y, QPen(QColor(_r,_g,_b)));
         self._traj_segm_l.append(my_segm)
         self.debug_cur_x = _new_x
         self.debug_cur_y = _new_y
