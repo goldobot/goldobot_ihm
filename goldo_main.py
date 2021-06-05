@@ -13,7 +13,7 @@ from PyQt5.QtWidgets import QMainWindow, QApplication, QWidget, QLabel, QLineEdi
 from PyQt5.QtCore import QObject, pyqtSignal, QSize, QRectF, QPointF, Qt, QTimer
 from PyQt5.QtWidgets import QTabWidget, QAction, QDialog, QVBoxLayout, QCheckBox
 from PyQt5.QtWidgets import QHBoxLayout, QComboBox, QMessageBox, QShortcut
-from PyQt5.QtGui import QKeySequence
+from PyQt5.QtGui import QKeySequence, QFont
 
 from widgets.table_view import TableViewWidget
 from widgets.plot_dialog import PlotDialog, ControlPlots
@@ -104,6 +104,7 @@ class MainWindow(QMainWindow):
         tools_menu.addAction(self._action_upload_config)
 
         self._main_widget = QWidget()
+        self._score = QLabel()
         self._table_view = TableViewWidget(ihm_type=self._ihm_type,parent=self)
         self._widget_robot_status = RobotStatusWidget(ihm_type=self._ihm_type)
         self._conf_button = QPushButton('Load Conf')
@@ -213,6 +214,12 @@ class MainWindow(QMainWindow):
         right_layout.addStretch(16)
 
         main_layout.addWidget(self._widget_robot_status)
+        if self._ihm_type == "raspi":
+            my_font = QFont ( "Arial", 40, QFont.Bold)
+            self._score.setFont(my_font)
+            self._score.setAlignment(Qt.AlignCenter)
+            self._score.setText("Score:\n80")
+            main_layout.addWidget(self._score)
         main_layout.addLayout(table_layout)
         if self._ihm_type != "raspi":
             main_layout.addLayout(right_layout)

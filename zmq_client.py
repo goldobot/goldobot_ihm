@@ -135,7 +135,9 @@ class ZmqClient(QObject):
             print("MSG: SequenceEvent {} {}".format(event_id, msg[3:]))
 
         if msg_type == message_types.DebugGoldo:
-            self.debug_goldo.emit(struct.unpack('<I',msg[2:])[0])
+            dbg_val = struct.unpack('<I',msg[2:])[0]
+            print("DEBUG GOLDO : {}".format(dbg_val))
+            self.debug_goldo.emit(dbg_val)
 
         if msg_type == message_types.DebugGoldoVect:
             vec = struct.unpack('<'+'IhhiHH',msg[2:])

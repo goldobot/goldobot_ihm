@@ -23,16 +23,16 @@ class RobotStatusWidget(QWidget):
         layout = QGridLayout()
         layout.addWidget(QLabel('time:'),0,0)
         layout.addWidget(self._time_wid,0,1,1,1)
-        layout.addWidget(QLabel('DbgGoldo:'),0,2,1,1)
-        layout.addWidget(self._debug_goldo_wid,0,3,1,1)
         layout.addWidget(self._robot_state_wid,1,0,1,1)
         layout.addWidget(self._robot_side_wid,1,1,1,1)
-        layout.addWidget(self._sensors_wid,1,2,1,1)
-        layout.addWidget(self._gpio_wid,1,3,1,1)
+        #layout.addWidget(QLabel('DbgGoldo:'),2,0,1,1)
+        #layout.addWidget(self._debug_goldo_wid,2,1,1,1)
+        #layout.addWidget(self._sensors_wid,3,0,1,1)
+        #layout.addWidget(self._gpio_wid,3,1,1,1)
 
         frame = QFrame()
         frame.setFrameShape(QFrame.HLine)
-        layout.addWidget(frame,2,0,1,2)
+        layout.addWidget(frame,4,0,1,2)
 
         if ihm_type=='pc':
             self._telemetry_props = PropertiesEditorWidget(None,
@@ -69,10 +69,10 @@ class RobotStatusWidget(QWidget):
                 [
                 ],True)
 
-        layout.addWidget(self._telemetry_props,3,0,1,2)
-        layout.addWidget(self._telemetry_ex_props,4,0,1,2)
-        layout.addWidget(self._emergency_stop_button,5,0,1,2)
-        layout.addWidget(self._clear_error_button,6,0,1,2)
+        layout.addWidget(self._telemetry_props,5,0,1,2)
+        layout.addWidget(self._telemetry_ex_props,6,0,1,2)
+        layout.addWidget(self._emergency_stop_button,7,0,1,2)
+        layout.addWidget(self._clear_error_button,8,0,1,2)
         self.setLayout(layout)
         self._emergency_stop_button.clicked.connect(self._on_emergency_stop_button_clicked)
         self._clear_error_button.clicked.connect(self._on_clear_error_button_clicked)
