@@ -1,0 +1,11 @@
+---
+- strategy:
+    map:
+      points:
+        depart_1: [100,200]
+        a1: [300, 500]
+      areas:
+        depart_1:
+          - [0,100]
+          - [100,200]
+        

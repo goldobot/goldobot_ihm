@@ -11,6 +11,9 @@ from PyQt5.QtWidgets import QTabWidget
 import struct
 from goldobot import message_types
 
+import google.protobuf as _pb
+_sym_db = _pb.symbol_database.Default()
+
 ax12_registers = [
     ('model_number',0x00, 2, 'r'),
     ('firmware_version',0x02, 1, 'r'),
@@ -75,13 +78,13 @@ class TestDynamixelAx12Dialog(QDialog):
     def read_registers(self):
         id_ = self._spinbox_id.value()
         for k, a, s, r in self._registers:
-            self._client.send_message(77,struct.pack('<BBB',id_, a, s))
-            return
+            self.read_register(id_, a, s)
 
-    def read_register(self, id_, address, size):
+    def read_register(self, id_, address, size):       
         self._sequence_number = (self._sequence_number + 1) % 2**16
-        msg = _sym_db.GetSymbol('goldo.nucleo.dynamixels.RequestPacketV1')(
+        msg = _sym_db.GetSymbol('goldo.nucleo.dynamixels.RequestPacket')(
                 sequence_number=self._sequence_number,
+                protocol_version=1,
                 id=id_,
                 command=0x02,
                 payload=struct.pack('BB', address, size)
