@@ -23,7 +23,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='goldo.robot',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x11goldo/robot.proto\x12\x0bgoldo.robot\x1a\x12goldo/nucleo.proto\x1a\x13goldo/rplidar.proto\x1a\x1bgoldo/common/geometry.proto\x1a\x17goldo/pb2_options.proto\"o\n\rRobotGeometry\x12\x14\n\x0c\x66ront_length\x18\x01 \x01(\x02\x12\x13\n\x0b\x62\x61\x63k_length\x18\x02 \x01(\x02\x12\x33\n\x07outline\x18\x03 \x03(\x0b\x32\x1c.goldo.common.geometry.PointB\x04\x80\xb5\x18\x0c\"+\n\rSequencesFile\x12\x0c\n\x04path\x18\x01 \x01(\t\x12\x0c\n\x04\x62ody\x18\x02 \x01(\t\"\xea\x01\n\x0bRobotConfig\x12*\n\x06nucleo\x18\x01 \x01(\x0b\x32\x1a.goldo.nucleo.NucleoConfig\x12\x32\n\x0erobot_geometry\x18\x02 \x01(\x0b\x32\x1a.goldo.robot.RobotGeometry\x12\x17\n\x0fsequences_names\x18( \x03(\t\x12\x33\n\x0fsequences_files\x18) \x03(\x0b\x32\x1a.goldo.robot.SequencesFile\x12-\n\x07rplidar\x18\x32 \x01(\x0b\x32\x1c.goldo.rplidar.RPLidarConfigb\x06proto3')
+  serialized_pb=_b('\n\x11goldo/robot.proto\x12\x0bgoldo.robot\x1a\x12goldo/nucleo.proto\x1a\x13goldo/rplidar.proto\x1a\x1bgoldo/common/geometry.proto\x1a\x17goldo/pb2_options.proto\"o\n\rRobotGeometry\x12\x14\n\x0c\x66ront_length\x18\x01 \x01(\x02\x12\x13\n\x0b\x62\x61\x63k_length\x18\x02 \x01(\x02\x12\x33\n\x07outline\x18\x03 \x03(\x0b\x32\x1c.goldo.common.geometry.PointB\x04\x80\xb5\x18\x0c\"+\n\rSequencesFile\x12\x0c\n\x04path\x18\x01 \x01(\t\x12\x0c\n\x04\x62ody\x18\x02 \x01(\t\"\xea\x01\n\x0bRobotConfig\x12*\n\x06nucleo\x18\x01 \x01(\x0b\x32\x1a.goldo.nucleo.NucleoConfig\x12\x32\n\x0erobot_geometry\x18\x02 \x01(\x0b\x32\x1a.goldo.robot.RobotGeometry\x12\x17\n\x0fsequences_names\x18( \x03(\t\x12\x33\n\x0fsequences_files\x18) \x03(\x0b\x32\x1a.goldo.robot.SequencesFile\x12-\n\x07rplidar\x18\x32 \x01(\x0b\x32\x1c.goldo.rplidar.RPLidarConfig\"7\n\nRobotState\x12)\n\x06nucleo\x18\x01 \x01(\x0b\x32\x19.goldo.nucleo.NucleoStateb\x06proto3')
   ,
   dependencies=[goldo_dot_nucleo__pb2.DESCRIPTOR,goldo_dot_rplidar__pb2.DESCRIPTOR,goldo_dot_common_dot_geometry__pb2.DESCRIPTOR,goldo_dot_pb2__options__pb2.DESCRIPTOR,])
 
@@ -171,14 +171,47 @@ _ROBOTCONFIG = _descriptor.Descriptor(
   serialized_end=522,
 )
 
+
+_ROBOTSTATE = _descriptor.Descriptor(
+  name='RobotState',
+  full_name='goldo.robot.RobotState',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='nucleo', full_name='goldo.robot.RobotState.nucleo', index=0,
+      number=1, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=524,
+  serialized_end=579,
+)
+
 _ROBOTGEOMETRY.fields_by_name['outline'].message_type = goldo_dot_common_dot_geometry__pb2._POINT
 _ROBOTCONFIG.fields_by_name['nucleo'].message_type = goldo_dot_nucleo__pb2._NUCLEOCONFIG
 _ROBOTCONFIG.fields_by_name['robot_geometry'].message_type = _ROBOTGEOMETRY
 _ROBOTCONFIG.fields_by_name['sequences_files'].message_type = _SEQUENCESFILE
 _ROBOTCONFIG.fields_by_name['rplidar'].message_type = goldo_dot_rplidar__pb2._RPLIDARCONFIG
+_ROBOTSTATE.fields_by_name['nucleo'].message_type = goldo_dot_nucleo__pb2._NUCLEOSTATE
 DESCRIPTOR.message_types_by_name['RobotGeometry'] = _ROBOTGEOMETRY
 DESCRIPTOR.message_types_by_name['SequencesFile'] = _SEQUENCESFILE
 DESCRIPTOR.message_types_by_name['RobotConfig'] = _ROBOTCONFIG
+DESCRIPTOR.message_types_by_name['RobotState'] = _ROBOTSTATE
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 RobotGeometry = _reflection.GeneratedProtocolMessageType('RobotGeometry', (_message.Message,), dict(
@@ -201,6 +234,13 @@ RobotConfig = _reflection.GeneratedProtocolMessageType('RobotConfig', (_message.
   # @@protoc_insertion_point(class_scope:goldo.robot.RobotConfig)
   ))
 _sym_db.RegisterMessage(RobotConfig)
+
+RobotState = _reflection.GeneratedProtocolMessageType('RobotState', (_message.Message,), dict(
+  DESCRIPTOR = _ROBOTSTATE,
+  __module__ = 'goldo.robot_pb2'
+  # @@protoc_insertion_point(class_scope:goldo.robot.RobotState)
+  ))
+_sym_db.RegisterMessage(RobotState)
 
 
 _ROBOTGEOMETRY.fields_by_name['outline']._options = None

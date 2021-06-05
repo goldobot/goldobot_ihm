@@ -9,7 +9,7 @@ from PyQt5.QtWidgets import QGraphicsItem
 from PyQt5.QtWidgets import QGraphicsPixmapItem
 
 from PyQt5.QtGui import QPolygonF, QPen, QBrush, QColor, QFont, QTransform
-from PyQt5.QtGui import QImage, QImageReader, QPixmap
+from PyQt5.QtGui import QImage, QImageReader, QPixmap, QPainterPath
 
 class Robot(QGraphicsItem):
     def __init__(self, parent, config):
@@ -44,6 +44,7 @@ class TableViewWidget(QGraphicsView):
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         
         self._robots = {}
+        self._waypoints = []
 
         redium = QColor.fromCmykF(0,1,1,0.1)
         greenium = QColor.fromCmykF(0.7,0,0.9,0)
@@ -222,6 +223,35 @@ class TableViewWidget(QGraphicsView):
         self._plot_items = []
 
         TableViewWidget.g_table_view = self
+        
+    def set_strategy(self, strategy):
+        greenium = QColor.fromCmykF(0.7,0,0.9,0)
+        #greenium.setAlphaF(0.2)
+        for id_, pos in strategy['strategy']['map']['waypoints'].items():
+            wp = self._scene.addEllipse(QRectF(pos[0]-10,pos[1]-10,20,20),QPen(), QBrush(greenium))
+            self._waypoints.append(wp)
+        for id_, pose in strategy['strategy']['map']['poses'].items():
+            p = strategy['strategy']['map']['waypoints'][pose[0]]
+            path = QPainterPath()
+            cos_ = math.cos(pose[1] * math.pi / 180)
+            sin_ = math.sin(pose[1] * math.pi / 180)
+            l = 40
+            w = 20
+            path.moveTo(p[0] + l * cos_, p[1] + l * sin_)
+            path.lineTo(p[0] -l * cos_ + w * sin_, p[1] - l * sin_ - w * cos_)
+            path.lineTo(p[0] -l * cos_ - w * sin_, p[1] - l * sin_ + w * cos_)
+            path.closeSubpath()
+            itm = self._scene.addPath(path, QPen(), QBrush(greenium))
+            
+        for id_, area in strategy['strategy']['map']['areas'].items():
+            path = QPainterPath()
+            v = area['vertices'][0]
+            path.moveTo(v[0], v[1])
+            for v in area['vertices'][1:]: 
+                path.lineTo(v[0], v[1])
+            path.closeSubpath()
+            itm = self._scene.addPath(path, QPen(), QBrush(greenium))
+            self._waypoints.append(wp)
 
 
     def add_points(self, points):
@@ -239,10 +269,6 @@ class TableViewWidget(QGraphicsView):
         self._client.rplidar_plot.connect(self.update_plots)
         self._client.rplidar_robot_detection.connect(self.update_other_robots)
         
-    def draw_strategy(self,strategy):
-        pass
-        
-
     def update_telemetry(self, telemetry):
 #        self._big_robot.setPos(telemetry.x * 1000, telemetry.y * 1000)
 #        self._big_robot.setRotation(telemetry.yaw * 180 / math.pi)

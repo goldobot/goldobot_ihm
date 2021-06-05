@@ -4,6 +4,8 @@ nucleo:
     - propulsion
     - odrive_comm
     - dynamixels_comm
+    - fpga
+    - servos
   propulsion_task:
     motor_controller: ODriveUART
     update_period_ms: 1
@@ -101,20 +103,24 @@ nucleo:
   #7 et 8 pales dynamixels
     
   sensors:
-    - name: start_match
-      id: 3
+    - name: tirette
+      type: NUCLEO
+      id: 3      
     - name: emergency_stop
+      type: NUCLEO
       id: 6
-    - name: vacuostat
+    - name: recalage_ascenceur_gauche
+      type: FPGA
+      id: 8
+    - name: recalage_ascenceur_droit
+      type: FPGA
+      id: 7
+    - name: switch_pavillon
+      type: FPGA
+      id: 9
+    - name: switch3
+      type: FPGA
       id: 1
-    - name: laser_droit
-      id: 2
-    - name: laser_gauche
-      id: 0
-    - name: rouge_gauche
-      id: 4
-    - name: rouge_droit
-      id: 5
 
   sequence_files:
     - "sequences/constants.txt"

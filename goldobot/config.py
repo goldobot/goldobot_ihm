@@ -52,6 +52,8 @@ class RobotConfig:
         ParseDict(yaml.load(open(self.path / 'robot.yaml'),Loader=yaml.FullLoader), self.robot_config, ignore_unknown_fields=True)
         self.hal_config = HALConfig(nucleo_config.hal)
         self.config_proto = nucleo_config
+        
+        self.strategy = yaml.load(open(self.path / 'map.yaml'),Loader=yaml.FullLoader)
 
         robot = SequencesRobot()
         runpy.run_path(self.path / 'sequences.py', {'robot': robot})
