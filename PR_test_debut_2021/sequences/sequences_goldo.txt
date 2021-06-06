@@ -36,8 +36,6 @@ end sequence
 
 begin sequence prematch_common
 pump.set_pwm pwm_pump_off
-set_servo stock_g,chargeur_gauche_sorti,100
-set_servo stock_d,chargeur_droit_sorti,100
 arm.go_to_position stk_av_retrait,1,100
 #call griffes_range
 call griffes_chaos

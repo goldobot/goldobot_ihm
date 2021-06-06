@@ -73,37 +73,13 @@ var vec3 speed_100=(45mm,300mm,300mm)
 #							Position servo
 ####################################################################
 
-#--position GuiC (slider avant)
-var int servo_slider_gauche_overshoot=32200
-var int servo_slider_gauche_range=32500
-var int servo_slider_gauche_presorti=34000
-var int servo_slider_gauche=36500
-var int servo_slider_droite=42000
-var int servo_slider_droit_presorti=44300
-var int servo_slider_droit_range=45700
-var int servo_slider_droit_overshoot=46000
-
-#--position CoSe (cale mobile avant)
+#--HACK 2021
 var int servo_griffe_gauche_attack=51000
 var int servo_griffe_gauche_retrait=27000
-var int servo_griffe_gauche_goldenium=28000
-var int servo_griffe_gauche_accelerateur=45000
 var int servo_griffe_droit_attack=16000
-#var int servo_griffe_droit_retrait=47000
 var int servo_griffe_droit_retrait=40000
-var int servo_griffe_droit_goldenium=39000
-var int servo_griffe_droit_accelerateur=22000
-
-#--position Tock (stock lateraux)
-var int chargeur_droit_preprise=43500
-var int chargeur_gauche_preprise=32000
-var int chargeur_droit_prise=31000
-var int chargeur_gauche_prise=43500
-var int chargeur_droit_sorti=52000
-var int chargeur_gauche_sorti=23700
-var int chargeur_droit_calage=45500
-var int chargeur_gauche_calage=30000
-
+var int servo_flag_ranged=16000
+var int servo_flag_raised=34000
 
 ####################################################################
 #							Capteur

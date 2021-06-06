@@ -10,11 +10,5 @@ arm.shutdown
 end sequence
 
 begin sequence test_servos_speed
-set_servo slider,servo_slider_droite,100
 delay delay2
-set_servo slider,servo_slider_gauche,100
-delay delay2
-set_servo slider,servo_slider_droite,20
-delay delay2
-set_servo slider,servo_slider_gauche,20
 end sequence
