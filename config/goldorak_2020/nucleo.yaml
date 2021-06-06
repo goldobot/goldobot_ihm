@@ -93,15 +93,35 @@ nucleo:
       max_torque: 10
       cw_limit: 6950 
       ccw_limit: 15200
-    - name: test
-      id: 3
+    - name: pale_g
+      id: 7
       type: DYNAMIXEL_AX12
       max_speed: 0x1020
-      max_torque: 10
+      max_torque: 256
       cw_limit: 19000
       ccw_limit: 51000
-  #7 et 8 pales dynamixels
-    
+    - name: pale_d
+      id: 8
+      type: DYNAMIXEL_AX12
+      max_speed: 0x1020
+      max_torque: 256
+      cw_limit: 19000
+      ccw_limit: 51000
+    - name: herse_v
+      id: 81
+      type: DYNAMIXEL_MX28
+      max_speed: 0x1020
+      max_torque: 256
+      cw_limit: 19000
+      ccw_limit: 51000
+    - name: herse_slider
+      id: 81
+      type: DYNAMIXEL_AX12
+      max_speed: 0x1020
+      max_torque: 256
+      cw_limit: 19000
+      ccw_limit: 51000
+  #7 et 8 pales dynamixels    
   sensors:
     - name: tirette
       type: NUCLEO
@@ -121,6 +141,13 @@ nucleo:
     - name: switch3
       type: FPGA
       id: 1
+  lifts:
+    left:
+      max_pwm: 0x20
+      max_range: 1000
+      kp: 0
+      ki: 0
+      kd: 0
 
   sequence_files:
     - "sequences/constants.txt"

@@ -39,14 +39,12 @@ async def test1():
     
 @robot.sequence
 async def test_dynamixels():
-    await commands.dynamixelsSetTorqueEnable(1, True)
-    for i in range(4):
-        await commands.dynamixelsSetSpeed(1, 256)
-        await commands.dynamixelsSetPosition(1, 512)
-        await sleep(1)
-        await commands.dynamixelsSetSpeed(1, 1023)
-        await commands.dynamixelsSetPosition(1, 200)
-        await sleep(1)
+    id_ = 8
+    await commands.dynamixelsSetTorqueEnable(id_, True)
+    await commands.dynamixelsSetSpeed(id_, 256)
+    await commands.dynamixelsSetTorqueLimit(id_, 256)
+    await commands.dynamixelsSetPosition(id_, 500)
+        
     
 @robot.sequence
 async def _prematch():

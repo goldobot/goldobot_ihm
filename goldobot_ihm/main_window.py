@@ -64,6 +64,8 @@ class MainWindow(QMainWindow):
 
         self._client = ZmqClient(ip=options.robot_ip)
         config.load_config(options.config_path)
+        cfg = config.robot_config
+        cfg.update_config()        
 
         # Create actions
 
@@ -98,6 +100,7 @@ class MainWindow(QMainWindow):
 
         self._main_widget = QWidget()
         self._table_view = TableViewWidget()
+        self._table_view.set_strategy(cfg.strategy)
         self._widget_robot_status = RobotStatusWidget()
 
         layout1 = QHBoxLayout()
@@ -166,7 +169,8 @@ class MainWindow(QMainWindow):
         
     def _upload_config(self):
         cfg = config.robot_config
-        cfg.update_config()        
+        cfg.update_config()
+        self._table_view.set_strategy(cfg.strategy)
         self._client.publishTopic('config/test/put', cfg.robot_config)
         self._client.publishTopic('gui/out/commands/config_nucleo')        
 
