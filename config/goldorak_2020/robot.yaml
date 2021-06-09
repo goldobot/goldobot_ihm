@@ -3,13 +3,13 @@ robot_geometry:
     front_length: 106.5
     back_length: 101.5
     configurations:
-      base:
+      - name: base
+        front_length: 106.5
+        back_length: 101.5
         outline:
-        - { x: 0, y: 116.5}
-        - { x: 10, y: 20}
-    outline:
-      - { x: 0, y: 116.5}
-      - { x: 10, y: 20}
+          - { x: 0, y: 116.5}
+          - { x: 10, y: 20}
+
 rplidar:
   theta_offset: 145
   tresholds:

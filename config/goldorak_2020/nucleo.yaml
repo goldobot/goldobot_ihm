@@ -98,29 +98,29 @@ nucleo:
       type: DYNAMIXEL_AX12
       max_speed: 0x1020
       max_torque: 256
-      cw_limit: 19000
-      ccw_limit: 51000
+      cw_limit: 156
+      ccw_limit: 769
     - name: pale_d
       id: 8
       type: DYNAMIXEL_AX12
       max_speed: 0x1020
       max_torque: 256
-      cw_limit: 19000
-      ccw_limit: 51000
+      cw_limit: 255
+      ccw_limit: 858
     - name: herse_v
       id: 81
       type: DYNAMIXEL_MX28
       max_speed: 0x1020
       max_torque: 256
-      cw_limit: 19000
-      ccw_limit: 51000
+      cw_limit: 860
+      ccw_limit: 2075
     - name: herse_slider
-      id: 81
+      id: 1
       type: DYNAMIXEL_AX12
       max_speed: 0x1020
       max_torque: 256
-      cw_limit: 19000
-      ccw_limit: 51000
+      cw_limit: 140
+      ccw_limit: 800
   #7 et 8 pales dynamixels    
   sensors:
     - name: tirette
