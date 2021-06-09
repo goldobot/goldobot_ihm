@@ -43,6 +43,8 @@ from goldobot import config
 import google.protobuf as _pb
 _sym_db = _pb.symbol_database.Default()
 
+import goldobot_ihm.dialogs as _dialogs
+
 dialogs = [
     ("Test Hal", HalTestDialog),
     ("ODrive", ODriveDialog),
@@ -55,7 +57,7 @@ dialogs = [
     ("Debug FPGA", DebugFpgaDialog),
     ("Debug asserv", DebugAsservDialog),
     ("Test sequences", SequencesDialog),
-    ('Score', ScoreDialog)
+    ("Test Lifts", _dialogs.DebugLiftsDialog)
  ]
 
 class MainWindow(QMainWindow):
