@@ -3,7 +3,6 @@
 
 import sys
 _b=sys.version_info[0]<3 and (lambda x:x) or (lambda x:x.encode('latin1'))
-from google.protobuf.internal import enum_type_wrapper
 from google.protobuf import descriptor as _descriptor
 from google.protobuf import message as _message
 from google.protobuf import reflection as _reflection
@@ -21,13 +20,15 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='goldo.nucleo.dynamixels',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x1dgoldo/nucleo/dynamixels.proto\x12\x17goldo.nucleo.dynamixels\x1a\x17goldo/pb2_options.proto\"\xaa\x01\n\rRequestPacket\x12\x1d\n\x0fsequence_number\x18\x01 \x01(\rB\x04\x80\xb5\x18\x05\x12\x1e\n\x10protocol_version\x18\x02 \x01(\rB\x04\x80\xb5\x18\x03\x12\x10\n\x02id\x18\x03 \x01(\rB\x04\x80\xb5\x18\x03\x12\x37\n\x07\x63ommand\x18\x04 \x01(\x0e\x32 .goldo.nucleo.dynamixels.CommandB\x04\x80\xb5\x18\x03\x12\x0f\n\x07payload\x18\x05 \x01(\x0c\"\x8d\x01\n\x0eResponsePacket\x12\x1d\n\x0fsequence_number\x18\x01 \x01(\rB\x04\x80\xb5\x18\x05\x12\x1e\n\x10protocol_version\x18\x02 \x01(\rB\x04\x80\xb5\x18\x03\x12\x10\n\x02id\x18\x03 \x01(\rB\x04\x80\xb5\x18\x03\x12\x19\n\x0b\x65rror_flags\x18\x04 \x01(\rB\x04\x80\xb5\x18\x03\x12\x0f\n\x07payload\x18\x05 \x01(\x0c*\xc8\x01\n\x07\x43ommand\x12\x0b\n\x07UNKNOWN\x10\x00\x12\x08\n\x04PING\x10\x01\x12\x08\n\x04READ\x10\x02\x12\t\n\x05WRITE\x10\x03\x12\r\n\tREG_WRITE\x10\x04\x12\n\n\x06\x41\x43TION\x10\x05\x12\x11\n\rFACTORY_RESET\x10\x06\x12\n\n\x06REBOOT\x10\x08\x12\t\n\x05\x43LEAR\x10\x10\x12\n\n\x06STATUS\x10U\x12\x0e\n\tSYNC_READ\x10\x82\x01\x12\x0f\n\nSYNC_WRITE\x10\x83\x01\x12\x0e\n\tBULK_READ\x10\x92\x01\x12\x0f\n\nBULK_WRITE\x10\x93\x01\x62\x06proto3')
+  serialized_pb=_b('\n\x1dgoldo/nucleo/dynamixels.proto\x12\x17goldo.nucleo.dynamixels\x1a\x17goldo/pb2_options.proto\"\x83\x03\n\rRequestPacket\x12\x1d\n\x0fsequence_number\x18\x01 \x01(\rB\x04\x80\xb5\x18\x05\x12\x1e\n\x10protocol_version\x18\x02 \x01(\rB\x04\x80\xb5\x18\x03\x12\x10\n\x02id\x18\x03 \x01(\rB\x04\x80\xb5\x18\x03\x12\x45\n\x07\x63ommand\x18\x04 \x01(\x0e\x32..goldo.nucleo.dynamixels.RequestPacket.CommandB\x04\x80\xb5\x18\x03\x12\x0f\n\x07payload\x18\x05 \x01(\x0c\"\xc8\x01\n\x07\x43ommand\x12\x0b\n\x07UNKNOWN\x10\x00\x12\x08\n\x04PING\x10\x01\x12\x08\n\x04READ\x10\x02\x12\t\n\x05WRITE\x10\x03\x12\r\n\tREG_WRITE\x10\x04\x12\n\n\x06\x41\x43TION\x10\x05\x12\x11\n\rFACTORY_RESET\x10\x06\x12\n\n\x06REBOOT\x10\x08\x12\t\n\x05\x43LEAR\x10\x10\x12\n\n\x06STATUS\x10U\x12\x0e\n\tSYNC_READ\x10\x82\x01\x12\x0f\n\nSYNC_WRITE\x10\x83\x01\x12\x0e\n\tBULK_READ\x10\x92\x01\x12\x0f\n\nBULK_WRITE\x10\x93\x01\"\x8d\x01\n\x0eResponsePacket\x12\x1d\n\x0fsequence_number\x18\x01 \x01(\rB\x04\x80\xb5\x18\x05\x12\x1e\n\x10protocol_version\x18\x02 \x01(\rB\x04\x80\xb5\x18\x03\x12\x10\n\x02id\x18\x03 \x01(\rB\x04\x80\xb5\x18\x03\x12\x19\n\x0b\x65rror_flags\x18\x04 \x01(\rB\x04\x80\xb5\x18\x03\x12\x0f\n\x07payload\x18\x05 \x01(\x0c\x62\x06proto3')
   ,
   dependencies=[goldo_dot_pb2__options__pb2.DESCRIPTOR,])
 
-_COMMAND = _descriptor.EnumDescriptor(
+
+
+_REQUESTPACKET_COMMAND = _descriptor.EnumDescriptor(
   name='Command',
-  full_name='goldo.nucleo.dynamixels.Command',
+  full_name='goldo.nucleo.dynamixels.RequestPacket.Command',
   filename=None,
   file=DESCRIPTOR,
   values=[
@@ -90,27 +91,10 @@ _COMMAND = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=401,
-  serialized_end=601,
+  serialized_start=271,
+  serialized_end=471,
 )
-_sym_db.RegisterEnumDescriptor(_COMMAND)
-
-Command = enum_type_wrapper.EnumTypeWrapper(_COMMAND)
-UNKNOWN = 0
-PING = 1
-READ = 2
-WRITE = 3
-REG_WRITE = 4
-ACTION = 5
-FACTORY_RESET = 6
-REBOOT = 8
-CLEAR = 16
-STATUS = 85
-SYNC_READ = 130
-SYNC_WRITE = 131
-BULK_READ = 146
-BULK_WRITE = 147
-
+_sym_db.RegisterEnumDescriptor(_REQUESTPACKET_COMMAND)
 
 
 _REQUESTPACKET = _descriptor.Descriptor(
@@ -160,6 +144,7 @@ _REQUESTPACKET = _descriptor.Descriptor(
   ],
   nested_types=[],
   enum_types=[
+    _REQUESTPACKET_COMMAND,
   ],
   serialized_options=None,
   is_extendable=False,
@@ -168,7 +153,7 @@ _REQUESTPACKET = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=84,
-  serialized_end=254,
+  serialized_end=471,
 )
 
 
@@ -226,14 +211,14 @@ _RESPONSEPACKET = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=257,
-  serialized_end=398,
+  serialized_start=474,
+  serialized_end=615,
 )
 
-_REQUESTPACKET.fields_by_name['command'].enum_type = _COMMAND
+_REQUESTPACKET.fields_by_name['command'].enum_type = _REQUESTPACKET_COMMAND
+_REQUESTPACKET_COMMAND.containing_type = _REQUESTPACKET
 DESCRIPTOR.message_types_by_name['RequestPacket'] = _REQUESTPACKET
 DESCRIPTOR.message_types_by_name['ResponsePacket'] = _RESPONSEPACKET
-DESCRIPTOR.enum_types_by_name['Command'] = _COMMAND
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 RequestPacket = _reflection.GeneratedProtocolMessageType('RequestPacket', (_message.Message,), dict(

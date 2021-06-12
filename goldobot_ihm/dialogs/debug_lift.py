@@ -39,6 +39,8 @@ class DebugLiftTab(QDialog):
         self._line_edit_kd = QLineEdit()
         
         self._line_edit_kp.setText("{:>08x}".format(_default_kp))
+        self._line_edit_ki.setText("{:>08x}".format(_default_ki))
+        self._line_edit_kd.setText("{:>08x}".format(_default_kd))
         
         self._button_set_kp = QPushButton('Set kp')
         self._button_set_ki = QPushButton('Set ki')
@@ -46,10 +48,35 @@ class DebugLiftTab(QDialog):
         
         layout.addWidget(self._line_edit_kp,1,0)
         layout.addWidget(self._button_set_kp,1,1)
+        
         layout.addWidget(self._line_edit_ki,2,0)
         layout.addWidget(self._button_set_ki,2,1)
+        
         layout.addWidget(self._line_edit_kd,3,0)
         layout.addWidget(self._button_set_kd,3,1)
+        
+        
+        self._spinbox_range = QSpinBox()
+        self._spinbox_clamp = QSpinBox()
+        self._button_set_range_clamp = QPushButton('Set')
+        layout.addWidget(QLabel('Range'),4,0)
+        layout.addWidget(QLabel('Clamp'),4,1)
+        layout.addWidget(self._spinbox_range,5,1)
+        layout.addWidget(self._spinbox_clamp,5,0)
+        layout.addWidget(self._button_set_range_clamp,6,0)
+        
+        self._spinbox_bltrig = QSpinBox()
+        self._spinbox_speed = QSpinBox()
+        self._button_set_bltrig_speed = QPushButton('Set')
+        layout.addWidget(QLabel('BlTrig'),7,0)
+        layout.addWidget(QLabel('Speed'),7,1)
+        layout.addWidget(self._spinbox_bltrig,8,1)
+        layout.addWidget(self._spinbox_speed,8,0)
+        layout.addWidget(self._button_set_bltrig_speed,9,0)
+        
+        self._spinbox_target = QSpinBox()
+        self._button_jump = QPushButton('Jump')
+        self._button_goto = QPushButton('GoTo')
         
         self.setLayout(layout)
         

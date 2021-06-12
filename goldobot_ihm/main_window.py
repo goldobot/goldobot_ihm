@@ -55,9 +55,8 @@ dialogs = [
     ("Test dynamixels", TestDynamixelAx12Dialog),
     ("Test actionneurs", TestActuatorsDialog),
     ("Debug FPGA", DebugFpgaDialog),
-    ("Debug asserv", DebugAsservDialog),
-    ("Test sequences", SequencesDialog),
-    ("Test Lifts", _dialogs.DebugLiftsDialog)
+    ("Debug Lifts", DebugAsservDialog),
+    ("Test sequences", SequencesDialog)
  ]
 
 class MainWindow(QMainWindow):

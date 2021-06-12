@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='goldo.nucleo',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x17goldo/nucleo/main.proto\x12\x0cgoldo.nucleo\"\x1e\n\tHeartbeat\x12\x11\n\ttimestamp\x18\x01 \x01(\x07\"*\n\x0cSensorsState\x12\x0c\n\x04gpio\x18\x01 \x01(\x07\x12\x0c\n\x04\x66pga\x18\x02 \x01(\x07\"}\n\rWatchdogState\x12\x0c\n\x04main\x18\x01 \x01(\x08\x12\x12\n\npropulsion\x18\x02 \x01(\x08\x12\x0c\n\x04\x66pga\x18\x03 \x01(\x08\x12\x13\n\x0bodrive_comm\x18\x04 \x01(\x08\x12\x17\n\x0f\x64ynamixels_comm\x18\x05 \x01(\x08\x12\x0e\n\x06servos\x18\x06 \x01(\x08\"_\n\x11\x46reeRTOSHeapStats\x12\"\n\x1axAvailableHeapSpaceInBytes\x18\x01 \x01(\x07\x12&\n\x1exSizeOfLargestFreeBlockInBytes\x18\x02 \x01(\x07\x62\x06proto3')
+  serialized_pb=_b('\n\x17goldo/nucleo/main.proto\x12\x0cgoldo.nucleo\"\x1e\n\tHeartbeat\x12\x11\n\ttimestamp\x18\x01 \x01(\x07\"\x1d\n\x0cSensorsState\x12\r\n\x05state\x18\x01 \x01(\x07\"}\n\rWatchdogState\x12\x0c\n\x04main\x18\x01 \x01(\x08\x12\x12\n\npropulsion\x18\x02 \x01(\x08\x12\x0c\n\x04\x66pga\x18\x03 \x01(\x08\x12\x13\n\x0bodrive_comm\x18\x04 \x01(\x08\x12\x17\n\x0f\x64ynamixels_comm\x18\x05 \x01(\x08\x12\x0e\n\x06servos\x18\x06 \x01(\x08\"_\n\x11\x46reeRTOSHeapStats\x12\"\n\x1axAvailableHeapSpaceInBytes\x18\x01 \x01(\x07\x12&\n\x1exSizeOfLargestFreeBlockInBytes\x18\x02 \x01(\x07\x62\x06proto3')
 )
 
 
@@ -64,15 +64,8 @@ _SENSORSSTATE = _descriptor.Descriptor(
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='gpio', full_name='goldo.nucleo.SensorsState.gpio', index=0,
+      name='state', full_name='goldo.nucleo.SensorsState.state', index=0,
       number=1, type=7, cpp_type=3, label=1,
-      has_default_value=False, default_value=0,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='fpga', full_name='goldo.nucleo.SensorsState.fpga', index=1,
-      number=2, type=7, cpp_type=3, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -90,7 +83,7 @@ _SENSORSSTATE = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=73,
-  serialized_end=115,
+  serialized_end=102,
 )
 
 
@@ -155,8 +148,8 @@ _WATCHDOGSTATE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=117,
-  serialized_end=242,
+  serialized_start=104,
+  serialized_end=229,
 )
 
 
@@ -193,8 +186,8 @@ _FREERTOSHEAPSTATS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=244,
-  serialized_end=339,
+  serialized_start=231,
+  serialized_end=326,
 )
 
 DESCRIPTOR.message_types_by_name['Heartbeat'] = _HEARTBEAT

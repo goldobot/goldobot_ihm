@@ -21,7 +21,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='goldo.pb2_options',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x17goldo/pb2_options.proto\x12\x11goldo.pb2_options\x1a google/protobuf/descriptor.proto*\x9b\x01\n\x07\x43ppType\x12\x0b\n\x07UNKNOWN\x10\x00\x12\x08\n\x04\x42OOL\x10\x01\x12\x08\n\x04INT8\x10\x02\x12\t\n\x05UINT8\x10\x03\x12\t\n\x05INT16\x10\x04\x12\n\n\x06UINT16\x10\x05\x12\t\n\x05INT32\x10\x06\x12\n\n\x06UINT32\x10\x07\x12\t\n\x05INT64\x10\x08\x12\n\n\x06UINT64\x10\t\x12\t\n\x05\x46LOAT\x10\n\x12\n\n\x06\x44OUBLE\x10\x0b\x12\x08\n\x04VOID\x10\x0c:M\n\x08\x63pp_type\x12\x1d.google.protobuf.FieldOptions\x18\xd0\x86\x03 \x01(\x0e\x32\x1a.goldo.pb2_options.CppType:2\n\tmax_count\x12\x1d.google.protobuf.FieldOptions\x18\xd1\x86\x03 \x01(\x05:4\n\x0b\x66ixed_count\x12\x1d.google.protobuf.FieldOptions\x18\xd2\x86\x03 \x01(\x08\x62\x06proto3')
+  serialized_pb=_b('\n\x17goldo/pb2_options.proto\x12\x11goldo.pb2_options\x1a google/protobuf/descriptor.proto*\x9b\x01\n\x07\x43ppType\x12\x0b\n\x07UNKNOWN\x10\x00\x12\x08\n\x04\x42OOL\x10\x01\x12\x08\n\x04INT8\x10\x02\x12\t\n\x05UINT8\x10\x03\x12\t\n\x05INT16\x10\x04\x12\n\n\x06UINT16\x10\x05\x12\t\n\x05INT32\x10\x06\x12\n\n\x06UINT32\x10\x07\x12\t\n\x05INT64\x10\x08\x12\n\n\x06UINT64\x10\t\x12\t\n\x05\x46LOAT\x10\n\x12\n\n\x06\x44OUBLE\x10\x0b\x12\x08\n\x04VOID\x10\x0c:M\n\x08\x63pp_type\x12\x1d.google.protobuf.FieldOptions\x18\xd0\x86\x03 \x01(\x0e\x32\x1a.goldo.pb2_options.CppType:2\n\tmax_count\x12\x1d.google.protobuf.FieldOptions\x18\xd1\x86\x03 \x01(\x05:4\n\x0b\x66ixed_count\x12\x1d.google.protobuf.FieldOptions\x18\xd2\x86\x03 \x01(\x08:O\n\ncount_type\x12\x1d.google.protobuf.FieldOptions\x18\xd3\x86\x03 \x01(\x0e\x32\x1a.goldo.pb2_options.CppTypeb\x06proto3')
   ,
   dependencies=[google_dot_protobuf_dot_descriptor__pb2.DESCRIPTOR,])
 
@@ -130,16 +130,27 @@ fixed_count = _descriptor.FieldDescriptor(
   message_type=None, enum_type=None, containing_type=None,
   is_extension=True, extension_scope=None,
   serialized_options=None, file=DESCRIPTOR)
+COUNT_TYPE_FIELD_NUMBER = 50003
+count_type = _descriptor.FieldDescriptor(
+  name='count_type', full_name='goldo.pb2_options.count_type', index=3,
+  number=50003, type=14, cpp_type=8, label=1,
+  has_default_value=False, default_value=0,
+  message_type=None, enum_type=None, containing_type=None,
+  is_extension=True, extension_scope=None,
+  serialized_options=None, file=DESCRIPTOR)
 
 DESCRIPTOR.enum_types_by_name['CppType'] = _CPPTYPE
 DESCRIPTOR.extensions_by_name['cpp_type'] = cpp_type
 DESCRIPTOR.extensions_by_name['max_count'] = max_count
 DESCRIPTOR.extensions_by_name['fixed_count'] = fixed_count
+DESCRIPTOR.extensions_by_name['count_type'] = count_type
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 cpp_type.enum_type = _CPPTYPE
 google_dot_protobuf_dot_descriptor__pb2.FieldOptions.RegisterExtension(cpp_type)
 google_dot_protobuf_dot_descriptor__pb2.FieldOptions.RegisterExtension(max_count)
 google_dot_protobuf_dot_descriptor__pb2.FieldOptions.RegisterExtension(fixed_count)
+count_type.enum_type = _CPPTYPE
+google_dot_protobuf_dot_descriptor__pb2.FieldOptions.RegisterExtension(count_type)
 
 # @@protoc_insertion_point(module_scope)
