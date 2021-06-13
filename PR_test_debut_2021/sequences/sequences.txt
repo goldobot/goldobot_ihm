@@ -2,16 +2,16 @@
 #							Sequence Match
 ####################################################################
 
+# 0
 begin sequence prematch_jaune
 movi score,0
-#call auto_test
 call prematch_common
 propulsion.set_pose start_pose_jaune
 end sequence
 
+# 1
 begin sequence prematch_violet
 movi score,0
-#call auto_test
 call prematch_common
 propulsion.set_pose start_pose_violet
 end sequence
@@ -19,12 +19,14 @@ end sequence
 
 ############################ match jaune #####################
 
+# 2
 begin sequence match_jaune
 propulsion.set_pose start_pose_jaune
 end sequence
 
 ############################ match violet #####################
 
+# 3
 begin sequence match_violet
 propulsion.set_pose start_pose_violet
 end sequence
@@ -34,35 +36,38 @@ end sequence
 #							Sous routines
 ####################################################################
 
+# 4
 begin sequence prematch_common
 pump.set_pwm pwm_pump_off
-arm.go_to_position stk_av_retrait,1,100
-#call griffes_range
-#call griffes_chaos
+#call range_bras
+call range_flag
 delay delay1
 propulsion.motors_enable
 propulsion.enable
 end sequence
 
-begin sequence griffes_chaos
-set_servo griffe_g,servo_griffe_gauche_attack,100
+# 5
+begin sequence deploie_droit
 set_servo griffe_d,servo_griffe_droit_attack,100
 end sequence
 
-begin sequence griffes_range
+# 6
+begin sequence deploie_gauche
+set_servo griffe_g,servo_griffe_gauche_attack,100
+end sequence
+
+# 7
+begin sequence range_bras
 set_servo griffe_g,servo_griffe_gauche_retrait,100
 set_servo griffe_d,servo_griffe_droit_retrait,100
 end sequence
 
-begin sequence griffes_phare
-set_servo griffe_g,servo_griffe_gauche_attack,100
-set_servo griffe_d,servo_griffe_droit_attack,100
-end sequence
-
+# 8
 begin sequence range_flag
 set_servo flag,servo_flag_ranged,100
 end sequence
 
+# 9
 begin sequence raise_flag
 set_servo flag,servo_flag_raised,100
 end sequence
