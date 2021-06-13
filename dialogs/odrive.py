@@ -121,7 +121,7 @@ class ODriveDialog(QDialog):
     def _read_json(self):
         self._reading_json = True
         self._json_schema_buffer = b''
-        self._seq[0] = self._send_request(0x8000, 512, struct.pack('<I',0), 1)
+        self._seq[0] = self._send_request(0x4000, 512, struct.pack('<I',0), 1)
         
     def _calibrate(self):
         self._client.publishTopic('nucleo/in/propulsion/calibrate_odrive', _sym_db.GetSymbol('google.protobuf.Empty')())
@@ -133,7 +133,7 @@ class ODriveDialog(QDialog):
             self._json_schema_buffer += payload
             if len(payload):
                 offset = len(self._json_schema_buffer)
-                self._seq[0] = self._client.send_message_odrive(0x8000, 512, struct.pack('<I',offset), 1)
+                self._seq[0] = self._client.send_message_odrive(0x4000, 512, struct.pack('<I',offset), 1)
             else:
                 del self._seq[0]
                 open('odrive_schema.json', 'wb').write(self._json_schema_buffer)

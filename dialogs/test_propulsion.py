@@ -222,7 +222,7 @@ class PropulsionTestDialog(QDialog):
     def _execute_rotation(self):
         if self._client is not None:
             msg = _sym_db.GetSymbol('goldo.nucleo.propulsion.ExecuteRotation')(
-                yaw_delta = int(self._execute_rotation_edit.text()) * math.pi/180,
+                angle = int(self._execute_rotation_edit.text()) * math.pi/180,
                 yaw_rate = 1)
             self._client.publishTopic('nucleo/in/propulsion/cmd/rotation', msg)
             
