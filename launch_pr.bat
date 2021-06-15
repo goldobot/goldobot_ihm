@@ -1,1 +1,0 @@
-python  main.py --robot-ip 192.168.0.222

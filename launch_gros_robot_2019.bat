@@ -1,1 +1,0 @@
-python main.py --robot-ip robot02 --config-path config/gros_robot_2019

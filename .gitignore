@@ -3,3 +3,11 @@
 *.pyc
 __pycache__/
 sequence_names.txt
+goldo_log.txt
+
+# Environments
+.env
+.venv
+
+# Pycharm project
+.project

@@ -1,1 +1,1 @@
-python  main.py --robot-ip raspberrypi01 --config-path robot_2020
+python  main.py --robot-ip robot01 --config-path config/goldorak_2020
