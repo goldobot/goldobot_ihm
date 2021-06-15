@@ -1,4 +1,5 @@
 import zmq
+import re
 import struct
 from PyQt5.QtCore import QObject, QSocketNotifier, pyqtSignal
 from PyQt5.QtGui import QPixmap
@@ -60,6 +61,7 @@ class ZmqClient(QObject):
         self._notifier_main = QSocketNotifier(self._socket_main_sub.getsockopt(zmq.FD), QSocketNotifier.Read, self)
         self._notifier_main.activated.connect(self._on_socket_main_sub)
        
+        self._callbacks = []
         self._goldo_log_fd = open("goldo_log.txt","wt")
 
     def send_message(self, message_type, message_body):
@@ -72,8 +74,14 @@ class ZmqClient(QObject):
                                               msg.DESCRIPTOR.full_name.encode('utf8'),
                                               msg.SerializeToString()])
                                               
-    def registerListener(self, topic, callback):
-        pass
+    def registerCallback(self, pattern: str, callback):
+        pattern = (
+            pattern
+            .replace('*', r'([^/]+)')
+            .replace('/#', r'(/[^/]+)*')
+            .replace('#/', r'([^/]+/)*')
+            )
+        self._callbacks.append((re.compile(f"^{pattern}$"), callback))
                                               
     def _on_socket_main_sub(self):        
         self._notifier_main.setEnabled(False)
@@ -91,6 +99,10 @@ class ZmqClient(QObject):
                 msg.ParseFromString(payload)
             else:
                 msg = None
+            callback_matches = ((regexp.match(topic), callback) for regexp, callback in self._callbacks)
+            for match, callback in callback_matches:
+                if match:
+                    callback(*match.groups(), msg)
             if topic.startswith('nucleo'):
                 pass #print(topic)
             if topic == 'nucleo/out/os/heartbeat':

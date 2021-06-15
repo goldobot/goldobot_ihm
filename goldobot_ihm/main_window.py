@@ -33,6 +33,7 @@ from dialogs.score import ScoreDialog
 from dialogs.test_hal import HalTestDialog
 from dialogs.odrive import ODriveDialog
 from dialogs.test_rplidar import TestRPLidarDialog
+from goldobot_ihm.scope.scope import ScopeDialog
 
 from parse_sequence import SequenceParser
 
@@ -51,6 +52,7 @@ dialogs = [
     ("Configure Odometry", OdometryConfigDialog),
     ("Configure Propulsion controller", PropulsionControllerConfigDialog),
     ("Test propulsion", PropulsionTestDialog),
+    ("Scope", ScopeDialog),
     ("Test RPLidar", TestRPLidarDialog),
     ("Test dynamixels", TestDynamixelAx12Dialog),
     ("Test actionneurs", TestActuatorsDialog),
@@ -72,7 +74,7 @@ class MainWindow(QMainWindow):
 
         self._action_reset = QAction("Reset")
         self._action_enter_debug = QAction("Debug enter")
-        self._action_exit_debug = QAction("Debug exit")
+        self._action_simulation = QAction("Simulation", checkable=True)
         self._action_upload_config = QAction("Upload config")
 
         self._F5_shortcut = QShortcut(QKeySequence(Qt.Key_F5), self)
@@ -94,8 +96,7 @@ class MainWindow(QMainWindow):
             self._dialogs.append(widget)
             action.triggered.connect(widget.show)
 
-        tools_menu.addAction(self._action_enter_debug)
-        tools_menu.addAction(self._action_exit_debug)
+        tools_menu.addAction(self._action_simulation)
         tools_menu.addAction(self._action_reset)
         tools_menu.addAction(self._action_upload_config)
 
@@ -116,11 +117,9 @@ class MainWindow(QMainWindow):
 
         self._action_reset.triggered.connect(self._send_reset)
         self._action_enter_debug.triggered.connect(self._send_enter_debug)
-        self._action_exit_debug.triggered.connect(self._send_exit_debug)
         self._action_upload_config.triggered.connect(self._upload_config)
 
         self._client.robot_end_load_config_status.connect(self._upload_status)
-
 
         for d in self._dialogs:
             d.set_client(self._client)
@@ -178,7 +177,8 @@ class MainWindow(QMainWindow):
     def _upload_status(self, status):
         if status == True:
             QMessageBox.information(self, "Upload config status", "Success")
-            #self._client.publishTopic('nucleo/in/propulsion/simulation/enable', _sym_db.GetSymbol('google.protobuf.BoolValue')(value=True))
+            simulation_enable = self._action_simulation.isChecked()
+            self._client.publishTopic('nucleo/in/propulsion/simulation/enable', _sym_db.GetSymbol('google.protobuf.BoolValue')(value=simulation_enable))
         else:
             QMessageBox.critical(self, "Upload config status", "Failure")
 
