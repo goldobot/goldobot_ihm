@@ -44,7 +44,10 @@ async def test_dynamixels():
     await commands.dynamixelsSetSpeed(id_, 256)
     await commands.dynamixelsSetTorqueLimit(id_, 256)
     await commands.dynamixelsSetPosition(id_, 500)
-        
+    
+@robot.sequence
+async def test_servos():
+    await servos.move('test_standard', 12000, 42)   
     
 @robot.sequence
 async def _prematch():

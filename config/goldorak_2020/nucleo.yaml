@@ -121,7 +121,13 @@ nucleo:
       max_torque: 256
       cw_limit: 140
       ccw_limit: 800
-  #7 et 8 pales dynamixels    
+    - name: test_standard
+      id: 8
+      type: STANDARD
+      max_speed: 10000
+      max_torque: 10
+      cw_limit: 2800 
+      ccw_limit: 15000
   sensors:
     - name: tirette
       type: NUCLEO
@@ -129,18 +135,24 @@ nucleo:
     - name: emergency_stop
       type: NUCLEO
       id: 6
-    - name: recalage_ascenceur_gauche
+    - name: recalage_ascensceur_gauche
       type: FPGA
-      id: 8
-    - name: recalage_ascenceur_droit
+      id: 14
+    - name: recalage_ascensceur_droit
       type: FPGA
-      id: 7
+      id: 15
     - name: switch_pavillon
       type: FPGA
-      id: 9
+      id: 13
     - name: switch3
       type: FPGA
       id: 1
+    - name: truc1
+      type: FPGA
+      id: 10
+    - name: truc2
+      type: FPGA
+      id: 11
   lifts:
     left:
       max_pwm: 0x20

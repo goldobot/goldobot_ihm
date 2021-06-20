@@ -27,7 +27,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='goldo.nucleo',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x12goldo/nucleo.proto\x12\x0cgoldo.nucleo\x1a\x1bgoldo/common/geometry.proto\x1a\x16goldo/nucleo/hal.proto\x1a\x1bgoldo/nucleo/odometry.proto\x1a\x1dgoldo/nucleo/propulsion.proto\x1a\"goldo/nucleo/robot_simulator.proto\x1a\x19goldo/nucleo/servos.proto\x1a\x17goldo/pb2_options.proto\"y\n\x16MessageQueueStatistics\x12$\n\x16min_available_capacity\x18\x01 \x01(\rB\x04\x80\xb5\x18\x07\x12\x1a\n\x0c\x62ytes_pushed\x18\x02 \x01(\rB\x04\x80\xb5\x18\x07\x12\x1d\n\x0fmessages_pushed\x18\x03 \x01(\rB\x04\x80\xb5\x18\x07\"\xa9\x01\n\x16UARTCommTaskStatistics\x12\x18\n\nmax_cycles\x18\x01 \x01(\rB\x04\x80\xb5\x18\x07\x12\x37\n\tqueue_out\x18\x02 \x01(\x0b\x32$.goldo.nucleo.MessageQueueStatistics\x12<\n\x0equeue_out_prio\x18\x03 \x01(\x0b\x32$.goldo.nucleo.MessageQueueStatistics\"b\n\x0cSensorConfig\x12,\n\x04type\x18\x01 \x01(\x0e\x32\x18.goldo.nucleo.SensorTypeB\x04\x80\xb5\x18\x03\x12\x10\n\x02id\x18\x02 \x01(\x05\x42\x04\x80\xb5\x18\x03\x12\x12\n\x04name\x18@ \x01(\tB\x04\x80\xb5\x18\x0c\"\xc5\x03\n\x0cNucleoConfig\x12(\n\x03hal\x18\x01 \x01(\x0b\x32\x1b.goldo.nucleo.hal.HalConfig\x12K\n\x0frobot_simulator\x18\x02 \x01(\x0b\x32\x32.goldo.nucleo.robot_simulator.RobotSimulatorConfig\x12\x37\n\x08odometry\x18\x03 \x01(\x0b\x32%.goldo.nucleo.odometry.OdometryConfig\x12G\n\npropulsion\x18\x04 \x01(\x0b\x32\x33.goldo.nucleo.propulsion.PropulsionControllerConfig\x12\x46\n\x0fpropulsion_task\x18\x05 \x01(\x0b\x32-.goldo.nucleo.propulsion.PropulsionTaskConfig\x12\x30\n\x06servos\x18\x06 \x03(\x0b\x32 .goldo.nucleo.servos.ServoConfig\x12+\n\x07sensors\x18\x07 \x03(\x0b\x32\x1a.goldo.nucleo.SensorConfig\x12\x15\n\renabled_tasks\x18\x08 \x03(\t\"4\n\x0bNucleoState\x12\x12\n\nconfigured\x18\x01 \x01(\x08\x12\x11\n\theartbeat\x18\x02 \x01(\r\"\xcc\x01\n\x12ScopeChannelConfig\x12\x16\n\x08variable\x18\x01 \x01(\rB\x04\x80\xb5\x18\x05\x12\x16\n\x08\x65ncoding\x18\x02 \x01(\rB\x04\x80\xb5\x18\x05\x12\x11\n\tmin_value\x18\x03 \x01(\x02\x12\x11\n\tmax_value\x18\x04 \x01(\x02\"`\n\x08\x45ncoding\x12\x08\n\x04RAW8\x10\x00\x12\t\n\x05RAW16\x10\x01\x12\t\n\x05RAW32\x10\x02\x12\x0b\n\x07SCALED8\x10\x04\x12\x0c\n\x08SCALED16\x10\x05\x12\x0c\n\x08SCALED32\x10\x06\x12\x0b\n\x07\x46LOAT32\x10\x08\"a\n\x0bScopeConfig\x12\x14\n\x06period\x18\x01 \x01(\rB\x04\x80\xb5\x18\x05\x12<\n\x08\x63hannels\x18\x02 \x03(\x0b\x32 .goldo.nucleo.ScopeChannelConfigB\x08\x98\xb5\x18\x05\x88\xb5\x18\x08\"2\n\tScopeData\x12\x17\n\ttimestamp\x18\x01 \x01(\rB\x04\x80\xb5\x18\x05\x12\x0c\n\x04\x64\x61ta\x18\x02 \x01(\x0c\"*\n\x12ScopeChannelValues\x12\x14\n\x0c\x66loat_values\x18\x01 \x03(\x02\"U\n\x0bScopeValues\x12\x12\n\ntimestamps\x18\x01 \x03(\x02\x12\x32\n\x08\x63hannels\x18\x02 \x03(\x0b\x32 .goldo.nucleo.ScopeChannelValues*/\n\nSensorType\x12\x0b\n\x07UNKNOWN\x10\x00\x12\n\n\x06NUCLEO\x10\x01\x12\x08\n\x04\x46PGA\x10\x02\x62\x06proto3')
+  serialized_pb=_b('\n\x12goldo/nucleo.proto\x12\x0cgoldo.nucleo\x1a\x1bgoldo/common/geometry.proto\x1a\x16goldo/nucleo/hal.proto\x1a\x1bgoldo/nucleo/odometry.proto\x1a\x1dgoldo/nucleo/propulsion.proto\x1a\"goldo/nucleo/robot_simulator.proto\x1a\x19goldo/nucleo/servos.proto\x1a\x17goldo/pb2_options.proto\"b\n\x0cSensorConfig\x12,\n\x04type\x18\x01 \x01(\x0e\x32\x18.goldo.nucleo.SensorTypeB\x04\x80\xb5\x18\x03\x12\x10\n\x02id\x18\x02 \x01(\x05\x42\x04\x80\xb5\x18\x03\x12\x12\n\x04name\x18@ \x01(\tB\x04\x80\xb5\x18\x0c\"\xc5\x03\n\x0cNucleoConfig\x12(\n\x03hal\x18\x01 \x01(\x0b\x32\x1b.goldo.nucleo.hal.HalConfig\x12K\n\x0frobot_simulator\x18\x02 \x01(\x0b\x32\x32.goldo.nucleo.robot_simulator.RobotSimulatorConfig\x12\x37\n\x08odometry\x18\x03 \x01(\x0b\x32%.goldo.nucleo.odometry.OdometryConfig\x12G\n\npropulsion\x18\x04 \x01(\x0b\x32\x33.goldo.nucleo.propulsion.PropulsionControllerConfig\x12\x46\n\x0fpropulsion_task\x18\x05 \x01(\x0b\x32-.goldo.nucleo.propulsion.PropulsionTaskConfig\x12\x30\n\x06servos\x18\x06 \x03(\x0b\x32 .goldo.nucleo.servos.ServoConfig\x12+\n\x07sensors\x18\x07 \x03(\x0b\x32\x1a.goldo.nucleo.SensorConfig\x12\x15\n\renabled_tasks\x18\x08 \x03(\t\"4\n\x0bNucleoState\x12\x12\n\nconfigured\x18\x01 \x01(\x08\x12\x11\n\theartbeat\x18\x02 \x01(\r\"\xcc\x01\n\x12ScopeChannelConfig\x12\x16\n\x08variable\x18\x01 \x01(\rB\x04\x80\xb5\x18\x05\x12\x16\n\x08\x65ncoding\x18\x02 \x01(\rB\x04\x80\xb5\x18\x05\x12\x11\n\tmin_value\x18\x03 \x01(\x02\x12\x11\n\tmax_value\x18\x04 \x01(\x02\"`\n\x08\x45ncoding\x12\x08\n\x04RAW8\x10\x00\x12\t\n\x05RAW16\x10\x01\x12\t\n\x05RAW32\x10\x02\x12\x0b\n\x07SCALED8\x10\x04\x12\x0c\n\x08SCALED16\x10\x05\x12\x0c\n\x08SCALED32\x10\x06\x12\x0b\n\x07\x46LOAT32\x10\x08\"a\n\x0bScopeConfig\x12\x14\n\x06period\x18\x01 \x01(\rB\x04\x80\xb5\x18\x05\x12<\n\x08\x63hannels\x18\x02 \x03(\x0b\x32 .goldo.nucleo.ScopeChannelConfigB\x08\x98\xb5\x18\x05\x88\xb5\x18\x08\"2\n\tScopeData\x12\x17\n\ttimestamp\x18\x01 \x01(\rB\x04\x80\xb5\x18\x05\x12\x0c\n\x04\x64\x61ta\x18\x02 \x01(\x0c\"*\n\x12ScopeChannelValues\x12\x14\n\x0c\x66loat_values\x18\x01 \x03(\x02\"U\n\x0bScopeValues\x12\x12\n\ntimestamps\x18\x01 \x03(\x02\x12\x32\n\x08\x63hannels\x18\x02 \x03(\x0b\x32 .goldo.nucleo.ScopeChannelValues*/\n\nSensorType\x12\x0b\n\x07UNKNOWN\x10\x00\x12\n\n\x06NUCLEO\x10\x01\x12\x08\n\x04\x46PGA\x10\x02\x62\x06proto3')
   ,
   dependencies=[goldo_dot_common_dot_geometry__pb2.DESCRIPTOR,goldo_dot_nucleo_dot_hal__pb2.DESCRIPTOR,goldo_dot_nucleo_dot_odometry__pb2.DESCRIPTOR,goldo_dot_nucleo_dot_propulsion__pb2.DESCRIPTOR,goldo_dot_nucleo_dot_robot__simulator__pb2.DESCRIPTOR,goldo_dot_nucleo_dot_servos__pb2.DESCRIPTOR,goldo_dot_pb2__options__pb2.DESCRIPTOR,])
 
@@ -52,8 +52,8 @@ _SENSORTYPE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=1631,
-  serialized_end=1678,
+  serialized_start=1336,
+  serialized_end=1383,
 )
 _sym_db.RegisterEnumDescriptor(_SENSORTYPE)
 
@@ -100,100 +100,10 @@ _SCOPECHANNELCONFIG_ENCODING = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=1251,
-  serialized_end=1347,
+  serialized_start=956,
+  serialized_end=1052,
 )
 _sym_db.RegisterEnumDescriptor(_SCOPECHANNELCONFIG_ENCODING)
-
-
-_MESSAGEQUEUESTATISTICS = _descriptor.Descriptor(
-  name='MessageQueueStatistics',
-  full_name='goldo.nucleo.MessageQueueStatistics',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='min_available_capacity', full_name='goldo.nucleo.MessageQueueStatistics.min_available_capacity', index=0,
-      number=1, type=13, cpp_type=3, label=1,
-      has_default_value=False, default_value=0,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=_b('\200\265\030\007'), file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='bytes_pushed', full_name='goldo.nucleo.MessageQueueStatistics.bytes_pushed', index=1,
-      number=2, type=13, cpp_type=3, label=1,
-      has_default_value=False, default_value=0,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=_b('\200\265\030\007'), file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='messages_pushed', full_name='goldo.nucleo.MessageQueueStatistics.messages_pushed', index=2,
-      number=3, type=13, cpp_type=3, label=1,
-      has_default_value=False, default_value=0,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=_b('\200\265\030\007'), file=DESCRIPTOR),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  serialized_options=None,
-  is_extendable=False,
-  syntax='proto3',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=237,
-  serialized_end=358,
-)
-
-
-_UARTCOMMTASKSTATISTICS = _descriptor.Descriptor(
-  name='UARTCommTaskStatistics',
-  full_name='goldo.nucleo.UARTCommTaskStatistics',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='max_cycles', full_name='goldo.nucleo.UARTCommTaskStatistics.max_cycles', index=0,
-      number=1, type=13, cpp_type=3, label=1,
-      has_default_value=False, default_value=0,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=_b('\200\265\030\007'), file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='queue_out', full_name='goldo.nucleo.UARTCommTaskStatistics.queue_out', index=1,
-      number=2, type=11, cpp_type=10, label=1,
-      has_default_value=False, default_value=None,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='queue_out_prio', full_name='goldo.nucleo.UARTCommTaskStatistics.queue_out_prio', index=2,
-      number=3, type=11, cpp_type=10, label=1,
-      has_default_value=False, default_value=None,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  serialized_options=None,
-  is_extendable=False,
-  syntax='proto3',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=361,
-  serialized_end=530,
-)
 
 
 _SENSORCONFIG = _descriptor.Descriptor(
@@ -236,8 +146,8 @@ _SENSORCONFIG = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=532,
-  serialized_end=630,
+  serialized_start=237,
+  serialized_end=335,
 )
 
 
@@ -316,8 +226,8 @@ _NUCLEOCONFIG = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=633,
-  serialized_end=1086,
+  serialized_start=338,
+  serialized_end=791,
 )
 
 
@@ -354,8 +264,8 @@ _NUCLEOSTATE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1088,
-  serialized_end=1140,
+  serialized_start=793,
+  serialized_end=845,
 )
 
 
@@ -407,8 +317,8 @@ _SCOPECHANNELCONFIG = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1143,
-  serialized_end=1347,
+  serialized_start=848,
+  serialized_end=1052,
 )
 
 
@@ -445,8 +355,8 @@ _SCOPECONFIG = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1349,
-  serialized_end=1446,
+  serialized_start=1054,
+  serialized_end=1151,
 )
 
 
@@ -483,8 +393,8 @@ _SCOPEDATA = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1448,
-  serialized_end=1498,
+  serialized_start=1153,
+  serialized_end=1203,
 )
 
 
@@ -514,8 +424,8 @@ _SCOPECHANNELVALUES = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1500,
-  serialized_end=1542,
+  serialized_start=1205,
+  serialized_end=1247,
 )
 
 
@@ -552,12 +462,10 @@ _SCOPEVALUES = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1544,
-  serialized_end=1629,
+  serialized_start=1249,
+  serialized_end=1334,
 )
 
-_UARTCOMMTASKSTATISTICS.fields_by_name['queue_out'].message_type = _MESSAGEQUEUESTATISTICS
-_UARTCOMMTASKSTATISTICS.fields_by_name['queue_out_prio'].message_type = _MESSAGEQUEUESTATISTICS
 _SENSORCONFIG.fields_by_name['type'].enum_type = _SENSORTYPE
 _NUCLEOCONFIG.fields_by_name['hal'].message_type = goldo_dot_nucleo_dot_hal__pb2._HALCONFIG
 _NUCLEOCONFIG.fields_by_name['robot_simulator'].message_type = goldo_dot_nucleo_dot_robot__simulator__pb2._ROBOTSIMULATORCONFIG
@@ -569,8 +477,6 @@ _NUCLEOCONFIG.fields_by_name['sensors'].message_type = _SENSORCONFIG
 _SCOPECHANNELCONFIG_ENCODING.containing_type = _SCOPECHANNELCONFIG
 _SCOPECONFIG.fields_by_name['channels'].message_type = _SCOPECHANNELCONFIG
 _SCOPEVALUES.fields_by_name['channels'].message_type = _SCOPECHANNELVALUES
-DESCRIPTOR.message_types_by_name['MessageQueueStatistics'] = _MESSAGEQUEUESTATISTICS
-DESCRIPTOR.message_types_by_name['UARTCommTaskStatistics'] = _UARTCOMMTASKSTATISTICS
 DESCRIPTOR.message_types_by_name['SensorConfig'] = _SENSORCONFIG
 DESCRIPTOR.message_types_by_name['NucleoConfig'] = _NUCLEOCONFIG
 DESCRIPTOR.message_types_by_name['NucleoState'] = _NUCLEOSTATE
@@ -581,20 +487,6 @@ DESCRIPTOR.message_types_by_name['ScopeChannelValues'] = _SCOPECHANNELVALUES
 DESCRIPTOR.message_types_by_name['ScopeValues'] = _SCOPEVALUES
 DESCRIPTOR.enum_types_by_name['SensorType'] = _SENSORTYPE
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
-
-MessageQueueStatistics = _reflection.GeneratedProtocolMessageType('MessageQueueStatistics', (_message.Message,), dict(
-  DESCRIPTOR = _MESSAGEQUEUESTATISTICS,
-  __module__ = 'goldo.nucleo_pb2'
-  # @@protoc_insertion_point(class_scope:goldo.nucleo.MessageQueueStatistics)
-  ))
-_sym_db.RegisterMessage(MessageQueueStatistics)
-
-UARTCommTaskStatistics = _reflection.GeneratedProtocolMessageType('UARTCommTaskStatistics', (_message.Message,), dict(
-  DESCRIPTOR = _UARTCOMMTASKSTATISTICS,
-  __module__ = 'goldo.nucleo_pb2'
-  # @@protoc_insertion_point(class_scope:goldo.nucleo.UARTCommTaskStatistics)
-  ))
-_sym_db.RegisterMessage(UARTCommTaskStatistics)
 
 SensorConfig = _reflection.GeneratedProtocolMessageType('SensorConfig', (_message.Message,), dict(
   DESCRIPTOR = _SENSORCONFIG,
@@ -653,10 +545,6 @@ ScopeValues = _reflection.GeneratedProtocolMessageType('ScopeValues', (_message.
 _sym_db.RegisterMessage(ScopeValues)
 
 
-_MESSAGEQUEUESTATISTICS.fields_by_name['min_available_capacity']._options = None
-_MESSAGEQUEUESTATISTICS.fields_by_name['bytes_pushed']._options = None
-_MESSAGEQUEUESTATISTICS.fields_by_name['messages_pushed']._options = None
-_UARTCOMMTASKSTATISTICS.fields_by_name['max_cycles']._options = None
 _SENSORCONFIG.fields_by_name['type']._options = None
 _SENSORCONFIG.fields_by_name['id']._options = None
 _SENSORCONFIG.fields_by_name['name']._options = None
