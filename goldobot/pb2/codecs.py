@@ -125,7 +125,7 @@ class _MessageCodec:
             self._struct_fmt += '{}s'.format(codec._size * array_count)
             self._field_codecs.append(_ArrayFieldCodec(field.name, array_count, codec))
         else:
-            print('ERROR')
+            print('ERROR, protobuf repeated field misconfigured')
         
     def _add_message(self, field):
         codec = get_message_codec(field.message_type.full_name)

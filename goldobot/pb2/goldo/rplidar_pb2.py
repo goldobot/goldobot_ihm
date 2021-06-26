@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='goldo.rplidar',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x13goldo/rplidar.proto\x12\rgoldo.rplidar\"\x9f\x01\n\x05Zones\x12\x12\n\nfront_near\x18\x01 \x01(\x08\x12\x12\n\nright_near\x18\x02 \x01(\x08\x12\x11\n\tback_near\x18\x03 \x01(\x08\x12\x11\n\tleft_near\x18\x04 \x01(\x08\x12\x11\n\tfront_far\x18\x05 \x01(\x08\x12\x11\n\tright_far\x18\x06 \x01(\x08\x12\x10\n\x08\x62\x61\x63k_far\x18\x07 \x01(\x08\x12\x10\n\x08left_far\x18\x08 \x01(\x08\"3\n\tTresholds\x12\x0c\n\x04near\x18\x01 \x01(\x02\x12\x0b\n\x03mid\x18\x02 \x01(\x02\x12\x0b\n\x03\x66\x61r\x18\x03 \x01(\x02\"R\n\rRPLidarConfig\x12\x14\n\x0ctheta_offset\x18\x01 \x01(\x02\x12+\n\ttresholds\x18\x02 \x01(\x0b\x32\x18.goldo.rplidar.Tresholdsb\x06proto3')
+  serialized_pb=_b('\n\x13goldo/rplidar.proto\x12\rgoldo.rplidar\"\x9f\x01\n\x05Zones\x12\x12\n\nfront_near\x18\x01 \x01(\x08\x12\x12\n\nright_near\x18\x02 \x01(\x08\x12\x11\n\tback_near\x18\x03 \x01(\x08\x12\x11\n\tleft_near\x18\x04 \x01(\x08\x12\x11\n\tfront_far\x18\x05 \x01(\x08\x12\x11\n\tright_far\x18\x06 \x01(\x08\x12\x10\n\x08\x62\x61\x63k_far\x18\x07 \x01(\x08\x12\x10\n\x08left_far\x18\x08 \x01(\x08\"3\n\tTresholds\x12\x0c\n\x04near\x18\x01 \x01(\x02\x12\x0b\n\x03mid\x18\x02 \x01(\x02\x12\x0b\n\x03\x66\x61r\x18\x03 \x01(\x02\"R\n\rRPLidarConfig\x12\x14\n\x0ctheta_offset\x18\x01 \x01(\x02\x12+\n\ttresholds\x18\x02 \x01(\x0b\x32\x18.goldo.rplidar.Tresholds\"\x90\x01\n\x0eRobotDetection\x12\x14\n\x0ctimestamp_ms\x18\x01 \x01(\r\x12\n\n\x02id\x18\x02 \x01(\r\x12\t\n\x01x\x18\x03 \x01(\x02\x12\t\n\x01y\x18\x04 \x01(\x02\x12\n\n\x02vx\x18\x05 \x01(\x02\x12\n\n\x02vy\x18\x06 \x01(\x02\x12\n\n\x02\x61x\x18\x07 \x01(\x02\x12\n\n\x02\x61y\x18\x08 \x01(\x02\x12\x16\n\x0e\x64\x65tect_quality\x18\t \x01(\rb\x06proto3')
 )
 
 
@@ -187,10 +187,98 @@ _RPLIDARCONFIG = _descriptor.Descriptor(
   serialized_end=335,
 )
 
+
+_ROBOTDETECTION = _descriptor.Descriptor(
+  name='RobotDetection',
+  full_name='goldo.rplidar.RobotDetection',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='timestamp_ms', full_name='goldo.rplidar.RobotDetection.timestamp_ms', index=0,
+      number=1, type=13, cpp_type=3, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='id', full_name='goldo.rplidar.RobotDetection.id', index=1,
+      number=2, type=13, cpp_type=3, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='x', full_name='goldo.rplidar.RobotDetection.x', index=2,
+      number=3, type=2, cpp_type=6, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='y', full_name='goldo.rplidar.RobotDetection.y', index=3,
+      number=4, type=2, cpp_type=6, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='vx', full_name='goldo.rplidar.RobotDetection.vx', index=4,
+      number=5, type=2, cpp_type=6, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='vy', full_name='goldo.rplidar.RobotDetection.vy', index=5,
+      number=6, type=2, cpp_type=6, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='ax', full_name='goldo.rplidar.RobotDetection.ax', index=6,
+      number=7, type=2, cpp_type=6, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='ay', full_name='goldo.rplidar.RobotDetection.ay', index=7,
+      number=8, type=2, cpp_type=6, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='detect_quality', full_name='goldo.rplidar.RobotDetection.detect_quality', index=8,
+      number=9, type=13, cpp_type=3, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=338,
+  serialized_end=482,
+)
+
 _RPLIDARCONFIG.fields_by_name['tresholds'].message_type = _TRESHOLDS
 DESCRIPTOR.message_types_by_name['Zones'] = _ZONES
 DESCRIPTOR.message_types_by_name['Tresholds'] = _TRESHOLDS
 DESCRIPTOR.message_types_by_name['RPLidarConfig'] = _RPLIDARCONFIG
+DESCRIPTOR.message_types_by_name['RobotDetection'] = _ROBOTDETECTION
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 Zones = _reflection.GeneratedProtocolMessageType('Zones', (_message.Message,), dict(
@@ -213,6 +301,13 @@ RPLidarConfig = _reflection.GeneratedProtocolMessageType('RPLidarConfig', (_mess
   # @@protoc_insertion_point(class_scope:goldo.rplidar.RPLidarConfig)
   ))
 _sym_db.RegisterMessage(RPLidarConfig)
+
+RobotDetection = _reflection.GeneratedProtocolMessageType('RobotDetection', (_message.Message,), dict(
+  DESCRIPTOR = _ROBOTDETECTION,
+  __module__ = 'goldo.rplidar_pb2'
+  # @@protoc_insertion_point(class_scope:goldo.rplidar.RobotDetection)
+  ))
+_sym_db.RegisterMessage(RobotDetection)
 
 
 # @@protoc_insertion_point(module_scope)

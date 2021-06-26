@@ -43,6 +43,7 @@ class ZmqClient(QObject):
     sequence_event = pyqtSignal(int, object)
     odrive_response = pyqtSignal(object)
     camera_image = pyqtSignal(object)
+    robot_state_change = pyqtSignal(object)
 
     def __init__(self, ip=None, parent = None):
         super(ZmqClient, self).__init__(None)
@@ -123,6 +124,9 @@ class ZmqClient(QObject):
                 self.fpga_registers.emit(msg.apb_address, msg.apb_value)
             if topic == 'rplidar/out/scan':
                 self.rplidar_plot.emit(msg)
+            if topic == 'gui/in/robot_state':
+                self.robot_state = msg
+                self.robot_state_change.emit(msg)
             if topic == 'nucleo/out/dbg_goldo':
                 #print("nucleo/out/dbg_goldo : {:8x}".format(msg.value))
                 val = msg.value
