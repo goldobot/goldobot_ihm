@@ -3,6 +3,7 @@
 
 import sys
 _b=sys.version_info[0]<3 and (lambda x:x) or (lambda x:x.encode('latin1'))
+from google.protobuf.internal import enum_type_wrapper
 from google.protobuf import descriptor as _descriptor
 from google.protobuf import message as _message
 from google.protobuf import reflection as _reflection
@@ -14,6 +15,7 @@ _sym_db = _symbol_database.Default()
 
 from goldo import nucleo_pb2 as goldo_dot_nucleo__pb2
 from goldo import rplidar_pb2 as goldo_dot_rplidar__pb2
+from goldo import table_pb2 as goldo_dot_table__pb2
 from goldo.common import geometry_pb2 as goldo_dot_common_dot_geometry__pb2
 from goldo import pb2_options_pb2 as goldo_dot_pb2__options__pb2
 
@@ -23,10 +25,40 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='goldo.robot',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x11goldo/robot.proto\x12\x0bgoldo.robot\x1a\x12goldo/nucleo.proto\x1a\x13goldo/rplidar.proto\x1a\x1bgoldo/common/geometry.proto\x1a\x17goldo/pb2_options.proto\"o\n\rRobotGeometry\x12\x14\n\x0c\x66ront_length\x18\x01 \x01(\x02\x12\x13\n\x0b\x62\x61\x63k_length\x18\x02 \x01(\x02\x12\x33\n\x07outline\x18\x03 \x03(\x0b\x32\x1c.goldo.common.geometry.PointB\x04\x80\xb5\x18\x0c\"+\n\rSequencesFile\x12\x0c\n\x04path\x18\x01 \x01(\t\x12\x0c\n\x04\x62ody\x18\x02 \x01(\t\"\xea\x01\n\x0bRobotConfig\x12*\n\x06nucleo\x18\x01 \x01(\x0b\x32\x1a.goldo.nucleo.NucleoConfig\x12\x32\n\x0erobot_geometry\x18\x02 \x01(\x0b\x32\x1a.goldo.robot.RobotGeometry\x12\x17\n\x0fsequences_names\x18( \x03(\t\x12\x33\n\x0fsequences_files\x18) \x03(\x0b\x32\x1a.goldo.robot.SequencesFile\x12-\n\x07rplidar\x18\x32 \x01(\x0b\x32\x1c.goldo.rplidar.RPLidarConfig\"7\n\nRobotState\x12)\n\x06nucleo\x18\x01 \x01(\x0b\x32\x19.goldo.nucleo.NucleoStateb\x06proto3')
+  serialized_pb=_b('\n\x11goldo/robot.proto\x12\x0bgoldo.robot\x1a\x12goldo/nucleo.proto\x1a\x13goldo/rplidar.proto\x1a\x11goldo/table.proto\x1a\x1bgoldo/common/geometry.proto\x1a\x17goldo/pb2_options.proto\"o\n\rRobotGeometry\x12\x14\n\x0c\x66ront_length\x18\x01 \x01(\x02\x12\x13\n\x0b\x62\x61\x63k_length\x18\x02 \x01(\x02\x12\x33\n\x07outline\x18\x03 \x03(\x0b\x32\x1c.goldo.common.geometry.PointB\x04\x80\xb5\x18\x0c\"+\n\rSequencesFile\x12\x0c\n\x04path\x18\x01 \x01(\t\x12\x0c\n\x04\x62ody\x18\x02 \x01(\t\"\xea\x01\n\x0bRobotConfig\x12*\n\x06nucleo\x18\x01 \x01(\x0b\x32\x1a.goldo.nucleo.NucleoConfig\x12\x32\n\x0erobot_geometry\x18\x02 \x01(\x0b\x32\x1a.goldo.robot.RobotGeometry\x12\x17\n\x0fsequences_names\x18( \x03(\t\x12\x33\n\x0fsequences_files\x18) \x03(\x0b\x32\x1a.goldo.robot.SequencesFile\x12-\n\x07rplidar\x18\x32 \x01(\x0b\x32\x1c.goldo.rplidar.RPLidarConfig\"\xe5\x02\n\nRobotState\x12)\n\x06nucleo\x18\x01 \x01(\x0b\x32\x19.goldo.nucleo.NucleoState\x12\x35\n\x07sensors\x18\x02 \x03(\x0b\x32$.goldo.robot.RobotState.SensorsEntry\x12&\n\x05table\x18\x03 \x01(\x0b\x32\x17.goldo.table.TableState\x12\x16\n\x0e\x65mergency_stop\x18\x04 \x01(\x08\x12\r\n\x05score\x18\x05 \x01(\r\x12\x13\n\x0bmatch_timer\x18\x06 \x01(\r\x12\x1f\n\x04side\x18\x07 \x01(\x0e\x32\x11.goldo.robot.Side\x12/\n\nrobot_pose\x18\x08 \x01(\x0b\x32\x1b.goldo.common.geometry.Pose\x12\x0f\n\x07tirette\x18\t \x01(\x08\x1a.\n\x0cSensorsEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x08:\x02\x38\x01*8\n\x04Side\x12\x10\n\x0cSIDE_UNKNOWN\x10\x00\x12\r\n\tSIDE_BLUE\x10\x01\x12\x0f\n\x0bSIDE_YELLOW\x10\x02\x62\x06proto3')
   ,
-  dependencies=[goldo_dot_nucleo__pb2.DESCRIPTOR,goldo_dot_rplidar__pb2.DESCRIPTOR,goldo_dot_common_dot_geometry__pb2.DESCRIPTOR,goldo_dot_pb2__options__pb2.DESCRIPTOR,])
+  dependencies=[goldo_dot_nucleo__pb2.DESCRIPTOR,goldo_dot_rplidar__pb2.DESCRIPTOR,goldo_dot_table__pb2.DESCRIPTOR,goldo_dot_common_dot_geometry__pb2.DESCRIPTOR,goldo_dot_pb2__options__pb2.DESCRIPTOR,])
 
+_SIDE = _descriptor.EnumDescriptor(
+  name='Side',
+  full_name='goldo.robot.Side',
+  filename=None,
+  file=DESCRIPTOR,
+  values=[
+    _descriptor.EnumValueDescriptor(
+      name='SIDE_UNKNOWN', index=0, number=0,
+      serialized_options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='SIDE_BLUE', index=1, number=1,
+      serialized_options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='SIDE_YELLOW', index=2, number=2,
+      serialized_options=None,
+      type=None),
+  ],
+  containing_type=None,
+  serialized_options=None,
+  serialized_start=903,
+  serialized_end=959,
+)
+_sym_db.RegisterEnumDescriptor(_SIDE)
+
+Side = enum_type_wrapper.EnumTypeWrapper(_SIDE)
+SIDE_UNKNOWN = 0
+SIDE_BLUE = 1
+SIDE_YELLOW = 2
 
 
 
@@ -70,8 +102,8 @@ _ROBOTGEOMETRY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=129,
-  serialized_end=240,
+  serialized_start=148,
+  serialized_end=259,
 )
 
 
@@ -108,8 +140,8 @@ _SEQUENCESFILE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=242,
-  serialized_end=285,
+  serialized_start=261,
+  serialized_end=304,
 )
 
 
@@ -167,10 +199,47 @@ _ROBOTCONFIG = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=288,
-  serialized_end=522,
+  serialized_start=307,
+  serialized_end=541,
 )
 
+
+_ROBOTSTATE_SENSORSENTRY = _descriptor.Descriptor(
+  name='SensorsEntry',
+  full_name='goldo.robot.RobotState.SensorsEntry',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='key', full_name='goldo.robot.RobotState.SensorsEntry.key', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='value', full_name='goldo.robot.RobotState.SensorsEntry.value', index=1,
+      number=2, type=8, cpp_type=7, label=1,
+      has_default_value=False, default_value=False,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=_b('8\001'),
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=855,
+  serialized_end=901,
+)
 
 _ROBOTSTATE = _descriptor.Descriptor(
   name='RobotState',
@@ -186,10 +255,66 @@ _ROBOTSTATE = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='sensors', full_name='goldo.robot.RobotState.sensors', index=1,
+      number=2, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='table', full_name='goldo.robot.RobotState.table', index=2,
+      number=3, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='emergency_stop', full_name='goldo.robot.RobotState.emergency_stop', index=3,
+      number=4, type=8, cpp_type=7, label=1,
+      has_default_value=False, default_value=False,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='score', full_name='goldo.robot.RobotState.score', index=4,
+      number=5, type=13, cpp_type=3, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='match_timer', full_name='goldo.robot.RobotState.match_timer', index=5,
+      number=6, type=13, cpp_type=3, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='side', full_name='goldo.robot.RobotState.side', index=6,
+      number=7, type=14, cpp_type=8, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='robot_pose', full_name='goldo.robot.RobotState.robot_pose', index=7,
+      number=8, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='tirette', full_name='goldo.robot.RobotState.tirette', index=8,
+      number=9, type=8, cpp_type=7, label=1,
+      has_default_value=False, default_value=False,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
-  nested_types=[],
+  nested_types=[_ROBOTSTATE_SENSORSENTRY, ],
   enum_types=[
   ],
   serialized_options=None,
@@ -198,8 +323,8 @@ _ROBOTSTATE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=524,
-  serialized_end=579,
+  serialized_start=544,
+  serialized_end=901,
 )
 
 _ROBOTGEOMETRY.fields_by_name['outline'].message_type = goldo_dot_common_dot_geometry__pb2._POINT
@@ -207,11 +332,17 @@ _ROBOTCONFIG.fields_by_name['nucleo'].message_type = goldo_dot_nucleo__pb2._NUCL
 _ROBOTCONFIG.fields_by_name['robot_geometry'].message_type = _ROBOTGEOMETRY
 _ROBOTCONFIG.fields_by_name['sequences_files'].message_type = _SEQUENCESFILE
 _ROBOTCONFIG.fields_by_name['rplidar'].message_type = goldo_dot_rplidar__pb2._RPLIDARCONFIG
+_ROBOTSTATE_SENSORSENTRY.containing_type = _ROBOTSTATE
 _ROBOTSTATE.fields_by_name['nucleo'].message_type = goldo_dot_nucleo__pb2._NUCLEOSTATE
+_ROBOTSTATE.fields_by_name['sensors'].message_type = _ROBOTSTATE_SENSORSENTRY
+_ROBOTSTATE.fields_by_name['table'].message_type = goldo_dot_table__pb2._TABLESTATE
+_ROBOTSTATE.fields_by_name['side'].enum_type = _SIDE
+_ROBOTSTATE.fields_by_name['robot_pose'].message_type = goldo_dot_common_dot_geometry__pb2._POSE
 DESCRIPTOR.message_types_by_name['RobotGeometry'] = _ROBOTGEOMETRY
 DESCRIPTOR.message_types_by_name['SequencesFile'] = _SEQUENCESFILE
 DESCRIPTOR.message_types_by_name['RobotConfig'] = _ROBOTCONFIG
 DESCRIPTOR.message_types_by_name['RobotState'] = _ROBOTSTATE
+DESCRIPTOR.enum_types_by_name['Side'] = _SIDE
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 RobotGeometry = _reflection.GeneratedProtocolMessageType('RobotGeometry', (_message.Message,), dict(
@@ -236,12 +367,21 @@ RobotConfig = _reflection.GeneratedProtocolMessageType('RobotConfig', (_message.
 _sym_db.RegisterMessage(RobotConfig)
 
 RobotState = _reflection.GeneratedProtocolMessageType('RobotState', (_message.Message,), dict(
+
+  SensorsEntry = _reflection.GeneratedProtocolMessageType('SensorsEntry', (_message.Message,), dict(
+    DESCRIPTOR = _ROBOTSTATE_SENSORSENTRY,
+    __module__ = 'goldo.robot_pb2'
+    # @@protoc_insertion_point(class_scope:goldo.robot.RobotState.SensorsEntry)
+    ))
+  ,
   DESCRIPTOR = _ROBOTSTATE,
   __module__ = 'goldo.robot_pb2'
   # @@protoc_insertion_point(class_scope:goldo.robot.RobotState)
   ))
 _sym_db.RegisterMessage(RobotState)
+_sym_db.RegisterMessage(RobotState.SensorsEntry)
 
 
 _ROBOTGEOMETRY.fields_by_name['outline']._options = None
+_ROBOTSTATE_SENSORSENTRY._options = None
 # @@protoc_insertion_point(module_scope)

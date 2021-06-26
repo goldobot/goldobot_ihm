@@ -88,23 +88,34 @@ class TestActuatorsDialog(QDialog):
         #layout.addWidget(self._button_reset)
         self.combobox_servo = QComboBox()
         self.spinbox_value = QSpinBox()
+        self.spinbox_speed = QSpinBox()
+        self.spinbox_torque = QSpinBox()
         
         self.button_go = QPushButton('go')
         self.spinbox_value.setRange(0, 0x40000)
+        self.spinbox_speed.setRange(0, 10000)
+        self.spinbox_torque.setRange(0, 0xff)
+        self.spinbox_speed.setValue(1000)
+        self.spinbox_torque.setValue(0xff)
+        
         for s in config.robot_config.config_proto.servos:
             self.combobox_servo.addItem(s.name)
         
         
         layout.addWidget(self.combobox_servo, 0,0)
         layout.addWidget(self.spinbox_value, 0,1)
-        layout.addWidget(self.button_go, 0,2)
+        layout.addWidget(self.spinbox_speed, 0,2)
+        layout.addWidget(self.spinbox_torque, 0,3)
+        layout.addWidget(self.button_go, 0,4)
         self.setLayout(layout)
         self.button_go.clicked.connect(self._go)
 
     def _go(self):
         servo_id = self.combobox_servo.currentIndex()
         position = self.spinbox_value.value()
-        msg = _sym_db.GetSymbol('goldo.nucleo.servos.Move')(servo_id=servo_id, position=position, speed=0x000f)
+        speed = self.spinbox_speed.value()
+        torque = self.spinbox_torque.value()
+        msg = _sym_db.GetSymbol('goldo.nucleo.servos.Move')(servo_id=servo_id, position=position, speed=speed)
         self._client.publishTopic('nucleo/in/servo/move', msg)
 
         

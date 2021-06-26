@@ -47,7 +47,10 @@ async def test_dynamixels():
     
 @robot.sequence
 async def test_servos():
-    await servos.move('test_standard', 12000, 42)   
+    print('foo')
+    #await servos.move('test_standard', 12000, 42)
+    await servos.moveMultiple({'bras_lat_gauche': 7000, 'herse_slider': 200})
+    await servos.moveMultiple({'bras_lat_gauche': 12000, 'herse_slider': 700})
     
 @robot.sequence
 async def _prematch():
