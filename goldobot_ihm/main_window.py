@@ -77,6 +77,7 @@ class MainWindow(QMainWindow):
         self._action_simulation = QAction("Simulation", checkable=True)
         self._action_upload_config = QAction("Upload config")
         self._action_prematch = QAction("Prematch")
+        self._action_start_match = QAction("Start Match")
 
         self._F5_shortcut = QShortcut(QKeySequence(Qt.Key_F5), self)
         self._F5_shortcut.activated.connect(self._upload_config)
@@ -101,6 +102,7 @@ class MainWindow(QMainWindow):
         tools_menu.addAction(self._action_reset)
         tools_menu.addAction(self._action_upload_config)
         tools_menu.addAction(self._action_prematch)
+        tools_menu.addAction(self._action_start_match)
 
         self._main_widget = QWidget()
         self._table_view = TableViewWidget()
@@ -121,6 +123,7 @@ class MainWindow(QMainWindow):
         self._action_enter_debug.triggered.connect(self._send_enter_debug)
         self._action_upload_config.triggered.connect(self._upload_config)
         self._action_prematch.triggered.connect(self._prematch)
+        self._action_start_match.triggered.connect(self._start_match)
 
         self._client.robot_end_load_config_status.connect(self._upload_status)
 
@@ -179,6 +182,9 @@ class MainWindow(QMainWindow):
         
     def _prematch(self):
         self._client.publishTopic('gui/out/commands/prematch')  
+        
+    def _start_match(self):
+        self._client.publishTopic('gui/out/commands/debug_start_match')  
         
     def _upload_status(self, status):
         if status == True:

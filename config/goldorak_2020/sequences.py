@@ -75,7 +75,17 @@ async def prematch():
     await commands.servoMove('fanion', fanion_ferme)
     #robot._adversary_detection_enable = False
     
-    
+@robot.sequence 
+async def start_match():
+    """
+    Sequence called at the start of the match, before trying any action.
+    This will typically be used to setup actuators and get out of the starting area.
+    """
+    print('start match sequence')
+    await sleep(2)
+    print('finished')
+
+ 
 @robot.sequence
 async def match():    
     await commands.scoreSet(15)
