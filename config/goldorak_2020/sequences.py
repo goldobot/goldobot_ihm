@@ -25,17 +25,21 @@ pos_yellow2 = [[1.5, 0.5], [1.0, 1.2]]
 @robot.sequence
 async def test1():
     print('I am in a sequence')
+    await propulsion.setAccelerationLimits(0.5,0.5,0.5,0.5)
     await propulsion.setPose([0,0], 0)
     await propulsion.setMotorsEnable(True)
     await propulsion.setEnable(True)
-    
-    await propulsion.moveTo((1,0), 1)
-    cmd = await propulsion.pointTo((1,1), 1)
-    await propulsion.moveTo((1,1), 1)
-    await cmd.begin
-    #await propulsion.clearCommandQueue()
-    #await propulsion.setMotorsEnable(False)
-    await cmd.end
+
+    await propulsion.moveTo((1,0), 0.5)
+    await propulsion.rotation(180, 0.5)
+    await propulsion.moveTo((0.5,0), 0.5)
+    await propulsion.pointTo((1,0), 0.5)
+    await propulsion.faceDirection(90, 0.5)
+    await propulsion.translation(0.1, 0.5)
+    await propulsion.trajectory([(0.5,0.1), (0.5,0.5), (1,0.5)], 0.5)
+
+        
+
     
 @robot.sequence
 async def test_dynamixels():
