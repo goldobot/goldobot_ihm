@@ -25,18 +25,23 @@ pos_yellow2 = [[1.5, 0.5], [1.0, 1.2]]
 @robot.sequence
 async def test1():
     print('I am in a sequence')
+    await odrive.clearErrors()
     await propulsion.setAccelerationLimits(0.5,0.5,0.5,0.5)
     await propulsion.setPose([0,0], 0)
     await propulsion.setMotorsEnable(True)
     await propulsion.setEnable(True)
-
+    
+    await propulsion.setPose([0.5,0.1], 90)
+    await propulsion.trajectorySpline([(0.5,0.1), (0.5,0.5), (1,0.5)], 0.5)
+    return
     await propulsion.moveTo((1,0), 0.5)
     await propulsion.rotation(180, 0.5)
     await propulsion.moveTo((0.5,0), 0.5)
     await propulsion.pointTo((1,0), 0.5)
     await propulsion.faceDirection(90, 0.5)
     await propulsion.translation(0.1, 0.5)
-    await propulsion.trajectory([(0.5,0.1), (0.5,0.5), (1,0.5)], 0.5)
+    
+    await propulsion.trajectorySpline([(0.5,0.1), (0.5,0.5), (1,0.5)], 0.5)
 
         
 
@@ -53,8 +58,10 @@ async def test_dynamixels():
 async def test_servos():
     print('foo')
     #await servos.move('test_standard', 12000, 42)
-    await servos.moveMultiple({'bras_lat_gauche': 7000, 'herse_slider': 200})
-    await servos.moveMultiple({'bras_lat_gauche': 12000, 'herse_slider': 700})
+    await servos.setEnable('pale_g', True)
+    await servos.setEnable('pale_d', True)
+    await servos.moveMultiple({'pale_g': 156, 'pale_d': 858})
+    await servos.moveMultiple({'pale_g': 769, 'pale_d': 255})
     
 @robot.sequence
 async def _prematch():

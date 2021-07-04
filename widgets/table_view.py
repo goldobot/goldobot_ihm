@@ -268,6 +268,20 @@ class TableViewWidget(QGraphicsView):
         self._client.propulsion_telemetry.connect(self.update_telemetry)
         self._client.rplidar_plot.connect(self.update_plots)
         self._client.rplidar_robot_detection.connect(self.update_other_robots)
+        self._client.registerCallback('nucleo/in/propulsion/cmd/trajectory', self.on_msg_trajectory)
+        
+    def on_msg_trajectory(self, msg):
+        path = QPainterPath()
+        p = msg.points[0]
+        path.moveTo(p.x * 1000, p.y * 1000)
+        for p in msg.points[1:]: 
+            path.lineTo(p.x * 1000, p.y * 1000)
+        greenium = QColor.fromCmykF(0.7,0,0.9,0)        
+        itm = self._scene.addPath(path)
+        pen = QPen()
+        pen.setWidth(3)
+        itm.setPen(pen)
+        self._path_trajectory = itm
         
     def update_telemetry(self, telemetry):
 #        self._big_robot.setPos(telemetry.x * 1000, telemetry.y * 1000)

@@ -26,8 +26,8 @@ nucleo:
     dist_per_count_right: 1.5342e-05
     wheel_distance_left: 235.5e-3
     wheel_distance_right: 0
-    speed_filter_frequency: 100
-    accel_filter_frequency: 50
+    speed_filter_frequency: 200
+    accel_filter_frequency: 10
     
   propulsion:
     low_level_config:

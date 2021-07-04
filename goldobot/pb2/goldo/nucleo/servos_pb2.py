@@ -21,7 +21,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='goldo.nucleo.servos',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x19goldo/nucleo/servos.proto\x12\x13goldo.nucleo.servos\x1a\x17goldo/pb2_options.proto\"\xe3\x01\n\x0bServoConfig\x12\x32\n\x04type\x18\x01 \x01(\x0e\x32\x1e.goldo.nucleo.servos.ServoTypeB\x04\x80\xb5\x18\x03\x12\x10\n\x02id\x18\x02 \x01(\x05\x42\x04\x80\xb5\x18\x03\x12\x16\n\x08\x63w_limit\x18\x03 \x01(\x05\x42\x04\x80\xb5\x18\x05\x12\x17\n\tccw_limit\x18\x04 \x01(\x05\x42\x04\x80\xb5\x18\x05\x12\x17\n\tmax_speed\x18\x05 \x01(\x05\x42\x04\x80\xb5\x18\x05\x12\x18\n\nmax_torque\x18\x06 \x01(\x05\x42\x04\x80\xb5\x18\x03\x12\x16\n\x08reserved\x18\x64 \x01(\x05\x42\x04\x80\xb5\x18\x03\x12\x12\n\x04name\x18@ \x01(\tB\x04\x80\xb5\x18\x0c\"?\n\rServoPosition\x12\x16\n\x08servo_id\x18\x01 \x01(\x05\x42\x04\x80\xb5\x18\x03\x12\x16\n\x08position\x18\x02 \x01(\rB\x04\x80\xb5\x18\x05\"K\n\x04Move\x12\x16\n\x08servo_id\x18\x01 \x01(\x05\x42\x04\x80\xb5\x18\x03\x12\x16\n\x08position\x18\x02 \x01(\rB\x04\x80\xb5\x18\x05\x12\x13\n\x05speed\x18\x03 \x01(\rB\x04\x80\xb5\x18\x05\"|\n\x0f\x43mdMoveMultiple\x12\x1d\n\x0fsequence_number\x18\x01 \x01(\x05\x42\x04\x80\xb5\x18\x05\x12\x13\n\x05speed\x18\x02 \x01(\x05\x42\x04\x80\xb5\x18\x05\x12\x35\n\tpositions\x18\x03 \x03(\x0b\x32\".goldo.nucleo.servos.ServoPosition*^\n\tServoType\x12\x0b\n\x07UNKNOWN\x10\x00\x12\x0c\n\x08STANDARD\x10\x01\x12\x12\n\x0e\x44YNAMIXEL_AX12\x10\x02\x12\x12\n\x0e\x44YNAMIXEL_MX28\x10\x03\x12\x0e\n\nGOLDO_LIFT\x10\x04\x62\x06proto3')
+  serialized_pb=_b('\n\x19goldo/nucleo/servos.proto\x12\x13goldo.nucleo.servos\x1a\x17goldo/pb2_options.proto\"\xe3\x01\n\x0bServoConfig\x12\x32\n\x04type\x18\x01 \x01(\x0e\x32\x1e.goldo.nucleo.servos.ServoTypeB\x04\x80\xb5\x18\x03\x12\x10\n\x02id\x18\x02 \x01(\x05\x42\x04\x80\xb5\x18\x03\x12\x16\n\x08\x63w_limit\x18\x03 \x01(\x05\x42\x04\x80\xb5\x18\x05\x12\x17\n\tccw_limit\x18\x04 \x01(\x05\x42\x04\x80\xb5\x18\x05\x12\x17\n\tmax_speed\x18\x05 \x01(\x05\x42\x04\x80\xb5\x18\x05\x12\x18\n\nmax_torque\x18\x06 \x01(\x05\x42\x04\x80\xb5\x18\x03\x12\x16\n\x08reserved\x18\x64 \x01(\x05\x42\x04\x80\xb5\x18\x03\x12\x12\n\x04name\x18@ \x01(\tB\x04\x80\xb5\x18\x0c\"9\n\tSetEnable\x12\x16\n\x08servo_id\x18\x01 \x01(\x05\x42\x04\x80\xb5\x18\x03\x12\x14\n\x06\x65nable\x18\x02 \x01(\x08\x42\x04\x80\xb5\x18\x03\"?\n\rServoPosition\x12\x16\n\x08servo_id\x18\x01 \x01(\x05\x42\x04\x80\xb5\x18\x03\x12\x16\n\x08position\x18\x02 \x01(\rB\x04\x80\xb5\x18\x05\"K\n\x04Move\x12\x16\n\x08servo_id\x18\x01 \x01(\x05\x42\x04\x80\xb5\x18\x03\x12\x16\n\x08position\x18\x02 \x01(\rB\x04\x80\xb5\x18\x05\x12\x13\n\x05speed\x18\x03 \x01(\rB\x04\x80\xb5\x18\x05\"|\n\x0f\x43mdMoveMultiple\x12\x1d\n\x0fsequence_number\x18\x01 \x01(\x05\x42\x04\x80\xb5\x18\x05\x12\x13\n\x05speed\x18\x02 \x01(\x05\x42\x04\x80\xb5\x18\x05\x12\x35\n\tpositions\x18\x03 \x03(\x0b\x32\".goldo.nucleo.servos.ServoPosition*^\n\tServoType\x12\x0b\n\x07UNKNOWN\x10\x00\x12\x0c\n\x08STANDARD\x10\x01\x12\x12\n\x0e\x44YNAMIXEL_AX12\x10\x02\x12\x12\n\x0e\x44YNAMIXEL_MX28\x10\x03\x12\x0e\n\nGOLDO_LIFT\x10\x04\x62\x06proto3')
   ,
   dependencies=[goldo_dot_pb2__options__pb2.DESCRIPTOR,])
 
@@ -54,8 +54,8 @@ _SERVOTYPE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=573,
-  serialized_end=667,
+  serialized_start=632,
+  serialized_end=726,
 )
 _sym_db.RegisterEnumDescriptor(_SERVOTYPE)
 
@@ -148,6 +148,44 @@ _SERVOCONFIG = _descriptor.Descriptor(
 )
 
 
+_SETENABLE = _descriptor.Descriptor(
+  name='SetEnable',
+  full_name='goldo.nucleo.servos.SetEnable',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='servo_id', full_name='goldo.nucleo.servos.SetEnable.servo_id', index=0,
+      number=1, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=_b('\200\265\030\003'), file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='enable', full_name='goldo.nucleo.servos.SetEnable.enable', index=1,
+      number=2, type=8, cpp_type=7, label=1,
+      has_default_value=False, default_value=False,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=_b('\200\265\030\003'), file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=305,
+  serialized_end=362,
+)
+
+
 _SERVOPOSITION = _descriptor.Descriptor(
   name='ServoPosition',
   full_name='goldo.nucleo.servos.ServoPosition',
@@ -181,8 +219,8 @@ _SERVOPOSITION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=305,
-  serialized_end=368,
+  serialized_start=364,
+  serialized_end=427,
 )
 
 
@@ -226,8 +264,8 @@ _MOVE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=370,
-  serialized_end=445,
+  serialized_start=429,
+  serialized_end=504,
 )
 
 
@@ -271,13 +309,14 @@ _CMDMOVEMULTIPLE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=447,
-  serialized_end=571,
+  serialized_start=506,
+  serialized_end=630,
 )
 
 _SERVOCONFIG.fields_by_name['type'].enum_type = _SERVOTYPE
 _CMDMOVEMULTIPLE.fields_by_name['positions'].message_type = _SERVOPOSITION
 DESCRIPTOR.message_types_by_name['ServoConfig'] = _SERVOCONFIG
+DESCRIPTOR.message_types_by_name['SetEnable'] = _SETENABLE
 DESCRIPTOR.message_types_by_name['ServoPosition'] = _SERVOPOSITION
 DESCRIPTOR.message_types_by_name['Move'] = _MOVE
 DESCRIPTOR.message_types_by_name['CmdMoveMultiple'] = _CMDMOVEMULTIPLE
@@ -290,6 +329,13 @@ ServoConfig = _reflection.GeneratedProtocolMessageType('ServoConfig', (_message.
   # @@protoc_insertion_point(class_scope:goldo.nucleo.servos.ServoConfig)
   ))
 _sym_db.RegisterMessage(ServoConfig)
+
+SetEnable = _reflection.GeneratedProtocolMessageType('SetEnable', (_message.Message,), dict(
+  DESCRIPTOR = _SETENABLE,
+  __module__ = 'goldo.nucleo.servos_pb2'
+  # @@protoc_insertion_point(class_scope:goldo.nucleo.servos.SetEnable)
+  ))
+_sym_db.RegisterMessage(SetEnable)
 
 ServoPosition = _reflection.GeneratedProtocolMessageType('ServoPosition', (_message.Message,), dict(
   DESCRIPTOR = _SERVOPOSITION,
@@ -321,6 +367,8 @@ _SERVOCONFIG.fields_by_name['max_speed']._options = None
 _SERVOCONFIG.fields_by_name['max_torque']._options = None
 _SERVOCONFIG.fields_by_name['reserved']._options = None
 _SERVOCONFIG.fields_by_name['name']._options = None
+_SETENABLE.fields_by_name['servo_id']._options = None
+_SETENABLE.fields_by_name['enable']._options = None
 _SERVOPOSITION.fields_by_name['servo_id']._options = None
 _SERVOPOSITION.fields_by_name['position']._options = None
 _MOVE.fields_by_name['servo_id']._options = None

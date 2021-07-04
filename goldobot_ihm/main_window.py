@@ -32,6 +32,7 @@ from dialogs.sequences import SequencesDialog
 from dialogs.score import ScoreDialog
 from dialogs.test_hal import HalTestDialog
 from dialogs.odrive import ODriveDialog
+from .dialogs.console import ConsoleDialog
 from dialogs.test_rplidar import TestRPLidarDialog
 from goldobot_ihm.scope.scope import ScopeDialog
 
@@ -58,7 +59,8 @@ dialogs = [
     ("Test actionneurs", TestActuatorsDialog),
     ("Debug FPGA", DebugFpgaDialog),
     ("Debug Lifts", DebugAsservDialog),
-    ("Test sequences", SequencesDialog)
+    ("Test sequences", SequencesDialog),
+    ("Console", ConsoleDialog)
  ]
 
 class MainWindow(QMainWindow):

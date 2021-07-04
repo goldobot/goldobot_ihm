@@ -102,29 +102,12 @@ class SequencesDialog(QDialog):
             self._combobox_sequence_id.addItem(k)
         
     def _upload(self):
-        config.robot_config.update_config()     
+        cfg = config.robot_config
+        cfg.update_config()
         self._update_sequence_names()
-        sequences = config.robot_config.sequences
+        self._client.publishTopic('config/test/put', cfg.robot_config)
+        self._client.publishTopic('gui/out/commands/config_nucleo')
             
-        buff = sequences.binary
-
-        #Start programming
-        self._client.send_message(40, b'')
-        #Upload codes by packets
-        while len(buff) >32:
-            self._client.send_message(42, buff[0:32])
-            buff = buff[32:]
-        self._client.send_message(42, buff)
-        #Finish programming
-        self._client.send_message(41, b'')
-        
-        #upload arms positions
-        i = 0
-        for n,pos in config.robot_config.dynamixels_positions.items():
-            msg = struct.pack('<BB', 0, i)
-            msg = msg + b''.join([struct.pack('<H', v) for v in pos])
-            self._client.send_message(message_types.DbgArmsSetPose,msg)
-            i += 1
 
     def _execute(self):
         seq_name = self._combobox_sequence_id.currentText()
