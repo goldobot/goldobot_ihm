@@ -91,21 +91,28 @@ class PropulsionTestDialog(QDialog):
         self._execute_translation_edit = QLineEdit('0')
         self._execute_translation_button.clicked.connect(self._execute_translation)
         
-        layout.addWidget(self._execute_translation_button, 12,0)
-        layout.addWidget(self._execute_translation_edit, 12,1)
+        self._translation_speed = QLineEdit('0')
+        self._translation_accel = QLineEdit('0')
+        self._translation_deccel = QLineEdit('0')
+        
+        layout.addWidget(self._translation_accel, 12,0)
+        layout.addWidget(self._translation_deccel, 12,1)
+        layout.addWidget(self._translation_speed, 13,0)
+        layout.addWidget(self._execute_translation_button, 14,0)
+        layout.addWidget(self._execute_translation_edit, 14,1)
         
         # rotation command
         self._execute_rotation_button = QPushButton('rotation')
         self._execute_rotation_edit = QLineEdit('0')
         self._execute_rotation_button.clicked.connect(self._execute_rotation)
         
-        layout.addWidget(self._execute_rotation_button, 13,0)
-        layout.addWidget(self._execute_rotation_edit, 13,1)
+        layout.addWidget(self._execute_rotation_button, 15,0)
+        layout.addWidget(self._execute_rotation_edit, 15,1)
         
 
-        layout.addWidget(self._start_traj_edit_button, 14,0)
-        layout.addWidget(self._end_traj_edit_button, 14,1)
-        layout.addWidget(self._execute_trajectory_button, 15,0)
+        layout.addWidget(self._start_traj_edit_button, 16,0)
+        layout.addWidget(self._end_traj_edit_button, 16,1)
+        layout.addWidget(self._execute_trajectory_button, 17,0)
 
         self.setLayout(layout)
         
@@ -155,10 +162,12 @@ class PropulsionTestDialog(QDialog):
         self._client.publishTopic('nucleo/in/propulsion/simulation/enable', _sym_db.GetSymbol('google.protobuf.BoolValue')(value=True))
         
     def _propulsion_enable(self):
-        self._client.publishTopic('nucleo/in/propulsion/enable/set', _sym_db.GetSymbol('google.protobuf.BoolValue')(value=True))
+        msg = _sym_db.GetSymbol('goldo.nucleo.propulsion.CmdSetEnable')(enable=True)    
+        self._client.publishTopic('nucleo/in/propulsion/enable/set', msg)
 
     def _propulsion_disable(self):
-        self._client.publishTopic('nucleo/in/propulsion/enable/set', _sym_db.GetSymbol('google.protobuf.BoolValue')(value=False))
+        msg = _sym_db.GetSymbol('goldo.nucleo.propulsion.CmdSetEnable')(enable=False)    
+        self._client.publishTopic('nucleo/in/propulsion/enable/set', msg)
 
     def _motors_enable(self):
         self._client.publishTopic('nucleo/in/propulsion/motors/enable/set', _sym_db.GetSymbol('google.protobuf.BoolValue')(value=True))
@@ -183,7 +192,7 @@ class PropulsionTestDialog(QDialog):
         x = int(self._pose_x_edit.text()) * 1e-3
         y = int(self._pose_y_edit.text()) * 1e-3
         yaw = int(self._pose_yaw_edit.text()) * math.pi / 180
-        msg = _sym_db.GetSymbol('goldo.common.geometry.Pose')()
+        msg = _sym_db.GetSymbol('goldo.nucleo.propulsion.CmdSetPose')()
         msg.position.x = x
         msg.position.y = y
         msg.yaw = yaw
@@ -214,9 +223,16 @@ class PropulsionTestDialog(QDialog):
 
     def _execute_translation(self):
         if self._client is not None:
+            msg = _sym_db.GetSymbol('goldo.nucleo.propulsion.CmdSetAccelerationLimits')(
+                accel = float(self._translation_accel.text()),
+                deccel = float(self._translation_deccel.text()),
+                angular_accel = 0.5,
+                angular_deccel = 0.5)
+            self._client.publishTopic('nucleo/in/propulsion/acceleration_limits/set', msg)
+                
             msg = _sym_db.GetSymbol('goldo.nucleo.propulsion.ExecuteTranslation')(
                 distance = int(self._execute_translation_edit.text()) * 1e-3,
-                speed = 1)
+                speed = float(self._translation_speed.text()))
             self._client.publishTopic('nucleo/in/propulsion/cmd/translation', msg)
             
     def _execute_rotation(self):

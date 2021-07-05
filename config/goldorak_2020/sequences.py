@@ -1,4 +1,5 @@
 from asyncio import sleep
+import asyncio
 
 class Side:
     Unknown = 0
@@ -43,9 +44,7 @@ async def test1():
     
     await propulsion.trajectorySpline([(0.5,0.1), (0.5,0.5), (1,0.5)], 0.5)
 
-        
-
-    
+ 
 @robot.sequence
 async def test_dynamixels():
     id_ = 8
@@ -133,50 +132,28 @@ async def match():
     await commands.servoMove('fanion', fanion_ferme)
         
     
-@robot.sequence
-async def prematch3():
-    print('start moves')
-    await commands.propulsionSetEnable(False)
-    await commands.propulsionSetEnable(True)
-    await commands.motorsSetEnable(True)
-    await commands.propulsionSetPose([0,0], 0)
-    await commands.propulsionMoveTo([0.5, 0], 1)
-    print(1)
-    await commands.propulsionPointTo([1,1], 1)
-    print(1)
-    await commands.propulsionMoveTo([1, 1], 1)
-    print(1)
-    await commands.propulsionFaceDirection(-90, 1)
-    print(1)
-    await commands.propulsionTrajectory([[1,1], [1,0.5], [1.5,0]], 1)
-    print(1)
-    await commands.propulsionWaitForStop()
-    print('end moves')
-    await sleep(1)
-    await commands.servoMove('bras_lat_gauche', 12000)
-    
-@robot.sequence
-async def prematch2():
-    print('prematch started, side: {}'.format(robot.side))
-    await commands.lidarStart()
-    print('start moves')
-    await commands.propulsionSetEnable(True)
-    await commands.propulsionSetPose([0,0], 0)
-    await commands.propulsionTranslation(0.5, 1)
-    
-    await commands.propulsionRotation(90, 1)
-    await commands.propulsionTranslation(0.5, 1)
-    await commands.propulsionWaitForStop()
-    print('end moves')
-    await sleep(1)
-    await commands.lidarStop()
-    print('foo')
-    await commands.servoMove('bras_lat_gauche', 12000)
-    
-@robot.sequence
+
+
 async def matcha():
     await sleep(20)
     await commands.scoreSet(10)
     robot.snapGirouette()
     if robot.girouette == 'n':
         await commands.scoreSet(50)
+        
+@robot.sequence
+async def test_emergency_stop():
+    await propulsion.setAccelerationLimits(0.5,0.5,0.5,0.5)
+    await propulsion.setPose([0,0], 0)
+    await propulsion.setMotorsEnable(True)
+    await propulsion.setEnable(True)
+    
+    await propulsion.reposition(0.2,0.1)
+    
+    task = asyncio.create_task(propulsion.translation(0.5, 0.1))
+    await sleep(1)
+    await propulsion.setTargetSpeed(0.3)
+    await sleep(1)
+    print('estop')
+    await propulsion.emergencyStop()
+    await task
