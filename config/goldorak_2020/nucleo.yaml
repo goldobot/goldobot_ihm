@@ -26,8 +26,8 @@ nucleo:
     dist_per_count_right: 1.5342e-05
     wheel_distance_left: 235.5e-3
     wheel_distance_right: 0
-    speed_filter_frequency: 200
-    accel_filter_frequency: 10
+    speed_filter_frequency: 500
+    accel_filter_frequency: 50
     
   propulsion:
     low_level_config:
@@ -113,13 +113,13 @@ nucleo:
       max_speed: 0x3ff
       max_torque: 255
       cw_limit: 156
-      ccw_limit: 769
+      ccw_limit: 657
     - name: pale_d
       id: 8
       type: DYNAMIXEL_AX12
       max_speed: 0x3ff
       max_torque: 255
-      cw_limit: 255
+      cw_limit: 364
       ccw_limit: 858
     - name: herse_v
       id: 81
@@ -142,6 +142,13 @@ nucleo:
       max_torque: 10
       cw_limit: 2800 
       ccw_limit: 15000
+    - name: lift_left
+      id: 0
+      type: GOLDO_LIFT
+      max_speed: 10000
+      max_torque: 10
+      cw_limit: 0 
+      ccw_limit: 1000
   sensors:
     - name: tirette
       type: NUCLEO

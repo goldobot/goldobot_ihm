@@ -26,7 +26,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='goldo.robot',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x11goldo/robot.proto\x12\x0bgoldo.robot\x1a\x12goldo/nucleo.proto\x1a\x13goldo/rplidar.proto\x1a\x11goldo/table.proto\x1a\x14goldo/strategy.proto\x1a\x1bgoldo/common/geometry.proto\x1a\x17goldo/pb2_options.proto\"o\n\rRobotGeometry\x12\x14\n\x0c\x66ront_length\x18\x01 \x01(\x02\x12\x13\n\x0b\x62\x61\x63k_length\x18\x02 \x01(\x02\x12\x33\n\x07outline\x18\x03 \x03(\x0b\x32\x1c.goldo.common.geometry.PointB\x04\x80\xb5\x18\x0c\"+\n\rSequencesFile\x12\x0c\n\x04path\x18\x01 \x01(\t\x12\x0c\n\x04\x62ody\x18\x02 \x01(\t\"\x9c\x02\n\x0bRobotConfig\x12*\n\x06nucleo\x18\x01 \x01(\x0b\x32\x1a.goldo.nucleo.NucleoConfig\x12\x32\n\x0erobot_geometry\x18\x02 \x01(\x0b\x32\x1a.goldo.robot.RobotGeometry\x12\x17\n\x0fsequences_names\x18( \x03(\t\x12\x33\n\x0fsequences_files\x18) \x03(\x0b\x32\x1a.goldo.robot.SequencesFile\x12-\n\x07rplidar\x18\x32 \x01(\x0b\x32\x1c.goldo.rplidar.RPLidarConfig\x12\x30\n\x08strategy\x18< \x01(\x0b\x32\x1e.goldo.strategy.StrategyConfig\"\xa0\x03\n\nRobotState\x12)\n\x06nucleo\x18\x01 \x01(\x0b\x32\x19.goldo.nucleo.NucleoState\x12\x35\n\x07sensors\x18\x02 \x03(\x0b\x32$.goldo.robot.RobotState.SensorsEntry\x12&\n\x05table\x18\x03 \x01(\x0b\x32\x17.goldo.table.TableState\x12\x16\n\x0e\x65mergency_stop\x18\x04 \x01(\x08\x12\r\n\x05score\x18\x05 \x01(\r\x12\x13\n\x0bmatch_timer\x18\x06 \x01(\r\x12\x1f\n\x04side\x18\x07 \x01(\x0e\x32\x11.goldo.robot.Side\x12/\n\nrobot_pose\x18\x08 \x01(\x0b\x32\x1b.goldo.common.geometry.Pose\x12\x0f\n\x07tirette\x18\t \x01(\x08\x12\x39\n\x12rplidar_detections\x18\n \x03(\x0b\x32\x1d.goldo.rplidar.RobotDetection\x1a.\n\x0cSensorsEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x08:\x02\x38\x01*8\n\x04Side\x12\x10\n\x0cSIDE_UNKNOWN\x10\x00\x12\r\n\tSIDE_BLUE\x10\x01\x12\x0f\n\x0bSIDE_YELLOW\x10\x02\x62\x06proto3')
+  serialized_pb=_b('\n\x11goldo/robot.proto\x12\x0bgoldo.robot\x1a\x12goldo/nucleo.proto\x1a\x13goldo/rplidar.proto\x1a\x11goldo/table.proto\x1a\x14goldo/strategy.proto\x1a\x1bgoldo/common/geometry.proto\x1a\x17goldo/pb2_options.proto\"o\n\rRobotGeometry\x12\x14\n\x0c\x66ront_length\x18\x01 \x01(\x02\x12\x13\n\x0b\x62\x61\x63k_length\x18\x02 \x01(\x02\x12\x33\n\x07outline\x18\x03 \x03(\x0b\x32\x1c.goldo.common.geometry.PointB\x04\x80\xb5\x18\x0c\"+\n\rSequencesFile\x12\x0c\n\x04path\x18\x01 \x01(\t\x12\x0c\n\x04\x62ody\x18\x02 \x01(\t\"\x9c\x02\n\x0bRobotConfig\x12*\n\x06nucleo\x18\x01 \x01(\x0b\x32\x1a.goldo.nucleo.NucleoConfig\x12\x32\n\x0erobot_geometry\x18\x02 \x01(\x0b\x32\x1a.goldo.robot.RobotGeometry\x12\x17\n\x0fsequences_names\x18( \x03(\t\x12\x33\n\x0fsequences_files\x18) \x03(\x0b\x32\x1a.goldo.robot.SequencesFile\x12-\n\x07rplidar\x18\x32 \x01(\x0b\x32\x1c.goldo.rplidar.RPLidarConfig\x12\x30\n\x08strategy\x18< \x01(\x0b\x32\x1e.goldo.strategy.StrategyConfig\"w\n\x0cRPLidarState\x12\x0f\n\x07running\x18\x01 \x01(\x08\x12\x31\n\ndetections\x18\n \x03(\x0b\x32\x1d.goldo.rplidar.RobotDetection\x12#\n\x05zones\x18\x0b \x01(\x0b\x32\x14.goldo.rplidar.Zones\"\xfa\x03\n\nRobotState\x12)\n\x06nucleo\x18\x01 \x01(\x0b\x32\x19.goldo.nucleo.NucleoState\x12\x35\n\x07sensors\x18\x02 \x03(\x0b\x32$.goldo.robot.RobotState.SensorsEntry\x12&\n\x05table\x18\x03 \x01(\x0b\x32\x17.goldo.table.TableState\x12\x16\n\x0e\x65mergency_stop\x18\x04 \x01(\x08\x12\r\n\x05score\x18\x05 \x01(\r\x12\x13\n\x0bmatch_timer\x18\x06 \x01(\r\x12\x1f\n\x04side\x18\x07 \x01(\x0e\x32\x11.goldo.robot.Side\x12/\n\nrobot_pose\x18\x08 \x01(\x0b\x32\x1b.goldo.common.geometry.Pose\x12\x0f\n\x07tirette\x18\t \x01(\x08\x12\x39\n\x12rplidar_detections\x18\n \x03(\x0b\x32\x1d.goldo.rplidar.RobotDetection\x12*\n\x07rplidar\x18\x0b \x01(\x0b\x32\x19.goldo.robot.RPLidarState\x12,\n\x0bmatch_state\x18\x0c \x01(\x0e\x32\x17.goldo.robot.MatchState\x1a.\n\x0cSensorsEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x08:\x02\x38\x01*8\n\x04Side\x12\x10\n\x0cSIDE_UNKNOWN\x10\x00\x12\r\n\tSIDE_BLUE\x10\x01\x12\x0f\n\x0bSIDE_YELLOW\x10\x02*~\n\nMatchState\x12\x0e\n\nMATCH_IDLE\x10\x00\x12\x12\n\x0eMATCH_PREMATCH\x10\x01\x12!\n\x1dMATCH_WAIT_FOR_START_OF_MATCH\x10\x02\x12\x0f\n\x0bMATCH_MATCH\x10\x03\x12\x18\n\x14MATCH_MATCH_FINISHED\x10\x04\x62\x06proto3')
   ,
   dependencies=[goldo_dot_nucleo__pb2.DESCRIPTOR,goldo_dot_rplidar__pb2.DESCRIPTOR,goldo_dot_table__pb2.DESCRIPTOR,goldo_dot_strategy__pb2.DESCRIPTOR,goldo_dot_common_dot_geometry__pb2.DESCRIPTOR,goldo_dot_pb2__options__pb2.DESCRIPTOR,])
 
@@ -51,15 +51,55 @@ _SIDE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=1034,
-  serialized_end=1090,
+  serialized_start=1245,
+  serialized_end=1301,
 )
 _sym_db.RegisterEnumDescriptor(_SIDE)
 
 Side = enum_type_wrapper.EnumTypeWrapper(_SIDE)
+_MATCHSTATE = _descriptor.EnumDescriptor(
+  name='MatchState',
+  full_name='goldo.robot.MatchState',
+  filename=None,
+  file=DESCRIPTOR,
+  values=[
+    _descriptor.EnumValueDescriptor(
+      name='MATCH_IDLE', index=0, number=0,
+      serialized_options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='MATCH_PREMATCH', index=1, number=1,
+      serialized_options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='MATCH_WAIT_FOR_START_OF_MATCH', index=2, number=2,
+      serialized_options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='MATCH_MATCH', index=3, number=3,
+      serialized_options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='MATCH_MATCH_FINISHED', index=4, number=4,
+      serialized_options=None,
+      type=None),
+  ],
+  containing_type=None,
+  serialized_options=None,
+  serialized_start=1303,
+  serialized_end=1429,
+)
+_sym_db.RegisterEnumDescriptor(_MATCHSTATE)
+
+MatchState = enum_type_wrapper.EnumTypeWrapper(_MATCHSTATE)
 SIDE_UNKNOWN = 0
 SIDE_BLUE = 1
 SIDE_YELLOW = 2
+MATCH_IDLE = 0
+MATCH_PREMATCH = 1
+MATCH_WAIT_FOR_START_OF_MATCH = 2
+MATCH_MATCH = 3
+MATCH_MATCH_FINISHED = 4
 
 
 
@@ -212,6 +252,51 @@ _ROBOTCONFIG = _descriptor.Descriptor(
 )
 
 
+_RPLIDARSTATE = _descriptor.Descriptor(
+  name='RPLidarState',
+  full_name='goldo.robot.RPLidarState',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='running', full_name='goldo.robot.RPLidarState.running', index=0,
+      number=1, type=8, cpp_type=7, label=1,
+      has_default_value=False, default_value=False,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='detections', full_name='goldo.robot.RPLidarState.detections', index=1,
+      number=10, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='zones', full_name='goldo.robot.RPLidarState.zones', index=2,
+      number=11, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=615,
+  serialized_end=734,
+)
+
+
 _ROBOTSTATE_SENSORSENTRY = _descriptor.Descriptor(
   name='SensorsEntry',
   full_name='goldo.robot.RobotState.SensorsEntry',
@@ -245,8 +330,8 @@ _ROBOTSTATE_SENSORSENTRY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=986,
-  serialized_end=1032,
+  serialized_start=1197,
+  serialized_end=1243,
 )
 
 _ROBOTSTATE = _descriptor.Descriptor(
@@ -326,6 +411,20 @@ _ROBOTSTATE = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='rplidar', full_name='goldo.robot.RobotState.rplidar', index=10,
+      number=11, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='match_state', full_name='goldo.robot.RobotState.match_state', index=11,
+      number=12, type=14, cpp_type=8, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -338,8 +437,8 @@ _ROBOTSTATE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=616,
-  serialized_end=1032,
+  serialized_start=737,
+  serialized_end=1243,
 )
 
 _ROBOTGEOMETRY.fields_by_name['outline'].message_type = goldo_dot_common_dot_geometry__pb2._POINT
@@ -348,6 +447,8 @@ _ROBOTCONFIG.fields_by_name['robot_geometry'].message_type = _ROBOTGEOMETRY
 _ROBOTCONFIG.fields_by_name['sequences_files'].message_type = _SEQUENCESFILE
 _ROBOTCONFIG.fields_by_name['rplidar'].message_type = goldo_dot_rplidar__pb2._RPLIDARCONFIG
 _ROBOTCONFIG.fields_by_name['strategy'].message_type = goldo_dot_strategy__pb2._STRATEGYCONFIG
+_RPLIDARSTATE.fields_by_name['detections'].message_type = goldo_dot_rplidar__pb2._ROBOTDETECTION
+_RPLIDARSTATE.fields_by_name['zones'].message_type = goldo_dot_rplidar__pb2._ZONES
 _ROBOTSTATE_SENSORSENTRY.containing_type = _ROBOTSTATE
 _ROBOTSTATE.fields_by_name['nucleo'].message_type = goldo_dot_nucleo__pb2._NUCLEOSTATE
 _ROBOTSTATE.fields_by_name['sensors'].message_type = _ROBOTSTATE_SENSORSENTRY
@@ -355,11 +456,15 @@ _ROBOTSTATE.fields_by_name['table'].message_type = goldo_dot_table__pb2._TABLEST
 _ROBOTSTATE.fields_by_name['side'].enum_type = _SIDE
 _ROBOTSTATE.fields_by_name['robot_pose'].message_type = goldo_dot_common_dot_geometry__pb2._POSE
 _ROBOTSTATE.fields_by_name['rplidar_detections'].message_type = goldo_dot_rplidar__pb2._ROBOTDETECTION
+_ROBOTSTATE.fields_by_name['rplidar'].message_type = _RPLIDARSTATE
+_ROBOTSTATE.fields_by_name['match_state'].enum_type = _MATCHSTATE
 DESCRIPTOR.message_types_by_name['RobotGeometry'] = _ROBOTGEOMETRY
 DESCRIPTOR.message_types_by_name['SequencesFile'] = _SEQUENCESFILE
 DESCRIPTOR.message_types_by_name['RobotConfig'] = _ROBOTCONFIG
+DESCRIPTOR.message_types_by_name['RPLidarState'] = _RPLIDARSTATE
 DESCRIPTOR.message_types_by_name['RobotState'] = _ROBOTSTATE
 DESCRIPTOR.enum_types_by_name['Side'] = _SIDE
+DESCRIPTOR.enum_types_by_name['MatchState'] = _MATCHSTATE
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 RobotGeometry = _reflection.GeneratedProtocolMessageType('RobotGeometry', (_message.Message,), dict(
@@ -382,6 +487,13 @@ RobotConfig = _reflection.GeneratedProtocolMessageType('RobotConfig', (_message.
   # @@protoc_insertion_point(class_scope:goldo.robot.RobotConfig)
   ))
 _sym_db.RegisterMessage(RobotConfig)
+
+RPLidarState = _reflection.GeneratedProtocolMessageType('RPLidarState', (_message.Message,), dict(
+  DESCRIPTOR = _RPLIDARSTATE,
+  __module__ = 'goldo.robot_pb2'
+  # @@protoc_insertion_point(class_scope:goldo.robot.RPLidarState)
+  ))
+_sym_db.RegisterMessage(RPLidarState)
 
 RobotState = _reflection.GeneratedProtocolMessageType('RobotState', (_message.Message,), dict(
 

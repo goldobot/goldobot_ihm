@@ -20,7 +20,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='goldo.strategy',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x14goldo/strategy.proto\x12\x0egoldo.strategy\x1a\x1bgoldo/common/geometry.proto\")\n\x04Pose\x12\t\n\x01x\x18\x01 \x01(\x02\x12\t\n\x01y\x18\x02 \x01(\x02\x12\x0b\n\x03yaw\x18\x03 \x01(\x02\"\xa3\x01\n\x0c\x41\x63tionConfig\x12(\n\nstart_pose\x18\x01 \x01(\x0b\x32\x14.goldo.strategy.Pose\x12\x17\n\x0fsequence_action\x18\x02 \x01(\t\x12\x18\n\x10sequence_prepare\x18\x03 \x01(\t\x12\x1f\n\x17sequence_prepare_cancel\x18\x04 \x01(\t\x12\x15\n\rsequence_post\x18\x05 \x01(\t\"\x9c\x01\n\x0eStrategyConfig\x12<\n\x07\x61\x63tions\x18\x02 \x03(\x0b\x32+.goldo.strategy.StrategyConfig.ActionsEntry\x1aL\n\x0c\x41\x63tionsEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12+\n\x05value\x18\x02 \x01(\x0b\x32\x1c.goldo.strategy.ActionConfig:\x02\x38\x01\x62\x06proto3')
+  serialized_pb=_b('\n\x14goldo/strategy.proto\x12\x0egoldo.strategy\x1a\x1bgoldo/common/geometry.proto\")\n\x04Pose\x12\t\n\x01x\x18\x01 \x01(\x02\x12\t\n\x01y\x18\x02 \x01(\x02\x12\x0b\n\x03yaw\x18\x03 \x01(\x02\"\xb5\x01\n\x0c\x41\x63tionConfig\x12(\n\nstart_pose\x18\x01 \x01(\x0b\x32\x14.goldo.strategy.Pose\x12\x17\n\x0fsequence_action\x18\x02 \x01(\t\x12\x18\n\x10sequence_prepare\x18\x03 \x01(\t\x12\x1f\n\x17sequence_prepare_cancel\x18\x04 \x01(\t\x12\x15\n\rsequence_post\x18\x05 \x01(\t\x12\x10\n\x08priority\x18\x06 \x01(\x05\"\x9c\x01\n\x0eStrategyConfig\x12<\n\x07\x61\x63tions\x18\x02 \x03(\x0b\x32+.goldo.strategy.StrategyConfig.ActionsEntry\x1aL\n\x0c\x41\x63tionsEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12+\n\x05value\x18\x02 \x01(\x0b\x32\x1c.goldo.strategy.ActionConfig:\x02\x38\x01\x62\x06proto3')
   ,
   dependencies=[goldo_dot_common_dot_geometry__pb2.DESCRIPTOR,])
 
@@ -114,6 +114,13 @@ _ACTIONCONFIG = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='priority', full_name='goldo.strategy.ActionConfig.priority', index=5,
+      number=6, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -127,7 +134,7 @@ _ACTIONCONFIG = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=113,
-  serialized_end=276,
+  serialized_end=294,
 )
 
 
@@ -164,8 +171,8 @@ _STRATEGYCONFIG_ACTIONSENTRY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=359,
-  serialized_end=435,
+  serialized_start=377,
+  serialized_end=453,
 )
 
 _STRATEGYCONFIG = _descriptor.Descriptor(
@@ -194,8 +201,8 @@ _STRATEGYCONFIG = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=279,
-  serialized_end=435,
+  serialized_start=297,
+  serialized_end=453,
 )
 
 _ACTIONCONFIG.fields_by_name['start_pose'].message_type = _POSE

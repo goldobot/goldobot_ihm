@@ -97,8 +97,11 @@ propulsion_variables = [
     'odrive.vbus',  
     'odrive.ibus', 
     'encoders.left_counts',
+    'encoders.right_counts',
     'blocking_detector.speed_estimate',
-    'blocking_detector.force_estimate'
+    'blocking_detector.force_estimate',
+    'blocking_detector.left_slip_speed',
+    'blocking_detector.right_slip_speed'
     ]
     
 propulsion_variables_dict = {v:i for i, v in enumerate(propulsion_variables)}
