@@ -15,4 +15,4 @@ rplidar:
   tresholds:
     near: 0.1
     mid: 0.3
-    far: 0.6
+    far: 0.5
