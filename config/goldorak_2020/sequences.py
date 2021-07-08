@@ -23,6 +23,10 @@ bras_lat_droite_rentre = 11500
 fanion_ferme = 8000
 fanion_ouvert = 11000
 
+#
+table_blue_port_green_x = 0.3
+table_blue_port_green_x = 1.3
+
 #actuators
 class Herse(object):
     def __init__(self):
@@ -63,6 +67,8 @@ pos_blue2 = [[1.5, -0.5], [1.0, -1.2]]
 pos_depart_yellow = [0.8, 1.4]
 pos_yellow = [[0.8, 0.7], [0.4, 0.7], [0.6, 1.2]]
 pos_yellow2 = [[1.5, 0.5], [1.0, 1.2]]
+
+
 
 
 
@@ -157,15 +163,15 @@ async def homologation():
 
     await moveToRetry(poses.flags_3[0:2], speed)
 
-    await pales_ouvre()
+    await pales_prise()
 
     girouette = await camera.captureGirouette()
     print('girouette', girouette)
 
-    await propulsion.pointAndGo(poses.flags_4[0:2], speed, 2)
+    await propulsion.pointAndGo(poses.flags_4[0:2], 0.4, 2)
 
     #pousse les verres dans la zone de depart
-    await pales_ferme()
+    await pales_stockage()
     await propulsion.pointAndGo(poses.flags_5[0:2], speed, 2)
     await robot.setScore(robot.score + 2)
 
@@ -253,7 +259,15 @@ async def test_herse():
 @robot.sequence
 async def pales_ferme():
     await servos.moveMultiple({'pale_g': 156, 'pale_d': 858})
+    
+@robot.sequence
+async def pales_stockage():
+    await servos.moveMultiple({'pale_g': 226, 'pale_d': 787})
 
+@robot.sequence
+async def pales_prise():
+    await servos.moveMultiple({'pale_g': 567, 'pale_d': 461})
+    
 @robot.sequence
 async def pales_ouvre():
     await servos.moveMultiple({'pale_g': 657, 'pale_d': 364})
@@ -312,8 +326,6 @@ async def start_match():
     if robot.side == Side.Yellow:
         await homologation()
     strategy.actions['action1'].enabled = True
-
-
 
 async def end_match():
     print('end match callback')

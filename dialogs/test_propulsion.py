@@ -199,7 +199,18 @@ class PropulsionTestDialog(QDialog):
         self._client.publishTopic('nucleo/in/propulsion/pose/set', msg)
 
     def _reposition_forward(self):
-        self._client.send_message(message_types.DbgPropulsionExecuteReposition, struct.pack('<bffff', 1, 0.2, 0, -1, 1.500))
+        if self._client is not None:
+            msg = _sym_db.GetSymbol('goldo.nucleo.propulsion.CmdSetAccelerationLimits')(
+                accel = float(self._translation_accel.text()),
+                deccel = float(self._translation_deccel.text()),
+                angular_accel = 0.5,
+                angular_deccel = 0.5)
+            self._client.publishTopic('nucleo/in/propulsion/acceleration_limits/set', msg)
+                
+            msg = _sym_db.GetSymbol('goldo.nucleo.propulsion.ExecuteTranslation')(
+                distance = int(self._execute_translation_edit.text()) * 1e-3,
+                speed = float(self._translation_speed.text()))
+            self._client.publishTopic('nucleo/in/propulsion/cmd/reposition', msg)
 
     def _speed_steps(self):
         self._client.send_message(message_types.DbgPropulsionTest, struct.pack('<B',0))

@@ -5,9 +5,6 @@ from PyQt5.QtWidgets import QTabWidget, QWidget
 from PyQt5.QtWidgets import QComboBox
 from widgets.properties_editor import PropertiesEditorWidget
 
-from goldobot.messages import PropulsionControllerConfig
-from goldobot.messages import PropulsionControllerLowLevelConfig
-from goldobot import message_types
 
 import google.protobuf as _pb
 _sym_db = _pb.symbol_database.Default()
@@ -41,12 +38,19 @@ class PropulsionLowLevelPIDConfigWidget(QTabWidget):
         self._yaw_props = PropertiesEditorWidget(PIDConfig, pid_props)
         self.addTab(self._yaw_props, "yaw")
         
+        self._speed_props.set_value(PIDConfig())
+        self._yaw_rate_props.set_value(PIDConfig())
+        self._longi_props.set_value(PIDConfig())
+        self._yaw_props.set_value(PIDConfig())
+        self._obj = _sym_db.GetSymbol('goldo.nucleo.propulsion.PIDConfig')
+        
+        
     def getValue(self):
         val = self._obj
-        self._speed_props.get_value()
-        self._yaw_rate_props.get_value()
-        self._longi_props.get_value()
-        self._yaw_props.get_value()
+        val.speed.CopyFrom(self._speed_props.get_value())
+        val.yaw_rate.CopyFrom(self._yaw_rate_props.get_value())
+        val.longi.CopyFrom(self._longi_props.get_value())
+        val.yaw.CopyFrom(self._yaw_props.get_value())
         return val
         
     def setValue(self, val):
@@ -81,12 +85,16 @@ class PropulsionControllerConfigDialog(QDialog):
         
         self._pid_config_widget = tab_widget
 
+        PropulsionControllerConfig = _sym_db.GetSymbol('goldo.nucleo.propulsion.PropulsionControllerConfig')
         self._props = PropertiesEditorWidget(PropulsionControllerConfig, [
             ('lookahead_distance', float, '{:.2e}'),
             ('lookahead_time', float, '{:.2e}'),
-            ('static_pwm_limit', float, '{:.2e}'),
-            ('cruise_pwm_limit', float, '{:.2e}'),
-            ('reposition_pwm_limit', float, '{:.2e}')
+            ('static_motor_speed_limit', float, '{:.2e}'),
+            ('cruise_motor_speed_limit', float, '{:.2e}'),
+            ('reposition_motor_speed_limit', float, '{:.2e}'),
+            ('static_torque_limit', float, '{:.2e}'),
+            ('cruise_torque_limit', float, '{:.2e}'),
+            ('reposition_torque_limit', float, '{:.2e}')
             ])
             
         layout.addWidget(self._props,2,0,1,2) 

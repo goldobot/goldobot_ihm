@@ -22,7 +22,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='goldo.nucleo.propulsion',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x1dgoldo/nucleo/propulsion.proto\x12\x17goldo.nucleo.propulsion\x1a\x1bgoldo/common/geometry.proto\x1a\x17goldo/pb2_options.proto\"\xda\x01\n\tTelemetry\x12)\n\x04pose\x18\x01 \x01(\x0b\x32\x1b.goldo.common.geometry.Pose\x12\x14\n\x0cleft_encoder\x18\x02 \x01(\r\x12\x15\n\rright_encoder\x18\x03 \x01(\r\x12\x10\n\x08left_pwm\x18\x04 \x01(\x02\x12\x11\n\tright_pwm\x18\x05 \x01(\x02\x12\x41\n\x05state\x18\x06 \x01(\x0e\x32\x32.goldo.nucleo.propulsion.PropulsionControllerState\x12\r\n\x05\x65rror\x18\x07 \x01(\r\"\xab\x01\n\x0bTelemetryEx\x12\x30\n\x0btarget_pose\x18\x01 \x01(\x0b\x32\x1b.goldo.common.geometry.Pose\x12\x13\n\x0b\x65rror_longi\x18\x02 \x01(\x02\x12\x15\n\rerror_lateral\x18\x03 \x01(\x02\x12\x11\n\terror_yaw\x18\x04 \x01(\x02\x12\x13\n\x0b\x65rror_speed\x18\x05 \x01(\x02\x12\x16\n\x0e\x65rror_yaw_rate\x18\x06 \x01(\x02\"\x83\x01\n\x17MotorsVelocitySetpoints\x12\x10\n\x08left_vel\x18\x01 \x01(\x02\x12\x11\n\tright_vel\x18\x02 \x01(\x02\x12 \n\x18left_current_feedforward\x18\x03 \x01(\x02\x12!\n\x19right_current_feedforward\x18\x04 \x01(\x02\"\xc6\x01\n\x0eOdometryConfig\x12\x1b\n\x13\x64ist_per_count_left\x18\x01 \x01(\x02\x12\x1c\n\x14\x64ist_per_count_right\x18\x02 \x01(\x02\x12\x1b\n\x13wheel_distance_left\x18\x03 \x01(\x02\x12\x1c\n\x14wheel_distance_right\x18\x04 \x01(\x02\x12\x1e\n\x16speed_filter_frequency\x18\x05 \x01(\x02\x12\x1e\n\x16\x61\x63\x63\x65l_filter_frequency\x18\x06 \x01(\x02\"\x8b\x01\n\tPIDConfig\x12\n\n\x02kp\x18\x01 \x01(\x02\x12\n\n\x02ki\x18\x02 \x01(\x02\x12\n\n\x02kd\x18\x03 \x01(\x02\x12\r\n\x05lim_i\x18\x04 \x01(\x02\x12\r\n\x05lim_d\x18\x05 \x01(\x02\x12\x1a\n\x12\x64_filter_frequency\x18\x06 \x01(\x02\x12\x0f\n\x07out_min\x18\x07 \x01(\x02\x12\x0f\n\x07out_max\x18\x08 \x01(\x02\"\xea\x01\n\x1bPropulsionLowLevelPIDConfig\x12\x31\n\x05speed\x18\x01 \x01(\x0b\x32\".goldo.nucleo.propulsion.PIDConfig\x12\x31\n\x05longi\x18\x02 \x01(\x0b\x32\".goldo.nucleo.propulsion.PIDConfig\x12\x34\n\x08yaw_rate\x18\x03 \x01(\x0b\x32\".goldo.nucleo.propulsion.PIDConfig\x12/\n\x03yaw\x18\x04 \x01(\x0b\x32\".goldo.nucleo.propulsion.PIDConfig\"Z\n\"PropulsionLowLevelControllerConfig\x12\x17\n\x0fwheels_distance\x18\x01 \x01(\x02\x12\x1b\n\x13motors_speed_factor\x18\x02 \x01(\x02\"\xce\x02\n\x1aPropulsionControllerConfig\x12U\n\x10low_level_config\x18\x01 \x01(\x0b\x32;.goldo.nucleo.propulsion.PropulsionLowLevelControllerConfig\x12S\n\x0bpid_configs\x18\x02 \x03(\x0b\x32\x34.goldo.nucleo.propulsion.PropulsionLowLevelPIDConfigB\x08\x88\xb5\x18\x04\x90\xb5\x18\x01\x12\x1a\n\x12lookahead_distance\x18\x03 \x01(\x02\x12\x16\n\x0elookahead_time\x18\x04 \x01(\x02\x12\x18\n\x10static_pwm_limit\x18\x05 \x01(\x02\x12\x18\n\x10\x63ruise_pwm_limit\x18\x06 \x01(\x02\x12\x1c\n\x14reposition_pwm_limit\x18\x07 \x01(\x02\"\xe4\x02\n\x14PropulsionTaskConfig\x12\x61\n\x10motor_controller\x18\x01 \x01(\x0e\x32\x41.goldo.nucleo.propulsion.PropulsionTaskConfig.MotorControllerTypeB\x04\x80\xb5\x18\x03\x12\x1e\n\x10update_period_ms\x18\x02 \x01(\rB\x04\x80\xb5\x18\x03\x12!\n\x13telemetry_period_ms\x18\x03 \x01(\rB\x04\x80\xb5\x18\x03\x12$\n\x16telemetry_ex_period_ms\x18\x04 \x01(\rB\x04\x80\xb5\x18\x03\x12\x1c\n\x0epose_period_ms\x18\x05 \x01(\rB\x04\x80\xb5\x18\x05\x12(\n\x1aodrive_telemetry_period_ms\x18\x06 \x01(\rB\x04\x80\xb5\x18\x05\"8\n\x13MotorControllerType\x12\x08\n\x04None\x10\x00\x12\x07\n\x03Pwm\x10\x01\x12\x0e\n\nODriveUART\x10\x02\"Y\n\rCommandStatus\x12\x1d\n\x0fsequence_number\x18\x01 \x01(\x05\x42\x04\x80\xb5\x18\x05\x12\x14\n\x06status\x18\x02 \x01(\x05\x42\x04\x80\xb5\x18\x03\x12\x13\n\x05\x65rror\x18\x03 \x01(\x05\x42\x04\x80\xb5\x18\x03\"S\n\x15SetMotorsTorqueLimits\x12\x1d\n\x0fsequence_number\x18\x01 \x01(\x05\x42\x04\x80\xb5\x18\x05\x12\x0c\n\x04left\x18\x02 \x01(\x02\x12\r\n\x05right\x18\x03 \x01(\x02\")\n\x08\x43mdEmpty\x12\x1d\n\x0fsequence_number\x18\x01 \x01(\x05\x42\x04\x80\xb5\x18\x05\"C\n\x0c\x43mdSetEnable\x12\x1d\n\x0fsequence_number\x18\x01 \x01(\x05\x42\x04\x80\xb5\x18\x05\x12\x14\n\x06\x65nable\x18\x02 \x01(\x08\x42\x04\x80\xb5\x18\x03\"\x87\x01\n\x18\x43mdSetAccelerationLimits\x12\x1d\n\x0fsequence_number\x18\x01 \x01(\x05\x42\x04\x80\xb5\x18\x05\x12\r\n\x05\x61\x63\x63\x65l\x18\x02 \x01(\x02\x12\x0e\n\x06\x64\x65\x63\x63\x65l\x18\x03 \x01(\x02\x12\x15\n\rangular_accel\x18\x04 \x01(\x02\x12\x16\n\x0e\x61ngular_deccel\x18\x05 \x01(\x02\"h\n\nCmdSetPose\x12\x1d\n\x0fsequence_number\x18\x01 \x01(\x05\x42\x04\x80\xb5\x18\x05\x12.\n\x08position\x18\x02 \x01(\x0b\x32\x1c.goldo.common.geometry.Point\x12\x0b\n\x03yaw\x18\x03 \x01(\x02\"H\n\x11\x43mdSetTargetSpeed\x12\x1d\n\x0fsequence_number\x18\x01 \x01(\x05\x42\x04\x80\xb5\x18\x05\x12\x14\n\x0ctarget_speed\x18\x03 \x01(\x02\"o\n\x11\x45xecuteTrajectory\x12\x1d\n\x0fsequence_number\x18\x01 \x01(\x05\x42\x04\x80\xb5\x18\x05\x12\r\n\x05speed\x18\x02 \x01(\x02\x12,\n\x06points\x18\x03 \x03(\x0b\x32\x1c.goldo.common.geometry.Point\"T\n\x12\x45xecuteTranslation\x12\x1d\n\x0fsequence_number\x18\x01 \x01(\x05\x42\x04\x80\xb5\x18\x05\x12\x10\n\x08\x64istance\x18\x02 \x01(\x02\x12\r\n\x05speed\x18\x03 \x01(\x02\"S\n\x11\x45xecuteReposition\x12\x1d\n\x0fsequence_number\x18\x01 \x01(\x05\x42\x04\x80\xb5\x18\x05\x12\x10\n\x08\x64istance\x18\x02 \x01(\x02\x12\r\n\x05speed\x18\x03 \x01(\x02\"Q\n\x0f\x45xecuteRotation\x12\x1d\n\x0fsequence_number\x18\x01 \x01(\x05\x42\x04\x80\xb5\x18\x05\x12\r\n\x05\x61ngle\x18\x02 \x01(\x02\x12\x10\n\x08yaw_rate\x18\x03 \x01(\x02\"j\n\rExecuteMoveTo\x12\x1d\n\x0fsequence_number\x18\x01 \x01(\x05\x42\x04\x80\xb5\x18\x05\x12+\n\x05point\x18\x02 \x01(\x0b\x32\x1c.goldo.common.geometry.Point\x12\r\n\x05speed\x18\x03 \x01(\x02\"n\n\x0e\x45xecutePointTo\x12\x1d\n\x0fsequence_number\x18\x01 \x01(\x05\x42\x04\x80\xb5\x18\x05\x12+\n\x05point\x18\x02 \x01(\x0b\x32\x1c.goldo.common.geometry.Point\x12\x10\n\x08yaw_rate\x18\x03 \x01(\x02\"T\n\x14\x45xecuteFaceDirection\x12\x1d\n\x0fsequence_number\x18\x01 \x01(\x05\x42\x04\x80\xb5\x18\x05\x12\x0b\n\x03yaw\x18\x02 \x01(\x02\x12\x10\n\x08yaw_rate\x18\x03 \x01(\x02*\x9c\x01\n\x19PropulsionControllerState\x12\x0c\n\x08INACTIVE\x10\x00\x12\x0b\n\x07STOPPED\x10\x01\x12\x15\n\x11\x46OLLOW_TRAJECTORY\x10\x02\x12\n\n\x06ROTATE\x10\x03\x12\x0e\n\nREPOSITION\x10\x04\x12\x12\n\x0eMANUAL_CONTROL\x10\x05\x12\x12\n\x0e\x45MERGENCY_STOP\x10\x06\x12\t\n\x05\x45RROR\x10\x07\x62\x06proto3')
+  serialized_pb=_b('\n\x1dgoldo/nucleo/propulsion.proto\x12\x17goldo.nucleo.propulsion\x1a\x1bgoldo/common/geometry.proto\x1a\x17goldo/pb2_options.proto\"\xda\x01\n\tTelemetry\x12)\n\x04pose\x18\x01 \x01(\x0b\x32\x1b.goldo.common.geometry.Pose\x12\x14\n\x0cleft_encoder\x18\x02 \x01(\r\x12\x15\n\rright_encoder\x18\x03 \x01(\r\x12\x10\n\x08left_pwm\x18\x04 \x01(\x02\x12\x11\n\tright_pwm\x18\x05 \x01(\x02\x12\x41\n\x05state\x18\x06 \x01(\x0e\x32\x32.goldo.nucleo.propulsion.PropulsionControllerState\x12\r\n\x05\x65rror\x18\x07 \x01(\r\"\xab\x01\n\x0bTelemetryEx\x12\x30\n\x0btarget_pose\x18\x01 \x01(\x0b\x32\x1b.goldo.common.geometry.Pose\x12\x13\n\x0b\x65rror_longi\x18\x02 \x01(\x02\x12\x15\n\rerror_lateral\x18\x03 \x01(\x02\x12\x11\n\terror_yaw\x18\x04 \x01(\x02\x12\x13\n\x0b\x65rror_speed\x18\x05 \x01(\x02\x12\x16\n\x0e\x65rror_yaw_rate\x18\x06 \x01(\x02\"\x83\x01\n\x17MotorsVelocitySetpoints\x12\x10\n\x08left_vel\x18\x01 \x01(\x02\x12\x11\n\tright_vel\x18\x02 \x01(\x02\x12 \n\x18left_current_feedforward\x18\x03 \x01(\x02\x12!\n\x19right_current_feedforward\x18\x04 \x01(\x02\"\xc6\x01\n\x0eOdometryConfig\x12\x1b\n\x13\x64ist_per_count_left\x18\x01 \x01(\x02\x12\x1c\n\x14\x64ist_per_count_right\x18\x02 \x01(\x02\x12\x1b\n\x13wheel_distance_left\x18\x03 \x01(\x02\x12\x1c\n\x14wheel_distance_right\x18\x04 \x01(\x02\x12\x1e\n\x16speed_filter_frequency\x18\x05 \x01(\x02\x12\x1e\n\x16\x61\x63\x63\x65l_filter_frequency\x18\x06 \x01(\x02\"\x8b\x01\n\tPIDConfig\x12\n\n\x02kp\x18\x01 \x01(\x02\x12\n\n\x02ki\x18\x02 \x01(\x02\x12\n\n\x02kd\x18\x03 \x01(\x02\x12\r\n\x05lim_i\x18\x04 \x01(\x02\x12\r\n\x05lim_d\x18\x05 \x01(\x02\x12\x1a\n\x12\x64_filter_frequency\x18\x06 \x01(\x02\x12\x0f\n\x07out_min\x18\x07 \x01(\x02\x12\x0f\n\x07out_max\x18\x08 \x01(\x02\"\xea\x01\n\x1bPropulsionLowLevelPIDConfig\x12\x31\n\x05speed\x18\x01 \x01(\x0b\x32\".goldo.nucleo.propulsion.PIDConfig\x12\x31\n\x05longi\x18\x02 \x01(\x0b\x32\".goldo.nucleo.propulsion.PIDConfig\x12\x34\n\x08yaw_rate\x18\x03 \x01(\x0b\x32\".goldo.nucleo.propulsion.PIDConfig\x12/\n\x03yaw\x18\x04 \x01(\x0b\x32\".goldo.nucleo.propulsion.PIDConfig\"Z\n\"PropulsionLowLevelControllerConfig\x12\x17\n\x0fwheels_distance\x18\x01 \x01(\x02\x12\x1b\n\x13motors_speed_factor\x18\x02 \x01(\x02\"\xc1\x03\n\x1aPropulsionControllerConfig\x12U\n\x10low_level_config\x18\x01 \x01(\x0b\x32;.goldo.nucleo.propulsion.PropulsionLowLevelControllerConfig\x12S\n\x0bpid_configs\x18\x02 \x03(\x0b\x32\x34.goldo.nucleo.propulsion.PropulsionLowLevelPIDConfigB\x08\x88\xb5\x18\x04\x90\xb5\x18\x01\x12\x1a\n\x12lookahead_distance\x18\x03 \x01(\x02\x12\x16\n\x0elookahead_time\x18\x04 \x01(\x02\x12 \n\x18static_motor_speed_limit\x18\x05 \x01(\x02\x12 \n\x18\x63ruise_motor_speed_limit\x18\x06 \x01(\x02\x12$\n\x1creposition_motor_speed_limit\x18\x07 \x01(\x02\x12\x1b\n\x13static_torque_limit\x18\x08 \x01(\x02\x12\x1b\n\x13\x63ruise_torque_limit\x18\t \x01(\x02\x12\x1f\n\x17reposition_torque_limit\x18\n \x01(\x02\"\xe4\x02\n\x14PropulsionTaskConfig\x12\x61\n\x10motor_controller\x18\x01 \x01(\x0e\x32\x41.goldo.nucleo.propulsion.PropulsionTaskConfig.MotorControllerTypeB\x04\x80\xb5\x18\x03\x12\x1e\n\x10update_period_ms\x18\x02 \x01(\rB\x04\x80\xb5\x18\x03\x12!\n\x13telemetry_period_ms\x18\x03 \x01(\rB\x04\x80\xb5\x18\x03\x12$\n\x16telemetry_ex_period_ms\x18\x04 \x01(\rB\x04\x80\xb5\x18\x03\x12\x1c\n\x0epose_period_ms\x18\x05 \x01(\rB\x04\x80\xb5\x18\x05\x12(\n\x1aodrive_telemetry_period_ms\x18\x06 \x01(\rB\x04\x80\xb5\x18\x05\"8\n\x13MotorControllerType\x12\x08\n\x04None\x10\x00\x12\x07\n\x03Pwm\x10\x01\x12\x0e\n\nODriveUART\x10\x02\"Y\n\rCommandStatus\x12\x1d\n\x0fsequence_number\x18\x01 \x01(\x05\x42\x04\x80\xb5\x18\x05\x12\x14\n\x06status\x18\x02 \x01(\x05\x42\x04\x80\xb5\x18\x03\x12\x13\n\x05\x65rror\x18\x03 \x01(\x05\x42\x04\x80\xb5\x18\x03\"S\n\x15SetMotorsTorqueLimits\x12\x1d\n\x0fsequence_number\x18\x01 \x01(\x05\x42\x04\x80\xb5\x18\x05\x12\x0c\n\x04left\x18\x02 \x01(\x02\x12\r\n\x05right\x18\x03 \x01(\x02\")\n\x08\x43mdEmpty\x12\x1d\n\x0fsequence_number\x18\x01 \x01(\x05\x42\x04\x80\xb5\x18\x05\"C\n\x0c\x43mdSetEnable\x12\x1d\n\x0fsequence_number\x18\x01 \x01(\x05\x42\x04\x80\xb5\x18\x05\x12\x14\n\x06\x65nable\x18\x02 \x01(\x08\x42\x04\x80\xb5\x18\x03\"\x87\x01\n\x18\x43mdSetAccelerationLimits\x12\x1d\n\x0fsequence_number\x18\x01 \x01(\x05\x42\x04\x80\xb5\x18\x05\x12\r\n\x05\x61\x63\x63\x65l\x18\x02 \x01(\x02\x12\x0e\n\x06\x64\x65\x63\x63\x65l\x18\x03 \x01(\x02\x12\x15\n\rangular_accel\x18\x04 \x01(\x02\x12\x16\n\x0e\x61ngular_deccel\x18\x05 \x01(\x02\"h\n\nCmdSetPose\x12\x1d\n\x0fsequence_number\x18\x01 \x01(\x05\x42\x04\x80\xb5\x18\x05\x12.\n\x08position\x18\x02 \x01(\x0b\x32\x1c.goldo.common.geometry.Point\x12\x0b\n\x03yaw\x18\x03 \x01(\x02\"H\n\x11\x43mdSetTargetSpeed\x12\x1d\n\x0fsequence_number\x18\x01 \x01(\x05\x42\x04\x80\xb5\x18\x05\x12\x14\n\x0ctarget_speed\x18\x03 \x01(\x02\"o\n\x11\x45xecuteTrajectory\x12\x1d\n\x0fsequence_number\x18\x01 \x01(\x05\x42\x04\x80\xb5\x18\x05\x12\r\n\x05speed\x18\x02 \x01(\x02\x12,\n\x06points\x18\x03 \x03(\x0b\x32\x1c.goldo.common.geometry.Point\"T\n\x12\x45xecuteTranslation\x12\x1d\n\x0fsequence_number\x18\x01 \x01(\x05\x42\x04\x80\xb5\x18\x05\x12\x10\n\x08\x64istance\x18\x02 \x01(\x02\x12\r\n\x05speed\x18\x03 \x01(\x02\"S\n\x11\x45xecuteReposition\x12\x1d\n\x0fsequence_number\x18\x01 \x01(\x05\x42\x04\x80\xb5\x18\x05\x12\x10\n\x08\x64istance\x18\x02 \x01(\x02\x12\r\n\x05speed\x18\x03 \x01(\x02\"Q\n\x0f\x45xecuteRotation\x12\x1d\n\x0fsequence_number\x18\x01 \x01(\x05\x42\x04\x80\xb5\x18\x05\x12\r\n\x05\x61ngle\x18\x02 \x01(\x02\x12\x10\n\x08yaw_rate\x18\x03 \x01(\x02\"j\n\rExecuteMoveTo\x12\x1d\n\x0fsequence_number\x18\x01 \x01(\x05\x42\x04\x80\xb5\x18\x05\x12+\n\x05point\x18\x02 \x01(\x0b\x32\x1c.goldo.common.geometry.Point\x12\r\n\x05speed\x18\x03 \x01(\x02\"n\n\x0e\x45xecutePointTo\x12\x1d\n\x0fsequence_number\x18\x01 \x01(\x05\x42\x04\x80\xb5\x18\x05\x12+\n\x05point\x18\x02 \x01(\x0b\x32\x1c.goldo.common.geometry.Point\x12\x10\n\x08yaw_rate\x18\x03 \x01(\x02\"T\n\x14\x45xecuteFaceDirection\x12\x1d\n\x0fsequence_number\x18\x01 \x01(\x05\x42\x04\x80\xb5\x18\x05\x12\x0b\n\x03yaw\x18\x02 \x01(\x02\x12\x10\n\x08yaw_rate\x18\x03 \x01(\x02*\x9c\x01\n\x19PropulsionControllerState\x12\x0c\n\x08INACTIVE\x10\x00\x12\x0b\n\x07STOPPED\x10\x01\x12\x15\n\x11\x46OLLOW_TRAJECTORY\x10\x02\x12\n\n\x06ROTATE\x10\x03\x12\x0e\n\nREPOSITION\x10\x04\x12\x12\n\x0eMANUAL_CONTROL\x10\x05\x12\x12\n\x0e\x45MERGENCY_STOP\x10\x06\x12\t\n\x05\x45RROR\x10\x07\x62\x06proto3')
   ,
   dependencies=[goldo_dot_common_dot_geometry__pb2.DESCRIPTOR,goldo_dot_pb2__options__pb2.DESCRIPTOR,])
 
@@ -67,8 +67,8 @@ _PROPULSIONCONTROLLERSTATE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=3289,
-  serialized_end=3445,
+  serialized_start=3404,
+  serialized_end=3560,
 )
 _sym_db.RegisterEnumDescriptor(_PROPULSIONCONTROLLERSTATE)
 
@@ -104,8 +104,8 @@ _PROPULSIONTASKCONFIG_MOTORCONTROLLERTYPE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=1951,
-  serialized_end=2007,
+  serialized_start=2066,
+  serialized_end=2122,
 )
 _sym_db.RegisterEnumDescriptor(_PROPULSIONTASKCONFIG_MOTORCONTROLLERTYPE)
 
@@ -573,22 +573,43 @@ _PROPULSIONCONTROLLERCONFIG = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='static_pwm_limit', full_name='goldo.nucleo.propulsion.PropulsionControllerConfig.static_pwm_limit', index=4,
+      name='static_motor_speed_limit', full_name='goldo.nucleo.propulsion.PropulsionControllerConfig.static_motor_speed_limit', index=4,
       number=5, type=2, cpp_type=6, label=1,
       has_default_value=False, default_value=float(0),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='cruise_pwm_limit', full_name='goldo.nucleo.propulsion.PropulsionControllerConfig.cruise_pwm_limit', index=5,
+      name='cruise_motor_speed_limit', full_name='goldo.nucleo.propulsion.PropulsionControllerConfig.cruise_motor_speed_limit', index=5,
       number=6, type=2, cpp_type=6, label=1,
       has_default_value=False, default_value=float(0),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='reposition_pwm_limit', full_name='goldo.nucleo.propulsion.PropulsionControllerConfig.reposition_pwm_limit', index=6,
+      name='reposition_motor_speed_limit', full_name='goldo.nucleo.propulsion.PropulsionControllerConfig.reposition_motor_speed_limit', index=6,
       number=7, type=2, cpp_type=6, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='static_torque_limit', full_name='goldo.nucleo.propulsion.PropulsionControllerConfig.static_torque_limit', index=7,
+      number=8, type=2, cpp_type=6, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='cruise_torque_limit', full_name='goldo.nucleo.propulsion.PropulsionControllerConfig.cruise_torque_limit', index=8,
+      number=9, type=2, cpp_type=6, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='reposition_torque_limit', full_name='goldo.nucleo.propulsion.PropulsionControllerConfig.reposition_torque_limit', index=9,
+      number=10, type=2, cpp_type=6, label=1,
       has_default_value=False, default_value=float(0),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -606,7 +627,7 @@ _PROPULSIONCONTROLLERCONFIG = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=1314,
-  serialized_end=1648,
+  serialized_end=1763,
 )
 
 
@@ -672,8 +693,8 @@ _PROPULSIONTASKCONFIG = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1651,
-  serialized_end=2007,
+  serialized_start=1766,
+  serialized_end=2122,
 )
 
 
@@ -717,8 +738,8 @@ _COMMANDSTATUS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2009,
-  serialized_end=2098,
+  serialized_start=2124,
+  serialized_end=2213,
 )
 
 
@@ -762,8 +783,8 @@ _SETMOTORSTORQUELIMITS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2100,
-  serialized_end=2183,
+  serialized_start=2215,
+  serialized_end=2298,
 )
 
 
@@ -793,8 +814,8 @@ _CMDEMPTY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2185,
-  serialized_end=2226,
+  serialized_start=2300,
+  serialized_end=2341,
 )
 
 
@@ -831,8 +852,8 @@ _CMDSETENABLE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2228,
-  serialized_end=2295,
+  serialized_start=2343,
+  serialized_end=2410,
 )
 
 
@@ -890,8 +911,8 @@ _CMDSETACCELERATIONLIMITS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2298,
-  serialized_end=2433,
+  serialized_start=2413,
+  serialized_end=2548,
 )
 
 
@@ -935,8 +956,8 @@ _CMDSETPOSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2435,
-  serialized_end=2539,
+  serialized_start=2550,
+  serialized_end=2654,
 )
 
 
@@ -973,8 +994,8 @@ _CMDSETTARGETSPEED = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2541,
-  serialized_end=2613,
+  serialized_start=2656,
+  serialized_end=2728,
 )
 
 
@@ -1018,8 +1039,8 @@ _EXECUTETRAJECTORY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2615,
-  serialized_end=2726,
+  serialized_start=2730,
+  serialized_end=2841,
 )
 
 
@@ -1063,8 +1084,8 @@ _EXECUTETRANSLATION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2728,
-  serialized_end=2812,
+  serialized_start=2843,
+  serialized_end=2927,
 )
 
 
@@ -1108,8 +1129,8 @@ _EXECUTEREPOSITION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2814,
-  serialized_end=2897,
+  serialized_start=2929,
+  serialized_end=3012,
 )
 
 
@@ -1153,8 +1174,8 @@ _EXECUTEROTATION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2899,
-  serialized_end=2980,
+  serialized_start=3014,
+  serialized_end=3095,
 )
 
 
@@ -1198,8 +1219,8 @@ _EXECUTEMOVETO = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2982,
-  serialized_end=3088,
+  serialized_start=3097,
+  serialized_end=3203,
 )
 
 
@@ -1243,8 +1264,8 @@ _EXECUTEPOINTTO = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3090,
-  serialized_end=3200,
+  serialized_start=3205,
+  serialized_end=3315,
 )
 
 
@@ -1288,8 +1309,8 @@ _EXECUTEFACEDIRECTION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3202,
-  serialized_end=3286,
+  serialized_start=3317,
+  serialized_end=3401,
 )
 
 _TELEMETRY.fields_by_name['pose'].message_type = goldo_dot_common_dot_geometry__pb2._POSE

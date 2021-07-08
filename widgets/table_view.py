@@ -6,17 +6,98 @@ from PyQt5.QtCore import QObject, pyqtSignal, QSize, QRectF, QPointF, Qt
 from PyQt5.QtWidgets import QGraphicsView
 from PyQt5.QtWidgets import QGraphicsScene
 from PyQt5.QtWidgets import QGraphicsItem
+from PyQt5.QtWidgets import QGraphicsItemGroup 
+from PyQt5.QtWidgets import QGraphicsEllipseItem
 from PyQt5.QtWidgets import QGraphicsPixmapItem
+from PyQt5.QtWidgets import QGraphicsPathItem 
 
 from PyQt5.QtGui import QPolygonF, QPen, QBrush, QColor, QFont, QTransform
 from PyQt5.QtGui import QImage, QImageReader, QPixmap, QPainterPath
 
-class Robot(QGraphicsItem):
-    def __init__(self, parent, config):
-        super().__init__(parent)
-        self.addPolygon(little_robot_poly, QPen(), QBrush(QColor('red')))
-        
+import struct
+_lidar_point_struct = struct.Struct('<ff')
 
+
+little_robot_poly = QPolygonF([
+            QPointF(  50,   0),
+            QPointF( 100,  85),
+            QPointF(  65, 115),
+            QPointF( -65, 115),
+            QPointF(-100,  85),
+            QPointF(-100, -85),
+            QPointF( -65,-115),
+            QPointF(  65,-115),
+            QPointF( 100, -85)
+            ])
+            
+near_poly = QPolygonF([
+            QPointF(  10, 10),
+            QPointF(  10, -10),
+            QPointF(  30, -30),
+            QPointF(  30, 30),
+            QPointF(  10, 10),            
+            ])
+            
+far_poly = QPolygonF([
+            QPointF(  30, 30),
+            QPointF(  30, -30),
+            QPointF(  50, -50),
+            QPointF(  50, 50),
+            QPointF(  30, 30),            
+            ])
+            
+            
+class Robot(QGraphicsItemGroup):
+    def __init__(self):
+        super().__init__()
+        
+        path = QPainterPath()
+        path.addPolygon(little_robot_poly)
+        #p = little_robot_poly[0}
+        #path.moveTo(p.x * 1000, p.y * 1000)
+        
+        outline = QGraphicsPathItem(path, self)
+        outline.setPen(QPen())
+        outline.setBrush(QBrush(QColor('red')))
+        
+        path = QPainterPath()
+        path.addPolygon(near_poly)
+        self._near_front = QGraphicsPathItem(path, self)
+        self._near_front.setPen(QPen())
+        self._near_front.setBrush(QBrush(QColor('green')))
+        
+        path = QPainterPath()
+        path.addPolygon(far_poly)
+        self._far_front = QGraphicsPathItem(path, self)
+        self._far_front.setPen(QPen())
+        self._far_front.setBrush(QBrush(QColor('green')))
+        
+        path = QPainterPath()
+        path.addPolygon(near_poly)
+        self._near_back = QGraphicsPathItem(path, self)
+        self._near_back.setPen(QPen())
+        self._near_back.setBrush(QBrush(QColor('green')))
+        self._near_back.setRotation(180)
+        
+        path = QPainterPath()
+        path.addPolygon(far_poly)
+        self._far_back = QGraphicsPathItem(path, self)
+        self._far_back.setPen(QPen())
+        self._far_back.setBrush(QBrush(QColor('green')))
+        self._far_back.setRotation(180)
+        
+        
+        #self.addPolygon(little_robot_poly, QPen(), QBrush(QColor('red')))
+        
+class AdversaryDetection(QGraphicsItemGroup):
+    def __init__(self,id_text):
+        super().__init__()
+        circle = QGraphicsEllipseItem(-100, -100, 200, 200, parent=self)
+        circle.setPen(QPen(QBrush(QColor('black')),4))
+        #self.addEllipse(-100, -100, 200, 200, QPen(QBrush(QColor('black')),4), QBrush(QColor('white')))
+        #self.addPolygon(little_robot_poly, QPen(), QBrush(QColor('red')))
+        
+        
 class TableViewWidget(QGraphicsView):
     g_table_view = None
     g_detect_size = 200
@@ -44,6 +125,7 @@ class TableViewWidget(QGraphicsView):
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         
         self._robots = {}
+        self._adversary_detections = {}
         self._waypoints = []
 
         redium = QColor.fromCmykF(0,1,1,0.1)
@@ -55,39 +137,18 @@ class TableViewWidget(QGraphicsView):
         background = QColor(40,40,40)
         darker = QColor(20,20,20)
 
-#        big_robot_poly = QPolygonF([
-#            QPointF(-135,-151),
-#            QPointF(60,-151),
-#            QPointF(170,-91),
-#            QPointF(170,-45),
-#            QPointF(111,-40),
-#            QPointF(111,40),
-#            QPointF(170,45),
-#            QPointF(170,91),
-#            QPointF(60,151),
-#            QPointF(-135,151)
-#            ])
 
-        little_robot_poly = QPolygonF([
-            QPointF(  50,   0),
-            QPointF( 100,  85),
-            QPointF(  65, 115),
-            QPointF( -65, 115),
-            QPointF(-100,  85),
-            QPointF(-100, -85),
-            QPointF( -65,-115),
-            QPointF(  65,-115),
-            QPointF( 100, -85)
-            ])
+        
 
-        #self._scene = QGraphicsScene(QRectF(0,-1500,2000,3000))
+
         self._scene = QGraphicsScene(QRectF(-100,-1600,2200,3200))
 
 #        self._big_robot = self._scene.addPolygon(big_robot_poly, QPen(), QBrush(QColor('red')))
 #        self._big_robot.setZValue(1)
         #self._robots['little'] = Robot(self._scene)
-        self._little_robot = self._scene.addPolygon(little_robot_poly, QPen(), QBrush(QColor('red')))
+        self._little_robot = Robot()
         self._little_robot.setZValue(1)
+        self._scene.addItem(self._little_robot)
         #self._friend_robot = self._scene.addEllipse(-100, -100, 200, 200, QPen(QBrush(QColor('black')),4), QBrush(QColor('green')))
         self._friend_robot = self._scene.addEllipse(-100, -100, TableViewWidget.g_detect_size, TableViewWidget.g_detect_size, QPen(QBrush(QColor('black')),4), QBrush(QColor('white')))
         self._friend_robot.setZValue(1)
@@ -269,6 +330,26 @@ class TableViewWidget(QGraphicsView):
         self._client.rplidar_plot.connect(self.update_plots)
         self._client.rplidar_robot_detection.connect(self.update_other_robots)
         self._client.registerCallback('nucleo/in/propulsion/cmd/trajectory', self.on_msg_trajectory)
+        self._client.registerCallback('gui/in/robot_state', self.on_msg_robot_state)
+        
+    def on_msg_robot_state(self, msg):
+        for d in msg.rplidar.detections:
+            if d.id not in self._adversary_detections:
+                ad = AdversaryDetection(str(d.id))
+                self._adversary_detections[d.id] = ad
+                ad.setZValue(1)
+                self._scene.addItem(ad)
+            ad = self._adversary_detections[d.id]
+            ad.setPos(d.x * 1000, d.y * 1000)
+        zones = msg.rplidar.zones
+        self._little_robot._near_front.setBrush(QBrush(QColor('red' if zones.front_near else 'green')))
+        self._little_robot._far_front.setBrush(QBrush(QColor('red' if zones.front_far else 'green')))
+        self._little_robot._near_back.setBrush(QBrush(QColor('red' if zones.back_near else 'green')))
+        self._little_robot._far_back.setBrush(QBrush(QColor('red' if zones.back_far else 'green')))
+                
+            
+        
+        
         
     def on_msg_trajectory(self, msg):
         path = QPainterPath()
@@ -298,19 +379,15 @@ class TableViewWidget(QGraphicsView):
         for i in self._plot_items:
             self._scene.removeItem(i)
         self._plot_items = []
+        
+        for i in range(my_plot.num_points):
+            x, y = _lidar_point_struct.unpack(my_plot.data[i*8:(i+1)*8])
+            itm = self._scene.addEllipse(x * 1000 - dbg_plt_sz, y * 1000 - dbg_plt_sz, 2*dbg_plt_sz, 2*dbg_plt_sz, QPen(QBrush(QColor('red')),4), QBrush(QColor('red')))
+            self._plot_items.append(itm)
             
         #self.last_plot_ts = my_plot.timestamp
-        for pt in my_plot.points:
-            itm = self._scene.addEllipse(pt.x * 1000 - dbg_plt_sz, pt.y * 1000 - dbg_plt_sz, 2*dbg_plt_sz, 2*dbg_plt_sz, QPen(QBrush(QColor('red')),4), QBrush(QColor('red')))
-            self._plot_items.append(itm)
         return
-        my_plot_ellipse = self._scene.addEllipse(my_plot.x * 1000 - dbg_plt_sz, my_plot.y * 1000 - dbg_plt_sz, 2*dbg_plt_sz, 2*dbg_plt_sz, QPen(QBrush(QColor('red')),4), QBrush(QColor('red')))
-        self.plot_graph_l.append((my_plot,my_plot_ellipse))
-        for rec in self.plot_graph_l:
-            if (self.last_plot_ts-rec[0].timestamp>TableViewWidget.g_rplidar_plot_life_ms):
-                rec_ellipse = rec[1]
-                self._scene.removeItem(rec_ellipse)
-                self.plot_graph_l.remove(rec)
+
 
     def update_other_robots(self, other_robot):
         dbg_plt_sz = 3

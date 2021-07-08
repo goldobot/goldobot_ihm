@@ -68,9 +68,12 @@ nucleo:
         out_max: 1
     lookahead_time: 0.5
     lookahead_distance: 0.15
-    static_pwm_limit: 10
-    cruise_pwm_limit: 100
-    reposition_pwm_limit: 10
+    static_motor_speed_limit: 10
+    cruise_motor_speed_limit: 100
+    reposition_motor_speed_limit: 10
+    static_torque_limit: 0.4
+    cruise_torque_limit: 0.4
+    reposition_torque_limit: 0.03
   servos:
     - name: bras_lat_gauche
       id: 11

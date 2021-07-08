@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='goldo.common.geometry',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x1bgoldo/common/geometry.proto\x12\x15goldo.common.geometry\"\x1d\n\x05Point\x12\t\n\x01x\x18\x01 \x01(\x02\x12\t\n\x01y\x18\x02 \x01(\x02\":\n\nPointCloud\x12,\n\x06points\x18\x01 \x03(\x0b\x32\x1c.goldo.common.geometry.Point\"\x98\x01\n\x04Pose\x12.\n\x08position\x18\x01 \x01(\x0b\x32\x1c.goldo.common.geometry.Point\x12\x0b\n\x03yaw\x18\x02 \x01(\x02\x12\r\n\x05speed\x18\x03 \x01(\x02\x12\x10\n\x08yaw_rate\x18\x04 \x01(\x02\x12\x14\n\x0c\x61\x63\x63\x65leration\x18\x05 \x01(\x02\x12\x1c\n\x14\x61ngular_acceleration\x18\x06 \x01(\x02\x62\x06proto3')
+  serialized_pb=_b('\n\x1bgoldo/common/geometry.proto\x12\x15goldo.common.geometry\"\x1d\n\x05Point\x12\t\n\x01x\x18\x01 \x01(\x02\x12\t\n\x01y\x18\x02 \x01(\x02\".\n\nPointCloud\x12\x12\n\nnum_points\x18\x01 \x01(\r\x12\x0c\n\x04\x64\x61ta\x18\x02 \x01(\x0c\"\x98\x01\n\x04Pose\x12.\n\x08position\x18\x01 \x01(\x0b\x32\x1c.goldo.common.geometry.Point\x12\x0b\n\x03yaw\x18\x02 \x01(\x02\x12\r\n\x05speed\x18\x03 \x01(\x02\x12\x10\n\x08yaw_rate\x18\x04 \x01(\x02\x12\x14\n\x0c\x61\x63\x63\x65leration\x18\x05 \x01(\x02\x12\x1c\n\x14\x61ngular_acceleration\x18\x06 \x01(\x02\x62\x06proto3')
 )
 
 
@@ -71,9 +71,16 @@ _POINTCLOUD = _descriptor.Descriptor(
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='points', full_name='goldo.common.geometry.PointCloud.points', index=0,
-      number=1, type=11, cpp_type=10, label=3,
-      has_default_value=False, default_value=[],
+      name='num_points', full_name='goldo.common.geometry.PointCloud.num_points', index=0,
+      number=1, type=13, cpp_type=3, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='data', full_name='goldo.common.geometry.PointCloud.data', index=1,
+      number=2, type=12, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b(""),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
@@ -90,7 +97,7 @@ _POINTCLOUD = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=85,
-  serialized_end=143,
+  serialized_end=131,
 )
 
 
@@ -155,11 +162,10 @@ _POSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=146,
-  serialized_end=298,
+  serialized_start=134,
+  serialized_end=286,
 )
 
-_POINTCLOUD.fields_by_name['points'].message_type = _POINT
 _POSE.fields_by_name['position'].message_type = _POINT
 DESCRIPTOR.message_types_by_name['Point'] = _POINT
 DESCRIPTOR.message_types_by_name['PointCloud'] = _POINTCLOUD

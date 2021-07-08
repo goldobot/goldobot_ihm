@@ -30,7 +30,7 @@ class ConsoleDialog(QDialog):
 
     def set_client(self, client: ''):
         self._client = client
-        self._client.registerCallback('main/log/message', self._onLogMessage)
+        self._client.registerCallback('*', self._onLogMessage)
         
     def _onLogMessage(self, msg):
         print(msg)

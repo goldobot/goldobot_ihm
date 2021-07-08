@@ -39,6 +39,8 @@ class PropertiesEditorWidget(QWidget):
             i+=1
 
         self.setLayout(layout)
+        if self._class:
+            self._obj = self._class()
         
     def setValue(self, value):
         self.set_value(value)
