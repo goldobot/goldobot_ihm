@@ -3,6 +3,8 @@ import os
 
 from PyQt5.QtCore import QObject, pyqtSignal, QSize, QRectF, QPointF, Qt
 
+from PyQt5.QtWidgets import QLabel
+
 from PyQt5.QtWidgets import QGraphicsView
 from PyQt5.QtWidgets import QGraphicsScene
 from PyQt5.QtWidgets import QGraphicsItem
@@ -332,6 +334,8 @@ class TableViewWidget(QGraphicsView):
         self._client.registerCallback('nucleo/in/propulsion/cmd/trajectory', self.on_msg_trajectory)
         self._client.registerCallback('gui/in/robot_state', self.on_msg_robot_state)
         
+        self._client.registerCallback('strategy/debug/astar_arr', self.on_msg_astar)
+        
     def on_msg_robot_state(self, msg):
         for d in msg.rplidar.detections:
             if d.id not in self._adversary_detections:
@@ -349,7 +353,13 @@ class TableViewWidget(QGraphicsView):
                 
             
         
-        
+    def on_msg_astar(self, msg):
+        image = QImage(msg.value, 300, 200, QImage.Format_Grayscale8)
+        image.setColorTable([Qt.black, Qt.white])
+        self._astar_label = QLabel()
+        self._astar_label.setPixmap(QPixmap(image))
+        self._astar_label.show()
+        print(image)
         
     def on_msg_trajectory(self, msg):
         path = QPainterPath()

@@ -75,14 +75,14 @@ class ZmqClient(QObject):
                                               msg.DESCRIPTOR.full_name.encode('utf8'),
                                               msg.SerializeToString()])
                                               
-    def registerCallback(self, pattern: str, callback):
+    def registerCallback(self, pattern: str, callback, full=False):
         pattern = (
             pattern
             .replace('*', r'([^/]+)')
             .replace('/#', r'(/[^/]+)*')
             .replace('#/', r'([^/]+/)*')
             )
-        self._callbacks.append((re.compile(f"^{pattern}$"), callback))
+        self._callbacks.append((re.compile(f"^{pattern}$"), callback, full))
                                               
     def _on_socket_main_sub(self):        
         self._notifier_main.setEnabled(False)
@@ -100,10 +100,13 @@ class ZmqClient(QObject):
                 msg.ParseFromString(payload)
             else:
                 msg = None
-            callback_matches = ((regexp.match(topic), callback) for regexp, callback in self._callbacks)
-            for match, callback in callback_matches:
+            callback_matches = ((regexp.match(topic), callback, full) for regexp, callback, full in self._callbacks)
+            for match, callback, full in callback_matches:
                 if match:
-                    callback(*match.groups(), msg)
+                    if full:
+                        callback(topic, msg)
+                    else:
+                        callback(*match.groups(), msg)
             if topic.startswith('nucleo'):
                 pass #print(topic)
             if topic == 'nucleo/out/os/heartbeat':

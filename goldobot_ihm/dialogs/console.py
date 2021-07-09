@@ -2,11 +2,17 @@ from PyQt5.QtWidgets import QGridLayout
 from PyQt5.QtWidgets import QPushButton
 from PyQt5.QtWidgets import QDialog
 from PyQt5.QtWidgets import QTextEdit
+from PyQt5.QtWidgets import QTreeView
+
+from goldobot_ihm.qjsonmodel import QJsonModel
+    
+    
 from widgets.properties_editor import PropertiesEditorWidget
 
 from typing import Optional
 
 import google.protobuf as _pb
+import google.protobuf.json_format
 _sym_db = _pb.symbol_database.Default()
 
 class ConsoleDialog(QDialog):
@@ -17,23 +23,37 @@ class ConsoleDialog(QDialog):
         self._client = None
 
 
+        self._view = QTreeView()
+        self._model = model = QJsonModel()
+        self._view.setModel(model)
         self._text_edit = QTextEdit()
+        self._last = {}
+        #self._topic_select = 
 
-        self._button_reset_counts = QPushButton('reset counts')
+        self._button_update = QPushButton('update')
 
         layout = QGridLayout()
 
 
-        layout.addWidget(self._text_edit)
+        layout.addWidget(self._view)
+        layout.addWidget(self._button_update)
         self.setLayout(layout)
+        
+        self._button_update.clicked.connect(self.onUpdateClicked)
 
 
     def set_client(self, client: ''):
         self._client = client
-        self._client.registerCallback('*', self._onLogMessage)
+        self._client.registerCallback('#/*', self._onLogMessage, True)
         
-    def _onLogMessage(self, msg):
-        print(msg)
+    def onUpdateClicked(self):
+        self._model.load(self._last)
+        
+    def _onLogMessage(self, topic, msg):
+        txt = google.protobuf.json_format.MessageToDict(msg, including_default_value_fields=True)
+        if topic == 'gui/in/robot_state':
+            #self._text_edit.setText(txt)
+            self._last = txt
         
 
      
