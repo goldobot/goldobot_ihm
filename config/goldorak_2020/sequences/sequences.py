@@ -1,6 +1,12 @@
 from asyncio import sleep
 import asyncio
 
+import numpy as np
+import math
+
+from .herse import herse
+from .pales import pales
+
 class Side:
     Unknown = 0
     Blue = 1
@@ -25,70 +31,16 @@ fanion_ouvert = 11000
 table_blue_port_green_x = 0.3
 table_blue_port_green_x = 1.3
 
+
+    
 #actuators
-class Herse(object):
-    def __init__(self):
-        self.v_haut = 2050
-        self.v_approche = 1500
-        self.v_prise_approche = 1020
-        self.v_prise = 950
-        self.v_depose = 900
-        self.v_rangement = 1800
 
-        self.h_gauche = 190
-        self.h_droite = 790
-        self.h_centre = 490
-        self.h_centre_gauche = 500
-        self.h_centre_droit = 440
-        
-        self.pd_ouvert = 11000
-        self.pd_ferme = 5300
-        
-        self.pg_ouvert = 5500
-        self.pg_ferme = 12000
-
-    async def prise(self):
-        await servos.moveMultiple({
-            'herse_v': self.v_prise_approche})
-        await servos.moveMultiple({
-            'herse_v': self.v_prise,
-            'pince_droite': self.pd_ferme,
-            'pince_gauche': self.pg_ferme})
-        await sleep(1)
-            
-        await servos.moveMultiple({
-            'herse_v': self.v_approche})
-        await servos.moveMultiple({
-            'herse_slider': self.h_centre})
-            
-    async def depose(self):
-        await servos.moveMultiple({
-            'herse_v': self.v_depose})
-        await servos.moveMultiple({
-            'pince_droite': self.pd_ouvert,
-            'pince_gauche': self.pg_ouvert})
-        await servos.moveMultiple({
-            'herse_v': self.v_rangement})
-        
-        
-        
-    async def initialize(self):
-        await servos.setEnable('herse_v', True)
-        await servos.setEnable('herse_slider', True)
-        await servos.setEnable('pince_droite', True)
-        await servos.setEnable('pince_gauche', True)
-        await servos.moveMultiple({'herse_slider': self.h_centre})
-        await servos.moveMultiple({'herse_v': self.v_haut})
-        await servos.moveMultiple({'pince_droite': self.pd_ouvert, 'pince_gauche': self.pg_ouvert})
-
-        return
-        await servos.moveMultiple({'herse_v': self.v_prise})
-        await servos.moveMultiple({'herse_slider': self.h_gauche})
+#Pales exemple
+#
+#pales.move(gauche='ouvert', speed=0.5)
+#pales.move(both='ferme', speed=0.1)
 
 
-
-
-herse = Herse()
 
 #herse
 herse_haut = 2050
@@ -107,9 +59,18 @@ herse_bas_gobelet = 1000
 
 
 def symetrie(pose):
+    if isinstance(pose, np.ndarray):
+        if pose.shape[0] == 2:
+            return np.array([pose[0], -pose[1]])
     return (pose[0], -pose[1], -pose[2])
 
-
+def on_segment(p1, p2, d):
+    diff = p2 - p1
+    midpoint = (p1 + p2) * 0.5
+    diff = diff/np.linalg.norm(diff)
+    nr = np.array([diff[1], -diff[0]])
+    return midpoint + nr * d
+    
 #strategie homologation
 #depart robot parallele au bord de latable
 #avancée vers les fanions
@@ -130,12 +91,25 @@ class BluePoses(object):
     p2 = (0.4, -0.8, 90)
 
     phare = (0.15, -1.5 + 0.24, 90)
-
+    
+    hp_approche_phare = (0.4, -1, 180)
+    hp_phare = (0.17, -1, 180)
+    
+    bouee_1 = np.array([0.51,-1.05])    
+    bouee_2 = np.array([0.4,-1.2])
+    bouee_3 = np.array([1.08,-1.05])
+    bouee_4 = np.array([1.2,-1.2])
+    
+    pousse_bouees_1 = on_segment(bouee_1, bouee_2, -0.3)
+    
+    traj1 = [flags, flags_2, flags_3]
+    
     servos_ma_bras_sorti = {'bras_lat_droite': bras_lat_droite_sorti}
     servos_ma_bras_rentre = {'bras_lat_droite': bras_lat_droite_rentre}
 
     servos_phare_bras_rentre = {'bras_lat_gauche': bras_lat_gauche_rentre}
     servos_phare_bras_sorti = {'bras_lat_gauche': 12000}
+    servos_herse_phare = {'herse_slider': herse.h_droite}
 
 class YellowPoses(object):
     start_pose = symetrie(BluePoses.start_pose)
@@ -150,14 +124,17 @@ class YellowPoses(object):
     p1 = symetrie(BluePoses.p1)
     p2 = symetrie(BluePoses.p2)
 
-    phare = symetrie(BluePoses.phare)
+    phare = symetrie(BluePoses.phare)    
+        
+    hp_approche_phare = symetrie(BluePoses.hp_approche_phare)
+    hp_phare = symetrie(BluePoses.hp_phare)
 
     servos_ma_bras_sorti = {'bras_lat_gauche': bras_lat_gauche_sorti}
     servos_ma_bras_rentre = {'bras_lat_gauche': bras_lat_gauche_rentre}
 
     servos_phare_bras_rentre = {'bras_lat_droite': bras_lat_droite_rentre}
     servos_phare_bras_sorti = {'bras_lat_droite': 6800 }
-    
+    servos_herse_phare = {'herse_slider': herse.h_gauche}
     #bras_lat_gauche_sorti = 14500
     #bras_lat_gauche_rentre = 7300
 
@@ -175,26 +152,47 @@ async def manches_a_air():
     await robot.setScore(robot.score + 15)
     
 async def moveToRetry(p, speed):
-    cp = propulsion.pose
-    cp = (cp.position.x, cp.position.y)
-    while True:
-        try:
-            await propulsion.moveTo(p, speed)
-            return
-        except exceptions.PropulsionError as e:
-            await propulsion.clearError()
-            await propulsion.moveTo(cp, speed * 0.5)
-            await sleep(2)
+    await propulsion.moveToRetry(p, speed)
             
 async def pointAndGoRetry(p, speed, yaw_rate):
     await propulsion.pointTo(p, yaw_rate)
     await moveToRetry(p, speed)
-
+    
+async def homologation_phare():
+    #points phare
+    await robot.setScore(2)
+    speed = 0.7
+    await propulsion.faceDirection(180, 2)
+    await moveToRetry(poses.hp_approche_phare, speed)
+    
+    await declenchement_phare()
+    
+async def declenchement_phare():
+    #depart a hp_approche_phare
+    await propulsion.faceDirection(180, 0.5)
+    
+    await servos.moveMultiple({
+            'herse_v': herse.v_depose})
+    await servos.moveMultiple(poses.servos_herse_phare)
+            
+    await propulsion.moveTo(poses.hp_phare, 0.2)
+    
+    await robot.setScore(robot.score + 3)
+    await robot.setScore(robot.score + 10)
+    
+    await propulsion.moveTo(poses.hp_approche_phare, 0.5)
+    
+    await servos.moveMultiple({
+        'herse_slider': herse.h_centre})
+    await servos.moveMultiple({
+        'herse_v': herse.v_haut})
+    
 async def homologation():
     #points phare
     await robot.setScore(2)
     speed = 0.7
-    await propulsion.moveTo(poses.flags[0:2], speed)
+    await propulsion.pointTo(poses.flags, 2)
+    await propulsion.moveToRetry(poses.flags[0:2], speed)
     await manches_a_air()
 
     await moveToRetry(poses.flags_3[0:2], speed)
@@ -219,16 +217,20 @@ async def homologation():
     # va au phare
     await pointAndGoRetry(poses.p1[0:2], speed, 2)
     await pointAndGoRetry(poses.p2[0:2], speed, 2)
-    await pointAndGoRetry(poses.phare[0:2], speed, 2)
-
-    await propulsion.faceDirection(poses.phare[2], 2)
+    
+    #approche phare
+    await pointAndGoRetry(poses.hp_approche_phare, speed, 2)
 
     # declenchement phare
-    await servos.moveMultiple(poses.servos_phare_bras_sorti)
-    await servos.moveMultiple(poses.servos_phare_bras_rentre)
-    await robot.setScore(robot.score + 3)
-    await robot.setScore(robot.score + 10)
-
+    #await servos.moveMultiple(poses.servos_phare_bras_sorti)
+    #await servos.moveMultiple(poses.servos_phare_bras_rentre)
+    #await robot.setScore(robot.score + 3)
+    #await robot.setScore(robot.score + 10)
+    
+    #declenchement nouveau phare
+    await declenchement_phare()
+    
+    
 
     if girouette == 'south':
         await pointAndGoRetry(poses.p2[0:2], speed, 2)
@@ -423,13 +425,22 @@ async def test_ouvre_pavillon():
     await servos.move('fanion', fanion_ferme)
 @robot.sequence
 async def test_enable_servos():
-    #servos
     await servos.setEnable('pale_g', True)
     await servos.setEnable('pale_d', True)
-    await servos.moveMultiple({'pale_g': 156, 'pale_d': 858})
+    await pales.move(gauche='ouvert', droite='droit')
+    return
+    print(robot.sensors['gache_g'])
+    await herse.initialize()
+    return
+    #servos
+    await servos.setEnable('pince_gauche', True)
+    await servos.setEnable('pince_droite', True)
+    await herse.pinces_attrape(gauche=True)
+    return
+    await servos.setEnable('pale_g', True)
+    await servos.setEnable('pale_d', True)
 
     await servos.setEnable('fanion', True)
-    await servos.move('fanion', fanion_ferme)
 
     await servos.setEnable('bras_lat_gauche', True)
     await servos.move('bras_lat_gauche', bras_lat_gauche_rentre)
@@ -438,6 +449,7 @@ async def test_enable_servos():
     await servos.move('bras_lat_droite', bras_lat_droite_rentre)
 
     await herse.initialize()
+    
 @robot.sequence
 async def test_emergency_stop():
     await propulsion.setAccelerationLimits(0.5,0.5,0.5,0.5)

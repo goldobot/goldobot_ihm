@@ -94,8 +94,8 @@ nucleo:
       type: STANDARD
       max_speed: 10000
       max_torque: 10
-      cw_limit: 5300 
-      ccw_limit: 12400
+      cw_limit: 6800 
+      ccw_limit: 14200
     - name: pince_droite
       id: 7
       type: STANDARD
@@ -164,12 +164,24 @@ nucleo:
     - name: switch3
       type: FPGA
       id: 1
-    - name: truc1
+    - name: gache_g
       type: FPGA
       id: 10
-    - name: truc2
+    - name: gache_d
       type: FPGA
       id: 11
+    - name: lr_cd
+      type: FPGA
+      id: 21
+    - name: lr_cg
+      type: FPGA
+      id: 20
+    - name: lr_ld
+      type: FPGA
+      id: 19
+    - name: lr_lg
+      type: FPGA
+      id: 18
   lifts:
     left:
       max_pwm: 0x20

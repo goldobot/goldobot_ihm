@@ -101,12 +101,16 @@ class TestActuatorsDialog(QDialog):
         for s in config.robot_config.config_proto.servos:
             self.combobox_servo.addItem(s.name)
         
+        layout.addWidget(QLabel('servo'), 0,0)
+        layout.addWidget(QLabel('position'), 0,1)
+        layout.addWidget(QLabel('speed'), 0,2)
+        layout.addWidget(QLabel('torque'), 0,3)
         
-        layout.addWidget(self.combobox_servo, 0,0)
-        layout.addWidget(self.spinbox_value, 0,1)
-        layout.addWidget(self.spinbox_speed, 0,2)
-        layout.addWidget(self.spinbox_torque, 0,3)
-        layout.addWidget(self.button_go, 0,4)
+        layout.addWidget(self.combobox_servo, 1,0)
+        layout.addWidget(self.spinbox_value, 1,1)
+        layout.addWidget(self.spinbox_speed, 1,2)
+        layout.addWidget(self.spinbox_torque, 1,3)
+        layout.addWidget(self.button_go, 1,4)
         self.setLayout(layout)
         self.button_go.clicked.connect(self._go)
 

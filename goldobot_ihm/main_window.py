@@ -146,6 +146,9 @@ class MainWindow(QMainWindow):
         self._client.camera_image.connect(self._dbg_image)
         
         self._lab = QLabel()
+        
+        self._table_view.set_strategy(cfg.strategy)
+        self._table_view.set_config(cfg)
         #self._lab.show()
         #plt = ControlPlots()
         #plt.show()qt display QImage
@@ -179,6 +182,7 @@ class MainWindow(QMainWindow):
         cfg = config.robot_config
         cfg.update_config()
         self._table_view.set_strategy(cfg.strategy)
+        self._table_view.set_config(cfg)
         self._client.publishTopic('config/test/put', cfg.robot_config)
         self._client.publishTopic('gui/out/commands/config_nucleo')
         

@@ -16,6 +16,7 @@ from PyQt5.QtWidgets import QGraphicsPathItem
 from PyQt5.QtGui import QPolygonF, QPen, QBrush, QColor, QFont, QTransform
 from PyQt5.QtGui import QImage, QImageReader, QPixmap, QPainterPath
 
+import numpy as np
 import struct
 _lidar_point_struct = struct.Struct('<ff')
 
@@ -129,6 +130,11 @@ class TableViewWidget(QGraphicsView):
         self._robots = {}
         self._adversary_detections = {}
         self._waypoints = []
+        self._sequences_poses = []
+        self._colors = {
+            'green': QColor.fromCmykF(0.7,0,0.9,0),
+            'blue': QColor.fromCmykF(0.9,0.4,0,0)
+            }
 
         redium = QColor.fromCmykF(0,1,1,0.1)
         greenium = QColor.fromCmykF(0.7,0,0.9,0)
@@ -138,10 +144,6 @@ class TableViewWidget(QGraphicsView):
         purple = QColor.fromCmykF(0.5,0.9,0,0.05)
         background = QColor(40,40,40)
         darker = QColor(20,20,20)
-
-
-        
-
 
         self._scene = QGraphicsScene(QRectF(-100,-1600,2200,3200))
 
@@ -322,7 +324,40 @@ class TableViewWidget(QGraphicsView):
             pt = self._scene.addEllipse(p[0]-10, p[1]-10, 20, 20,  QPen(), QBrush(QColor('grey')))
             pt.setZValue(1)
             self._points.append((pt, p))
-
+            
+    def addPose(self, x, y, yaw, color = 'green'):
+        path = QPainterPath()
+        cos_ = math.cos(yaw * math.pi / 180)
+        sin_ = math.sin(yaw * math.pi / 180)
+        l = 40
+        w = 20
+        path.moveTo(x + l * cos_, y + l * sin_)
+        path.lineTo(x -l * cos_ + w * sin_, y - l * sin_ - w * cos_)
+        path.lineTo(x -l * cos_ - w * sin_, y - l * sin_ + w * cos_)
+        path.closeSubpath()
+        itm = self._scene.addPath(path, QPen(), QBrush(self._colors[color]))
+        itm.setZValue(2)
+        return itm
+        
+    def addPoint(self, x, y, color = 'green'):
+        itm = self._scene.addEllipse(x-10, y-10, 20, 20,  QPen(), QBrush(self._colors[color]))
+        itm.setZValue(2)
+        return itm
+        
+    def addTrajectory(self, points):
+        path = QPainterPath()
+        p = points[0]
+        path.moveTo(p[0] * 1000, p[1] * 1000)
+        for p in points[1:]: 
+            path.lineTo(p[0] * 1000, p[1] * 1000)
+        greenium = QColor.fromCmykF(0.7,0,0.9,0)        
+        itm = self._scene.addPath(path)
+        pen = QPen()
+        pen.setWidth(3)
+        itm.setPen(pen)
+        itm.setZValue(3)
+        return itm
+        
     def sizeHint(self):
         return QSize(600,400)
 
@@ -335,6 +370,23 @@ class TableViewWidget(QGraphicsView):
         self._client.registerCallback('gui/in/robot_state', self.on_msg_robot_state)
         
         self._client.registerCallback('strategy/debug/astar_arr', self.on_msg_astar)
+        
+    def set_config(self, config):     
+        poses = config.BluePoses.__dict__
+        for itm in self._sequences_poses:
+            self._scene.removeItem(itm)
+        self._sequences_poses = []
+        for k, v in poses.items():
+            if not k.startswith('_') and isinstance(v, tuple):
+                itm = self.addPose(v[0] * 1000, v[1] * 1000, v[2])
+                self._sequences_poses.append(itm)
+            if not k.startswith('_') and isinstance(v, np.ndarray):
+                itm = self.addPoint(v[0] * 1000, v[1] * 1000, 'blue')
+                self._sequences_poses.append(itm)
+            if not k.startswith('_') and isinstance(v, list):
+                itm = self.addTrajectory(v)
+                self._sequences_poses.append(itm)
+            
         
     def on_msg_robot_state(self, msg):
         for d in msg.rplidar.detections:

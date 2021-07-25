@@ -16,6 +16,9 @@ _sym_db = _pb.symbol_database.Default()
 
 from google.protobuf.json_format import ParseDict
 
+from goldobot import sequences_importer
+import importlib
+
 
 def align_buffer(buff):
     k = len(buff) % 8
@@ -32,13 +35,19 @@ class SequencesRobot(object):
     def sequence(self, func):
         self._sequences[func.__name__] = func
         self._sequence_names.append(func.__name__)
-        #print(inspect.getfullargspec(func))
-        
+        return func
+
+class DebugGui(object):
+    
+    def pose(self, pose):
+        print(pose)
 
 class RobotConfig:
     def __init__(self, path):
         self.path = pathlib.Path(path)
         self.update_config()
+        
+      
         
         
     def update_config(self):
@@ -57,14 +66,25 @@ class RobotConfig:
         self.strategy = yaml.load(open(self.path / 'map.yaml'),Loader=yaml.FullLoader)
 
         robot = SequencesRobot()
-        runpy.run_path(self.path / 'sequences.py', {'robot': robot})
+        
+        #import all sequences
+        sequences_path = self.path / 'sequences'
+        sequences_importer.meta_finder.sequences_path = sequences_path
+        debug_gui = DebugGui()
+        sequences_importer.meta_finder.inject_globals = {'robot': robot, 'config': self.robot_config, 'debug_gui': debug_gui}
+        
+        sequences = importlib.import_module('sequences.sequences')
+        self.BluePoses = sequences.BluePoses
+        
         self.robot_config.sequences_names.extend(robot._sequence_names)
         
-        sequences_file = _sym_db.GetSymbol('goldo.robot.SequencesFile')()
-        sequences_file.path = 'sequences.py'
-        sequences_file.body = open(self.path / 'sequences.py').read()
-        self.robot_config.sequences_files.extend([sequences_file])
-        
+        for k, v in sequences_importer.meta_finder.sequence_modules.items():   
+            sequences_file = _sym_db.GetSymbol('goldo.robot.SequencesFile')()
+            sequences_file.path = v.__name__[10:] + '.py'
+            sequences_file.body = open(v.__file__).read()
+            self.robot_config.sequences_files.extend([sequences_file])   
+
+        sequences_importer.meta_finder.unload_all()
         
         self.dc_motors_indices = {}
         self.sensors_indices = {s.name:s.id for s in self.config_proto.sensors}
