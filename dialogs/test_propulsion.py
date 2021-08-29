@@ -86,33 +86,51 @@ class PropulsionTestDialog(QDialog):
         layout.addWidget(self._button_set_pose, 10,0)
         layout.addWidget(self._button_reposition, 11,0)
         
-        # translation command
+        # translation command        
+        self._translation_speed = QLineEdit('1')
+        self._translation_accel = QLineEdit('1')
+        self._translation_deccel = QLineEdit('1')
+        
+        self._rotation_speed = QLineEdit('1')
+        self._rotation_accel = QLineEdit('1')
+        self._rotation_deccel = QLineEdit('1')
+        
+        layout.addWidget(QLabel('accel'), 12,0)
+        layout.addWidget(QLabel('deccel'), 12,1)        
+        
+        layout.addWidget(self._translation_accel, 13,0)
+        layout.addWidget(self._translation_deccel, 13,1)
+        
+        layout.addWidget(QLabel('angular accel'), 14,0)
+        layout.addWidget(QLabel('angular deccel'), 14,1)  
+        
+        layout.addWidget(self._rotation_accel, 15,0)
+        layout.addWidget(self._rotation_deccel, 15,1)
+        
+        layout.addWidget(QLabel('speed'), 16,0)
+        layout.addWidget(QLabel('yaw rate'), 16,1)
+        
+        layout.addWidget(self._translation_speed, 17,0)
+        layout.addWidget(self._rotation_speed, 17,1)
+        
         self._execute_translation_button = QPushButton('translation')
         self._execute_translation_edit = QLineEdit('0')
         self._execute_translation_button.clicked.connect(self._execute_translation)
         
-        self._translation_speed = QLineEdit('0')
-        self._translation_accel = QLineEdit('0')
-        self._translation_deccel = QLineEdit('0')
-        
-        layout.addWidget(self._translation_accel, 12,0)
-        layout.addWidget(self._translation_deccel, 12,1)
-        layout.addWidget(self._translation_speed, 13,0)
-        layout.addWidget(self._execute_translation_button, 14,0)
-        layout.addWidget(self._execute_translation_edit, 14,1)
+        layout.addWidget(self._execute_translation_button, 18,0)
+        layout.addWidget(self._execute_translation_edit, 18,1)
         
         # rotation command
         self._execute_rotation_button = QPushButton('rotation')
         self._execute_rotation_edit = QLineEdit('0')
         self._execute_rotation_button.clicked.connect(self._execute_rotation)
         
-        layout.addWidget(self._execute_rotation_button, 15,0)
-        layout.addWidget(self._execute_rotation_edit, 15,1)
-        
+        layout.addWidget(self._execute_rotation_button, 19,0)
+        layout.addWidget(self._execute_rotation_edit, 19,1)        
 
-        layout.addWidget(self._start_traj_edit_button, 16,0)
-        layout.addWidget(self._end_traj_edit_button, 16,1)
-        layout.addWidget(self._execute_trajectory_button, 17,0)
+        layout.addWidget(self._start_traj_edit_button, 20,0)
+        layout.addWidget(self._end_traj_edit_button, 20,1)
+        layout.addWidget(self._execute_trajectory_button, 21,0)
 
         self.setLayout(layout)
         
@@ -232,15 +250,19 @@ class PropulsionTestDialog(QDialog):
         self._telemetry_buffer = []
         QTimer.singleShot(10000, self.foo)
 
-    def _execute_translation(self):
+    def _set_acceleration_limits(self):
         if self._client is not None:
             msg = _sym_db.GetSymbol('goldo.nucleo.propulsion.CmdSetAccelerationLimits')(
                 accel = float(self._translation_accel.text()),
                 deccel = float(self._translation_deccel.text()),
-                angular_accel = 0.5,
-                angular_deccel = 0.5)
+                angular_accel = float(self._rotation_accel.text()),
+                angular_deccel = float(self._rotation_deccel.text()))
+            print(msg)
             self._client.publishTopic('nucleo/in/propulsion/acceleration_limits/set', msg)
-                
+            
+    def _execute_translation(self):
+        if self._client is not None:
+            self._set_acceleration_limits()                
             msg = _sym_db.GetSymbol('goldo.nucleo.propulsion.ExecuteTranslation')(
                 distance = int(self._execute_translation_edit.text()) * 1e-3,
                 speed = float(self._translation_speed.text()))
@@ -248,9 +270,10 @@ class PropulsionTestDialog(QDialog):
             
     def _execute_rotation(self):
         if self._client is not None:
+            self._set_acceleration_limits()
             msg = _sym_db.GetSymbol('goldo.nucleo.propulsion.ExecuteRotation')(
                 angle = int(self._execute_rotation_edit.text()) * math.pi/180,
-                yaw_rate = 1)
+                yaw_rate = float(self._rotation_speed.text()))
             self._client.publishTopic('nucleo/in/propulsion/cmd/rotation', msg)
             
     def _test_trajectory(self):

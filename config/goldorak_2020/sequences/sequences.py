@@ -4,8 +4,13 @@ import asyncio
 import numpy as np
 import math
 
+#import modules from sequence directory
 from .herse import herse
 from .pales import pales
+from . import test_sequences
+
+# objects included in the _sequences_globals of RobotMain class, defined in robot_main.py of goldo_main, are available as global variables
+# those objects are used to interact with the robot (send commands, read data)
 
 class Side:
     Unknown = 0
@@ -229,8 +234,6 @@ async def homologation():
     
     #declenchement nouveau phare
     await declenchement_phare()
-    
-    
 
     if girouette == 'south':
         await pointAndGoRetry(poses.p2[0:2], speed, 2)

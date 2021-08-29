@@ -19,7 +19,7 @@ class Herse(object):
         
         self.pg_positions = {
             'ouvert': 6800,
-            'prise': 14200,
+            'prise': 13300,
             'maintient': 14000
             }
             
@@ -34,6 +34,11 @@ class Herse(object):
         
         self.pg_ouvert = 6800
         self.pg_ferme = 12000
+        
+    async def attrape_gache(self):
+        while True:
+            print(sensors)
+            asyncio.sleep(.05)        
         
     async def pinces(self, gauche=None, droite=None, both=None, speed=1):
         if both is not None:
@@ -57,12 +62,12 @@ class Herse(object):
             pd = ['prise', 'maintient']
         else:
             pd = [None, None]
+        
+        print(pd)
         await self.pinces(pg[0], pd[0])
         await sleep(0.5)
         await self.pinces(pg[1], pd[1], speed=0.1)
         
-        
-
     async def prise(self):
         await servos.moveMultiple({
             'herse_v': self.v_prise_approche})
@@ -89,12 +94,12 @@ class Herse(object):
     async def initialize(self):
         await servos.setEnable('herse_v', True)
         await servos.setEnable('herse_slider', True)
-        #await servos.setEnable('pince_droite', True)
-        #await servos.setEnable('pince_gauche', True)
+        await servos.setEnable('pince_droite', True)
+        await servos.setEnable('pince_gauche', True)
         await servos.moveMultiple({'herse_slider': self.h_centre})
         await sleep(1)
         await servos.moveMultiple({'herse_v': self.v_haut})
-        #await self.pinces(both='ouvert')
+        await self.pinces(both='ouvert')
 
         return
         await servos.moveMultiple({'herse_v': self.v_prise})
