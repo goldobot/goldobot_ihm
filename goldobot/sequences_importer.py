@@ -24,7 +24,7 @@ class MyMetaFinder(MetaPathFinder):
         
     def find_spec(self, fullname, path, target=None):
         if fullname == 'sequences':
-            file_location = Path(__file__) / Path('../sequences/__init__.py')
+            file_location = Path(__file__).parents[0] / Path('sequences/__init__.py')
             return spec_from_file_location(
                 fullname,
                 str(file_location),
