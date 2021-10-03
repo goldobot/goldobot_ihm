@@ -8,12 +8,14 @@ class Pales(object):
             'stockage': 226,
             'prise': 567,
             'ouvert': 657,
+            'deflecteur': 480,
             'droit': 409}
         self.positions_d = {
             'ferme': 858,
             'stockage': 787,
             'prise': 461,
             'ouvert': 364,
+            'deflecteur': 540,
             'droit': 614}
 
     async def move(self, *,gauche=None, droite=None, both=None, speed=1):

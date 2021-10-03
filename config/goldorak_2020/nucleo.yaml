@@ -89,20 +89,29 @@ nucleo:
       max_torque: 10
       cw_limit: 3500 
       ccw_limit: 11800
+    # Servo GS-9025MG (analog fils orange / rouge / marron)
+    # - name: pince_gauche
+    #   id: 8
+    #   type: STANDARD
+    #   max_speed: 20000
+    #   max_torque: 10
+    #   cw_limit: 6800 
+    #   ccw_limit: 14200
+    # Servo GSD-9025MG (digital fils blanc / rouge / noir)
     - name: pince_gauche
       id: 8
       type: STANDARD
       max_speed: 20000
       max_torque: 10
-      cw_limit: 6800 
-      ccw_limit: 14200
+      cw_limit: 5400
+      ccw_limit: 12800
     - name: pince_droite
       id: 7
       type: STANDARD
       max_speed: 20000
       max_torque: 10
-      cw_limit: 4900 
-      ccw_limit: 11600
+      cw_limit: 5000 
+      ccw_limit: 16000
     - name: fanion
       id: 10
       type: STANDARD

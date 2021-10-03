@@ -1,0 +1,10 @@
+hauteur
+prise : 1050
+degagement : 1650
+glissement : 980
+
+slider
+prise droite : 767
+prise gauche : 195
+centre venant de la gauche : 495
+centre venant de la droite : 455

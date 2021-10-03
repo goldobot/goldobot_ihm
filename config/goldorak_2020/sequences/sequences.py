@@ -1,3 +1,4 @@
+#Ajout gobelet vert grand port et detection robot secondaire
 from asyncio import sleep
 import asyncio
 
@@ -24,7 +25,7 @@ robot_back_length = 0.0837
 
 
 bras_lat_gauche_sorti = 14500
-bras_lat_gauche_rentre = 7300
+bras_lat_gauche_rentre = 6800
 
 bras_lat_droite_sorti = 4500
 bras_lat_droite_rentre = 11500
@@ -82,7 +83,42 @@ def on_segment(p1, p2, d):
 
 
 class BluePoses(object):
-    start_pose = (0.8, -1.5 + robot_width * 0.5 + 5e-3, 0)
+    # start_pose = (0.8, -1.4 + robot_width * 0.5, 0)
+    start_pose = (0.955, -1.5 + robot_width * 0.5 + 5e-3, 0)
+
+    sortie_port = (1.2, -1.5 + robot_width * 0.5 + 5e-3, 0)
+    approche_ecueil_lateral = (1.650, -1.5 + 0.26, -90)
+    prise_ecueil_lateral = (1.650, -1.5 + 0.16, -90)
+    stockage_ecueil_lateral = (1.650, -1.5 + 0.40, -90)
+
+    approche_pousse_test = (1.6, -1.225, 180)
+    pousse_test = (0.665, -1.265, 180)
+    recule_pousse_test = (0.750, -1.225, 180)
+
+    approche2_depose_front = (1.060, -1.03, -90)
+    approche_depose_front = (1.060, -0.80, -90)
+    push_front_1 = (1.060, -1.34, -90)
+    push_front_2 = (1.060, -1.110, -90)
+    recule_depose_front = (1.060, -1.03, -90)
+    recule_depose_front2 = (1.060, -1.00, -90)
+
+    approche_depose_back = (0.570, -0.80, -90)
+    push_back_1 = (0.57, -1.31, -90)
+    push_back_2 = (0.57, -1.07, -90)
+    recule_depose_back = (0.570, -1.03, -90)
+
+    hp_approche_phare = (0.4, -1.09, 180)
+    hp_approche2_phare = (0.25, -1.03, 180)
+    hp_phare = (0.15, -1.03, 180)
+    
+    
+    approche_retour_bon_port = (0.8, -1.03, -90)
+    retour_bon_port = (0.8, -1.2, -90)
+    retour_north = (0.67, -1.2, 180)
+    retour_south = (0.93, -1.2, 0)
+
+    prise_gobelet_depart = (1.2, -1.070, 0)
+
     flags = (2 - (robot_width * 0.5 + 5e-3), -1.5 + robot_width * 0.5 + 5e-3, -90)
     flags_2 = (flags[0], -0.8, flags[2])
     flags_3 = (1.2, -0.8, flags[2])
@@ -96,9 +132,6 @@ class BluePoses(object):
     p2 = (0.4, -0.8, 90)
 
     phare = (0.15, -1.5 + 0.24, 90)
-    
-    hp_approche_phare = (0.4, -1, 180)
-    hp_phare = (0.17, -1, 180)
     
     bouee_1 = np.array([0.51,-1.05])    
     bouee_2 = np.array([0.4,-1.2])
@@ -118,6 +151,35 @@ class BluePoses(object):
 
 class YellowPoses(object):
     start_pose = symetrie(BluePoses.start_pose)
+
+    sortie_port = symetrie(BluePoses.sortie_port)
+    approche_ecueil_lateral = symetrie(BluePoses.approche_ecueil_lateral)
+    prise_ecueil_lateral = symetrie(BluePoses.prise_ecueil_lateral)
+    stockage_ecueil_lateral = symetrie(BluePoses.stockage_ecueil_lateral)
+
+    approche_pousse_test = symetrie(BluePoses.approche_pousse_test)
+    pousse_test = symetrie(BluePoses.pousse_test)
+    recule_pousse_test = symetrie(BluePoses.recule_pousse_test)
+
+    approche_depose_front = symetrie(BluePoses.approche_depose_front)
+    approche2_depose_front = symetrie(BluePoses.approche2_depose_front)
+    push_front_1 = symetrie(BluePoses.push_front_1)
+    push_front_2 = symetrie(BluePoses.push_front_2)
+    recule_depose_front = symetrie(BluePoses.recule_depose_front)
+    recule_depose_front2 = symetrie(BluePoses.recule_depose_front2)
+
+    approche_depose_back = symetrie(BluePoses.approche_depose_back)
+    push_back_1 = symetrie(BluePoses.push_back_1)
+    push_back_2 = symetrie(BluePoses.push_back_2)
+    recule_depose_back = symetrie(BluePoses.recule_depose_back)
+
+    approche_retour_bon_port = symetrie(BluePoses.approche_retour_bon_port)
+    retour_bon_port = symetrie(BluePoses.retour_bon_port)
+    retour_north = symetrie(BluePoses.retour_north)
+    retour_south = symetrie(BluePoses.retour_south)
+    
+    prise_gobelet_depart = symetrie(BluePoses.prise_gobelet_depart)
+
     flags = symetrie(BluePoses.flags)
     flags_2 = symetrie(BluePoses.flags_2)
     flags_3 = symetrie(BluePoses.flags_3)
@@ -132,6 +194,7 @@ class YellowPoses(object):
     phare = symetrie(BluePoses.phare)    
         
     hp_approche_phare = symetrie(BluePoses.hp_approche_phare)
+    hp_approche2_phare = symetrie(BluePoses.hp_approche2_phare)
     hp_phare = symetrie(BluePoses.hp_phare)
 
     servos_ma_bras_sorti = {'bras_lat_gauche': bras_lat_gauche_sorti}
@@ -146,15 +209,293 @@ class YellowPoses(object):
     #bras_lat_droite_sorti = 4500
     #bras_lat_droite_rentre = 11500
 
+async def homologation():
+    await propulsion.setAccelerationLimits(1.2, 1.2,8,8)
+    await robot.setScore(22)
+    speed = 1.3
+    if robot.side == Side.Blue:
+        poses = BluePoses
+    else:
+        poses = YellowPoses
+    # 2 pts
+    # Sortie du port
+    await sortie_port()
+
+    # Prise de 4 gobelets dans l'ecueil
+    await ecueil_lateral()
+
+    # Manches a air
+    await go_to_manches_a_air()
+    await manches_a_air()
+    # 17 pts
+
+    # Pousse gobelet
+    await propulsion.moveTo(poses.approche_pousse_test[0:2], speed)
+    await propulsion.pointTo(poses.pousse_test[0:2], 20)
+    await propulsion.moveTo(poses.pousse_test[0:2], 0.7)
+    await propulsion.moveTo(poses.recule_pousse_test[0:2], speed)
+    await robot.setScore(robot.score + 2)
+    
+    # Depose cote manches a air
+    await propulsion.pointTo(poses.approche_depose_front[0:2], 20, True)
+    await propulsion.moveTo(poses.approche_depose_front[0:2], speed)
+    await depose_front()
+    # 23 pts
+
+    # Photo girouette
+    await propulsion.pointTo(poses.approche_depose_back[0:2], 20)
+    girouette = await camera.captureGirouette()
+    print('girouette', girouette)
+
+    # Depose cote phare
+    await propulsion.moveTo(poses.approche_depose_back[0:2], speed)
+    await depose_back()
+    # 35 pts
+
+    # Phare
+    # Phare
+    await propulsion.pointTo(poses.hp_approche_phare[0:2], 5)
+    if robot.side == Side.Blue:
+        await servos.moveMultiple({'pale_g': 657}, 0.5)
+    else:
+        await servos.moveMultiple({'pale_d': 364}, 0.5)
+
+    await moveToRetry(poses.hp_approche_phare[0:2], 0.5)
+
+    if robot.side == Side.Blue:
+        await servos.moveMultiple({'pale_g': 409}, 0.5)
+    else:
+        await servos.moveMultiple({'pale_d': 614}, 0.5)
+
+    await propulsion.pointTo(poses.hp_approche2_phare[0:2], 5)
+    await moveToRetry(poses.hp_approche2_phare[0:2], 0.5)
+    await pales_stockage(0.5)
+
+    await declenchement_phare()
+
+    await moveToRetry(poses.approche2_depose_front, speed)
+    await propulsion.pointTo(poses.push_front_2, 10)
+    await moveToRetry(poses.push_front_2, speed)
+    
+    if robot.side == Side.Blue:
+        await servos.moveMultiple({'pale_g': 657}, 0.5)
+    else:
+        await servos.moveMultiple({'pale_d': 364}, 0.5)
+    
+    await moveToRetry(poses.recule_depose_front2, 0.7)
+    await robot.setScore(robot.score + 4)
+    await pales_stockage(1)
+    
+    # 48 pts
+    await propulsion.pointTo(poses.approche_retour_bon_port[0:2], 20)
+    await moveToRetry(poses.approche_retour_bon_port[0:2], speed)
+
+    # Retour a bon port
+    await propulsion.pointTo(poses.retour_bon_port[0:2], 20)
+    await propulsion.moveTo(poses.retour_bon_port[0:2], speed)
+
+    if girouette == 'south':
+        await propulsion.pointTo(poses.retour_south[0:2], 20)
+        await propulsion.moveTo(poses.retour_south[0:2], speed)
+        await servos.moveMultiple({'herse_v' : herse.v_bon_port})
+        await robot.setScore(robot.score + 10)
+
+    if girouette == 'north':
+        await propulsion.pointTo(poses.retour_north[0:2], 20)
+        await propulsion.moveTo(poses.retour_north[0:2], speed)
+        await servos.moveMultiple({'herse_v' : herse.v_bon_port})
+        await robot.setScore(robot.score + 10)
+    # 68 pts ou 61 pts
+
+    # 78 ou 71 avec pavillon
+async def sortie_port():
+    speed = 1.3
+    if robot.side == Side.Blue:
+        await servos.moveMultiple({'pale_g' : 480})
+    else :
+        await servos.moveMultiple({'pale_d' : 540})
+    await propulsion.moveToRetry(poses.sortie_port[0:2], speed)
+    await propulsion.pointTo(poses.approche_ecueil_lateral[0:2], 20)
+    await propulsion.moveToRetry(poses.approche_ecueil_lateral[0:2], speed)
+    # await servos.moveMultiple({'pale_g': 156, 'pale_d': 858})
+    await propulsion.pointTo(poses.prise_ecueil_lateral[0:2], 20)
+
+@robot.sequence
+async def test_prise_g_itw():
+    await servos.moveMultiple({'herse_v' : herse.v_degagement, 'pale_g' : 190, 'pale_d' : 823})
+    await servos.moveMultiple({'herse_slider' : herse.h_prise_g})
+    await servos.moveMultiple({'herse_v' : herse.v_prise})
+    await sleep(5)
+    await servos.moveMultiple({'herse_v' : herse.v_prise_approche})
+    await herse.pinces_attrape(gauche = True, droite = True)
+    await servos.moveMultiple({'herse_v':herse.v_degagement})
+    await servos.moveMultiple({'herse_slider' : herse.h_centre_d})
+
+@robot.sequence
+async def test_prise_g_itw():
+    await servos.moveMultiple({'herse_v' : herse.v_degagement, 'pale_g' : 190, 'pale_d' : 823})
+    await servos.moveMultiple({'herse_slider' : herse.h_prise_d})
+    await servos.moveMultiple({'herse_v' : herse.v_prise})
+    await sleep(5)
+    await servos.moveMultiple({'herse_v' : herse.v_prise_approche})
+    await herse.pinces_attrape(gauche = True, droite = True)
+    await servos.moveMultiple({'herse_v':herse.v_degagement})
+    await servos.moveMultiple({'herse_slider' : herse.h_centre_g})
+
+@robot.sequence
+async def test_depose_itw():
+    await herse.depose_d()
+    await herse.depose_g()
+
+
+async def ecueil_lateral():
+    speed = 0.3
+    fast_speed = 1
+    if robot.side == Side.Blue:
+        poses = BluePoses
+    else:
+        poses = YellowPoses
+    # Grab 2 cups on wind sleeves side
+    await servos.moveMultiple({'herse_v' : herse.v_degagement, 'pale_g' : 190, 'pale_d' : 823})
+    if robot.side == Side.Blue:
+        await servos.moveMultiple({'herse_slider' : herse.h_prise_g})
+    else :
+        await servos.moveMultiple({'herse_slider' : herse.h_prise_d})
+    await servos.moveMultiple({'herse_v' : herse.v_prise})
+
+    #Move forward and grab if detected
+    # await propulsion.pointTo(poses.prise_ecueil_lateral[0:2], 2)
+    #task = asyncio.create_task(herse.prise_automatique())
+    await propulsion.moveTo(poses.prise_ecueil_lateral[0:2], speed)
+    await servos.moveMultiple({'herse_v' : herse.v_prise_approche})
+    await herse.pinces_attrape(gauche = True, droite = True)
+
+    #Lift and center cups
+    await servos.moveMultiple({'herse_v':herse.v_degagement})
+    if robot.side == Side.Blue:
+        await servos.moveMultiple({'herse_slider' : herse.h_centre_g})
+    else :
+        await servos.moveMultiple({'herse_slider' : herse.h_centre_d})
+    await servos.moveMultiple({'herse_slider': herse.h_centre})
+    
+    # Drop cups
+    await propulsion.moveTo(poses.stockage_ecueil_lateral[0:2], fast_speed)
+    await herse.depose_pales()
+    
+    # Store cups
+    await propulsion.moveTo(poses.approche_ecueil_lateral[0:2], speed)
+    # await pales_stockage_soft()
+
+    # Grab other cups
+    # await servos.moveMultiple({'herse_v' : herse.v_degagement})
+    await servos.moveMultiple({'herse_v' : herse.v_prise, 'pale_g': 190, 'pale_d': 823}, 0.8)
+    if robot.side == Side.Blue:
+        await servos.moveMultiple({'herse_slider' : herse.h_prise_d})
+    else :
+        await servos.moveMultiple({'herse_slider' : herse.h_prise_g})
+    # await servos.moveMultiple({'herse_v' : herse.v_prise})
+
+    # Move forward and grab cups if detected
+    # await propulsion.pointTo(poses.prise_ecueil_lateral[0:2], 4)
+    # task = asyncio.create_task(herse.prise_automatique())
+    await propulsion.moveTo(poses.prise_ecueil_lateral[0:2], speed)
+    await servos.moveMultiple({'herse_v' : herse.v_prise_approche})
+    await herse.pinces_attrape(gauche = True, droite = True)
+    # if not task.done():
+        # task.cancel()
+
+    #Lift and center cups
+    await servos.moveMultiple({'herse_v':herse.v_degagement})
+    if robot.side == Side.Blue:
+        await servos.moveMultiple({'herse_slider' : herse.h_centre_d})
+    else :
+        await servos.moveMultiple({'herse_slider' : herse.h_centre_g})
+    await servos.moveMultiple({'herse_slider': herse.h_centre})
+
+async def go_to_manches_a_air():
+    speed = 1.2
+
+    await propulsion.pointTo(poses.flags[0:2], 20, True)
+    await propulsion.moveTo(poses.flags[0:2], speed)
+
+
 async def manches_a_air():
     speed = 0.7
 
-    await propulsion.pointTo(poses.flags_2[0:2], 2)
+    await propulsion.pointTo(poses.flags_2[0:2], 20)
     await servos.moveMultiple(poses.servos_ma_bras_sorti)
     await propulsion.moveTo(poses.flags_2[0:2], speed)
-    await propulsion.pointTo(poses.flags_3[0:2], 2)
+    await propulsion.faceDirection(180, 10)
+    await propulsion.pointTo(poses.approche_pousse_test[0:2], 10)
     await servos.moveMultiple(poses.servos_ma_bras_rentre)
     await robot.setScore(robot.score + 15)
+
+async def depose_front():
+    speed = 1.2
+    slow_speed = 0.7
+    await propulsion.pointTo(poses.push_front_1[0:2], 20)
+
+    #Depose gobelet cote manches a air en poussant celui devant le chenal
+    if robot.side == Side.Blue:
+        await servos.moveMultiple({'pale_g': 409})
+    else :
+        await servos.moveMultiple({'pale_d': 614})
+    await propulsion.moveTo(poses.push_front_1[0:2], slow_speed)
+    await robot.setScore(robot.score + 4)
+
+    #Recule et depose gobelet herse
+    await propulsion.moveTo(poses.push_front_2[0:2], speed)
+    if robot.side == Side.Blue:
+        await herse.depose_g()
+    else:
+        await herse.depose_d()
+    await robot.setScore(robot.score + 2)
+
+    #Range les pales
+    await pales_stockage_soft()
+
+    #Tourner vers l'avant de la table et prendre le gobelet du depart
+    # await propulsion.pointTo(poses.prise_gobelet_depart[0:2], 2)
+    # if robot.side == Side.Blue:
+    #     await servos.moveMultiple({'pale_g': 409})
+    # else :
+    #     await servos.moveMultiple({'pale_d': 614})
+    # await propulsion.moveTo(poses.prise_gobelet_depart[0:2], 2)
+    # await pales_stockage_soft()
+
+    #Reculer
+    await propulsion.moveTo(poses.approche_depose_front[0:2],speed)
+    
+async def depose_back():
+    speed = 1.2
+    slow_speed = 0.5
+    await propulsion.pointTo(poses.push_back_1[0:2], 20)
+
+    #Depose gobelet cote mat en poussant celui devant le chenal
+    if robot.side == Side.Blue:
+        await servos.moveMultiple({'pale_d': 614})      
+    else :
+        await servos.moveMultiple({'pale_g': 409})
+    await propulsion.moveTo(poses.push_back_1[0:2], slow_speed)
+    await robot.setScore(robot.score + 4)
+    await robot.setScore(robot.score + 4)
+
+    #Recule et depose gobelet herse
+    await propulsion.moveTo(poses.push_back_2[0:2], speed)
+    if robot.side == Side.Blue:
+        await herse.depose_d()
+    else:
+        await herse.depose_g()
+    await robot.setScore(robot.score + 2)
+    await robot.setScore(robot.score + 2)
+
+    #Range les pales
+    await pales_stockage_soft()
+
+    #Reculer
+    # await propulsion.moveTo(poses.recule_depose_back[0:2],speed)
+    
+
     
 async def moveToRetry(p, speed):
     await propulsion.moveToRetry(p, speed)
@@ -174,10 +515,10 @@ async def homologation_phare():
     
 async def declenchement_phare():
     #depart a hp_approche_phare
-    await propulsion.faceDirection(180, 0.5)
+    await propulsion.faceDirection(180, 2)
     
     await servos.moveMultiple({
-            'herse_v': herse.v_depose})
+            'herse_v': herse.v_phare})
     await servos.moveMultiple(poses.servos_herse_phare)
             
     await propulsion.moveTo(poses.hp_phare, 0.2)
@@ -185,14 +526,14 @@ async def declenchement_phare():
     await robot.setScore(robot.score + 3)
     await robot.setScore(robot.score + 10)
     
-    await propulsion.moveTo(poses.hp_approche_phare, 0.5)
+    await propulsion.moveTo(poses.hp_approche_phare, 0.7)
     
     await servos.moveMultiple({
         'herse_slider': herse.h_centre})
     await servos.moveMultiple({
         'herse_v': herse.v_haut})
-    
-async def homologation():
+
+async def homologation2():
     #points phare
     await robot.setScore(2)
     speed = 0.7
@@ -247,9 +588,7 @@ async def homologation():
         await robot.setScore(robot.score + 20)
 
     if girouette == 'unknown':
-        await pointAndGoRetry(poses.p2[0:2], speed, 2)
-        await pointAndGoRetry(poses.zone_n[0:2], speed, 2)
-        await robot.setScore(robot.score + 13)
+        await robot.setScore(robot.score + 10)
 
 @robot.sequence
 async def test1():
@@ -346,9 +685,13 @@ async def pales_stockage(speed=1):
     await servos.moveMultiple({'pale_g': 226, 'pale_d': 787}, speed)
 
 @robot.sequence
+async def pales_stockage_soft(speed=0.5):
+    await servos.moveMultiple({'pale_g': 190, 'pale_d': 823}, speed)
+
+@robot.sequence
 async def pales_prise():
     await servos.moveMultiple({'pale_g': 567, 'pale_d': 461})
-    
+
 @robot.sequence
 async def pales_ouvre():
     await servos.moveMultiple({'pale_g': 657, 'pale_d': 364})
@@ -401,7 +744,8 @@ async def start_match():
     """
     await propulsion.setMotorsEnable(True)
     await propulsion.setEnable(True)
-    strategy.addTimerCallback(4, end_match)
+    strategy.addTimerCallback(3, end_match)
+    strategy.addTimerCallback(1, check_secondary_robot)
     if robot.side == Side.Blue:
         await homologation()
     if robot.side == Side.Yellow:
@@ -415,6 +759,17 @@ async def end_match():
     await servos.move('fanion', fanion_ferme)
     await robot.setScore(robot.score + 10)
 
+async def check_secondary_robot():
+    print('Check if second robot is in zone')
+    if girouette == 'unknown':
+        print('Yes')
+        await robot.setScore(robot.score + 10)
+    elif lidar.objectFrontFar():
+        print('Yes')
+        await robot.setScore(robot.score + 10)
+    else:
+        print('No')    
+
 @robot.sequence
 async def test_ferme_pavillon():
     await servos.setEnable('fanion', True)
@@ -426,33 +781,7 @@ async def test_ouvre_pavillon():
     await servos.move('fanion', fanion_ouvert)
     await sleep(2)
     await servos.move('fanion', fanion_ferme)
-@robot.sequence
-async def test_enable_servos():
-    await servos.setEnable('pale_g', True)
-    await servos.setEnable('pale_d', True)
-    await pales.move(gauche='ouvert', droite='droit')
-    return
-    print(robot.sensors['gache_g'])
-    await herse.initialize()
-    return
-    #servos
-    await servos.setEnable('pince_gauche', True)
-    await servos.setEnable('pince_droite', True)
-    await herse.pinces_attrape(gauche=True)
-    return
-    await servos.setEnable('pale_g', True)
-    await servos.setEnable('pale_d', True)
 
-    await servos.setEnable('fanion', True)
-
-    await servos.setEnable('bras_lat_gauche', True)
-    await servos.move('bras_lat_gauche', bras_lat_gauche_rentre)
-
-    await servos.setEnable('bras_lat_droite', True)
-    await servos.move('bras_lat_droite', bras_lat_droite_rentre)
-
-    await herse.initialize()
-    
 @robot.sequence
 async def test_emergency_stop():
     await propulsion.setAccelerationLimits(0.5,0.5,0.5,0.5)
