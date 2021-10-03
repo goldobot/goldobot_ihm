@@ -58,12 +58,12 @@ class RobotStatusWidget(QWidget):
                 ('pose.yaw', float, lambda x: '{:0>5.1f}'.format(x * 180.0/math.pi)),
                 ('pose.speed', float, '{:0>3.2f}'),
                 ('pose.yaw_rate', float, '{:0>3.2f}'),
-                ('pose.acceleration', float),
-                ('pose.angular_acceleration', float),
+                ('pose.acceleration', float, '{:0>3.2f}'),
+                ('pose.angular_acceleration', float, '{:0>3.2f}'),
                 ('left_encoder', float, '{:0>4}'),
                 ('right_encoder', float, '{:0>4}'),
-                ('left_pwm', float,),
-                ('right_pwm', float,),
+                ('left_pwm', float, '{:0>3.2f}'),
+                ('right_pwm', float, '{:0>3.2f}'),
                 ('state', int, lambda x: _controller_state[x]),
                 ('error',int,  lambda x: _controller_error[x])
                 ],True)

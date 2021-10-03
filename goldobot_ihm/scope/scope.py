@@ -85,7 +85,7 @@ propulsion_variables = [
     'target.yaw_rate',
     'target.acceleration',
     'low_level.longi_error',
-    'low_lewel.yaw_error',
+    'low_level.yaw_error',
     'low_level.speed_error',
     'low_level.yaw_rate_error',
     'motor0.vel_setpoint',
