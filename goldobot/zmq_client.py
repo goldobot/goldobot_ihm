@@ -120,7 +120,7 @@ class ZmqClient(QObject):
             if topic == 'nucleo/out/propulsion/telemetry':
                 self.propulsion_telemetry.emit(msg)
             if topic == 'nucleo/out/propulsion/telemetry_ex':
-                 self.propulsion_telemetry_ex.emit(msg)
+                self.propulsion_telemetry_ex.emit(msg)
             if topic == 'nucleo/out/propulsion/config':
                 self.propulsion_controller_config.emit(msg)  
             if topic == 'nucleo/out/fpga/reg':

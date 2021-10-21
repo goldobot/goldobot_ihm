@@ -151,8 +151,8 @@ class PropulsionTestDialog(QDialog):
 
         self._start_traj_edit_button.clicked.connect(self._start_traj_edit)
         self._end_traj_edit_button.clicked.connect(self._end_traj_edit)
-        #self._execute_trajectory_button.clicked.connect(self._test_trajectory)
-        self._execute_trajectory_button.clicked.connect(self._test_traj_goldo)
+        self._execute_trajectory_button.clicked.connect(self._test_trajectory)
+        #self._execute_trajectory_button.clicked.connect(self._test_traj_goldo)
 
         self._telemetry_buffer = []
         self._current_telemetry = None
@@ -277,11 +277,13 @@ class PropulsionTestDialog(QDialog):
             self._client.publishTopic('nucleo/in/propulsion/cmd/rotation', msg)
             
     def _test_trajectory(self):
-        points = [(0,0), (500, 0)]
-        msg = b''.join([struct.pack('<fff',0.2,0.2,0.2)] + [struct.pack('<ff', p[0]*1e-3, p[1] * 1e-3) for p in points])
-        self._client.send_message(message_types.DbgPropulsionExecuteTrajectory, msg)
-        self._telemetry_buffer = []
-        QTimer.singleShot(5000, self.foo)
+        if self._client is not None:
+            self._set_acceleration_limits()
+            msg = _sym_db.GetSymbol('goldo.nucleo.propulsion.ExecuteTrajectory')()
+            msg.speed = float(self._translation_speed.text())
+            Point = _sym_db.GetSymbol('goldo.common.geometry.Point')
+            msg.points.extend([Point(x=pt[0]*1e-3, y=pt[1]*1e-3)for pt in self._traj_point_l])
+            self._client.publishTopic('nucleo/in/propulsion/cmd/trajectory', msg)
 
 
     def foo(self):
@@ -314,7 +316,7 @@ class PropulsionTestDialog(QDialog):
     def _test_traj_goldo(self):
         if self._editing_traj: return
         print (self._traj_point_l)
-        msg = b''.join([struct.pack('<fff',0.4,0.3,0.3)] + [struct.pack('<ff', p[0]*1e-3, p[1] * 1e-3) for p in self._traj_point_l])
+        msg = b''.join([struct.pack('<fff',0.4,0.3,0.3)] + [struct.pack('<ff', p[0]*1e-3, p[1]*1e-3) for p in self._traj_point_l])
         #self._client.send_message_rplidar(message_types.DbgPropulsionExecuteTrajectory, msg)
         self._client.send_message(message_types.DbgPropulsionExecuteTrajectory, msg)
         self._telemetry_buffer = []

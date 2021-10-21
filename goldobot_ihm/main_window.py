@@ -108,18 +108,51 @@ class MainWindow(QMainWindow):
 
         self._main_widget = QWidget()
         self._table_view = TableViewWidget()
-        self._table_view.set_strategy(cfg.strategy)
+        #self._table_view.set_strategy(cfg.strategy)
         self._widget_robot_status = RobotStatusWidget()
 
-        layout1 = QHBoxLayout()
-        layout2 = QVBoxLayout()
         self.setCentralWidget(self._main_widget)
-        layout1.addWidget(self._widget_robot_status)
-        layout1.addLayout(layout2)
-        layout2.addWidget(self._table_view)
-        layout2.addStretch(1)
 
-        self._main_widget.setLayout(layout1)
+        self.zoomL = QLabel()
+        self.zoomL.setText("Zoom")
+        self.zoomL.setDisabled(False)
+
+        self.zoomPlusB = QPushButton()
+        self.zoomPlusB.setText("+")
+        self.zoomPlusB.setDisabled(False)
+        self.zoomPlusB.clicked.connect(self._table_view.zoomPlus)
+
+        self.zoomDefB = QPushButton()
+        self.zoomDefB.setText("o")
+        self.zoomDefB.setDisabled(False)
+        self.zoomDefB.clicked.connect(self._table_view.zoomDef)
+
+        self.zoomMinusB = QPushButton()
+        self.zoomMinusB.setText("-")
+        self.zoomMinusB.setDisabled(False)
+        self.zoomMinusB.clicked.connect(self._table_view.zoomMinus)
+
+        main_layout = QHBoxLayout()
+
+        status_layout = QVBoxLayout()
+        status_layout.addWidget(self._widget_robot_status)
+
+        table_layout = QVBoxLayout()
+        table_layout.addWidget(self._table_view)
+        table_layout.addStretch(1)
+
+        right_layout = QVBoxLayout()
+        right_layout.addWidget(self.zoomL)
+        right_layout.addWidget(self.zoomPlusB)
+        right_layout.addWidget(self.zoomDefB)
+        right_layout.addWidget(self.zoomMinusB)
+        right_layout.addStretch(16)
+
+        main_layout.addLayout(status_layout)
+        main_layout.addLayout(table_layout)
+        main_layout.addLayout(right_layout)
+
+        self._main_widget.setLayout(main_layout)
 
         self._action_reset.triggered.connect(self._send_reset)
         self._action_enter_debug.triggered.connect(self._send_enter_debug)
@@ -147,8 +180,8 @@ class MainWindow(QMainWindow):
         
         self._lab = QLabel()
         
-        self._table_view.set_strategy(cfg.strategy)
-        self._table_view.set_config(cfg)
+        #self._table_view.set_strategy(cfg.strategy)
+        #self._table_view.set_config(cfg)
         #self._lab.show()
         #plt = ControlPlots()
         #plt.show()qt display QImage
@@ -181,8 +214,8 @@ class MainWindow(QMainWindow):
     def _upload_config(self):
         cfg = config.robot_config
         cfg.update_config()
-        self._table_view.set_strategy(cfg.strategy)
-        self._table_view.set_config(cfg)
+        #self._table_view.set_strategy(cfg.strategy)
+        #self._table_view.set_config(cfg)
         self._client.publishTopic('config/test/put', cfg.robot_config)
         self._client.publishTopic('gui/out/commands/config_nucleo')
         

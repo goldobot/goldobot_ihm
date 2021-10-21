@@ -25,7 +25,8 @@ class ConsoleDialog(QDialog):
 
         self._view = QTreeView()
         self._model = model = QJsonModel()
-        self._view.setModel(model)
+        # FIXME : TODO : self._view.setModel(model), ca ne marche pas chez Goldo..
+        #self._view.setModel(model)
         self._text_edit = QTextEdit()
         self._last = {}
         #self._topic_select = 
