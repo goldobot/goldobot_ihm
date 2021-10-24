@@ -20,7 +20,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='goldo.nucleo.statistics',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x1dgoldo/nucleo/statistics.proto\x12\x17goldo.nucleo.statistics\x1a\x17goldo/pb2_options.proto\"y\n\x16MessageQueueStatistics\x12$\n\x16min_available_capacity\x18\x01 \x01(\rB\x04\x80\xb5\x18\x07\x12\x1a\n\x0c\x62ytes_pushed\x18\x02 \x01(\rB\x04\x80\xb5\x18\x07\x12\x1d\n\x0fmessages_pushed\x18\x03 \x01(\rB\x04\x80\xb5\x18\x07\"v\n\x18\x43ommSerializerStatistics\x12\x1b\n\rmessages_sent\x18\x01 \x01(\rB\x04\x80\xb5\x18\x07\x12\x18\n\nbytes_sent\x18\x02 \x01(\rB\x04\x80\xb5\x18\x07\x12#\n\x15\x62uffer_high_watermark\x18\x03 \x01(\rB\x04\x80\xb5\x18\x07\"\xb9\x01\n\x1a\x43ommDeserializerStatistics\x12\x1f\n\x11messages_received\x18\x01 \x01(\rB\x04\x80\xb5\x18\x07\x12\x1c\n\x0e\x62ytes_received\x18\x02 \x01(\rB\x04\x80\xb5\x18\x07\x12\x1d\n\x0fsequence_errors\x18\x03 \x01(\rB\x04\x80\xb5\x18\x07\x12\x18\n\ncrc_errors\x18\x04 \x01(\rB\x04\x80\xb5\x18\x07\x12#\n\x15\x62uffer_high_watermark\x18\x05 \x01(\rB\x04\x80\xb5\x18\x07\"v\n\x1cODriveStreamParserStatistics\x12\x1c\n\x0e\x62ytes_received\x18\x01 \x01(\rB\x04\x80\xb5\x18\x07\x12\x1f\n\x11messages_received\x18\x02 \x01(\rB\x04\x80\xb5\x18\x05\x12\x17\n\trx_errors\x18\x03 \x01(\rB\x04\x80\xb5\x18\x05\"q\n\x1cODriveStreamWriterStatistics\x12\x18\n\nbytes_sent\x18\x01 \x01(\rB\x04\x80\xb5\x18\x07\x12\x1b\n\rmessages_sent\x18\x02 \x01(\rB\x04\x80\xb5\x18\x05\x12\x1a\n\x0ctx_highwater\x18\x03 \x01(\rB\x04\x80\xb5\x18\x05\"\xb6\x04\n\x16UARTCommTaskStatistics\x12\x18\n\nmax_cycles\x18\x01 \x01(\rB\x04\x80\xb5\x18\x07\x12\x45\n\nserializer\x18\x02 \x01(\x0b\x32\x31.goldo.nucleo.statistics.CommSerializerStatistics\x12I\n\x0c\x64\x65serializer\x18\x03 \x01(\x0b\x32\x33.goldo.nucleo.statistics.CommDeserializerStatistics\x12J\n\x0fserializer_ftdi\x18\x04 \x01(\x0b\x32\x31.goldo.nucleo.statistics.CommSerializerStatistics\x12N\n\x11\x64\x65serializer_fdti\x18\x05 \x01(\x0b\x32\x33.goldo.nucleo.statistics.CommDeserializerStatistics\x12\x42\n\tqueue_out\x18\x06 \x01(\x0b\x32/.goldo.nucleo.statistics.MessageQueueStatistics\x12G\n\x0equeue_out_prio\x18\x07 \x01(\x0b\x32/.goldo.nucleo.statistics.MessageQueueStatistics\x12G\n\x0equeue_out_ftdi\x18\x08 \x01(\x0b\x32/.goldo.nucleo.statistics.MessageQueueStatistics\"\x82\x02\n\x18ODriveCommTaskStatistics\x12\x18\n\nmax_cycles\x18\x01 \x01(\rB\x04\x80\xb5\x18\x07\x12\x45\n\x06parser\x18\x02 \x01(\x0b\x32\x35.goldo.nucleo.statistics.ODriveStreamParserStatistics\x12\x45\n\x06writer\x18\x03 \x01(\x0b\x32\x35.goldo.nucleo.statistics.ODriveStreamWriterStatistics\x12>\n\x05queue\x18\x04 \x01(\x0b\x32/.goldo.nucleo.statistics.MessageQueueStatistics\"\x82\x02\n\x18PropulsionTaskStatistics\x12\x18\n\nmax_cycles\x18\x01 \x01(\rB\x04\x80\xb5\x18\x07\x12>\n\x05queue\x18\x02 \x01(\x0b\x32/.goldo.nucleo.statistics.MessageQueueStatistics\x12\x45\n\x0curgent_queue\x18\x03 \x01(\x0b\x32/.goldo.nucleo.statistics.MessageQueueStatistics\x12\x45\n\x0codrive_queue\x18\x04 \x01(\x0b\x32/.goldo.nucleo.statistics.MessageQueueStatisticsb\x06proto3')
+  serialized_pb=_b('\n\x1dgoldo/nucleo/statistics.proto\x12\x17goldo.nucleo.statistics\x1a\x17goldo/pb2_options.proto\"y\n\x16MessageQueueStatistics\x12$\n\x16min_available_capacity\x18\x01 \x01(\rB\x04\x80\xb5\x18\x07\x12\x1a\n\x0c\x62ytes_pushed\x18\x02 \x01(\rB\x04\x80\xb5\x18\x07\x12\x1d\n\x0fmessages_pushed\x18\x03 \x01(\rB\x04\x80\xb5\x18\x07\"v\n\x18\x43ommSerializerStatistics\x12\x1b\n\rmessages_sent\x18\x01 \x01(\rB\x04\x80\xb5\x18\x07\x12\x18\n\nbytes_sent\x18\x02 \x01(\rB\x04\x80\xb5\x18\x07\x12#\n\x15\x62uffer_high_watermark\x18\x03 \x01(\rB\x04\x80\xb5\x18\x07\"\xb9\x01\n\x1a\x43ommDeserializerStatistics\x12\x1f\n\x11messages_received\x18\x01 \x01(\rB\x04\x80\xb5\x18\x07\x12\x1c\n\x0e\x62ytes_received\x18\x02 \x01(\rB\x04\x80\xb5\x18\x07\x12\x1d\n\x0fsequence_errors\x18\x03 \x01(\rB\x04\x80\xb5\x18\x07\x12\x18\n\ncrc_errors\x18\x04 \x01(\rB\x04\x80\xb5\x18\x07\x12#\n\x15\x62uffer_high_watermark\x18\x05 \x01(\rB\x04\x80\xb5\x18\x07\"v\n\x1cODriveStreamParserStatistics\x12\x1c\n\x0e\x62ytes_received\x18\x01 \x01(\rB\x04\x80\xb5\x18\x07\x12\x1f\n\x11messages_received\x18\x02 \x01(\rB\x04\x80\xb5\x18\x05\x12\x17\n\trx_errors\x18\x03 \x01(\rB\x04\x80\xb5\x18\x05\"q\n\x1cODriveStreamWriterStatistics\x12\x18\n\nbytes_sent\x18\x01 \x01(\rB\x04\x80\xb5\x18\x07\x12\x1b\n\rmessages_sent\x18\x02 \x01(\rB\x04\x80\xb5\x18\x05\x12\x1a\n\x0ctx_highwater\x18\x03 \x01(\rB\x04\x80\xb5\x18\x05\"\xb6\x04\n\x16UARTCommTaskStatistics\x12\x18\n\nmax_cycles\x18\x01 \x01(\rB\x04\x80\xb5\x18\x07\x12\x45\n\nserializer\x18\x02 \x01(\x0b\x32\x31.goldo.nucleo.statistics.CommSerializerStatistics\x12I\n\x0c\x64\x65serializer\x18\x03 \x01(\x0b\x32\x33.goldo.nucleo.statistics.CommDeserializerStatistics\x12J\n\x0fserializer_ftdi\x18\x04 \x01(\x0b\x32\x31.goldo.nucleo.statistics.CommSerializerStatistics\x12N\n\x11\x64\x65serializer_fdti\x18\x05 \x01(\x0b\x32\x33.goldo.nucleo.statistics.CommDeserializerStatistics\x12\x42\n\tqueue_out\x18\x06 \x01(\x0b\x32/.goldo.nucleo.statistics.MessageQueueStatistics\x12G\n\x0equeue_out_prio\x18\x07 \x01(\x0b\x32/.goldo.nucleo.statistics.MessageQueueStatistics\x12G\n\x0equeue_out_ftdi\x18\x08 \x01(\x0b\x32/.goldo.nucleo.statistics.MessageQueueStatistics\"\xe8\x01\n\x18ODriveCommTaskStatistics\x12\x45\n\x06parser\x18\x02 \x01(\x0b\x32\x35.goldo.nucleo.statistics.ODriveStreamParserStatistics\x12\x45\n\x06writer\x18\x03 \x01(\x0b\x32\x35.goldo.nucleo.statistics.ODriveStreamWriterStatistics\x12>\n\x05queue\x18\x04 \x01(\x0b\x32/.goldo.nucleo.statistics.MessageQueueStatistics\"\x82\x02\n\x18PropulsionTaskStatistics\x12\x18\n\nmax_cycles\x18\x01 \x01(\rB\x04\x80\xb5\x18\x07\x12>\n\x05queue\x18\x02 \x01(\x0b\x32/.goldo.nucleo.statistics.MessageQueueStatistics\x12\x45\n\x0curgent_queue\x18\x03 \x01(\x0b\x32/.goldo.nucleo.statistics.MessageQueueStatistics\x12\x45\n\x0codrive_queue\x18\x04 \x01(\x0b\x32/.goldo.nucleo.statistics.MessageQueueStatisticsb\x06proto3')
   ,
   dependencies=[goldo_dot_pb2__options__pb2.DESCRIPTOR,])
 
@@ -354,28 +354,21 @@ _ODRIVECOMMTASKSTATISTICS = _descriptor.Descriptor(
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='max_cycles', full_name='goldo.nucleo.statistics.ODriveCommTaskStatistics.max_cycles', index=0,
-      number=1, type=13, cpp_type=3, label=1,
-      has_default_value=False, default_value=0,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=_b('\200\265\030\007'), file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='parser', full_name='goldo.nucleo.statistics.ODriveCommTaskStatistics.parser', index=1,
+      name='parser', full_name='goldo.nucleo.statistics.ODriveCommTaskStatistics.parser', index=0,
       number=2, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='writer', full_name='goldo.nucleo.statistics.ODriveCommTaskStatistics.writer', index=2,
+      name='writer', full_name='goldo.nucleo.statistics.ODriveCommTaskStatistics.writer', index=1,
       number=3, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='queue', full_name='goldo.nucleo.statistics.ODriveCommTaskStatistics.queue', index=3,
+      name='queue', full_name='goldo.nucleo.statistics.ODriveCommTaskStatistics.queue', index=2,
       number=4, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
@@ -394,7 +387,7 @@ _ODRIVECOMMTASKSTATISTICS = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=1319,
-  serialized_end=1577,
+  serialized_end=1551,
 )
 
 
@@ -445,8 +438,8 @@ _PROPULSIONTASKSTATISTICS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1580,
-  serialized_end=1838,
+  serialized_start=1554,
+  serialized_end=1812,
 )
 
 _UARTCOMMTASKSTATISTICS.fields_by_name['serializer'].message_type = _COMMSERIALIZERSTATISTICS
@@ -547,6 +540,5 @@ _ODRIVESTREAMWRITERSTATISTICS.fields_by_name['bytes_sent']._options = None
 _ODRIVESTREAMWRITERSTATISTICS.fields_by_name['messages_sent']._options = None
 _ODRIVESTREAMWRITERSTATISTICS.fields_by_name['tx_highwater']._options = None
 _UARTCOMMTASKSTATISTICS.fields_by_name['max_cycles']._options = None
-_ODRIVECOMMTASKSTATISTICS.fields_by_name['max_cycles']._options = None
 _PROPULSIONTASKSTATISTICS.fields_by_name['max_cycles']._options = None
 # @@protoc_insertion_point(module_scope)

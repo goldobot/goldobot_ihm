@@ -306,7 +306,6 @@ class PropulsionTestDialog(QDialog):
     def _start_traj_edit(self):
         self._editing_traj = True
         self._traj_point_l = [(0.0,0.0)]
-        #TableViewWidget.g_table_view.debug_start_edit(0.0,0.0)
         TableViewWidget.g_table_view.debug_start_edit_rel()
 
     def _end_traj_edit(self):

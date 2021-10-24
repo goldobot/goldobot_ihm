@@ -17,6 +17,8 @@ from PyQt5.QtGui import QPolygonF, QPen, QBrush, QColor, QFont, QTransform
 from PyQt5.QtGui import QImage, QImageReader, QPixmap, QPainterPath
 
 import numpy as np
+import scipy.interpolate
+
 import struct
 _lidar_point_struct = struct.Struct('<ff')
 
@@ -100,6 +102,80 @@ class AdversaryDetection(QGraphicsItemGroup):
         #self.addEllipse(-100, -100, 200, 200, QPen(QBrush(QColor('black')),4), QBrush(QColor('white')))
         #self.addPolygon(little_robot_poly, QPen(), QBrush(QColor('red')))
         
+class DebugTrajectory:
+    def __init__(self, scene):
+        self._scene = scene
+        self._traj_segm_l = []
+        self._spline_segm_l = []
+        self._edit_point_l = []
+        self.cur_x = 0
+        self.cur_y = 0
+        self._edit_mode = False
+        
+    def set_start(self, _new_x, _new_y):
+        self.cur_x = _new_x
+        self.cur_y = _new_y
+        if self._debug_edit_mode:
+            self._edit_point_l.append((_new_x,_new_y))
+
+    def line_to(self, _new_x, _new_y):
+        my_segm = self._scene.addLine(self._cur_x, self._cur_y, _new_x, _new_y, QPen(QColor(128,128,128)));
+        self._traj_segm_l.append(my_segm)
+        self._edit_point_l.append((_new_x,_new_y))
+        self._cur_x = _new_x
+        self._cur_y = _new_y
+        self.update_spline()
+
+    def clear(self):
+        for l in self._traj_segm_l:
+            self._scene.removeItem(l)
+        self._traj_segm_l = []
+
+    def start_edit(self, _new_x, _new_y):
+        self.clear()
+        self._edit_mode = True
+        self._cur_x = _new_x
+        self._cur_y = _new_y
+        self._edit_point_l = [(_new_x,_new_y)]
+
+    def stop_edit(self):
+        self._edit_mode = False
+        return self._sampled_points
+        return self._edit_point_l
+        
+    def update_spline(self):
+        # Clear existing segments
+        for l in self._spline_segm_l:
+            self._scene.removeItem(l)
+        self._spline_segm_l = []
+            
+        #sample spline            
+        points = self._edit_point_l
+        ctr = np.array([points[0]] + points + [points[-1]])
+
+        #control points, double first and last
+        x=ctr[:,0]
+        y=ctr[:,1]
+
+        #knots
+        l=len(x)
+        t=np.linspace(0,1,l-2,endpoint=True)
+        t=np.append([0,0,0],t)
+        t=np.append(t,[1,1,1])
+
+        tck=[t,[x,y],3]
+
+        num_samples = 16
+
+        u3=np.linspace(0,1,num_samples,endpoint=True)
+        out = scipy.interpolate.splev(u3,tck)
+        sampled_points = [(out[0][i], out[1][i]) for i in range(num_samples)]
+        self._sampled_points = sampled_points
+        for i in range(num_samples - 1):
+            p1 = sampled_points[i]
+            p2 = sampled_points[i+1]
+            self._spline_segm_l.append(self._scene.addLine(p1[0], p1[1], p2[0], p2[1], QPen(QColor(128,128,128))));
+
         
 class TableViewWidget(QGraphicsView):
     g_table_view = None
@@ -180,6 +256,10 @@ class TableViewWidget(QGraphicsView):
         self._adv1_robot = self._scene.addEllipse(-100, -100, TableViewWidget.g_detect_size, TableViewWidget.g_detect_size, QPen(QBrush(QColor('black')),4), QBrush(QColor('white')))
         self._adv1_robot.setZValue(1)
         self._adv1_robot.setPos(-1 * 1000, -1 * 1000)
+        
+        self._lookahead_point = self._scene.addEllipse(0,0, 10, 10, QPen(QBrush(QColor('black')),4), QBrush(QColor('blue')))
+        self._lookahead_point.setZValue(2)
+        
         if os.name == 'nt':
             self._adv1_robot_text = self._scene.addText("0", QFont("Calibri",80));
         else:
@@ -201,6 +281,8 @@ class TableViewWidget(QGraphicsView):
         self._adv2_robot_text.setTransform(QTransform(1.0, 0.0, 0.0,  0.0, -1.0, 0.0,   0.0, 0.0, 1.0))
         self._adv2_robot_text.setZValue(1)
         self.setScene(self._scene)
+        
+        self._debug_trajectory = DebugTrajectory(self._scene)
 
         self.rotate(90)
         if ihm_type=='pc':
@@ -289,11 +371,6 @@ class TableViewWidget(QGraphicsView):
 
         self._traj_segm_l = []
 
-        self._debug_edit_mode = False
-        self._debug_edit_point_l = []
-
-#        self._big_robot_x = 0
-#        self._big_robot_y = 0
         self._little_robot_x = 0
         self._little_robot_y = 0
 
@@ -479,6 +556,8 @@ class TableViewWidget(QGraphicsView):
             delta_x_mm = (telemetry_ex.target_pose.position.x * 1000 - self._dbg_target_x_mm)
             delta_y_mm = (telemetry_ex.target_pose.position.y * 1000 - self._dbg_target_y_mm)
             delta_d_mm = math.sqrt(delta_x_mm*delta_x_mm + delta_y_mm*delta_y_mm)
+
+            self._lookahead_point.setPos(telemetry_ex.lookahead_position.x * 1000, telemetry_ex.lookahead_position.y * 1000)
             if (delta_d_mm > 0.1):
                 self._dbg_target_x_mm = telemetry_ex.target_pose.position.x * 1000
                 self._dbg_target_y_mm = telemetry_ex.target_pose.position.y * 1000
@@ -537,12 +616,7 @@ class TableViewWidget(QGraphicsView):
                 self._scene.addEllipse(other_robot.x * 1000 - dbg_plt_sz, other_robot.y * 1000 - dbg_plt_sz, 2*dbg_plt_sz, 2*dbg_plt_sz, QPen(QBrush(QColor('white')),4), QBrush(QColor('white')))
 
     def debug_set_start(self, _new_x, _new_y):
-        self.debug_start_x = _new_x
-        self.debug_start_y = _new_y
-        self.debug_cur_x = _new_x
-        self.debug_cur_y = _new_y
-        if self._debug_edit_mode:
-            self._debug_edit_point_l.append((_new_x,_new_y))
+        self._debug_trajectory.set_start(_new_x, _new_y)        
 
     def debug_line_to(self, _new_x, _new_y):
         my_segm = self._scene.addLine(self.debug_cur_x, self.debug_cur_y, _new_x, _new_y, QPen(QColor(128,128,128)));
@@ -551,11 +625,11 @@ class TableViewWidget(QGraphicsView):
         self.debug_cur_y = _new_y
 
     def debug_clear_lines(self):
-        for l in self._traj_segm_l:
-            self._scene.removeItem(l)
-        self._traj_segm_l = []
+        self._debug_trajectory.clear()
 
     def debug_start_edit(self, _new_x, _new_y):
+        elf._debug_trajectory.start_edit(_new_x, _new_y)
+        return
         self.debug_clear_lines()
         self._debug_edit_mode = True
         self.debug_start_x = _new_x
@@ -565,17 +639,10 @@ class TableViewWidget(QGraphicsView):
         self._debug_edit_point_l = [(_new_x,_new_y)]
 
     def debug_start_edit_rel(self):
-        self.debug_clear_lines()
-        self._debug_edit_mode = True
-        self.debug_start_x = self._little_robot_x
-        self.debug_start_y = self._little_robot_y
-        self.debug_cur_x = self._little_robot_x
-        self.debug_cur_y = self._little_robot_y
-        self._debug_edit_point_l = [(self._little_robot_x,self._little_robot_y)]
+        self._debug_trajectory.start_edit(self._little_robot_x, self._little_robot_y)
 
     def debug_stop_edit(self):
-        self._debug_edit_mode = False
-        return self._debug_edit_point_l
+        return self._debug_trajectory.stop_edit()
 
     def mousePressEvent(self, event):
         print ("pix:<{},{}>".format(event.x(),event.y()))
@@ -584,7 +651,9 @@ class TableViewWidget(QGraphicsView):
         realY = 3200.0*(event.x()-480.0)/960.0
         realX = 2200.0*(event.y()-30.0)/660.0
         print ("real:<{},{}>".format(realX,realY))
-        if self._debug_edit_mode:
+        if self._debug_trajectory._edit_mode:
+            self._debug_trajectory.line_to(realX, realY)
+            return
             self._debug_edit_point_l.append((realX,realY))
             self.debug_line_to(realX, realY)
 
