@@ -132,6 +132,20 @@ class MainWindow(QMainWindow):
         self.zoomMinusB.setDisabled(False)
         self.zoomMinusB.clicked.connect(self._table_view.zoomMinus)
 
+        self.showThemeC = QCheckBox()
+        self.showThemeC.setText("Show Theme")
+        self.showThemeC.setDisabled(False)
+        self.showThemeC.setChecked(True)
+        self.showThemeC.clicked.connect(self.enableThemeDisplay)
+
+        self.clearTelemetryB = QPushButton()
+        self.clearTelemetryB.setText("Clear Telemetry")
+        self.clearTelemetryB.setDisabled(False)
+        self.clearTelemetryB.clicked.connect(self._table_view.clear_telemetry)
+
+        # FIXME : DEBUG : GOLDO
+        #self.propulsionTestD = PropulsionTestDialog()
+
         main_layout = QHBoxLayout()
 
         status_layout = QVBoxLayout()
@@ -146,6 +160,10 @@ class MainWindow(QMainWindow):
         right_layout.addWidget(self.zoomPlusB)
         right_layout.addWidget(self.zoomDefB)
         right_layout.addWidget(self.zoomMinusB)
+        right_layout.addWidget(self.showThemeC)
+        right_layout.addWidget(self.clearTelemetryB)
+        # FIXME : DEBUG : GOLDO
+        #right_layout.addWidget(self.propulsionTestD)
         right_layout.addStretch(16)
 
         main_layout.addLayout(status_layout)
@@ -164,6 +182,8 @@ class MainWindow(QMainWindow):
 
         for d in self._dialogs:
             d.set_client(self._client)
+        # FIXME : DEBUG : GOLDO
+        #self.propulsionTestD.set_client(self._client)
 
         # Add status bar
         self._status_link_state = QLabel('')
@@ -236,3 +256,6 @@ class MainWindow(QMainWindow):
     def _start_sequence(self):
         self._client.send_message(43, struct.pack('<H',1))
 
+    def enableThemeDisplay(self):
+        TableViewWidget.g_show_theme = self.showThemeC.isChecked()
+        self._table_view.refreshTheme()

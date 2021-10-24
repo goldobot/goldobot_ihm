@@ -294,20 +294,17 @@ class TableViewWidget(QGraphicsView):
 
         #self._scene.addRect(QRectF(0,-1500,2000,3000),QPen(), QBrush(background))
 
-        if TableViewWidget.g_show_theme:
-            f=open("widgets/table_2020_600x400.png","rb")
-            my_buff=f.read()
-            test_img_pixmap2 = QPixmap()
-            test_img_pixmap2.loadFromData(my_buff)
-            #self.setPixmap(test_img_pixmap2)
-            self._bg_img = QGraphicsPixmapItem(test_img_pixmap2)
-            self._bg_img.setTransform(QTransform(1.0, 0.0, 0.0,  0.0, -1.0, 0.0,   0.0, 0.0, 0.2))
-            self._bg_img.setRotation(-90)
-            self._bg_img.setPos(0, -1500)
-            self._scene.addItem(self._bg_img);
-            self._scene.addRect(QRectF(0,-1500,2000,3000))
-        else:
-            self._scene.addRect(QRectF(0,-1500,2000,3000))
+        self._scene.addRect(QRectF(0,-1500,2000,3000))
+        f=open("widgets/table_2020_600x400.png","rb")
+        my_buff=f.read()
+        test_img_pixmap2 = QPixmap()
+        test_img_pixmap2.loadFromData(my_buff)
+        #self.setPixmap(test_img_pixmap2)
+        self._bg_img = QGraphicsPixmapItem(test_img_pixmap2)
+        self._bg_img.setTransform(QTransform(1.0, 0.0, 0.0,  0.0, -1.0, 0.0,   0.0, 0.0, 0.2))
+        self._bg_img.setRotation(-90)
+        self._bg_img.setPos(0, -1500)
+        self.refreshTheme()
 
         # Scenario 2020
 
@@ -381,11 +378,19 @@ class TableViewWidget(QGraphicsView):
 
         self._dbg_x_mm = 0
         self._dbg_y_mm = 0
+        self._dbg_l = []
         self._dbg_target_x_mm = 0
         self._dbg_target_y_mm = 0
+        self._dbg_target_l = []
 
         TableViewWidget.g_table_view = self
         
+    def refreshTheme(self):
+        if TableViewWidget.g_show_theme:
+            self._scene.addItem(self._bg_img)
+        else:
+            self._scene.removeItem(self._bg_img)
+
     def set_strategy(self, strategy):
         greenium = QColor.fromCmykF(0.7,0,0.9,0)
         #greenium.setAlphaF(0.2)
@@ -548,6 +553,7 @@ class TableViewWidget(QGraphicsView):
                 self._dbg_y_mm = telemetry.pose.position.y * 1000
                 new_p = self._scene.addEllipse(self._dbg_x_mm-dbg_plt_sz, self._dbg_y_mm-dbg_plt_sz, 2*dbg_plt_sz, 2*dbg_plt_sz, QPen(QBrush(QColor('black')),dbg_pen_sz), QBrush(QColor('yellow')))
                 new_p.setZValue(100)
+                self._dbg_l.append(new_p)
 
     def update_telemetry_ex(self, telemetry_ex):
         if TableViewWidget.g_debug:
@@ -563,6 +569,15 @@ class TableViewWidget(QGraphicsView):
                 self._dbg_target_y_mm = telemetry_ex.target_pose.position.y * 1000
                 new_p = self._scene.addEllipse(self._dbg_target_x_mm-dbg_plt_sz, self._dbg_target_y_mm-dbg_plt_sz, 2*dbg_plt_sz, 2*dbg_plt_sz, QPen(QBrush(QColor('blue')),dbg_pen_sz), QBrush(QColor('red')))
                 new_p.setZValue(100)
+                self._dbg_target_l.append(new_p)
+
+    def clear_telemetry(self):
+        for itm in self._dbg_l:
+            self._scene.removeItem(itm)
+        self._dbg_l = []
+        for itm in self._dbg_target_l:
+            self._scene.removeItem(itm)
+        self._dbg_target_l = []
 
     def update_plots(self, my_plot):
         dbg_plt_sz = 1
@@ -628,15 +643,7 @@ class TableViewWidget(QGraphicsView):
         self._debug_trajectory.clear()
 
     def debug_start_edit(self, _new_x, _new_y):
-        elf._debug_trajectory.start_edit(_new_x, _new_y)
-        return
-        self.debug_clear_lines()
-        self._debug_edit_mode = True
-        self.debug_start_x = _new_x
-        self.debug_start_y = _new_y
-        self.debug_cur_x = _new_x
-        self.debug_cur_y = _new_y
-        self._debug_edit_point_l = [(_new_x,_new_y)]
+        self._debug_trajectory.start_edit(_new_x, _new_y)
 
     def debug_start_edit_rel(self):
         self._debug_trajectory.start_edit(self._little_robot_x, self._little_robot_y)
@@ -653,9 +660,6 @@ class TableViewWidget(QGraphicsView):
         print ("real:<{},{}>".format(realX,realY))
         if self._debug_trajectory._edit_mode:
             self._debug_trajectory.line_to(realX, realY)
-            return
-            self._debug_edit_point_l.append((realX,realY))
-            self.debug_line_to(realX, realY)
 
     def zoomPlus(self):
         self._my_scale = 2.0
