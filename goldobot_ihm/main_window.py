@@ -33,6 +33,7 @@ from dialogs.score import ScoreDialog
 from dialogs.test_hal import HalTestDialog
 from dialogs.odrive import ODriveDialog
 from .dialogs.console import ConsoleDialog
+from goldobot_ihm.dialogs.rec_player import RecPlayerDialog
 from dialogs.test_rplidar import TestRPLidarDialog
 from goldobot_ihm.scope.scope import ScopeDialog
 
@@ -60,9 +61,23 @@ dialogs = [
     ("Debug FPGA", DebugFpgaDialog),
     ("Debug Lifts", DebugAsservDialog),
     ("Test sequences", SequencesDialog),
-    ("Console", ConsoleDialog)
+    ("Console", ConsoleDialog),
+    ("RecPlayer", RecPlayerDialog)
  ]
 
+class MenuHelper:
+    def __init__(self, menu):
+        self._actions = []
+        self._menu = menu
+        
+    def addDialog(self, name, dialog):
+        action = QAction(name)
+        widget = dialog()
+        #tools_menu.addAction(action)
+        #self._actions.append(action)
+        #self._dialogs.append(widget)
+        #action.triggered.connect(widget.show)
+        
 class MainWindow(QMainWindow):
     def __init__(self, options):
         super().__init__(None)
