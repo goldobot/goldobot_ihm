@@ -16,83 +16,15 @@ from PyQt5.QtWidgets import QGraphicsPathItem
 from PyQt5.QtGui import QPolygonF, QPen, QBrush, QColor, QFont, QTransform
 from PyQt5.QtGui import QImage, QImageReader, QPixmap, QPainterPath
 
+from .table_2020 import Table
+from .robot import Robot
+
 import numpy as np
 import scipy.interpolate
 
 import struct
 _lidar_point_struct = struct.Struct('<ff')
 
-
-little_robot_poly = QPolygonF([
-            QPointF(  50,   0),
-            QPointF( 100,  85),
-            QPointF(  65, 115),
-            QPointF( -65, 115),
-            QPointF(-100,  85),
-            QPointF(-100, -85),
-            QPointF( -65,-115),
-            QPointF(  65,-115),
-            QPointF( 100, -85)
-            ])
-            
-near_poly = QPolygonF([
-            QPointF(  10, 10),
-            QPointF(  10, -10),
-            QPointF(  30, -30),
-            QPointF(  30, 30),
-            QPointF(  10, 10),            
-            ])
-            
-far_poly = QPolygonF([
-            QPointF(  30, 30),
-            QPointF(  30, -30),
-            QPointF(  50, -50),
-            QPointF(  50, 50),
-            QPointF(  30, 30),            
-            ])
-            
-            
-class Robot(QGraphicsItemGroup):
-    def __init__(self):
-        super().__init__()
-        
-        path = QPainterPath()
-        path.addPolygon(little_robot_poly)
-        #p = little_robot_poly[0}
-        #path.moveTo(p.x * 1000, p.y * 1000)
-        
-        outline = QGraphicsPathItem(path, self)
-        outline.setPen(QPen())
-        outline.setBrush(QBrush(QColor('red')))
-        
-        path = QPainterPath()
-        path.addPolygon(near_poly)
-        self._near_front = QGraphicsPathItem(path, self)
-        self._near_front.setPen(QPen())
-        self._near_front.setBrush(QBrush(QColor('green')))
-        
-        path = QPainterPath()
-        path.addPolygon(far_poly)
-        self._far_front = QGraphicsPathItem(path, self)
-        self._far_front.setPen(QPen())
-        self._far_front.setBrush(QBrush(QColor('green')))
-        
-        path = QPainterPath()
-        path.addPolygon(near_poly)
-        self._near_back = QGraphicsPathItem(path, self)
-        self._near_back.setPen(QPen())
-        self._near_back.setBrush(QBrush(QColor('green')))
-        self._near_back.setRotation(180)
-        
-        path = QPainterPath()
-        path.addPolygon(far_poly)
-        self._far_back = QGraphicsPathItem(path, self)
-        self._far_back.setPen(QPen())
-        self._far_back.setBrush(QBrush(QColor('green')))
-        self._far_back.setRotation(180)
-        
-        
-        #self.addPolygon(little_robot_poly, QPen(), QBrush(QColor('red')))
         
 class AdversaryDetection(QGraphicsItemGroup):
     def __init__(self,id_text):
@@ -111,6 +43,25 @@ class DebugTrajectory:
         self.cur_x = 0
         self.cur_y = 0
         self._edit_mode = False
+        
+    def onMousePress(self, x, y):
+        """"x, y in mm"""        
+        print ("pix:<{},{}>".format(event.x(),event.y()))
+        #realY = 3000.0*(event.x()-450.0)/900.0
+        #realX = 2000.0*(event.y())/600.0
+        realY = 3200.0*(event.x()-480.0)/960.0
+        realX = 2200.0*(event.y()-30.0)/660.0
+        print ("real:<{},{}>".format(realX,realY))
+        if self._debug_trajectory._edit_mode:
+            self._debug_trajectory.line_to(realX, realY)
+            
+    def onMouseMove(self, x, y):
+        """"x, y in mm"""
+        return
+        
+    def onMouseRelease(self, x, y):
+        """"x, y in mm"""
+        return
         
     def set_start(self, _new_x, _new_y):
         self.cur_x = _new_x
@@ -202,7 +153,6 @@ class TableViewWidget(QGraphicsView):
         else:
             #self.setFixedSize(225,150)
             self.setFixedSize(240,165)
-        #self.setSceneRect(QRectF(0,-1500,2000,3000))
         self.setSceneRect(QRectF(-100,-1600,2200,3200))
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
@@ -226,12 +176,14 @@ class TableViewWidget(QGraphicsView):
         darker = QColor(20,20,20)
 
         self._scene = QGraphicsScene(QRectF(-100,-1600,2200,3200))
+        
+        self._table = Table(self._scene)
+        self._bg_img = self._table._bg_img
+        self.refreshTheme()
 
-#        self._big_robot = self._scene.addPolygon(big_robot_poly, QPen(), QBrush(QColor('red')))
-#        self._big_robot.setZValue(1)
-        #self._robots['little'] = Robot(self._scene)
         self._little_robot = Robot()
         self._little_robot.setZValue(1)
+        
         self._scene.addItem(self._little_robot)
         if TableViewWidget.g_debug:
             dbg_plt_sz = TableViewWidget.g_dbg_plt_sz
@@ -292,79 +244,10 @@ class TableViewWidget(QGraphicsView):
         else:
             self.scale(0.075, -0.075)
 
-        #self._scene.addRect(QRectF(0,-1500,2000,3000),QPen(), QBrush(background))
-
         self._scene.addRect(QRectF(0,-1500,2000,3000))
-        f=open("widgets/table_2020_600x400.png","rb")
-        my_buff=f.read()
-        test_img_pixmap2 = QPixmap()
-        test_img_pixmap2.loadFromData(my_buff)
-        #self.setPixmap(test_img_pixmap2)
-        self._bg_img = QGraphicsPixmapItem(test_img_pixmap2)
-        self._bg_img.setTransform(QTransform(1.0, 0.0, 0.0,  0.0, -1.0, 0.0,   0.0, 0.0, 0.2))
-        self._bg_img.setRotation(-90)
-        self._bg_img.setPos(0, -1500)
-        self.refreshTheme()
-
-        # Scenario 2020
-
-        #Port principal "bleu"
-        self._scene.addRect(QRectF(500,-1120,570,20),QPen(), QBrush(blueium))
-        self._scene.addRect(QRectF(500,-1500,30,400),QPen(), QBrush(greenium))
-        self._scene.addRect(QRectF(1070,-1500,30,400),QPen(), QBrush(redium))
-
-        #Port secondaire "bleu"
-        self._scene.addRect(QRectF(1700,150,20,300),QPen(), QBrush(blueium))
-        self._scene.addRect(QRectF(1700,150,300,100),QPen(), QBrush(greenium))
-        self._scene.addRect(QRectF(1700,350,300,100),QPen(), QBrush(redium))
-
-        #Bouees cote "bleu"
-        self._scene.addEllipse(QRectF(1200-35,-1200-35,70,70),QPen(), QBrush(greenium))
-        self._scene.addEllipse(QRectF(1080-35,-1050-35,70,70),QPen(), QBrush(redium))
-        self._scene.addEllipse(QRectF(510-35,-1050-35,70,70),QPen(), QBrush(greenium))
-        self._scene.addEllipse(QRectF(400-35,-1200-35,70,70),QPen(), QBrush(redium))
-
-        self._scene.addEllipse(QRectF(100-35,-830-35,70,70),QPen(), QBrush(redium))
-        self._scene.addEllipse(QRectF(400-35,-550-35,70,70),QPen(), QBrush(greenium))
-        self._scene.addEllipse(QRectF(800-35,-400-35,70,70),QPen(), QBrush(redium))
-        self._scene.addEllipse(QRectF(1200-35,-230-35,70,70),QPen(), QBrush(greenium))
-
-        self._scene.addEllipse(QRectF(1650-35,-435-35,70,70),QPen(), QBrush(greenium))
-        self._scene.addEllipse(QRectF(1650-35,-165-35,70,70),QPen(), QBrush(redium))
-        self._scene.addEllipse(QRectF(1955-35,-495-35,70,70),QPen(), QBrush(redium))
-        self._scene.addEllipse(QRectF(1955-35,-105-35,70,70),QPen(), QBrush(greenium))
-
-        #Port principal "jaune"
-        self._scene.addRect(QRectF(500,1100,570,20),QPen(), QBrush(yellow))
-        self._scene.addRect(QRectF(500,1100,30,400),QPen(), QBrush(redium))
-        self._scene.addRect(QRectF(1070,1100,30,400),QPen(), QBrush(greenium))
-
-        #Port secondaire "jaune"
-        self._scene.addRect(QRectF(1700,-450,20,300),QPen(), QBrush(yellow))
-        self._scene.addRect(QRectF(1700,-450,300,100),QPen(), QBrush(greenium))
-        self._scene.addRect(QRectF(1700,-250,300,100),QPen(), QBrush(redium))
-
-        #Bouees cote "jaune"
-        self._scene.addEllipse(QRectF(1200-35,1200-35,70,70),QPen(), QBrush(redium))
-        self._scene.addEllipse(QRectF(1080-35,1050-35,70,70),QPen(), QBrush(greenium))
-        self._scene.addEllipse(QRectF(510-35,1050-35,70,70),QPen(), QBrush(redium))
-        self._scene.addEllipse(QRectF(400-35,1200-35,70,70),QPen(), QBrush(greenium))
-
-        self._scene.addEllipse(QRectF(100-35,830-35,70,70),QPen(), QBrush(greenium))
-        self._scene.addEllipse(QRectF(400-35,550-35,70,70),QPen(), QBrush(redium))
-        self._scene.addEllipse(QRectF(800-35,400-35,70,70),QPen(), QBrush(greenium))
-        self._scene.addEllipse(QRectF(1200-35,230-35,70,70),QPen(), QBrush(redium))
-
-        self._scene.addEllipse(QRectF(1650-35,435-35,70,70),QPen(), QBrush(redium))
-        self._scene.addEllipse(QRectF(1650-35,165-35,70,70),QPen(), QBrush(greenium))
-        self._scene.addEllipse(QRectF(1955-35,495-35,70,70),QPen(), QBrush(greenium))
-        self._scene.addEllipse(QRectF(1955-35,105-35,70,70),QPen(), QBrush(redium))
-
-        #dbg_plt_sz = 3
-        #self._scene.addEllipse(1000 - dbg_plt_sz, 0 - dbg_plt_sz, 2*dbg_plt_sz, 2*dbg_plt_sz, QPen(QBrush(QColor('white')),4), QBrush(QColor('white')))
+        
 
         self._points = []
-        #self.setSceneRect(QRectF(0,-150,200,300))
 
         self._traj_segm_l = []
 
@@ -533,14 +416,11 @@ class TableViewWidget(QGraphicsView):
         self._path_trajectory = itm
         
     def update_telemetry(self, telemetry):
-#        self._big_robot.setPos(telemetry.x * 1000, telemetry.y * 1000)
-#        self._big_robot.setRotation(telemetry.yaw * 180 / math.pi)
-#        self._big_robot_x = telemetry.x * 1000
-#        self._big_robot_y = telemetry.y * 1000
-        self._little_robot.setPos(telemetry.pose.position.x * 1000, telemetry.pose.position.y * 1000)
-        self._little_robot.setRotation(telemetry.pose.yaw * 180 / math.pi)
+        self._little_robot.onTelemetry(telemetry)        
+        
         self._little_robot_x = telemetry.pose.position.x * 1000
         self._little_robot_y = telemetry.pose.position.y * 1000
+        
         if TableViewWidget.g_debug:
             dbg_plt_sz = TableViewWidget.g_dbg_plt_sz
             dbg_pen_sz = TableViewWidget.g_dbg_pen_sz
@@ -563,7 +443,11 @@ class TableViewWidget(QGraphicsView):
             delta_y_mm = (telemetry_ex.target_pose.position.y * 1000 - self._dbg_target_y_mm)
             delta_d_mm = math.sqrt(delta_x_mm*delta_x_mm + delta_y_mm*delta_y_mm)
 
-            self._lookahead_point.setPos(telemetry_ex.lookahead_position.x * 1000, telemetry_ex.lookahead_position.y * 1000)
+            try:
+                self._lookahead_point.setPos(telemetry_ex.lookahead_position.x * 1000, telemetry_ex.lookahead_position.y * 1000)
+            except:
+                pass
+            
             if (delta_d_mm > 0.1):
                 self._dbg_target_x_mm = telemetry_ex.target_pose.position.x * 1000
                 self._dbg_target_y_mm = telemetry_ex.target_pose.position.y * 1000

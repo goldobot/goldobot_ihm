@@ -5,12 +5,14 @@ from PyQt5.QtWidgets import QSlider
 from PyQt5.QtWidgets import QFileDialog
 
 from PyQt5.QtCore import QTimer
+from PyQt5.QtCore import Qt
 
 from goldobot.rec_loader import RecLoader
 
 
 from typing import Optional
 from datetime import datetime
+import bisect
 
 import google.protobuf as _pb
 
@@ -36,21 +38,28 @@ class RecPlayerDialog(QDialog):
         self._button_play.clicked.connect(self.play)
         self._button_stop.clicked.connect(self.stop)
 
-        self._slider_timestamp = QSlider()
+        self._slider_timestamp = QSlider(Qt.Horizontal)
+        self._slider_timestamp.sliderReleased.connect(self._onSliderReleased)
+        self._slider_timestamp.sliderMoved.connect(self._onSliderMoved)
 
         layout = QGridLayout()
 
         layout.addWidget(self._button_load, 0, 1)
         layout.addWidget(self._button_play, 0, 2)
         layout.addWidget(self._button_stop, 0, 3)
-        layout.addWidget(self._slider_timestamp)
+        layout.addWidget(self._slider_timestamp, 1,0,1,3)
         self.setLayout(layout)
 
     def loadRecordFile(self, path):
         self._loader.open(path)
-        self._ts_min = self._loader._timestamps[0]
-        self._ts_max = self._loader._timestamps[-1]
+        if len(self._loader._timestamps) > 0:
+            self._ts_min = self._loader._timestamps[0]
+            self._ts_max = self._loader._timestamps[-1]
+        else:
+            self._ts_min = 0
+            self._ts_max = 0
         self._ts_next = self._ts_min
+        self._ts_current = self._ts_min
         self._ts_target = self._ts_min
         self._dt_last = datetime.now()
         self._index = 0
@@ -68,21 +77,37 @@ class RecPlayerDialog(QDialog):
     def stop(self):
         self._timer.stop()
         
+    def setTimestamp(self, timestamp):
+        i = bisect.bisect_left(self._loader._timestamps, timestamp)
+        print(i)
+        
+    def _playNextMessage(self):
+        topic, msg = self._loader._messages[self._index]
+        self._index += 1
+        if self._index < len(self._loader._timestamps):
+            self._ts_next = self._loader._timestamps[self._index]            
+        self._client.onMessage(topic, msg)
+        
+    def _playMessages(self, ts_target):
+        ts = self._ts_next
+        while self._ts_next < ts_target and self._index < len(self._loader._timestamps):
+            ts = self._ts_next
+            self._playNextMessage()
+        self._ts_current = ts
+            
+    def _onSliderReleased(self):
+        self._dt_last = datetime.now()  
+
+    def _onSliderMoved(self, timestamp):
+        self.setTimestamp(timestamp)
+        
     def _onTimer(self):
+        if self._slider_timestamp.isSliderDown():
+            return
         dt = datetime.now()
         self._ts_target += int((dt - self._dt_last).total_seconds() * 1000)
-        self._dt_last = dt
-        
-        ts = self._ts_next
-
-        while self._ts_next < self._ts_target and self._index < len(self._loader._timestamps):
-            ts = self._ts_next
-            topic, msg = self._loader._messages[self._index]
-            self._index += 1
-            if self._index < len(self._loader._timestamps):
-                self._ts_next = self._loader._timestamps[self._index]
-            self._client.onMessage(topic, msg)
-        self._slider_timestamp.setValue(ts)
+        self._playMessages(self._ts_target)
+        self._slider_timestamp.setValue(self._ts_current)
 
 
     def set_client(self, client: ''):

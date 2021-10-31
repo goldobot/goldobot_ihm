@@ -133,12 +133,14 @@ class ZmqClient(QObject):
             flags = socket.getsockopt(zmq.EVENTS)
             topic = topic.decode('utf8')
             full_name = full_name.decode('utf8')
-
-            msg_class = _sym_db.GetSymbol(full_name)
-            if msg_class is not None:
-                msg = msg_class()
-                msg.ParseFromString(payload)
-            else:
-                msg = None
-            self.onMessage(topic, msg)
+            try:
+                msg_class = _sym_db.GetSymbol(full_name)
+                if msg_class is not None:
+                    msg = msg_class()
+                    msg.ParseFromString(payload)
+                else:
+                    msg = None
+                self.onMessage(topic, msg)
+            except KeyError:
+                pass
         self._notifier_main.setEnabled(True)
