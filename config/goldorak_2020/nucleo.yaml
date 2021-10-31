@@ -22,9 +22,9 @@ nucleo:
     encoders_period: 8192
 
   odometry:
-    dist_per_count_left: 1.5358e-05
-    dist_per_count_right: 1.5342e-05
-    wheel_distance_left: 233.65e-3
+    dist_per_count_left: 1.5345e-05
+    dist_per_count_right: 1.5355e-05
+    wheel_distance_left: 233.6e-3
     wheel_distance_right: 0
     speed_filter_frequency: 500
     accel_filter_frequency: 50

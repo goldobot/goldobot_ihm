@@ -128,6 +128,25 @@ class DebugTrajectory:
             self._spline_segm_l.append(self._scene.addLine(p1[0], p1[1], p2[0], p2[1], QPen(QColor(128,128,128))));
 
         
+class DebugGraphicsScene(QGraphicsScene):
+    dbg_mouse_info = pyqtSignal(int,int,int,int,int)
+    def mouseMoveEvent(self, event):
+        x_mm = event.scenePos().x()
+        y_mm = event.scenePos().y()
+        rel_x_mm = x_mm - self.parent()._little_robot_x
+        rel_y_mm = y_mm - self.parent()._little_robot_y
+        d_mm = math.sqrt(rel_x_mm*rel_x_mm + rel_y_mm*rel_y_mm)
+        self.dbg_mouse_info.emit(x_mm, y_mm, rel_x_mm, rel_y_mm, d_mm)
+
+    def mousePressEvent(self, event):
+        realX = event.scenePos().x()
+        realY = event.scenePos().y()
+        #print ("pix:<{},{}>".format(event.x(),event.y()))
+        #print ("real:<{},{}>".format(realX,realY))
+        if self.parent()._debug_trajectory._edit_mode:
+            self.parent()._debug_trajectory.line_to(realX, realY)
+
+
 class TableViewWidget(QGraphicsView):
     g_table_view = None
     g_detect_size = 200
@@ -154,8 +173,8 @@ class TableViewWidget(QGraphicsView):
             #self.setFixedSize(225,150)
             self.setFixedSize(240,165)
         self.setSceneRect(QRectF(-100,-1600,2200,3200))
-        self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        #self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        #self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         
         self._robots = {}
         self._adversary_detections = {}
@@ -175,7 +194,8 @@ class TableViewWidget(QGraphicsView):
         background = QColor(40,40,40)
         darker = QColor(20,20,20)
 
-        self._scene = QGraphicsScene(QRectF(-100,-1600,2200,3200))
+        #self._scene = QGraphicsScene(QRectF(-100,-1600,2200,3200))
+        self._scene = DebugGraphicsScene(QRectF(-100,-1600,2200,3200),self)
         
         self._table = Table(self._scene)
         self._bg_img = self._table._bg_img
@@ -534,16 +554,6 @@ class TableViewWidget(QGraphicsView):
 
     def debug_stop_edit(self):
         return self._debug_trajectory.stop_edit()
-
-    def mousePressEvent(self, event):
-        print ("pix:<{},{}>".format(event.x(),event.y()))
-        #realY = 3000.0*(event.x()-450.0)/900.0
-        #realX = 2000.0*(event.y())/600.0
-        realY = 3200.0*(event.x()-480.0)/960.0
-        realX = 2200.0*(event.y()-30.0)/660.0
-        print ("real:<{},{}>".format(realX,realY))
-        if self._debug_trajectory._edit_mode:
-            self._debug_trajectory.line_to(realX, realY)
 
     def zoomPlus(self):
         self._my_scale = 2.0

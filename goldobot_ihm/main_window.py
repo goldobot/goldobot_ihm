@@ -96,16 +96,11 @@ class MainWindow(QMainWindow):
         self._action_prematch = QAction("Prematch")
         self._action_start_match = QAction("Start Match")
 
-        self._F5_shortcut = QShortcut(QKeySequence(Qt.Key_F5), self)
-        self._F5_shortcut.activated.connect(self._upload_config)
-
         # Add menu
         tools_menu = self.menuBar().addMenu("Tools")
 
         self._actions = []
         self._dialogs = []
-
-
 
         for d in dialogs:
             action = QAction(d[0])
@@ -114,12 +109,21 @@ class MainWindow(QMainWindow):
             self._actions.append(action)
             self._dialogs.append(widget)
             action.triggered.connect(widget.show)
+        # FIXME : DEBUG : GOLDO
+        self.propulsionTestD = PropulsionTestDialog()
 
         tools_menu.addAction(self._action_simulation)
         tools_menu.addAction(self._action_reset)
         tools_menu.addAction(self._action_upload_config)
         tools_menu.addAction(self._action_prematch)
         tools_menu.addAction(self._action_start_match)
+
+        self._F5_shortcut = QShortcut(QKeySequence(Qt.Key_F5), self)
+        self._F5_shortcut.activated.connect(self._upload_config)
+
+        # FIXME : DEBUG : GOLDO
+        self._F6_shortcut = QShortcut(QKeySequence(Qt.Key_F6), self)
+        self._F6_shortcut.activated.connect(self.propulsionTestD.show)
 
         self._main_widget = QWidget()
         self._table_view = TableViewWidget()
@@ -151,15 +155,36 @@ class MainWindow(QMainWindow):
         self.showThemeC.setText("Show Theme")
         self.showThemeC.setDisabled(False)
         self.showThemeC.setChecked(True)
-        self.showThemeC.clicked.connect(self.enableThemeDisplay)
+        self.showThemeC.clicked.connect(self._enableThemeDisplay)
 
         self.clearTelemetryB = QPushButton()
         self.clearTelemetryB.setText("Clear Telemetry")
         self.clearTelemetryB.setDisabled(False)
         self.clearTelemetryB.clicked.connect(self._table_view.clear_telemetry)
 
-        # FIXME : DEBUG : GOLDO
-        #self.propulsionTestD = PropulsionTestDialog()
+        self.posL = QLabel()
+        self.posL.setText("Pos & dist:")
+        self.posL.setDisabled(False)
+
+        self.posXL = QLabel()
+        self.posXL.setText(" x:")
+        self.posXL.setDisabled(False)
+
+        self.posYL = QLabel()
+        self.posYL.setText(" y:")
+        self.posYL.setDisabled(False)
+
+        self.posXRL = QLabel()
+        self.posXRL.setText(" xr:")
+        self.posXRL.setDisabled(False)
+
+        self.posYRL = QLabel()
+        self.posYRL.setText(" yr:")
+        self.posYRL.setDisabled(False)
+
+        self.posDRL = QLabel()
+        self.posDRL.setText(" dr:")
+        self.posDRL.setDisabled(False)
 
         main_layout = QHBoxLayout()
 
@@ -177,6 +202,12 @@ class MainWindow(QMainWindow):
         right_layout.addWidget(self.zoomMinusB)
         right_layout.addWidget(self.showThemeC)
         right_layout.addWidget(self.clearTelemetryB)
+        right_layout.addWidget(self.posL)
+        right_layout.addWidget(self.posXL)
+        right_layout.addWidget(self.posYL)
+        right_layout.addWidget(self.posXRL)
+        right_layout.addWidget(self.posYRL)
+        right_layout.addWidget(self.posDRL)
         # FIXME : DEBUG : GOLDO
         #right_layout.addWidget(self.propulsionTestD)
         right_layout.addStretch(16)
@@ -195,10 +226,12 @@ class MainWindow(QMainWindow):
 
         self._client.robot_end_load_config_status.connect(self._upload_status)
 
+        self._table_view._scene.dbg_mouse_info.connect(self._update_mouse_dbg)
+
         for d in self._dialogs:
             d.set_client(self._client)
         # FIXME : DEBUG : GOLDO
-        #self.propulsionTestD.set_client(self._client)
+        self.propulsionTestD.set_client(self._client)
 
         # Add status bar
         self._status_link_state = QLabel('')
@@ -271,6 +304,13 @@ class MainWindow(QMainWindow):
     def _start_sequence(self):
         self._client.send_message(43, struct.pack('<H',1))
 
-    def enableThemeDisplay(self):
+    def _enableThemeDisplay(self):
         TableViewWidget.g_show_theme = self.showThemeC.isChecked()
         self._table_view.refreshTheme()
+
+    def _update_mouse_dbg(self, x_mm, y_mm, rel_x_mm, rel_y_mm, d_mm):
+        self.posXL.setText(" x: {:>6.1f}".format(x_mm))
+        self.posYL.setText(" y: {:>6.1f}".format(y_mm))
+        self.posXRL.setText(" xr: {:>6.1f}".format(rel_x_mm))
+        self.posYRL.setText(" yr: {:>6.1f}".format(rel_y_mm))
+        self.posDRL.setText(" dr: {:>6.1f}".format(d_mm))
