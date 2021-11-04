@@ -9,8 +9,6 @@ from PyQt5.QtWidgets import QLineEdit
 from PyQt5.QtCore import  QTimer
 
 from widgets.properties_editor import PropertiesEditorWidget
-from widgets.table_view import TableViewWidget
-
 
 from goldobot import message_types
 

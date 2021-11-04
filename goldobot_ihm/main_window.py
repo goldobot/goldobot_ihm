@@ -13,7 +13,7 @@ from PyQt5.QtWidgets import QTabWidget, QAction, QDialog, QVBoxLayout, QCheckBox
 from PyQt5.QtWidgets import  QHBoxLayout, QComboBox, QMessageBox, QShortcut
 from PyQt5.QtGui import QKeySequence
 
-from widgets.table_view import TableViewWidget
+from goldobot_ihm.widgets.table_view import TableViewWidget
 from widgets.plot_dialog import PlotDialog, ControlPlots
 
 from goldobot.zmq_client import ZmqClient
@@ -36,8 +36,6 @@ from .dialogs.console import ConsoleDialog
 from goldobot_ihm.dialogs.rec_player import RecPlayerDialog
 from dialogs.test_rplidar import TestRPLidarDialog
 from goldobot_ihm.scope.scope import ScopeDialog
-
-from parse_sequence import SequenceParser
 
 from goldobot import message_types
 
@@ -218,8 +216,8 @@ class MainWindow(QMainWindow):
 
         self._main_widget.setLayout(main_layout)
 
-        self._action_reset.triggered.connect(self._send_reset)
-        self._action_enter_debug.triggered.connect(self._send_enter_debug)
+        #self._action_reset.triggered.connect(self._send_reset)
+        #self._action_enter_debug.triggered.connect(self._send_enter_debug)
         self._action_upload_config.triggered.connect(self._upload_config)
         self._action_prematch.triggered.connect(self._prematch)
         self._action_start_match.triggered.connect(self._start_match)
@@ -260,12 +258,6 @@ class MainWindow(QMainWindow):
     def _dbg_image(self, image):
         self._lab.setPixmap(image)
 
-    def _send_reset(self):
-        self._client.send_message(message_types.DbgReset, b'')
-
-    def _send_enter_debug(self):
-        self._client.send_message(message_types.SetMatchState, struct.pack('<B', 6))
-
     def _send_exit_debug(self):
         self._client.publishTopic('nucleo/in/match/timer/start', _sym_db.GetSymbol('google.protobuf.Empty')())
 
@@ -274,11 +266,7 @@ class MainWindow(QMainWindow):
 
     def _on_match_state_change(self, state,side):
         self._status_match_state.setText('{} {}'.format(state, side))
-
-    def _upload_sequence(self):
-        config.load_dynamixels_config()
-        config.load_sequence()
-        
+      
     def _upload_config(self):
         cfg = config.robot_config
         cfg.update_config()
@@ -300,9 +288,6 @@ class MainWindow(QMainWindow):
             self._client.publishTopic('nucleo/in/propulsion/simulation/enable', _sym_db.GetSymbol('google.protobuf.BoolValue')(value=simulation_enable))
         else:
             QMessageBox.critical(self, "Upload config status", "Failure")
-
-    def _start_sequence(self):
-        self._client.send_message(43, struct.pack('<H',1))
 
     def _enableThemeDisplay(self):
         TableViewWidget.g_show_theme = self.showThemeC.isChecked()

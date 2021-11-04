@@ -8,24 +8,23 @@ from PyQt5.QtWidgets import QLabel
 from PyQt5.QtWidgets import QGraphicsView
 from PyQt5.QtWidgets import QGraphicsScene
 from PyQt5.QtWidgets import QGraphicsItem
-from PyQt5.QtWidgets import QGraphicsItemGroup 
+from PyQt5.QtWidgets import QGraphicsItemGroup
 from PyQt5.QtWidgets import QGraphicsEllipseItem
 from PyQt5.QtWidgets import QGraphicsPixmapItem
-from PyQt5.QtWidgets import QGraphicsPathItem 
+from PyQt5.QtWidgets import QGraphicsPathItem
 
 from PyQt5.QtGui import QPolygonF, QPen, QBrush, QColor, QFont, QTransform
 from PyQt5.QtGui import QImage, QImageReader, QPixmap, QPainterPath
-        
-        
+
+import importlib.resources as pkg_resources
+
 class Table:
     def __init__(self, scene):
         self._scene = scene
-        
-        f=open("widgets/table_2020_600x400.png","rb")
-        my_buff=f.read()
+        my_buff=pkg_resources.read_binary(__package__, 'table_2020_600x400.png')
         test_img_pixmap2 = QPixmap()
         test_img_pixmap2.loadFromData(my_buff)
-        #self.setPixmap(test_img_pixmap2)
+
         self._bg_img = QGraphicsPixmapItem(test_img_pixmap2)
         self._bg_img.setTransform(QTransform(1.0, 0.0, 0.0,  0.0, -1.0, 0.0,   0.0, 0.0, 0.2))
         self._bg_img.setRotation(-90)
@@ -38,7 +37,7 @@ class Table:
         yellow = QColor.fromCmykF(0,0.25,1,0)
         purple = QColor.fromCmykF(0.5,0.9,0,0.05)
         background = QColor(40,40,40)
-        darker = QColor(20,20,20)        
+        darker = QColor(20,20,20)
 
         # Scenario 2020
 
