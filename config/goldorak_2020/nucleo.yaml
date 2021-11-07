@@ -73,7 +73,7 @@ nucleo:
     reposition_motor_speed_limit: 10
     static_torque_limit: 0.6
     cruise_torque_limit: 0.6
-    reposition_torque_limit: 0.03
+    reposition_torque_limit: 0.06
   servos:
     - name: bras_lat_gauche
       id: 11

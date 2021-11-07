@@ -22,6 +22,8 @@ import math
 
 from widgets.plot_dialog import PlotDialog
 
+
+
 class PropulsionTestDialog(QDialog):
     def __init__(self, parent = None):
         super(PropulsionTestDialog, self).__init__(None)
@@ -131,6 +133,13 @@ class PropulsionTestDialog(QDialog):
         layout.addWidget(self._start_traj_edit_button, 20,0)
         layout.addWidget(self._end_traj_edit_button, 20,1)
         layout.addWidget(self._execute_trajectory_button, 21,0)
+        
+        # torque set
+        self._torque_limit_set_button = QPushButton('set torque limit')
+        self._torque_limit_edit = QLineEdit('0')
+        layout.addWidget(self._torque_limit_edit, 22,0)
+        layout.addWidget(self._torque_limit_set_button, 22,1)
+        self._torque_limit_set_button.clicked.connect(self._set_torque_limit)
 
         self.setLayout(layout)
         
@@ -205,6 +214,11 @@ class PropulsionTestDialog(QDialog):
         self._left_pwm_spinbox.setValue(0)
         self._right_pwm_spinbox.setValue(0)
         self._set_pwm()
+        
+    def _set_torque_limit(self):
+        tl = float(self._torque_limit_edit.text())
+        msg = _sym_db.GetSymbol('goldo.nucleo.propulsion.SetMotorsTorqueLimits')(left=tl, right=tl)
+        self._client.publishTopic('nucleo/in/propulsion/motors/torque_limits/set', msg)        
 
     def _set_pose(self):
         x = int(self._pose_x_edit.text()) * 1e-3
