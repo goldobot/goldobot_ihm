@@ -652,11 +652,11 @@ async def test_recalage():
     await propulsion.setPose([0.15, -1.35], 95)
     await propulsion.reposition(-0.1, 0.1)
     await propulsion.measureNormal(90, -1.5 + robot_back_length)
-    await propulsion.translation(0.05, 0.5)
+    await propulsion.translation(0.15, 0.5)
     await propulsion.faceDirection(0, 0.5)
-    await propulsion.reposition(-0.1, 0.1)
+    await propulsion.reposition(-0.2, 0.1)
     await propulsion.measureNormal(0, 0 + robot_back_length)
-    await propulsion.translation(0.05, 0.5)
+    await propulsion.translation(0.15, 0.5)
     
     
     

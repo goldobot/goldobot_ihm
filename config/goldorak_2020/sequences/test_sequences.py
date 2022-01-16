@@ -26,4 +26,22 @@ async def test_herse_pinces_attrape():
      
     await herse.pinces(both='ouvert')
     await asyncio.sleep(5)
-    #await herse.pinces_attrape(gauche=True)
+    
+@robot.sequence
+async def test_reposition():
+    await propulsion.setAccelerationLimits(0.5,0.5,0.5,0.5)
+    await propulsion.setPose([0,0], 0)
+    await propulsion.setMotorsEnable(True)
+    await propulsion.setEnable(True)
+
+    await propulsion.reposition(0.2,0.5)
+    await propulsion.transformPose((0,0), 90)
+    
+@robot.sequence
+async def test_reposition_after_trajectory():
+    await propulsion.setAccelerationLimits(0.5,0.5,0.5,0.5)
+    await propulsion.setPose([0,0], 0)
+    await propulsion.setMotorsEnable(True)
+    await propulsion.setEnable(True)
+
+    await propulsion.trajectorySpline([(0,0), (0.5,0), (0.5,0.5)], speed=0.5,  reposition_speed=0.2,reposition_distance=0.5)
