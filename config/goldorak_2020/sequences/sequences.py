@@ -8,6 +8,7 @@ import math
 #import modules from sequence directory
 from .herse import herse
 from .pales import pales
+from . import test_actuators
 from . import test_sequences
 
 # objects included in the _sequences_globals of RobotMain class, defined in robot_main.py of goldo_main, are available as global variables
@@ -614,13 +615,7 @@ async def test1():
 
     await propulsion.trajectorySpline([(0.5,0.1), (0.5,0.5), (1,0.5)], 0.5)
 
-@robot.sequence
-async def test_lifts():
-    await servos.liftDoHoming(0)
-    await servos.liftDoHoming(1)
-    await sleep(1)
-    await servos.liftSetEnable(0, True)
-    await servos.setEnable('lift_left', True)
+
     
 @robot.sequence
 async def test_dynamixels():

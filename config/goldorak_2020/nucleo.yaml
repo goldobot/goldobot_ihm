@@ -154,6 +154,13 @@ nucleo:
       max_torque: 10
       cw_limit: 0 
       ccw_limit: 2000
+    - name: lift_right
+      id: 1
+      type: GOLDO_LIFT
+      max_speed: 5000
+      max_torque: 10
+      cw_limit: 0 
+      ccw_limit: 2000
   sensors:
     - name: tirette
       type: NUCLEO
