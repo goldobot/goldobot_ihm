@@ -123,28 +123,28 @@ nucleo:
       id: 7
       type: DYNAMIXEL_AX12
       max_speed: 0x3ff
-      max_torque: 255
+      max_torque: 0x3ff
       cw_limit: 156
       ccw_limit: 657
     - name: pale_d
       id: 8
       type: DYNAMIXEL_AX12
       max_speed: 0x3ff
-      max_torque: 255
+      max_torque: 0x3ff
       cw_limit: 364
       ccw_limit: 858
     - name: herse_v
       id: 81
       type: DYNAMIXEL_MX28
       max_speed: 0x3ff
-      max_torque: 255
+      max_torque: 0x3ff
       cw_limit: 860
       ccw_limit: 2075
     - name: herse_slider
       id: 1
       type: DYNAMIXEL_AX12
       max_speed: 0x3ff
-      max_torque: 255
+      max_torque: 0x3ff
       cw_limit: 140
       ccw_limit: 800
     - name: lift_left

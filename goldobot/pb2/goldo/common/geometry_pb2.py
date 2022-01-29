@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='goldo.common.geometry',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x1bgoldo/common/geometry.proto\x12\x15goldo.common.geometry\"\x1d\n\x05Point\x12\t\n\x01x\x18\x01 \x01(\x02\x12\t\n\x01y\x18\x02 \x01(\x02\".\n\nPointCloud\x12\x12\n\nnum_points\x18\x01 \x01(\r\x12\x0c\n\x04\x64\x61ta\x18\x02 \x01(\x0c\"\x98\x01\n\x04Pose\x12.\n\x08position\x18\x01 \x01(\x0b\x32\x1c.goldo.common.geometry.Point\x12\x0b\n\x03yaw\x18\x02 \x01(\x02\x12\r\n\x05speed\x18\x03 \x01(\x02\x12\x10\n\x08yaw_rate\x18\x04 \x01(\x02\x12\x14\n\x0c\x61\x63\x63\x65leration\x18\x05 \x01(\x02\x12\x1c\n\x14\x61ngular_acceleration\x18\x06 \x01(\x02\x62\x06proto3')
+  serialized_pb=_b('\n\x1bgoldo/common/geometry.proto\x12\x15goldo.common.geometry\"\x1d\n\x05Point\x12\t\n\x01x\x18\x01 \x01(\x02\x12\t\n\x01y\x18\x02 \x01(\x02\".\n\nPointCloud\x12\x12\n\nnum_points\x18\x01 \x01(\r\x12\x0c\n\x04\x64\x61ta\x18\x02 \x01(\x0c\"I\n\nStaticPose\x12.\n\x08position\x18\x01 \x01(\x0b\x32\x1c.goldo.common.geometry.Point\x12\x0b\n\x03yaw\x18\x02 \x01(\x02\"\x98\x01\n\x04Pose\x12.\n\x08position\x18\x01 \x01(\x0b\x32\x1c.goldo.common.geometry.Point\x12\x0b\n\x03yaw\x18\x02 \x01(\x02\x12\r\n\x05speed\x18\x03 \x01(\x02\x12\x10\n\x08yaw_rate\x18\x04 \x01(\x02\x12\x14\n\x0c\x61\x63\x63\x65leration\x18\x05 \x01(\x02\x12\x1c\n\x14\x61ngular_acceleration\x18\x06 \x01(\x02\x62\x06proto3')
 )
 
 
@@ -101,6 +101,44 @@ _POINTCLOUD = _descriptor.Descriptor(
 )
 
 
+_STATICPOSE = _descriptor.Descriptor(
+  name='StaticPose',
+  full_name='goldo.common.geometry.StaticPose',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='position', full_name='goldo.common.geometry.StaticPose.position', index=0,
+      number=1, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='yaw', full_name='goldo.common.geometry.StaticPose.yaw', index=1,
+      number=2, type=2, cpp_type=6, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=133,
+  serialized_end=206,
+)
+
+
 _POSE = _descriptor.Descriptor(
   name='Pose',
   full_name='goldo.common.geometry.Pose',
@@ -162,13 +200,15 @@ _POSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=134,
-  serialized_end=286,
+  serialized_start=209,
+  serialized_end=361,
 )
 
+_STATICPOSE.fields_by_name['position'].message_type = _POINT
 _POSE.fields_by_name['position'].message_type = _POINT
 DESCRIPTOR.message_types_by_name['Point'] = _POINT
 DESCRIPTOR.message_types_by_name['PointCloud'] = _POINTCLOUD
+DESCRIPTOR.message_types_by_name['StaticPose'] = _STATICPOSE
 DESCRIPTOR.message_types_by_name['Pose'] = _POSE
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
@@ -185,6 +225,13 @@ PointCloud = _reflection.GeneratedProtocolMessageType('PointCloud', (_message.Me
   # @@protoc_insertion_point(class_scope:goldo.common.geometry.PointCloud)
   ))
 _sym_db.RegisterMessage(PointCloud)
+
+StaticPose = _reflection.GeneratedProtocolMessageType('StaticPose', (_message.Message,), dict(
+  DESCRIPTOR = _STATICPOSE,
+  __module__ = 'goldo.common.geometry_pb2'
+  # @@protoc_insertion_point(class_scope:goldo.common.geometry.StaticPose)
+  ))
+_sym_db.RegisterMessage(StaticPose)
 
 Pose = _reflection.GeneratedProtocolMessageType('Pose', (_message.Message,), dict(
   DESCRIPTOR = _POSE,
