@@ -199,8 +199,7 @@ nucleo:
       type: FPGA
       id: 18
   lifts:
-    left:
-      max_pwm: 0x20
+    - max_pwm: 0x20
       max_range: 1000
       kp: 0
       ki: 0

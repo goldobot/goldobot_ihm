@@ -74,10 +74,12 @@ class TestActuatorsDialog(QDialog):
         self._client = None
         self._button = QPushButton('set actuator')
         servos = []
+        
         i = 0
         for s in config.robot_config.config_proto.servos:
             servos.append((s.name, i))
             i += 1
+        self._servos = servos
         self._servo_values = ActuatorValuesWidget(servos)
         self._button_go = QPushButton('go')
 
@@ -87,6 +89,11 @@ class TestActuatorsDialog(QDialog):
         #layout.addWidget(tab_widget)
         #layout.addWidget(self._button_reset)
         self.combobox_servo = QComboBox()
+        
+        self.label_position = QLabel()
+        self.label_load = QLabel()
+        
+        
         self.spinbox_value = QSpinBox()
         self.spinbox_speed = QSpinBox()
         self.spinbox_torque = QSpinBox()
@@ -110,6 +117,10 @@ class TestActuatorsDialog(QDialog):
         layout.addWidget(self.spinbox_value, 1,1)
         layout.addWidget(self.spinbox_speed, 1,2)
         layout.addWidget(self.spinbox_torque, 1,3)
+        
+        layout.addWidget(self.label_position, 2,1)
+        layout.addWidget(self.label_load, 2,3)
+        
         layout.addWidget(self.button_go, 1,4)
         self.setLayout(layout)
         self.button_go.clicked.connect(self._go)
@@ -122,7 +133,17 @@ class TestActuatorsDialog(QDialog):
         msg = _sym_db.GetSymbol('goldo.nucleo.servos.Move')(servo_id=servo_id, position=position, speed=speed)
         self._client.publishTopic('nucleo/in/servo/move', msg)
 
+    def _on_robot_state(self, msg):
+        self._servo_states = msg.servos
+        servo_id = self.combobox_servo.currentIndex()
+        servo_name = self._servos[servo_id][0]
+        servo_state = self._servo_states[servo_name]
+        
+        self.label_position.setText(str(servo_state.measured_position))
+        self.label_load.setText(str(servo_state.measured_load))
+
         
     def set_client(self, client):
         self._client = client
         self._servo_values._client = client
+        self._client.registerCallback('gui/in/robot_state', self._on_robot_state)
