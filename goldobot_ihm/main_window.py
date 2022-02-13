@@ -153,7 +153,7 @@ class MainWindow(QMainWindow):
         self.showThemeC.setText("Show Theme")
         self.showThemeC.setDisabled(False)
         self.showThemeC.setChecked(True)
-        self.showThemeC.clicked.connect(self._enableThemeDisplay)
+        self.showThemeC.clicked.connect(self._enable_theme_display)
 
         self.clearTelemetryB = QPushButton()
         self.clearTelemetryB.setText("Clear Telemetry")
@@ -184,6 +184,21 @@ class MainWindow(QMainWindow):
         self.posDRL.setText(" dr:")
         self.posDRL.setDisabled(False)
 
+        self.simulStartB = QPushButton()
+        self.simulStartB.setText("Start simulation")
+        self.simulStartB.setDisabled(False)
+        self.simulStartB.clicked.connect(self._start_simulation)
+
+        self.simulPauseB = QPushButton()
+        self.simulPauseB.setText("Pause simulation")
+        self.simulPauseB.setDisabled(False)
+        self.simulPauseB.clicked.connect(self._pause_simulation)
+
+        self.simulResumeB = QPushButton()
+        self.simulResumeB.setText("Resume simulation")
+        self.simulResumeB.setDisabled(False)
+        self.simulResumeB.clicked.connect(self._resume_simulation)
+
         main_layout = QHBoxLayout()
 
         status_layout = QVBoxLayout()
@@ -208,6 +223,9 @@ class MainWindow(QMainWindow):
         right_layout.addWidget(self.posDRL)
         # FIXME : DEBUG : GOLDO
         #right_layout.addWidget(self.propulsionTestD)
+        right_layout.addWidget(self.simulStartB)
+        right_layout.addWidget(self.simulPauseB)
+        right_layout.addWidget(self.simulResumeB)
         right_layout.addStretch(16)
 
         main_layout.addLayout(status_layout)
@@ -289,7 +307,7 @@ class MainWindow(QMainWindow):
         else:
             QMessageBox.critical(self, "Upload config status", "Failure")
 
-    def _enableThemeDisplay(self):
+    def _enable_theme_display(self):
         TableViewWidget.g_show_theme = self.showThemeC.isChecked()
         self._table_view.refreshTheme()
 
@@ -299,3 +317,19 @@ class MainWindow(QMainWindow):
         self.posXRL.setText(" xr: {:>6.1f}".format(rel_x_mm))
         self.posYRL.setText(" yr: {:>6.1f}".format(rel_y_mm))
         self.posDRL.setText(" dr: {:>6.1f}".format(d_mm))
+
+    def _start_simulation(self):
+        # FIXME : TODO : define "StartSimulation" properly
+        #                for now use the "RobotStratDbgStartMatch=2048" message from the "Strat" project
+        self._client.send_message(2048,b'')
+
+    def _pause_simulation(self):
+        # FIXME : TODO : define "PauseSimulation" properly
+        #                for now use the "RobotStratDbgPauseMatch=2049" message from the "Strat" project
+        self._client.send_message(2049,b'')
+
+    def _resume_simulation(self):
+        # FIXME : TODO : define "ResumeSimulation" properly
+        #                for now use the "RobotStratDbgResumeMatch=2050" message from the "Strat" project
+        self._client.send_message(2050,b'')
+

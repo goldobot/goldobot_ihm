@@ -25,7 +25,8 @@ class PropertiesEditorWidget(QWidget):
                 
             self._properties.append((k, t, fmt))                
             wid = QLineEdit(fmt(t()))
-            wid.setReadOnly(readonly)       
+            wid.setReadOnly(readonly)
+            wid.setFixedWidth(70)
             if (k=='x') or (k=='y'):
                 layout.addWidget(QLabel(k+' (mm)'),i,0)
             elif k=='yaw':
