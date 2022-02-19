@@ -39,6 +39,8 @@ async def test_reposition():
     
 @robot.sequence
 async def test_reposition_after_trajectory():
+    #sensor: 0x800084e4
+    await propulsion._setEventSensorsMaks({'lr_lg': 'rising'})
     await propulsion.setAccelerationLimits(0.5,0.5,0.5,0.5)
     await propulsion.setPose([0,0], 0)
     await propulsion.setMotorsEnable(True)

@@ -28,7 +28,7 @@ nucleo:
     wheel_distance_right: 0
     speed_filter_frequency: 500
     accel_filter_frequency: 50
-    
+
   propulsion:
     low_level_config:
       wheels_distance: 0.205
@@ -80,14 +80,14 @@ nucleo:
       type: STANDARD
       max_speed: 10000
       max_torque: 10
-      cw_limit: 6800 
+      cw_limit: 6800
       ccw_limit: 15000
     - name: bras_lat_droite
       id: 6
       type: STANDARD
       max_speed: 10000
       max_torque: 10
-      cw_limit: 3500 
+      cw_limit: 3500
       ccw_limit: 11800
     # Servo GS-9025MG (analog fils orange / rouge / marron)
     # - name: pince_gauche
@@ -95,7 +95,7 @@ nucleo:
     #   type: STANDARD
     #   max_speed: 20000
     #   max_torque: 10
-    #   cw_limit: 6800 
+    #   cw_limit: 6800
     #   ccw_limit: 14200
     # Servo GSD-9025MG (digital fils blanc / rouge / noir)
     - name: pince_gauche
@@ -110,14 +110,14 @@ nucleo:
       type: STANDARD
       max_speed: 20000
       max_torque: 10
-      cw_limit: 5000 
+      cw_limit: 5000
       ccw_limit: 16000
     - name: fanion
       id: 10
       type: STANDARD
       max_speed: 10000
       max_torque: 10
-      cw_limit: 8200 
+      cw_limit: 8200
       ccw_limit: 11500
     - name: pale_g
       id: 7
@@ -152,19 +152,19 @@ nucleo:
       type: GOLDO_LIFT
       max_speed: 5000
       max_torque: 10
-      cw_limit: 0 
+      cw_limit: 0
       ccw_limit: 2000
     - name: lift_right
       id: 1
       type: GOLDO_LIFT
       max_speed: 5000
       max_torque: 10
-      cw_limit: 0 
+      cw_limit: 0
       ccw_limit: 2000
   sensors:
     - name: tirette
       type: NUCLEO
-      id: 3      
+      id: 3
     - name: emergency_stop
       type: NUCLEO
       id: 6
