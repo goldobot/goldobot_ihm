@@ -154,4 +154,6 @@ class RobotStatusWidget(QWidget):
 
 
     def _on_emergency_stop_button_clicked(self):
-        self._client.send_message(16,b'')
+        # FIXME : TODO : define the "EmergencyStop" message properly
+        #                as of 02/13/2022 its value is 107 in message_types.h in nucleo firmware
+        self._client.send_message(107,b'')
