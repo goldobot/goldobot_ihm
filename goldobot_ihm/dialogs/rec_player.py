@@ -79,14 +79,24 @@ class RecPlayerDialog(QDialog):
         
     def setTimestamp(self, timestamp):
         i = bisect.bisect_left(self._loader._timestamps, timestamp)
-        print(i)
+        self._index = i
+        self._playNextMessage()
+        
         
     def _playNextMessage(self):
+        if self._index == len(self._loader._timestamps):
+            return False
         topic, msg = self._loader._messages[self._index]
+        self._client.onMessage(topic, msg)
+        
         self._index += 1
         if self._index < len(self._loader._timestamps):
-            self._ts_next = self._loader._timestamps[self._index]            
-        self._client.onMessage(topic, msg)
+            self._ts_next = self._loader._timestamps[self._index]
+        else:
+            self.stop()
+        return True
+            
+        
         
     def _playMessages(self, ts_target):
         ts = self._ts_next
@@ -96,7 +106,8 @@ class RecPlayerDialog(QDialog):
         self._ts_current = ts
             
     def _onSliderReleased(self):
-        self._dt_last = datetime.now()  
+        self._dt_last = datetime.now()
+        self._ts_target = self._ts_next
 
     def _onSliderMoved(self, timestamp):
         self.setTimestamp(timestamp)
@@ -106,6 +117,8 @@ class RecPlayerDialog(QDialog):
             return
         dt = datetime.now()
         self._ts_target += int((dt - self._dt_last).total_seconds() * 1000)
+        self._dt_last = dt
+        
         self._playMessages(self._ts_target)
         self._slider_timestamp.setValue(self._ts_current)
 

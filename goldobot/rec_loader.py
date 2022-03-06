@@ -1,4 +1,5 @@
 import struct
+import bisect
 
 from google.protobuf.descriptor import MakeDescriptor
 from google.protobuf.message_factory import MessageFactory
@@ -15,6 +16,9 @@ class RecLoader:
     def __init__(self):
         self._messages = []
         self._timestamps = []
+        
+    def __len__(self):
+        return len(self._messages)
 
     def open(self, path):
         pool = DescriptorPool()
@@ -78,7 +82,7 @@ class RecLoader:
             except:
                 pass
                 
-            
+
 def reconstruct_stream(l):
     encoders_left = []
     encoders_right = []
