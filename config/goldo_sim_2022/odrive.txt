@@ -1,0 +1,2 @@
+torque constant: 0.04
+torque lim default; 0.4 (10 amps)

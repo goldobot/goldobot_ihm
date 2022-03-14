@@ -159,6 +159,7 @@ class TableViewWidget(QGraphicsView):
     g_debug = True
     g_dbg_plt_sz = 1.2
     g_dbg_pen_sz = 0.8
+    g_debug_astar = True
 
 
     def __init__(self, parent = None, ihm_type='pc'):
@@ -412,12 +413,24 @@ class TableViewWidget(QGraphicsView):
             
         
     def on_msg_astar(self, msg):
+        if not TableViewWidget.g_debug_astar:
+            return
         image = QImage(msg.value, 300, 200, QImage.Format_Grayscale8)
         image.setColorTable([Qt.black, Qt.white])
-        self._astar_label = QLabel()
-        self._astar_label.setPixmap(QPixmap(image))
-        self._astar_label.show()
-        print(image)
+        #self._astar_label = QLabel()
+        #self._astar_label.setPixmap(QPixmap(image))
+        #self._astar_label.show()
+        #print(image)
+        goldo_pixmap = QPixmap()
+        goldo_pixmap.convertFromImage(image)
+        self._scene.removeItem(self._bg_img)
+        self._bg_img = QGraphicsPixmapItem(goldo_pixmap)
+        self._bg_img.setTransform(QTransform(1.0, 0.0, 0.0,  0.0, -1.0, 0.0,   0.0, 0.0, 0.1))
+        self._bg_img.setRotation(-90)
+        self._bg_img.setPos(0, -1500)
+        self._bg_img.setZValue(-1)
+        if TableViewWidget.g_show_theme:
+            self._scene.addItem(self._bg_img)
         
     def on_msg_trajectory(self, msg):
         if TableViewWidget.g_debug:

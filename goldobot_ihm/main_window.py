@@ -184,6 +184,11 @@ class MainWindow(QMainWindow):
         self.posDRL.setText(" dr:")
         self.posDRL.setDisabled(False)
 
+        self.executePrematchB = QPushButton()
+        self.executePrematchB.setText("Execute prematch")
+        self.executePrematchB.setDisabled(False)
+        self.executePrematchB.clicked.connect(self._prematch)
+
         self.simulStartB = QPushButton()
         self.simulStartB.setText("Start simulation")
         self.simulStartB.setDisabled(False)
@@ -198,6 +203,11 @@ class MainWindow(QMainWindow):
         self.simulResumeB.setText("Resume simulation")
         self.simulResumeB.setDisabled(False)
         self.simulResumeB.clicked.connect(self._resume_simulation)
+
+        self.testAstarB = QPushButton()
+        self.testAstarB.setText("Test A*")
+        self.testAstarB.setDisabled(False)
+        self.testAstarB.clicked.connect(self._test_astar)
 
         main_layout = QHBoxLayout()
 
@@ -223,9 +233,11 @@ class MainWindow(QMainWindow):
         right_layout.addWidget(self.posDRL)
         # FIXME : DEBUG : GOLDO
         #right_layout.addWidget(self.propulsionTestD)
+        right_layout.addWidget(self.executePrematchB)
         right_layout.addWidget(self.simulStartB)
         right_layout.addWidget(self.simulPauseB)
         right_layout.addWidget(self.simulResumeB)
+        right_layout.addWidget(self.testAstarB)
         right_layout.addStretch(16)
 
         main_layout.addLayout(status_layout)
@@ -294,7 +306,10 @@ class MainWindow(QMainWindow):
         self._client.publishTopic('gui/out/commands/config_nucleo')
         
     def _prematch(self):
-        self._client.publishTopic('gui/out/commands/prematch')  
+        blue = 1
+        yellow = 2
+        self._client.publishTopic('gui/out/side', _sym_db.GetSymbol('google.protobuf.Int32Value')(value=blue))
+        self._client.publishTopic('gui/out/commands/prematch')
         
     def _start_match(self):
         self._client.publishTopic('gui/out/commands/debug_start_match')  
@@ -321,15 +336,20 @@ class MainWindow(QMainWindow):
     def _start_simulation(self):
         # FIXME : TODO : define "StartSimulation" properly
         #                for now use the "RobotStratDbgStartMatch=2048" message from the "Strat" project
-        self._client.send_message(2048,b'')
+        self._client.send_message_new_header(2048,b'')
 
     def _pause_simulation(self):
         # FIXME : TODO : define "PauseSimulation" properly
         #                for now use the "RobotStratDbgPauseMatch=2049" message from the "Strat" project
-        self._client.send_message(2049,b'')
+        self._client.send_message_new_header(2049,b'')
 
     def _resume_simulation(self):
         # FIXME : TODO : define "ResumeSimulation" properly
         #                for now use the "RobotStratDbgResumeMatch=2050" message from the "Strat" project
-        self._client.send_message(2050,b'')
+        self._client.send_message_new_header(2050,b'')
+
+    def _test_astar(self):
+        print ("Test A*")
+        msg = _sym_db.GetSymbol('google.protobuf.Empty')()
+        self._client.publishTopic('robot/test_astar', msg)
 

@@ -68,6 +68,9 @@ class ZmqClient(QObject):
     def send_message(self, message_type, message_body):
         self._push_socket.send_multipart([struct.pack('<H',message_type), message_body])
 
+    def send_message_new_header(self, message_type, message_body):
+        self._push_socket.send_multipart([struct.pack('<BBHIi',0,0,message_type,0,0), message_body])
+
     def publishTopic(self, topic, msg = None):
         if msg is None:
             msg = _sym_db.GetSymbol('google.protobuf.Empty')()
