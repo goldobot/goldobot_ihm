@@ -16,7 +16,9 @@ class RecLoader:
     def __init__(self):
         self._messages = []
         self._timestamps = []
-        
+        self._topics = []
+        self._topic_timestamps = dict()
+
     def __len__(self):
         return len(self._messages)
 
@@ -27,17 +29,17 @@ class RecLoader:
         dp = FileDescriptorProto()
         d.CopyToProto(dp)
         pool.AddSerializedFile(dp.SerializeToString())
-        
+
         d = _descriptor_pool.Default().FindFileByName('google/protobuf/wrappers.proto')
         dp = FileDescriptorProto()
         d.CopyToProto(dp)
         pool.AddSerializedFile(dp.SerializeToString())
-        
+
         d = _descriptor_pool.Default().FindFileByName('google/protobuf/empty.proto')
         dp = FileDescriptorProto()
         d.CopyToProto(dp)
         pool.AddSerializedFile(dp.SerializeToString())
-        
+
         self._pool = pool
         descr = DescriptorProto(name='RecordFileHeader', field = [
             FieldDescriptorProto(
@@ -45,17 +47,17 @@ class RecLoader:
                 number=1,
                 label=FieldDescriptorProto.LABEL_REPEATED,
                 type=FieldDescriptorProto.TYPE_BYTES)
-            ]            
+            ]
         )
         file_descriptor_proto = FileDescriptorProto()
         file_descriptor_proto.message_type.add().MergeFrom(descr)
-        file_descriptor_proto.name = 'rec_file_header.proto'       
+        file_descriptor_proto.name = 'rec_file_header.proto'
         pool.Add(file_descriptor_proto)
         descr = pool.FindFileByName('rec_file_header.proto').message_types_by_name['RecordFileHeader']
-    
+
         message_factory = MessageFactory(pool=pool)
-        RecFileHeader = message_factory.GetPrototype(descr)        
-        
+        RecFileHeader = message_factory.GetPrototype(descr)
+        topics = set()
         with open(path, 'rb') as f:
             d = f.read(13)
             header_size, = struct.unpack('<I', d[9:])
@@ -79,18 +81,20 @@ class RecLoader:
                     msg.ParseFromString(payload)
                     self._timestamps.append(h[0])
                     self._messages.append((topic, msg))
+                    topics.add(topic)
             except:
                 pass
-                
+        self._topics = sorted(topics)
 
 def reconstruct_stream(l):
     encoders_left = []
     encoders_right = []
     for topic, msg in l._messages:
-        if topic == b'nucleo/out/propulsion/odometry_stream':
+        if topic == 'nucleo/out/propulsion/odometry_stream':
             timestamp = struct.unpack('<I', msg.value[0:4])
             vals = [struct.unpack('<HH', msg.value[i*4:(i+1)*4]) for i in range(1, len(msg.value)//4)]
             for v in vals:
                 encoders_left.append(v[0])
-    return encoders_left
-#encoders_left = reconstruct_stream(l) 
+                encoders_right.append(v[1])
+    return encoders_left, encoders_right
+#encoders_left = reconstruct_stream(l)

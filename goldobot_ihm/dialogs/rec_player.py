@@ -1,5 +1,6 @@
 from PyQt5.QtWidgets import QGridLayout
 from PyQt5.QtWidgets import QPushButton
+from PyQt5.QtWidgets import QMenu
 from PyQt5.QtWidgets import QDialog
 from PyQt5.QtWidgets import QSlider
 from PyQt5.QtWidgets import QFileDialog
@@ -7,7 +8,7 @@ from PyQt5.QtWidgets import QFileDialog
 from PyQt5.QtCore import QTimer
 from PyQt5.QtCore import Qt
 
-from goldobot.rec_loader import RecLoader
+from goldobot.rec_loader import RecLoader, reconstruct_stream
 
 
 from typing import Optional
@@ -33,6 +34,10 @@ class RecPlayerDialog(QDialog):
         self._button_load = QPushButton('load')
         self._button_play = QPushButton('play')
         self._button_stop = QPushButton('stop')
+        self._button_menu = QPushButton('...')
+        
+        self._menu = QMenu()
+        self._button_menu.setMenu(self._menu)
         
         self._button_load.clicked.connect(self.load)
         self._button_play.clicked.connect(self.play)
@@ -47,8 +52,11 @@ class RecPlayerDialog(QDialog):
         layout.addWidget(self._button_load, 0, 1)
         layout.addWidget(self._button_play, 0, 2)
         layout.addWidget(self._button_stop, 0, 3)
-        layout.addWidget(self._slider_timestamp, 1,0,1,3)
+        layout.addWidget(self._button_menu, 0, 4)
+        layout.addWidget(self._slider_timestamp, 1,0,1,4)
         self.setLayout(layout)
+        
+        self._menu.addAction('Export Odometry Counts').triggered.connect(self._export_odometry_counts)
 
     def loadRecordFile(self, path):
         self._loader.open(path)
@@ -95,8 +103,6 @@ class RecPlayerDialog(QDialog):
         else:
             self.stop()
         return True
-            
-        
         
     def _playMessages(self, ts_target):
         ts = self._ts_next
@@ -128,6 +134,17 @@ class RecPlayerDialog(QDialog):
 
     def onUpdateClicked(self):
         self._model.load(self._last)
+        
+    def _export_odometry_counts(self):
+        path = QFileDialog.getSaveFileName(self, 'Save file')[0]
+        c_left, c_right = reconstruct_stream(self._loader)
+        file = open(path, 'w')
+        file.write('encoder_left,encoder_right\n')
+        for cl,cr in zip(c_left, c_right):
+            file.write(f'{cl},{cr}\n')
+        
+    
+        
 
 
 
