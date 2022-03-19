@@ -12,7 +12,6 @@ from google.protobuf import symbol_database as _symbol_database
 _sym_db = _symbol_database.Default()
 
 
-from goldo.common import geometry_pb2 as goldo_dot_common_dot_geometry__pb2
 from goldo import pb2_options_pb2 as goldo_dot_pb2__options__pb2
 
 
@@ -21,9 +20,9 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='goldo.nucleo.odometry',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x1bgoldo/nucleo/odometry.proto\x12\x15goldo.nucleo.odometry\x1a\x1bgoldo/common/geometry.proto\x1a\x17goldo/pb2_options.proto\"\xc6\x01\n\x0eOdometryConfig\x12\x1b\n\x13\x64ist_per_count_left\x18\x01 \x01(\x02\x12\x1c\n\x14\x64ist_per_count_right\x18\x02 \x01(\x02\x12\x1b\n\x13wheel_distance_left\x18\x03 \x01(\x02\x12\x1c\n\x14wheel_distance_right\x18\x04 \x01(\x02\x12\x1e\n\x16speed_filter_frequency\x18\x05 \x01(\x02\x12\x1e\n\x16\x61\x63\x63\x65l_filter_frequency\x18\x06 \x01(\x02\x62\x06proto3')
+  serialized_pb=_b('\n\x1bgoldo/nucleo/odometry.proto\x12\x15goldo.nucleo.odometry\x1a\x17goldo/pb2_options.proto\"\xc6\x01\n\x0eOdometryConfig\x12\x1b\n\x13\x64ist_per_count_left\x18\x01 \x01(\x02\x12\x1c\n\x14\x64ist_per_count_right\x18\x02 \x01(\x02\x12\x1b\n\x13wheel_distance_left\x18\x03 \x01(\x02\x12\x1c\n\x14wheel_distance_right\x18\x04 \x01(\x02\x12\x1e\n\x16speed_filter_frequency\x18\x05 \x01(\x02\x12\x1e\n\x16\x61\x63\x63\x65l_filter_frequency\x18\x06 \x01(\x02\x62\x06proto3')
   ,
-  dependencies=[goldo_dot_common_dot_geometry__pb2.DESCRIPTOR,goldo_dot_pb2__options__pb2.DESCRIPTOR,])
+  dependencies=[goldo_dot_pb2__options__pb2.DESCRIPTOR,])
 
 
 
@@ -89,8 +88,8 @@ _ODOMETRYCONFIG = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=109,
-  serialized_end=307,
+  serialized_start=80,
+  serialized_end=278,
 )
 
 DESCRIPTOR.message_types_by_name['OdometryConfig'] = _ODOMETRYCONFIG
