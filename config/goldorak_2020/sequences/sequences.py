@@ -6,6 +6,8 @@ import numpy as np
 import math
 
 #import modules from sequence directory
+#purple replaces 2021's Blue
+from .poses import YellowPoses, PurplePoses
 from .herse import herse
 from .pales import pales
 from . import test_actuators
@@ -720,6 +722,9 @@ async def prematch():
 
     await odrive.clearErrors()
     await propulsion.clearError()
+    
+    await propulsion.setMotorsEnable(True)
+    await propulsion.setEnable(True)
 
 
     if robot.side == Side.Blue:
@@ -727,6 +732,10 @@ async def prematch():
     if robot.side == Side.Yellow:
         poses = YellowPoses
     await propulsion.setPose(poses.start_pose[0:2], poses.start_pose[2])
+    
+    a = await propulsion.reposition(-0.1, 0.1)
+    if a.data1 == 0:
+        raise RuntimeError("reposition didn't hit")
 
     return True
     #robot._adversary_detection_enable = False
@@ -765,17 +774,7 @@ async def check_secondary_robot():
     else:
         print('No')    
 
-@robot.sequence
-async def test_ferme_pavillon():
-    await servos.setEnable('fanion', True)
-    await servos.move('fanion', fanion_ferme)
 
-@robot.sequence
-async def test_ouvre_pavillon():
-    await servos.setEnable('fanion', True)
-    await servos.move('fanion', fanion_ouvert)
-    await sleep(2)
-    await servos.move('fanion', fanion_ferme)
 
 @robot.sequence
 async def test_emergency_stop():
