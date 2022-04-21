@@ -65,9 +65,22 @@ class YellowPoses:
         (1.5, -1.0),
         (1.25,-0.9),
         (0.55,-1.1),
-        (0.25,-1.25),
-        (0.20,-1.25),
-        (0.12,-1.25)
+        (0.35,-1.25),
+        (0.15,-1.25)
+        ]
+    t3 = [
+        (0.15,-0.62),
+        (0.9,-0.62),
+        (1.1,-0.9),
+        (1.5, -1.0),
+        t1[-1]
+        ]
+    t4 = [
+        t3[-1],
+        on_segment((2.0,-0.99), (1.49, -1.5), rc.robot_front_length + 0.05),
+        (1.75, -0.3),
+        (1.35, -0.3),
+        (1.35, -0.7),
         ]
     
 class BluePoses:
@@ -75,7 +88,8 @@ class BluePoses:
     start_pose = symetrie(YellowPoses.start_pose)
     t1 = [symetrie(p) for p in YellowPoses.t1]
     t2 = [symetrie(p) for p in YellowPoses.t2]
-
+    t3 = [symetrie(p) for p in YellowPoses.t3]
+    t4 = [symetrie(p) for p in YellowPoses.t4]
     
             
 async def pointAndGoRetry(p, speed, yaw_rate):
@@ -157,6 +171,11 @@ async def start_match():
 
     await propulsion.trajectorySpline(poses.t1, speed=1.0)
     await propulsion.trajectorySpline(poses.t2, speed=1.0)
+    await propulsion.pointAndGo(poses.t3[0], 1.0, 1.0)
+    await propulsion.pointTo(poses.t3[1], 1.0)
+    await propulsion.trajectorySpline(poses.t3, speed=1.0)
+    await propulsion.trajectorySpline(poses.t4, speed=1.0)
+    
     #strategy.actions['action1'].enabled = True
 
 async def end_match():

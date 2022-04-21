@@ -16,7 +16,7 @@ from PyQt5.QtWidgets import QGraphicsPathItem
 from PyQt5.QtGui import QPolygonF, QPen, QBrush, QColor, QFont, QTransform
 from PyQt5.QtGui import QImage, QImageReader, QPixmap, QPainterPath
 
-from .table_2020 import Table
+from .table_2022 import Table
 from .robot import Robot
 
 import numpy as np
