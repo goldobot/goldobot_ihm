@@ -60,7 +60,7 @@ class YellowPoses:
     display_pose = (rc.robot_back_length, -1.25)
     g1 = (rc.robot_rotation_distance_figurine, -0.4)
     
-    g2 = (0.7, -1.0)
+    g2 = (0.7, -1.05)
     g3 = (0.3,-1.0)
     
     g4 = (1.375, -0.7)
@@ -68,6 +68,8 @@ class YellowPoses:
     g6 = (1.50, -1.0)
     g7 = (0.7, -0.9)
     g8 = (0.7, -1.1)
+    
+    g9 = (0.7, -1.1)
     
     # prise figurine
     t1 = [
@@ -93,6 +95,7 @@ class YellowPoses:
         g2,
         (0.3,-1.0),
         (0.3,-0.4),
+        (0.675,-0.3),
         ]
     #vers 2eme groupe
     t4 = [
@@ -239,24 +242,21 @@ async def start_match():
     await asyncio.sleep(1)
     
     # bring group 1 into starting area
-    await propulsion.trajectorySpline(poses.t2, speed=0.7)  
+    await propulsion.trajectorySpline(poses.t2, speed=0.5)  
+    await robot.setScore(20)
 
     # get out of starting area     
     await propulsion.pointAndGo(poses.g2, 1.0, yaw_rate, back = True)
     await pales.move(both='ferme')
     await asyncio.sleep(1)
     
-    
+    # prepare to push group 2
     await propulsion.pointTo(poses.g3, yaw_rate)
     await propulsion.trajectorySpline(poses.t3, speed=1.0)
-    await propulsion.pointTo(poses.g5, yaw_rate)
-    await pales.move(both='ouvert')
-    await propulsion.trajectorySpline(poses.t4, speed=1.0)
-    await propulsion.moveTo(poses.g6, speed=1.0)
-    await pales.move(both='ferme')
-    await propulsion.pointAndGo(poses.g7, 1.0, yaw_rate)
-    await propulsion.pointAndGo(poses.g8, 1.0, yaw_rate)
-    
+    await propulsion.pointTo(poses.g2, yaw_rate)
+    await pales.move(both='ouvert') 
+    await asyncio.sleep(1)
+    await propulsion.moveTo(poses.g2, speed=1.0)    
     return
     
 
@@ -268,7 +268,7 @@ async def end_match():
     #await servos.move('fanion', fanion_ouvert)
     #await sleep(2)
     #await servos.move('fanion', fanion_ferme)
-    await robot.setScore(robot.score + 10)
+    await robot.setScore(42)
 
 async def check_secondary_robot():
     print('Check if second robot is in zone')
