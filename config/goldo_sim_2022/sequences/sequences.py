@@ -86,7 +86,7 @@ def on_segment(p1, p2, d):
 class BluePoses(object):
     # start_pose = (0.8, -1.4 + robot_width * 0.5, 0)
     start_pose = (0.955, -1.5 + robot_width * 0.5 + 5e-3, 0)
-    start_pose_simul_goldo = (0.65, -1.4, 90)
+    start_pose_simul_goldo = (0.55, -1.4, 90)
 
     sortie_port = (1.2, -1.5 + robot_width * 0.5 + 5e-3, 0)
     approche_ecueil_lateral = (1.650, -1.5 + 0.26, -90)
@@ -742,7 +742,7 @@ async def prematch():
     #await lidar.start()
 
     strategy._astar.resetCosts()
-    await strategy.display_astar()
+    #await strategy.display_astar()
 
     await robot.setScore(0)
 
@@ -844,18 +844,36 @@ async def test_emergency_stop():
 async def test_goldo():
     #await propulsion.trajectory([(0.65,-1.0)], 0.5)
 
-    await propulsion.trajectory([(0.7,-0.55),(1.05,0.02),(1.4,0.3),(1.7,0.3)], 0.5)
-    await sleep(2)
-    await propulsion.pointTo((1.54, 0.15), 20)
-    await sleep(2)
-    #print (rplidar_detections)
-    strategy._astar.resetCosts()
-    for d in rplidar_detections:
-        #print (d)
-        if (d.detect_quality>0):
-            strategy._astar.setDisk((d.x,d.y), 30)
-    await strategy.display_astar()
-    new_path = strategy._astar.computePath((1.7,0.3), (1.8, -1.3))
-    print (new_path)
-    await propulsion.trajectorySpline(new_path, 0.5)
+    #await propulsion.trajectory([(0.7,-0.55),(1.05,0.02),(1.4,0.3),(1.7,0.3)], 0.5)
+    #await sleep(2)
+    #await propulsion.pointTo((1.54, 0.15), 20)
+    #await sleep(2)
+    ##print (rplidar_detections)
+    #strategy._astar.resetCosts()
+    #for d in rplidar_detections:
+    #    #print (d)
+    #    if (d.detect_quality>0):
+    #        strategy._astar.setDisk((d.x,d.y), 30)
+    #await strategy.display_astar()
+    #new_path = strategy._astar.computePath((1.7,0.3), (1.8, -1.3))
+    #print (new_path)
+    #await propulsion.trajectorySpline(new_path, 0.5)
 
+    await propulsion.trajectory([(0.55,-1.0),(0.2,-0.7),(0.2,-0.45),(0.45,-0.15)], 0.5)
+    await sleep(1)
+    await propulsion.pointTo((0.10, -0.15), 20)
+    await sleep(1)
+    await propulsion.trajectory([(0.15,-0.15)], 0.5)
+    await sleep(10)
+    await propulsion.pointTo((0.25, -0.45), 20)
+    await sleep(1)
+    await propulsion.trajectory([(0.25, -0.45)], 0.5)
+    await sleep(1)
+    await propulsion.pointTo((0.10, -0.45), 20)
+    await sleep(1)
+    await propulsion.trajectory([(0.2,-0.45)], 0.5)
+    await sleep(10)
+    await propulsion.pointTo((1.0, 0.0), 20)
+    await sleep(1)
+    await propulsion.trajectory([(1.0, 0.0)], 0.5)
+    await sleep(1)
