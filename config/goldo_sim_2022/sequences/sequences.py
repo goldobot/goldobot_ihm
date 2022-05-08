@@ -738,6 +738,8 @@ async def prematch_old():
 async def prematch():
     print (" DEBUG GOLDO : prematch()")
 
+    await propulsion.setAccelerationLimits(4.0,4.0,20,20)
+
     global poses
     #await lidar.start()
 
@@ -859,6 +861,7 @@ async def test_goldo():
     #print (new_path)
     #await propulsion.trajectorySpline(new_path, 0.5)
 
+    # PR 2022
     await propulsion.trajectory([(0.55,-1.0),(0.2,-0.7),(0.2,-0.45),(0.45,-0.15)], 0.5)
     await sleep(1)
     await propulsion.pointTo((0.10, -0.15), 20)
@@ -875,5 +878,15 @@ async def test_goldo():
     await sleep(10)
     await propulsion.pointTo((1.0, 0.0), 20)
     await sleep(1)
-    await propulsion.trajectory([(1.0, 0.0)], 0.5)
+    #await propulsion.trajectory([(1.0, 0.0)], 0.5)
+    strategy._astar.resetCosts()
+    for d in rplidar_detections:
+        #print (d)
+        if (d.detect_quality>0):
+            strategy._astar.setDisk((d.x,d.y), 30)
+    await strategy.display_astar()
+    new_path = strategy._astar.computePath((0.2,-0.45), (1.0, 0.0))
+    new_path = [(0.2,-0.45)] + new_path
+    print (new_path)
+    await propulsion.trajectorySpline(new_path, 0.5)
     await sleep(1)
