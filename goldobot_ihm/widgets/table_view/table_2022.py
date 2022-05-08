@@ -39,56 +39,6 @@ class Table:
         background = QColor(40,40,40)
         darker = QColor(20,20,20)
 
-        # Scenario 2020
+        # Scenario 2022
+        # TODO
 
-        #Port principal "bleu"
-        self._scene.addRect(QRectF(500,-1120,570,20),QPen(), QBrush(blueium))
-        self._scene.addRect(QRectF(500,-1500,30,400),QPen(), QBrush(greenium))
-        self._scene.addRect(QRectF(1070,-1500,30,400),QPen(), QBrush(redium))
-
-        #Port secondaire "bleu"
-        self._scene.addRect(QRectF(1700,150,20,300),QPen(), QBrush(blueium))
-        self._scene.addRect(QRectF(1700,150,300,100),QPen(), QBrush(greenium))
-        self._scene.addRect(QRectF(1700,350,300,100),QPen(), QBrush(redium))
-
-        #Bouees cote "bleu"
-        self._scene.addEllipse(QRectF(1200-35,-1200-35,70,70),QPen(), QBrush(greenium))
-        self._scene.addEllipse(QRectF(1080-35,-1050-35,70,70),QPen(), QBrush(redium))
-        self._scene.addEllipse(QRectF(510-35,-1050-35,70,70),QPen(), QBrush(greenium))
-        self._scene.addEllipse(QRectF(400-35,-1200-35,70,70),QPen(), QBrush(redium))
-
-        self._scene.addEllipse(QRectF(100-35,-830-35,70,70),QPen(), QBrush(redium))
-        self._scene.addEllipse(QRectF(400-35,-550-35,70,70),QPen(), QBrush(greenium))
-        self._scene.addEllipse(QRectF(800-35,-400-35,70,70),QPen(), QBrush(redium))
-        self._scene.addEllipse(QRectF(1200-35,-230-35,70,70),QPen(), QBrush(greenium))
-
-        self._scene.addEllipse(QRectF(1650-35,-435-35,70,70),QPen(), QBrush(greenium))
-        self._scene.addEllipse(QRectF(1650-35,-165-35,70,70),QPen(), QBrush(redium))
-        self._scene.addEllipse(QRectF(1955-35,-495-35,70,70),QPen(), QBrush(redium))
-        self._scene.addEllipse(QRectF(1955-35,-105-35,70,70),QPen(), QBrush(greenium))
-
-        #Port principal "jaune"
-        self._scene.addRect(QRectF(500,1100,570,20),QPen(), QBrush(yellow))
-        self._scene.addRect(QRectF(500,1100,30,400),QPen(), QBrush(redium))
-        self._scene.addRect(QRectF(1070,1100,30,400),QPen(), QBrush(greenium))
-
-        #Port secondaire "jaune"
-        self._scene.addRect(QRectF(1700,-450,20,300),QPen(), QBrush(yellow))
-        self._scene.addRect(QRectF(1700,-450,300,100),QPen(), QBrush(greenium))
-        self._scene.addRect(QRectF(1700,-250,300,100),QPen(), QBrush(redium))
-
-        #Bouees cote "jaune"
-        self._scene.addEllipse(QRectF(1200-35,1200-35,70,70),QPen(), QBrush(redium))
-        self._scene.addEllipse(QRectF(1080-35,1050-35,70,70),QPen(), QBrush(greenium))
-        self._scene.addEllipse(QRectF(510-35,1050-35,70,70),QPen(), QBrush(redium))
-        self._scene.addEllipse(QRectF(400-35,1200-35,70,70),QPen(), QBrush(greenium))
-
-        self._scene.addEllipse(QRectF(100-35,830-35,70,70),QPen(), QBrush(greenium))
-        self._scene.addEllipse(QRectF(400-35,550-35,70,70),QPen(), QBrush(redium))
-        self._scene.addEllipse(QRectF(800-35,400-35,70,70),QPen(), QBrush(greenium))
-        self._scene.addEllipse(QRectF(1200-35,230-35,70,70),QPen(), QBrush(redium))
-
-        self._scene.addEllipse(QRectF(1650-35,435-35,70,70),QPen(), QBrush(redium))
-        self._scene.addEllipse(QRectF(1650-35,165-35,70,70),QPen(), QBrush(greenium))
-        self._scene.addEllipse(QRectF(1955-35,495-35,70,70),QPen(), QBrush(greenium))
-        self._scene.addEllipse(QRectF(1955-35,105-35,70,70),QPen(), QBrush(redium))

@@ -842,8 +842,8 @@ async def test_emergency_stop():
     await task
 
 async def test_goldo():
-    speed = 1.3
-    start_pose = (0.955, -1.5 + robot_width * 0.5 + 5e-3, 0)
+    #await propulsion.trajectory([(0.65,-1.0)], 0.5)
+
     await propulsion.trajectory([(0.7,-0.55),(1.05,0.02),(1.4,0.3),(1.7,0.3)], 0.5)
     await sleep(2)
     await propulsion.pointTo((1.54, 0.15), 20)
