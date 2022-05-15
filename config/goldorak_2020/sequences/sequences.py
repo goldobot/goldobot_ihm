@@ -13,6 +13,8 @@ from .pales import pales
 from . import test_actuators
 from . import test_sequences
 
+from . import robot_config as rc
+
 # objects included in the _sequences_globals of RobotMain class, defined in robot_main.py of goldo_main, are available as global variables
 # those objects are used to interact with the robot (send commands, read data)
 
@@ -323,32 +325,7 @@ async def sortie_port():
     # await servos.moveMultiple({'pale_g': 156, 'pale_d': 858})
     await propulsion.pointTo(poses.prise_ecueil_lateral[0:2], 20)
 
-@robot.sequence
-async def test_prise_g_itw():
-    await servos.moveMultiple({'herse_v' : herse.v_degagement, 'pale_g' : 190, 'pale_d' : 823})
-    await servos.moveMultiple({'herse_slider' : herse.h_prise_g})
-    await servos.moveMultiple({'herse_v' : herse.v_prise})
-    await sleep(5)
-    await servos.moveMultiple({'herse_v' : herse.v_prise_approche})
-    await herse.pinces_attrape(gauche = True, droite = True)
-    await servos.moveMultiple({'herse_v':herse.v_degagement})
-    await servos.moveMultiple({'herse_slider' : herse.h_centre_d})
 
-@robot.sequence
-async def test_prise_g_itw():
-    await servos.moveMultiple({'herse_v' : herse.v_degagement, 'pale_g' : 190, 'pale_d' : 823})
-    await servos.moveMultiple({'herse_slider' : herse.h_prise_d})
-    await servos.moveMultiple({'herse_v' : herse.v_prise})
-    await sleep(5)
-    await servos.moveMultiple({'herse_v' : herse.v_prise_approche})
-    await herse.pinces_attrape(gauche = True, droite = True)
-    await servos.moveMultiple({'herse_v':herse.v_degagement})
-    await servos.moveMultiple({'herse_slider' : herse.h_centre_g})
-
-@robot.sequence
-async def test_depose_itw():
-    await herse.depose_d()
-    await herse.depose_g()
 
 
 async def ecueil_lateral():

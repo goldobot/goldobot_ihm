@@ -2,6 +2,33 @@ import asyncio
 import logging
 
 @robot.sequence
+async def test_prise_g_itw():
+    await servos.moveMultiple({'herse_v' : herse.v_degagement, 'pale_g' : 190, 'pale_d' : 823})
+    await servos.moveMultiple({'herse_slider' : herse.h_prise_g})
+    await servos.moveMultiple({'herse_v' : herse.v_prise})
+    await sleep(5)
+    await servos.moveMultiple({'herse_v' : herse.v_prise_approche})
+    await herse.pinces_attrape(gauche = True, droite = True)
+    await servos.moveMultiple({'herse_v':herse.v_degagement})
+    await servos.moveMultiple({'herse_slider' : herse.h_centre_d})
+
+@robot.sequence
+async def test_prise_g_itw():
+    await servos.moveMultiple({'herse_v' : herse.v_degagement, 'pale_g' : 190, 'pale_d' : 823})
+    await servos.moveMultiple({'herse_slider' : herse.h_prise_d})
+    await servos.moveMultiple({'herse_v' : herse.v_prise})
+    await sleep(5)
+    await servos.moveMultiple({'herse_v' : herse.v_prise_approche})
+    await herse.pinces_attrape(gauche = True, droite = True)
+    await servos.moveMultiple({'herse_v':herse.v_degagement})
+    await servos.moveMultiple({'herse_slider' : herse.h_centre_g})
+
+@robot.sequence
+async def test_depose_itw():
+    await herse.depose_d()
+    await herse.depose_g()
+
+@robot.sequence
 async def test_servos_commands():
     await servos.disableAll()
     await servos.setEnable('pince_droite', True)

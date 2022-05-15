@@ -1,3 +1,6 @@
+import numpy as np
+from . import robot_config as rc
+
 def symetrie(pose):
     if isinstance(pose, np.ndarray):
         if pose.shape[0] == 2:
@@ -6,10 +9,10 @@ def symetrie(pose):
     
 
 class PurplePoses:    
-    start_pose = (0.955, -1.5 + robot_width * 0.5 + 5e-3, 0)
+    start_pose = (0.955, -1.5 + rc.robot_width * 0.5 + 5e-3, 0)
 
     
 
 class YellowPoses(object):
-    start_pose = symetrie(BluePoses.start_pose)
+    start_pose = symetrie(PurplePoses.start_pose)
 
