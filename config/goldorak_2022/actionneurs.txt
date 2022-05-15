@@ -1,0 +1,21 @@
+bras
+2 pompes (a priori gpio)
+2 ascenceurs
+2 mx28 (coude)
+2 ax12 (poignet)
+2 capteur sick (gpio)
+
+pince ravisseuse
+1 mx28 at (ascenseur)
+4 ax12 (2 entrée sortie, 2 serrr mors)
+2 capteurs sick lateraux
+carte mesure triohm (2 bits)
+
+ejecteur
+1 servo
+1 microswitch
+2 capteurs baumer ras du sol
+
+figurine
+1 capteur de presence (relais reed ou hall)
+
