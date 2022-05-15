@@ -129,7 +129,7 @@ class DebugTrajectory:
 
         
 class DebugGraphicsScene(QGraphicsScene):
-    dbg_mouse_info = pyqtSignal(int,int,int,int,int)
+    dbg_mouse_info = pyqtSignal(float,float,float,float,float)
     def mouseMoveEvent(self, event):
         x_mm = event.scenePos().x()
         y_mm = event.scenePos().y()
