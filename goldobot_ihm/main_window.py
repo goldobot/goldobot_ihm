@@ -306,9 +306,9 @@ class MainWindow(QMainWindow):
         self._client.publishTopic('gui/out/commands/config_nucleo')
         
     def _prematch(self):
-        blue = 1
+        purple = 1
         yellow = 2
-        self._client.publishTopic('gui/out/side', _sym_db.GetSymbol('google.protobuf.Int32Value')(value=blue))
+        self._client.publishTopic('gui/out/side', _sym_db.GetSymbol('google.protobuf.Int32Value')(value=yellow))
         self._client.publishTopic('gui/out/commands/prematch')
         
     def _start_match(self):
