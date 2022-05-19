@@ -22,6 +22,7 @@ from .robot import Robot
 import numpy as np
 import scipy.interpolate
 
+from .trajectory_view import TrajectoryView
 import struct
 _lidar_point_struct = struct.Struct('<ff')
 
@@ -43,6 +44,8 @@ class DebugTrajectory:
         self.cur_x = 0
         self.cur_y = 0
         self._edit_mode = False
+        
+        
         
     def onMousePress(self, x, y):
         """"x, y in mm"""        
@@ -177,6 +180,8 @@ class TableViewWidget(QGraphicsView):
         #self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         #self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         
+        
+        
         self._robots = {}
         self._adversary_detections = {}
         self._waypoints = []
@@ -197,6 +202,10 @@ class TableViewWidget(QGraphicsView):
 
         #self._scene = QGraphicsScene(QRectF(-100,-1600,2200,3200))
         self._scene = DebugGraphicsScene(QRectF(-100,-1600,2200,3200),self)
+        
+        self._layers = {
+            'trajectory': TrajectoryView(self)
+            }
         
         self._table = Table(self._scene)
         self._bg_img = self._table._bg_img
@@ -369,11 +378,12 @@ class TableViewWidget(QGraphicsView):
 
     def set_client(self, client):
         self._client = client
+        for layer in self._layers.values():
+            layer.set_client(client)
         self._client.propulsion_telemetry.connect(self.update_telemetry)
         self._client.propulsion_telemetry_ex.connect(self.update_telemetry_ex)
         self._client.rplidar_plot.connect(self.update_plots)
-        self._client.rplidar_robot_detection.connect(self.update_other_robots)
-        self._client.registerCallback('nucleo/in/propulsion/cmd/trajectory', self.on_msg_trajectory)
+        self._client.rplidar_robot_detection.connect(self.update_other_robots)        
         self._client.registerCallback('gui/in/robot_state', self.on_msg_robot_state)
         
         self._client.registerCallback('strategy/debug/astar_arr', self.on_msg_astar)
@@ -431,22 +441,6 @@ class TableViewWidget(QGraphicsView):
         self._bg_img.setZValue(-1)
         if TableViewWidget.g_show_theme:
             self._scene.addItem(self._bg_img)
-        
-    def on_msg_trajectory(self, msg):
-        if TableViewWidget.g_debug:
-            # pour ne pas poluer l'affichage des points de "target"
-            return
-        path = QPainterPath()
-        p = msg.points[0]
-        path.moveTo(p.x * 1000, p.y * 1000)
-        for p in msg.points[1:]: 
-            path.lineTo(p.x * 1000, p.y * 1000)
-        greenium = QColor.fromCmykF(0.7,0,0.9,0)        
-        itm = self._scene.addPath(path)
-        pen = QPen()
-        pen.setWidth(3)
-        itm.setPen(pen)
-        self._path_trajectory = itm
         
     def update_telemetry(self, telemetry):
         self._little_robot.onTelemetry(telemetry)        
