@@ -70,7 +70,6 @@ class RobotConfig:
         sequences_importer.meta_finder.inject_globals = {'robot': robot, 'config': self.robot_config, 'debug_gui': debug_gui}
         
         sequences = importlib.import_module('sequences.sequences')
-        self.BluePoses = sequences.BluePoses
         
         self.robot_config.sequences_names.extend(robot._sequence_names)
         

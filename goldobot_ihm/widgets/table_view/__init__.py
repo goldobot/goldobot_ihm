@@ -31,7 +31,7 @@ class AdversaryDetection(QGraphicsItemGroup):
     def __init__(self,id_text):
         super().__init__()
         circle = QGraphicsEllipseItem(-100, -100, 200, 200, parent=self)
-        circle.setPen(QPen(QBrush(QColor('black')),4))
+        circle.setPen(QPen(QBrush(QColor('blue')),8))
         #self.addEllipse(-100, -100, 200, 200, QPen(QBrush(QColor('black')),4), QBrush(QColor('white')))
         #self.addPolygon(little_robot_poly, QPen(), QBrush(QColor('red')))
         
