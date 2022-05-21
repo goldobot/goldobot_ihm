@@ -30,8 +30,10 @@ class TrajectoryView:
         pen.setWidth(3)
         itm.setPen(pen)
         itm.setZValue(3)
-        if self._path_item is None:
+        if self._path_item is not None:
             self._scene.removeItem(self._path_item)
+            self._item_group.removeFromGoup(self._path_item)
+            self._path_item = None
         self._item_group.addToGroup(itm)
         self._path_item = itm
         
@@ -49,4 +51,10 @@ class TrajectoryView:
         pen = QPen()
         pen.setWidth(3)
         itm.setPen(pen)
-        self._path_trajectory = itm
+        
+        if self._path_item is not None:
+            self._scene.removeItem(self._path_item)
+            #self._item_group.removeFromGoup(self._path_item)
+            self._path_item = None
+        self._item_group.addToGroup(itm)
+        self._path_item = itm

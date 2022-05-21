@@ -37,7 +37,8 @@ from goldobot_ihm.dialogs.rec_player import RecPlayerDialog
 from dialogs.test_rplidar import TestRPLidarDialog
 from goldobot_ihm.scope.scope import ScopeDialog
 
-from goldobot import message_types
+from .widgets.goldo_1 import Goldo1
+
 
 from goldobot import config
 
@@ -107,8 +108,6 @@ class MainWindow(QMainWindow):
             self._actions.append(action)
             self._dialogs.append(widget)
             action.triggered.connect(widget.show)
-        # FIXME : DEBUG : GOLDO
-        self.propulsionTestD = PropulsionTestDialog()
 
         tools_menu.addAction(self._action_simulation)
         tools_menu.addAction(self._action_reset)
@@ -121,7 +120,7 @@ class MainWindow(QMainWindow):
 
         # FIXME : DEBUG : GOLDO
         self._F6_shortcut = QShortcut(QKeySequence(Qt.Key_F6), self)
-        self._F6_shortcut.activated.connect(self.propulsionTestD.show)
+        self._F6_shortcut.activated.connect(self._dialogs[5].show)
 
         self._main_widget = QWidget()
         self._table_view = TableViewWidget()
@@ -130,85 +129,7 @@ class MainWindow(QMainWindow):
 
         self.setCentralWidget(self._main_widget)
 
-        self.zoomL = QLabel()
-        self.zoomL.setText("Zoom")
-        self.zoomL.setDisabled(False)
-
-        self.zoomPlusB = QPushButton()
-        self.zoomPlusB.setText("+")
-        self.zoomPlusB.setDisabled(False)
-        self.zoomPlusB.clicked.connect(self._table_view.zoomPlus)
-
-        self.zoomDefB = QPushButton()
-        self.zoomDefB.setText("o")
-        self.zoomDefB.setDisabled(False)
-        self.zoomDefB.clicked.connect(self._table_view.zoomDef)
-
-        self.zoomMinusB = QPushButton()
-        self.zoomMinusB.setText("-")
-        self.zoomMinusB.setDisabled(False)
-        self.zoomMinusB.clicked.connect(self._table_view.zoomMinus)
-
-        self.showThemeC = QCheckBox()
-        self.showThemeC.setText("Show Theme")
-        self.showThemeC.setDisabled(False)
-        self.showThemeC.setChecked(True)
-        self.showThemeC.clicked.connect(self._enable_theme_display)
-
-        self.clearTelemetryB = QPushButton()
-        self.clearTelemetryB.setText("Clear Telemetry")
-        self.clearTelemetryB.setDisabled(False)
-        self.clearTelemetryB.clicked.connect(self._table_view.clear_telemetry)
-
-        self.posL = QLabel()
-        self.posL.setText("Pos & dist:")
-        self.posL.setDisabled(False)
-
-        self.posXL = QLabel()
-        self.posXL.setText(" x:")
-        self.posXL.setDisabled(False)
-
-        self.posYL = QLabel()
-        self.posYL.setText(" y:")
-        self.posYL.setDisabled(False)
-
-        self.posXRL = QLabel()
-        self.posXRL.setText(" xr:")
-        self.posXRL.setDisabled(False)
-
-        self.posYRL = QLabel()
-        self.posYRL.setText(" yr:")
-        self.posYRL.setDisabled(False)
-
-        self.posDRL = QLabel()
-        self.posDRL.setText(" dr:")
-        self.posDRL.setDisabled(False)
-
-        self.executePrematchB = QPushButton()
-        self.executePrematchB.setText("Execute prematch")
-        self.executePrematchB.setDisabled(False)
-        self.executePrematchB.clicked.connect(self._prematch)
-
-        self.simulStartB = QPushButton()
-        self.simulStartB.setText("Start simulation")
-        self.simulStartB.setDisabled(False)
-        self.simulStartB.clicked.connect(self._start_simulation)
-
-        self.simulPauseB = QPushButton()
-        self.simulPauseB.setText("Pause simulation")
-        self.simulPauseB.setDisabled(False)
-        self.simulPauseB.clicked.connect(self._pause_simulation)
-
-        self.simulResumeB = QPushButton()
-        self.simulResumeB.setText("Resume simulation")
-        self.simulResumeB.setDisabled(False)
-        self.simulResumeB.clicked.connect(self._resume_simulation)
-
-        self.testAstarB = QPushButton()
-        self.testAstarB.setText("Test A*")
-        self.testAstarB.setDisabled(False)
-        self.testAstarB.clicked.connect(self._test_astar)
-
+       
         main_layout = QHBoxLayout()
 
         status_layout = QVBoxLayout()
@@ -217,49 +138,29 @@ class MainWindow(QMainWindow):
         table_layout = QVBoxLayout()
         table_layout.addWidget(self._table_view)
         table_layout.addStretch(1)
+        
+        self._widget_goldo1 = Goldo1(self._client, table_view=self._table_view, parent=self)
+        self._table_view._scene.dbg_mouse_info.connect(self._widget_goldo1._update_mouse_dbg)
 
-        right_layout = QVBoxLayout()
-        right_layout.addWidget(self.zoomL)
-        right_layout.addWidget(self.zoomPlusB)
-        right_layout.addWidget(self.zoomDefB)
-        right_layout.addWidget(self.zoomMinusB)
-        right_layout.addWidget(self.showThemeC)
-        right_layout.addWidget(self.clearTelemetryB)
-        right_layout.addWidget(self.posL)
-        right_layout.addWidget(self.posXL)
-        right_layout.addWidget(self.posYL)
-        right_layout.addWidget(self.posXRL)
-        right_layout.addWidget(self.posYRL)
-        right_layout.addWidget(self.posDRL)
-        # FIXME : DEBUG : GOLDO
-        #right_layout.addWidget(self.propulsionTestD)
-        right_layout.addWidget(self.executePrematchB)
-        right_layout.addWidget(self.simulStartB)
-        right_layout.addWidget(self.simulPauseB)
-        right_layout.addWidget(self.simulResumeB)
-        right_layout.addWidget(self.testAstarB)
-        right_layout.addStretch(16)
+      
 
         main_layout.addLayout(status_layout)
         main_layout.addLayout(table_layout)
-        main_layout.addLayout(right_layout)
+        main_layout.addWidget(self._widget_goldo1)
 
         self._main_widget.setLayout(main_layout)
 
-        #self._action_reset.triggered.connect(self._send_reset)
-        #self._action_enter_debug.triggered.connect(self._send_enter_debug)
+
         self._action_upload_config.triggered.connect(self._upload_config)
         self._action_prematch.triggered.connect(self._prematch)
         self._action_start_match.triggered.connect(self._start_match)
+        self._action_simulation.toggled.connect(self._set_simulation)
 
         self._client.robot_end_load_config_status.connect(self._upload_status)
 
-        self._table_view._scene.dbg_mouse_info.connect(self._update_mouse_dbg)
-
+ 
         for d in self._dialogs:
             d.set_client(self._client)
-        # FIXME : DEBUG : GOLDO
-        self.propulsionTestD.set_client(self._client)
 
         # Add status bar
         self._status_link_state = QLabel('')
@@ -274,7 +175,6 @@ class MainWindow(QMainWindow):
         
         self._client.camera_image.connect(self._dbg_image)
         
-        self._lab = QLabel()
         
         #self._table_view.set_strategy(cfg.strategy)
         #self._table_view.set_config(cfg)
@@ -312,13 +212,15 @@ class MainWindow(QMainWindow):
         self._client.publishTopic('gui/out/commands/prematch')
         
     def _start_match(self):
-        self._client.publishTopic('gui/out/commands/debug_start_match')  
+        self._client.publishTopic('gui/out/commands/debug_start_match')
+        
+    def _set_simulation(self, enable):
+        self._client.publishTopic('nucleo/in/propulsion/simulation/enable', _sym_db.GetSymbol('google.protobuf.BoolValue')(value=enable))
         
     def _upload_status(self, status):
         if status == True:
             QMessageBox.information(self, "Upload config status", "Success")
-            simulation_enable = self._action_simulation.isChecked()
-            self._client.publishTopic('nucleo/in/propulsion/simulation/enable', _sym_db.GetSymbol('google.protobuf.BoolValue')(value=simulation_enable))
+            self._set_simulation(self._action_simulation.isChecked())
         else:
             QMessageBox.critical(self, "Upload config status", "Failure")
 
