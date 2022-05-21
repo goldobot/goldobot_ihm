@@ -76,22 +76,13 @@ nucleo:
     reposition_torque_limit: 0.06
   servos:
     - name: ejecteur
-      id: 11
+      id: 0
       type: STANDARD
       max_speed: 10000
       max_torque: 10
       cw_limit: 6800
       ccw_limit: 15000
-    # Servo GS-9025MG (analog fils orange / rouge / marron)
-    # - name: pince_gauche
-    #   id: 8
-    #   type: STANDARD
-    #   max_speed: 20000
-    #   max_torque: 10
-    #   cw_limit: 6800
-    #   ccw_limit: 14200
-    # Servo GSD-9025MG (digital fils blanc / rouge / noir)
-
+      
     # Bras G
     - name: epaule_g
       id: 83
@@ -185,40 +176,41 @@ nucleo:
       id: 6
     - name: recalage_ascensceur_gauche
       type: FPGA
-      id: 14
+      id: 15
     - name: recalage_ascensceur_droit
       type: FPGA
-      id: 15
+      id: 14
     - name: switch_ejecteur
       type: FPGA
       id: 13
-    - name: sick_bras_g
-      type: FPGA
-      id: 1
-    - name: sick_bras_d
-      type: FPGA
-      id: 1
-    - name: sick_lat_g
-      type: FPGA
-      id: 1
-    - name: sick_lat_d
-      type: FPGA
-      id: 1
-    - name: baumer_proche
-      type: FPGA
-      id: 1
-    - name: baumer_loin
-      type: FPGA
-      id: 1
     - name: hall_statuette
       type: FPGA
-      id: 1
+      id: 12
     - name: tryohm_bit_0
       type: FPGA
-      id: 1
+      id: 11
     - name: tryohm_bit_1
       type: FPGA
-      id: 1
+      id: 10
+    - name: sick_bras_g
+      type: FPGA
+      id: 21
+    - name: sick_bras_d
+      type: FPGA
+      id: 20
+    - name: sick_lat_g
+      type: FPGA
+      id: 18
+    - name: sick_lat_d
+      type: FPGA
+      id: 19
+    - name: baumer_proche
+      type: FPGA
+      id: 17
+    - name: baumer_loin
+      type: FPGA
+      id: 16
+
   lifts:
     - max_pwm: 0x20
       max_range: 1000

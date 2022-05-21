@@ -10,6 +10,8 @@ nucleo:
         name: nucleo_user_button
         pin: PC5
         mode: IN
+
+      # Keyboard
       - id: 2
         name: keyboard_led
         pin: PC6
@@ -30,30 +32,17 @@ nucleo:
         name: keyboard_emergency_stop
         pin: PC8
         mode: IN
-      - id: 7
-        name: tof_ds_1
-        pin: PC14
-        mode: OUT_PP
-      - id: 8
-        name: tof_ds_2
-        pin: PC15
-        mode: OUT_PP
-      - id: 9
-        name: tof_ds_3
-        pin: PB16
-        mode: OUT_PP
+
+      #Pumps
       - id: 10
-        name: tof_ds_4
-        pin: PC16
+        name: pompe_d
+        pin: PA4
         mode: OUT_PP
       - id: 11
-        name: ext_io_5
-        pin: PA4
-        mode: IN
-      - id: 12
-        name: ext_io_6
+        name: pompe_g
         pin: PF1
-        mode: IN
+        mode: OUT_PP
+
       - id: 31
         name: debug
         pin: PC7
