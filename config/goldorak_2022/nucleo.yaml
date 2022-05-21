@@ -75,20 +75,13 @@ nucleo:
     cruise_torque_limit: 0.6
     reposition_torque_limit: 0.06
   servos:
-    - name: bras_lat_gauche
+    - name: ejecteur
       id: 11
       type: STANDARD
       max_speed: 10000
       max_torque: 10
       cw_limit: 6800
       ccw_limit: 15000
-    - name: bras_lat_droite
-      id: 6
-      type: STANDARD
-      max_speed: 10000
-      max_torque: 10
-      cw_limit: 3500
-      ccw_limit: 11800
     # Servo GS-9025MG (analog fils orange / rouge / marron)
     # - name: pince_gauche
     #   id: 8
@@ -98,55 +91,77 @@ nucleo:
     #   cw_limit: 6800
     #   ccw_limit: 14200
     # Servo GSD-9025MG (digital fils blanc / rouge / noir)
-    - name: pince_gauche
-      id: 8
-      type: STANDARD
-      max_speed: 20000
-      max_torque: 10
-      cw_limit: 5400
-      ccw_limit: 12800
-    - name: pince_droite
-      id: 7
-      type: STANDARD
-      max_speed: 20000
-      max_torque: 10
-      cw_limit: 5000
-      ccw_limit: 16000
-    - name: fanion
-      id: 10
-      type: STANDARD
-      max_speed: 10000
-      max_torque: 10
-      cw_limit: 8200
-      ccw_limit: 11500
-    - name: pale_g
-      id: 7
+
+    # Bras G
+    - name: epaule_g
+      id: 83
+      type: DYNAMIXEL_MX28
+      max_speed: 0x3ff
+      max_torque: 0x3ff
+      cw_limit: 917
+      ccw_limit: 3316
+    - name: coude_g
+      id: 3
       type: DYNAMIXEL_AX12
       max_speed: 0x3ff
       max_torque: 0x3ff
-      cw_limit: 156
-      ccw_limit: 657
-    - name: pale_d
-      id: 8
-      type: DYNAMIXEL_AX12
-      max_speed: 0x3ff
-      max_torque: 0x3ff
-      cw_limit: 364
-      ccw_limit: 858
-    - name: herse_v
+      cw_limit: 53
+      ccw_limit: 833
+
+    # Bras D
+    - name: epaule_d
       id: 81
       type: DYNAMIXEL_MX28
       max_speed: 0x3ff
       max_torque: 0x3ff
-      cw_limit: 860
-      ccw_limit: 2075
-    - name: herse_slider
+      cw_limit: 766
+      ccw_limit: 3171
+    - name: coude_d
       id: 1
       type: DYNAMIXEL_AX12
       max_speed: 0x3ff
       max_torque: 0x3ff
-      cw_limit: 140
-      ccw_limit: 800
+      cw_limit: 184
+      ccw_limit: 983
+
+    # Pince ravisseuse
+    - name: lift_pince
+      id: 85
+      type: DYNAMIXEL_MX28
+      max_speed: 0x3ff
+      max_torque: 0x3ff
+      cw_limit: 289
+      ccw_limit: 3867
+    - name: mors_g
+      id: 5
+      type: DYNAMIXEL_AX12
+      max_speed: 0x3ff
+      max_torque: 0x3ff
+      cw_limit: 0
+      ccw_limit: 1023
+    - name: chariot_g
+      id: 6
+      type: DYNAMIXEL_AX12
+      max_speed: 0x3ff
+      max_torque: 0x3ff
+      cw_limit: 0
+      ccw_limit: 1023
+    - name: chariot_d
+      id: 7
+      type: DYNAMIXEL_AX12
+      max_speed: 0x3ff
+      max_torque: 0x3ff
+      cw_limit: 0
+      ccw_limit: 1023
+    - name: mors_d
+      id: 8
+      type: DYNAMIXEL_AX12
+      max_speed: 0x3ff
+      max_torque: 0x3ff
+      cw_limit: 0
+      ccw_limit: 1023
+      
+    # Ascenseurs
     - name: lift_left
       id: 0
       type: GOLDO_LIFT
@@ -174,30 +189,36 @@ nucleo:
     - name: recalage_ascensceur_droit
       type: FPGA
       id: 15
-    - name: switch_pavillon
+    - name: switch_ejecteur
       type: FPGA
       id: 13
-    - name: switch3
+    - name: sick_bras_g
       type: FPGA
       id: 1
-    - name: gache_g
+    - name: sick_bras_d
       type: FPGA
-      id: 10
-    - name: gache_d
+      id: 1
+    - name: sick_lat_g
       type: FPGA
-      id: 11
-    - name: lr_cd
+      id: 1
+    - name: sick_lat_d
       type: FPGA
-      id: 21
-    - name: lr_cg
+      id: 1
+    - name: baumer_proche
       type: FPGA
-      id: 20
-    - name: lr_ld
+      id: 1
+    - name: baumer_loin
       type: FPGA
-      id: 19
-    - name: lr_lg
+      id: 1
+    - name: hall_statuette
       type: FPGA
-      id: 18
+      id: 1
+    - name: tryohm_bit_0
+      type: FPGA
+      id: 1
+    - name: tryohm_bit_1
+      type: FPGA
+      id: 1
   lifts:
     - max_pwm: 0x20
       max_range: 1000
