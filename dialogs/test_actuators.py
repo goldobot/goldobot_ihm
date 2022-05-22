@@ -130,9 +130,13 @@ class TestActuatorsDialog(QDialog):
         position = self.spinbox_value.value()
         speed = self.spinbox_speed.value()
         torque = self.spinbox_torque.value()
-        msg = _sym_db.GetSymbol('goldo.nucleo.servos.Move')(servo_id=servo_id, position=position, speed=speed)
-        self._client.publishTopic('nucleo/in/servo/move', msg)
+        
+        elts = []
+        elts.append(_sym_db.GetSymbol('goldo.nucleo.servos.ServoPosition')(servo_id=servo_id, position=position))
+        msg = _sym_db.GetSymbol('goldo.nucleo.servos.CmdMoveMultiple')(speed=speed, positions=elts)
 
+        self._client.publishTopic('nucleo/in/servo/move_multiple', msg)
+        
     def _on_robot_state(self, msg):
         self._servo_states = msg.servos
         servo_id = self.combobox_servo.currentIndex()

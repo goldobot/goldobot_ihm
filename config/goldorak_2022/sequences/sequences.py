@@ -8,11 +8,13 @@ import math
 #import modules from sequence directory
 #purple replaces 2021's Blue
 from .poses import YellowPoses, PurplePoses
-from .herse import herse
-from .pales import pales
+
 from . import robot_config as rc
 from . import test_actuators
 from . import test_sequences
+
+from . import actuators
+from . import tests_2022
 
 # objects included in the _sequences_globals of RobotMain class, defined in robot_main.py of goldo_main, are available as global variables
 # those objects are used to interact with the robot (send commands, read data)
@@ -220,14 +222,28 @@ async def action1():
     print('SEQUENCE: action 1')
     await asyncio.sleep(1)
     print('SEQUENCE: action 1 finished ')
-    strategy.current_action.enabled = False    
+    strategy.current_action.enabled = False  
+
+@robot.sequence
+async def action2():
+    print('SEQUENCE: action 2')
+    await asyncio.sleep(1)
+    print('SEQUENCE: action 2 finished ')
+    strategy.current_action.enabled = False     
     
     
 def load_strategy():
     a = strategy.create_action('action1')
     a.sequence = 'action1'
     a.enabled = True
-    a.begin_pose = (poses.figurine_preprise[0], poses.figurine_preprise[1], 45)
+    a.priority = 1
+    a.begin_pose = (poses.figurine_preprise[0], poses.figurine_preprise[1], -45)
+    
+    a = strategy.create_action('action2')
+    a.sequence = 'action2'
+    a.priority = 0
+    a.enabled = True
+    a.begin_pose = (0.15, 0.5, 0)
 
     
     
@@ -248,10 +264,10 @@ async def start_match():
     await propulsion.setEnable(True)
     #await propulsion.setPose(poses.start_pose[0:2], poses.start_pose[2])
     
-    strategy.addTimerCallback(3, end_match)
-    strategy.addTimerCallback(1, check_secondary_robot)
+    #strategy.addTimerCallback(3, end_match)
+    #strategy.addTimerCallback(1, check_secondary_robot)
     
-    print(strategy.actions)
+    #await propulsion.trajectorySpline(poses.t1, speed=1.0)    
     
     return
     #await lidar.stop()
