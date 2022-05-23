@@ -5,7 +5,7 @@ from PyQt5.QtWidgets import QTabWidget, QAction, QDialog, QVBoxLayout, QCheckBox
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QComboBox, QMessageBox, QShortcut
 from PyQt5.QtGui import QKeySequence
 
-
+from goldobot_ihm.widgets.table_view import TableViewWidget
 
 import google.protobuf as _pb
 _sym_db = _pb.symbol_database.Default()
