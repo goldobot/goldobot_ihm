@@ -80,6 +80,12 @@ var int servo_griffe_droit_attack=16000
 var int servo_griffe_droit_retrait=40000
 var int servo_flag_ranged=16000
 var int servo_flag_raised=34000
+var int servo_pale_droite_serre=32000
+var int servo_pale_droite_serre_un_peu=17000
+var int servo_pale_droite_ouvre=14000
+var int servo_pale_gauche_serre=33000
+var int servo_pale_gauche_serre_un_peu=48000
+var int servo_pale_gauche_ouvre=51000
 
 ####################################################################
 #							Capteur

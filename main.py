@@ -58,7 +58,7 @@ class MainWindow(QMainWindow):
         (options, args) = parser.parse_args(sys.argv)
         
         self._client = ZmqClient(ip=options.robot_ip)
-        config.load_config(options.config_path)
+        config.load_config(options.config_path, True)
         
         # Create actions
        

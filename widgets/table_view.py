@@ -12,7 +12,7 @@ from PyQt5.QtGui import QImage, QImageReader, QPixmap
 
 
 class MyGraphicsScene(QGraphicsScene):
-    def mousePressEvent(self, event):
+    def mouseMoveEvent(self, event):
         x_mm = event.scenePos().x()
         y_mm = event.scenePos().y()
         rel_x_mm = x_mm - self.parent()._little_robot_x
@@ -25,6 +25,10 @@ class MyGraphicsScene(QGraphicsScene):
         disp_window.posXRL.setText(" xr: {:>6.1f}".format(rel_x_mm))
         disp_window.posYRL.setText(" yr: {:>6.1f}".format(rel_y_mm))
         disp_window.posDRL.setText(" dr: {:>6.1f}".format(d_mm))
+
+    def mousePressEvent(self, event):
+        x_mm = event.scenePos().x()
+        y_mm = event.scenePos().y()
         if self.parent()._debug_edit_mode:
             self.parent()._debug_edit_point_l.append((x_mm,y_mm))
             self.parent().debug_line_to(x_mm,y_mm)
@@ -36,7 +40,8 @@ class TableViewWidget(QGraphicsView):
     #g_detect_text = "quality"
     #g_detect_text = "none"
     g_rplidar_remanence = False
-    g_rplidar_plot_life_ms = 1000
+    #g_rplidar_plot_life_ms = 1000 # FIXME : DEBUG : FSCK QT!
+    g_rplidar_plot_life_ms = 300
     g_update_other_robots = True
     g_show_theme = False
     g_debug = True

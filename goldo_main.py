@@ -115,6 +115,7 @@ class MainWindow(QMainWindow):
         self._dbg_strat_pause_button = QPushButton('Debug Strat pause')
         self._dbg_strat_resume_button = QPushButton('Debug Strat resume')
         self._dbg_strat_display_button = QPushButton('Display Strat')
+        self._dbg_strat_clear_button = QPushButton('Clear Strat')
         self._dbg_strat_fname_edit = QLineEdit('')
         self._nucleo_firmware_version = QLabel(self.nucleo_ver_prefix_s + "Unknown")
         self._astar_view = PlotAstarWidget()
@@ -188,6 +189,7 @@ class MainWindow(QMainWindow):
         if self._ihm_type != "raspi":
             raspi_layout.addWidget(self._dbg_strat_display_button,    4, 1)
             raspi_layout.addWidget(self._dbg_strat_fname_edit,        4, 2)
+            raspi_layout.addWidget(self._dbg_strat_clear_button,      5, 1)
 
         under_table_layout.addLayout(raspi_layout)
         if self._ihm_type != "raspi":
@@ -257,6 +259,7 @@ class MainWindow(QMainWindow):
         self._dbg_strat_pause_button.clicked.connect(self._dbg_strat_pause_control)
         self._dbg_strat_resume_button.clicked.connect(self._dbg_strat_resume_control)
         self._dbg_strat_display_button.clicked.connect(self._dbg_strat_display)
+        self._dbg_strat_clear_button.clicked.connect(self._dbg_strat_clear)
 
         self._client.robot_end_load_config_status.connect(self._upload_status)
         self._client.nucleo_firmware_version.connect(self._display_nucleo_firmware_version)
@@ -347,7 +350,11 @@ class MainWindow(QMainWindow):
         self._client.send_message_rplidar(message_types.RobotStratDbgResumeMatch, b'')
 
     def _dbg_strat_display(self):
-        strat_fname = self._dbg_strat_fname_edit.text()
+        strat_fname_in = self._dbg_strat_fname_edit.text()
+        if (strat_fname_in == ""):
+            strat_fname = "dbg/B.yaml"
+        else:
+            strat_fname = "dbg/" + self._dbg_strat_fname_edit.text()
         print ("Debug strat file : {}".format(strat_fname))
         try:
             strat_fd = open(strat_fname)
@@ -383,6 +390,9 @@ class MainWindow(QMainWindow):
                 print ("  <{:>10.3f} {:>10.3f}>".format(my_x,my_y))
                 TableViewWidget.g_table_view.debug_line_to(my_x,my_y,0,0,255)
             idx += 1
+
+    def _dbg_strat_clear(self):
+        TableViewWidget.g_table_view.debug_clear_lines()
 
     def _get_nucleo_firmware_version(self):
         self._client.send_message(message_types.GetNucleoFirmwareVersion, b'')

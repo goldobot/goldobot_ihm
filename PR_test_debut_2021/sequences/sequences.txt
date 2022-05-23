@@ -71,3 +71,42 @@ end sequence
 begin sequence raise_flag
 set_servo flag,servo_flag_raised,100
 end sequence
+
+# 10
+begin sequence pale_droite_serre
+set_servo pale_d,servo_pale_droite_serre,100
+end sequence
+
+# 11
+begin sequence pale_droite_ouvre
+set_servo pale_d,servo_pale_droite_ouvre,100
+end sequence
+
+# 12
+begin sequence pale_gauche_serre
+set_servo pale_g,servo_pale_gauche_serre,100
+end sequence
+
+# 13
+begin sequence pale_gauche_ouvre
+set_servo pale_g,servo_pale_gauche_ouvre,100
+end sequence
+
+# 14
+begin sequence pales_ouvre
+set_servo pale_d,servo_pale_droite_ouvre,100
+set_servo pale_g,servo_pale_gauche_ouvre,100
+end sequence
+
+# 15
+begin sequence pales_serre
+set_servo pale_d,servo_pale_droite_serre,100
+set_servo pale_g,servo_pale_gauche_serre,100
+end sequence
+
+# 16
+begin sequence pales_serre_un_peu
+set_servo pale_d,servo_pale_droite_serre_un_peu,100
+set_servo pale_g,servo_pale_gauche_serre_un_peu,100
+end sequence
+

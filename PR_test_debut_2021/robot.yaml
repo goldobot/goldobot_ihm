@@ -178,6 +178,16 @@ dynamixels:
     ccw_limit: 850    
     torque_limit: 512
 servos:
+  - name: pale_d
+    id: 0
+    max_speed: 40000
+    cw_limit: 12000
+    ccw_limit: 48000 
+  - name: pale_g
+    id: 3
+    max_speed: 40000
+    cw_limit: 12000
+    ccw_limit: 48000 
   - name: griffe_g
     id: 2
     max_speed: 40000
