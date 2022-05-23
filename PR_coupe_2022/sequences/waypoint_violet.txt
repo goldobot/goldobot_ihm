@@ -7,5 +7,5 @@
 
 
 #--position de depart
-var vec3 start_pose_violet=(550mm,1395mm,-90deg) # 2022 (en fait le "violet" est "jaune"..) 
+var vec3 start_pose_violet=(515mm,1395mm,-90deg) # 2022
 

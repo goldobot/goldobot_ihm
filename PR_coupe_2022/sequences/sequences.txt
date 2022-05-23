@@ -17,14 +17,14 @@ propulsion.set_pose start_pose_violet
 end sequence
 
 
-############################ match jaune (en fait violet..) ########
+############################ match jaune ###########################
 
 # 2
 begin sequence match_jaune
 propulsion.set_pose start_pose_jaune
 end sequence
 
-############################ match violet (en fait jaune..) ########
+############################ match violet ##########################
 
 # 3
 begin sequence match_violet

@@ -7,5 +7,5 @@
 
 
 #--position de depart
-var vec3 start_pose_jaune=(550mm,-1395mm,90deg) # 2020 (en fait le "jaune" est "violet"..)
+var vec3 start_pose_jaune=(515mm,-1395mm,90deg) # 2020
 
