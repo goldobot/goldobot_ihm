@@ -15,6 +15,7 @@ from . import test_sequences
 
 from . import actuators
 from . import tests_2022
+from . import tests_2022_goldo
 
 # objects included in the _sequences_globals of RobotMain class, defined in robot_main.py of goldo_main, are available as global variables
 # those objects are used to interact with the robot (send commands, read data)
