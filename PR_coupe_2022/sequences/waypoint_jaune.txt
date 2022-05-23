@@ -1,0 +1,11 @@
+####################################################################
+#							Position jaune
+####################################################################
+#--Robot positions
+#--Centre-Avant (sans CoSe): 105.5mm
+#--centre-Arriere:100.5mm
+
+
+#--position de depart
+var vec3 start_pose_jaune=(550mm,-1395mm,90deg) # 2020 (en fait le "jaune" est "violet"..)
+

@@ -1,0 +1,11 @@
+####################################################################
+#							Position violet
+####################################################################
+#--Robot positions
+#--Centre-Avant (sans CoSe): 105.5mm
+#--centre-Arriere:100.5mm
+
+
+#--position de depart
+var vec3 start_pose_violet=(550mm,1395mm,-90deg) # 2022 (en fait le "violet" est "jaune"..) 
+

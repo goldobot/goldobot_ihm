@@ -1,0 +1,95 @@
+
+####################################################################
+#							liste des send event
+####################################################################
+
+#0: reserve_test
+#1: score
+#10: statut ventouse (vacuostat)
+#20: statut stock (nombre de palet stocke
+
+####################################################################
+#							variable de sequence
+####################################################################
+
+#--general
+var int non=0
+var int oui=1
+var int score=0
+#ajout de score: movi score,1
+
+####################################################################
+#							constantes
+####################################################################
+
+#--delais
+var int delay005=50
+var int delay01=100
+var int delay02=200
+var int delay03=300
+var int delay05=500
+var int delay06=600
+var int delay1=1000
+var int delay2=2000
+var int delay5=5000
+var int delay100=100000
+
+#--unused: variable pour un test de trajectoire courbe
+var vec2 start=(0,0)
+var vec2 pt1=(200mm,0mm)
+var vec2 pt2=(0mm,-200mm)
+var vec2 pt3=(400mm,0)
+
+#--pompe
+var int pwm_pump_activated=400
+var int pwm_pump_off=0
+
+
+####################################################################
+#							Deplacement
+####################################################################
+
+var vec3 start_pose=(0mm,0mm,00deg)
+var float r_speed=200mm
+var float r_accel=1
+
+#--vitesse rotation
+var vec3 yaw_180=(180deg,180deg,180deg)
+var vec3 yaw_250=(250deg,250deg,250deg)
+
+#--vitesse de translation
+#--deplacement rapide
+var vec3 speed_750=(750mm,500mm,500mm)
+#--deplacement nominal
+var vec3 speed_500=(500mm,500mm,500mm)
+#--approche
+var vec3 speed_200=(200mm,500mm,300mm)
+var vec3 speed_180=(180mm,500mm,300mm)
+#--ramasse ligne chaos
+var vec3 speed_100=(45mm,300mm,300mm)
+
+
+####################################################################
+#							Position servo
+####################################################################
+
+#--HACK 2021
+var int servo_griffe_gauche_attack=51000
+var int servo_griffe_gauche_retrait=27000
+var int servo_griffe_droit_attack=16000
+var int servo_griffe_droit_retrait=40000
+var int servo_flag_ranged=16000
+var int servo_flag_raised=34000
+var int servo_pale_droite_serre=32000
+var int servo_pale_droite_serre_un_peu=17000
+var int servo_pale_droite_ouvre=14000
+var int servo_pale_gauche_serre=33000
+var int servo_pale_gauche_serre_un_peu=48000
+var int servo_pale_gauche_ouvre=51000
+
+####################################################################
+#							Capteur
+####################################################################
+
+#--position capteur (decalage capteur par rapport au centre du robot)
+var vec2 rouge_lateral=(0,96mm)
