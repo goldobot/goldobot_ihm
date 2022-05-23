@@ -23,6 +23,8 @@ import numpy as np
 import scipy.interpolate
 
 from .trajectory_view import TrajectoryView
+from .debug_astar import AstarView
+
 import struct
 _lidar_point_struct = struct.Struct('<ff')
 
@@ -204,11 +206,13 @@ class TableViewWidget(QGraphicsView):
         self._scene = DebugGraphicsScene(QRectF(-100,-1600,2200,3200),self)
         
         self._layers = {
+            'astar': AstarView(self),
             'trajectory': TrajectoryView(self)
             }
         
         self._table = Table(self._scene)
         self._bg_img = self._table._bg_img
+        self._bg_img.setZValue(-10)
         self.refreshTheme()
 
         self._little_robot = Robot()
@@ -386,7 +390,7 @@ class TableViewWidget(QGraphicsView):
         self._client.rplidar_robot_detection.connect(self.update_other_robots)        
         self._client.registerCallback('gui/in/robot_state', self.on_msg_robot_state)
         
-        self._client.registerCallback('strategy/debug/astar_arr', self.on_msg_astar)
+        
         
     def set_config(self, config):     
         poses = config.BluePoses.__dict__
@@ -422,25 +426,7 @@ class TableViewWidget(QGraphicsView):
                 
             
         
-    def on_msg_astar(self, msg):
-        if not TableViewWidget.g_debug_astar:
-            return
-        image = QImage(msg.value, 300, 200, QImage.Format_Grayscale8)
-        image.setColorTable([Qt.black, Qt.white])
-        #self._astar_label = QLabel()
-        #self._astar_label.setPixmap(QPixmap(image))
-        #self._astar_label.show()
-        #print(image)
-        goldo_pixmap = QPixmap()
-        goldo_pixmap.convertFromImage(image)
-        self._scene.removeItem(self._bg_img)
-        self._bg_img = QGraphicsPixmapItem(goldo_pixmap)
-        self._bg_img.setTransform(QTransform(1.0, 0.0, 0.0,  0.0, -1.0, 0.0,   0.0, 0.0, 0.1))
-        self._bg_img.setRotation(-90)
-        self._bg_img.setPos(0, -1500)
-        self._bg_img.setZValue(-1)
-        if TableViewWidget.g_show_theme:
-            self._scene.addItem(self._bg_img)
+   
         
     def update_telemetry(self, telemetry):
         self._little_robot.onTelemetry(telemetry)        
