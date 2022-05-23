@@ -1,6 +1,8 @@
 #Ajout gobelet vert grand port et detection robot secondaire
 from asyncio import sleep
 import asyncio
+from socketserver import BaseRequestHandler
+from tracemalloc import start
 
 import numpy as np
 import math
@@ -14,6 +16,8 @@ from . import test_actuators
 from . import test_sequences
 
 from . import actuators
+from . import pince_ravisseuse
+from . import ejecteur
 from . import tests_2022
 from . import tests_2022_goldo
 
@@ -55,7 +59,7 @@ class RefPoses:
     start_pose: Pose = (0.955, -1.5 + rc.robot_width * 0.5 + 5e-3, 0)
 
 class YellowPoses:
-    start_pose = (1.0 - rc.robot_width * 0.5, -1.5 + rc.robot_back_length, 90)
+    start_pose = (0.7 - rc.robot_width * 0.5, -1.33 + rc.robot_back_length, 90)
     figurine_pivot = (1.5, -1.0)
     figurine_preprise = on_segment((2.0,-0.99), (1.49, -1.5), rc.robot_rotation_distance_figurine)
     figurine_prise = on_segment((2.0,-0.99), (1.49, -1.5), rc.robot_back_length)
@@ -107,7 +111,12 @@ class YellowPoses:
         (1.50, -1.0),
         on_segment((2.0,-0.99), (1.49, -1.5), rc.robot_front_length + 0.05)
         ]
-        
+    #spline rush initial (gotta go fast !)
+    traj_rush = [
+        (start_pose[0] - rc.robot_width * 0.5, -1.05 + rc.robot_back_length),
+        (0.675 - rc.robot_width * 0.5, -0.9 + rc.robot_back_length),
+        (0.675 - rc.robot_width * 0.5, -0.74 + rc.robot_back_length)
+    ]
     #start to display
     
 class BluePoses:
@@ -132,6 +141,7 @@ class BluePoses:
     t2 = [symetrie(p) for p in YellowPoses.t2]
     t3 = [symetrie(p) for p in YellowPoses.t3]
     t4 = [symetrie(p) for p in YellowPoses.t4]
+    traj_rush = [symetrie(p) for p in YellowPoses.traj_rush]
     
             
 async def pointAndGoRetry(p, speed, yaw_rate):
@@ -145,14 +155,16 @@ async def test_recalage():
     await propulsion.setMotorsEnable(True)
     await propulsion.setEnable(True)
     await propulsion.setAccelerationLimits(2,2,2,2)
-    await propulsion.setPose([0.15, -1.35], 95)
-    await propulsion.reposition(-0.1, 0.1)
-    await propulsion.measureNormal(90, -1.5 + robot_back_length)
-    await propulsion.translation(0.15, 0.5)
-    await propulsion.faceDirection(0, 0.5)
-    await propulsion.reposition(-0.2, 0.1)
-    await propulsion.measureNormal(0, 0 + robot_back_length)
-    await propulsion.translation(0.15, 0.5)
+    await propulsion.setPose([0.40, 1.0], -90)
+    await propulsion.reposition(-1.0, 0.2)
+    await propulsion.measureNormal(-90, -1.5 + rc.robot_back_length)
+    await propulsion.translation(0.20, 0.2)
+    await propulsion.faceDirection(0, 0.6)
+    await propulsion.reposition(-1.0, 0.2)
+    await propulsion.measureNormal(0, 0 + rc.robot_back_length)
+    await propulsion.translation(0.15, 0.2)
+    await propulsion.moveTo(BluePoses.start_pose, 0.2)
+    await propulsion.faceDirection(-90, 0.8)
     
 
 @robot.sequence
@@ -171,21 +183,9 @@ async def prematch():
     await lidar.start()
     await robot.setScore(0)
 
-    #servos
-    await servos.setEnable('pale_g', True)
-    await servos.setEnable('pale_d', True)
-    await pales.move(both='ferme')
+    # Bras
+    await actuators.arms_initialize()
 
-    await servos.setEnable('fanion', True)
-    await servos.move('fanion', fanion_ferme)
-
-    #await servos.setEnable('bras_lat_gauche', True)
-    #await servos.move('bras_lat_gauche', bras_lat_gauche_rentre)
-
-    #await servos.setEnable('bras_lat_droite', True)
-    #await servos.move('bras_lat_droite', bras_lat_droite_rentre)
-
-    await herse.initialize()
 
     await odrive.clearErrors()
     await propulsion.clearError()
@@ -216,6 +216,11 @@ async def depose_figurine():
     await asyncio.sleep(1)
     await propulsion.moveTo(poses.display, 1.0)
     await robot.setScore(20)
+
+# @robot_sequence()
+# async def inital_rush():
+#     print('rush_initial')
+#     await propulsion.trajectorySpline(poses.traj_rush, speed=0.2)
     
     
 @robot.sequence
