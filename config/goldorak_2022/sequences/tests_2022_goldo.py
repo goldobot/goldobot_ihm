@@ -1,3 +1,113 @@
+from asyncio import sleep
+from . import robot_config as rc
+
+import numpy as np
+import math
+
+# FIXME : DEBUG : HACK ++
+def symetrie(pose):
+    pose = np.array(pose, dtype=np.float64)
+    if isinstance(pose, np.ndarray):
+        if pose.shape[0] == 2:
+            return np.array([pose[0], -pose[1]])
+    return (pose[0], -pose[1], -pose[2])
+
+def on_segment(p1, p2, d):
+    p1 = np.array(p1, dtype=np.float64)
+    p2 = np.array(p2, dtype=np.float64)
+    diff = p2 - p1
+    midpoint = (p1 + p2) * 0.5
+    diff = diff/np.linalg.norm(diff)
+    nr = np.array([diff[1], -diff[0]])
+    return midpoint + nr * d
+
+class Side:
+    Unknown = 0
+    Blue = 1
+    Yellow = 2
+
+class YellowPoses:
+    start_pose = (1.0 - rc.robot_width * 0.5, -1.5 + rc.robot_back_length, 90)
+    figurine_pivot = (1.5, -1.0)
+    figurine_preprise = on_segment((2.0,-0.99), (1.49, -1.5), rc.robot_rotation_distance_figurine)
+    figurine_prise = on_segment((2.0,-0.99), (1.49, -1.5), rc.robot_back_length)
+    display = (rc.robot_rotation_distance_figurine, -1.25)
+    display_pose = (rc.robot_back_length, -1.25)
+    g1 = (rc.robot_rotation_distance_figurine, -0.4)
+    
+    g2 = (0.7, -1.05)
+    g3 = (0.3,-1.0)
+    
+    g4 = (1.375, -0.7)
+    g5 = (1.3, -0.925)
+    g6 = (1.50, -1.0)
+    g7 = (0.7, -0.9)
+    g8 = (0.7, -1.1)
+    
+    g9 = (0.7, -1.1)
+    
+    # prise figurine
+    t1 = [
+        start_pose[0:2],
+        (start_pose[0],-1.1),
+        (1.3,-1.1),
+        (1.75,-0.8),
+        (1.75,-0.35),
+        (1.55,-0.2),
+        (1.375,-0.2),
+        ]
+    # prise figurine vers depose
+    t2 = [
+        t1[-1],
+        g4,
+        (1.20,-0.9),
+        (0.9, -1.0),
+        (0.7, -1.1),
+        (0.7, -1.2)
+        ]
+    # depose vers 1er groupe
+    t3 = [
+        g2,
+        (0.3,-1.0),
+        (0.3,-0.4),
+        (0.675,-0.3),
+        ]
+    #vers 2eme groupe
+    t4 = [
+        (0.3,-0.4),
+        g5,
+        (1.50, -1.0),
+        on_segment((2.0,-0.99), (1.49, -1.5), rc.robot_front_length + 0.05)
+        ]
+        
+    #start to display
+    
+class BluePoses:
+    # start_pose = (0.8, -1.4 + robot_width * 0.5, 0)
+    start_pose = symetrie(YellowPoses.start_pose)
+    figurine_pivot = symetrie(YellowPoses.figurine_pivot)
+    figurine_preprise = symetrie(YellowPoses.figurine_preprise)
+    figurine_prise = symetrie(YellowPoses.figurine_prise)
+    display = symetrie(YellowPoses.display)
+    display_pose = symetrie(YellowPoses.display_pose)
+    
+    g1 = symetrie(YellowPoses.g1)
+    g2 = symetrie(YellowPoses.g2)
+    g3 = symetrie(YellowPoses.g3)
+    g4 = symetrie(YellowPoses.g4)
+    g5 = symetrie(YellowPoses.g5)
+    g6 = symetrie(YellowPoses.g6)
+    g7 = symetrie(YellowPoses.g7)
+    g8 = symetrie(YellowPoses.g8)
+    
+    t1 = [symetrie(p) for p in YellowPoses.t1]
+    t2 = [symetrie(p) for p in YellowPoses.t2]
+    t3 = [symetrie(p) for p in YellowPoses.t3]
+    t4 = [symetrie(p) for p in YellowPoses.t4]
+# FIXME : DEBUG : HACK --
+    
+            
+
 @robot.sequence
 async def goldo_prematch():
     global poses
