@@ -76,12 +76,12 @@ nucleo:
     reposition_torque_limit: 0.06
   servos:
     - name: ejecteur
-      id: 0
+      id: 11
       type: STANDARD
-      max_speed: 10000
+      max_speed: 65000
       max_torque: 10
       cw_limit: 6800
-      ccw_limit: 15000
+      ccw_limit: 20000
       
     # Bras G
     - name: epaule_g
