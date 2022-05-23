@@ -35,6 +35,7 @@ from dialogs.odrive import ODriveDialog
 from .dialogs.console import ConsoleDialog
 from goldobot_ihm.dialogs.rec_player import RecPlayerDialog
 from dialogs.test_rplidar import TestRPLidarDialog
+from .dialogs.camera import CameraDialog
 from goldobot_ihm.scope.scope import ScopeDialog
 
 from .widgets.goldo_1 import Goldo1
@@ -61,7 +62,8 @@ dialogs = [
     ("Debug Lifts", DebugAsservDialog),
     ("Test sequences", SequencesDialog),
     ("Console", ConsoleDialog),
-    ("RecPlayer", RecPlayerDialog)
+    ("RecPlayer", RecPlayerDialog),
+    ("Camera", CameraDialog)
  ]
 
 class MenuHelper:

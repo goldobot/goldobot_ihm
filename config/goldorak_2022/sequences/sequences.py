@@ -26,7 +26,7 @@ from . import tests_2022_goldo
 
 class Side:
     Unknown = 0
-    Blue = 1
+    Purple = 1
     Yellow = 2
 
 
@@ -58,13 +58,26 @@ class RefPoses:
     __ref_side__ = Side.Yellow
     start_pose: Pose = (0.955, -1.5 + rc.robot_width * 0.5 + 5e-3, 0)
 
+class Map:
+    zone_depart_x_min = 0.4
+    zone_depart_x_max = 1.0
+    
+    
+    
+    
+    
 class YellowPoses:
-    start_pose = (0.7 - rc.robot_width * 0.5, -1.33 + rc.robot_back_length, 90)
+    start_pose = (0.675, -1.20, 90)
+    
     figurine_pivot = (1.5, -1.0)
     figurine_preprise = on_segment((2.0,-0.99), (1.49, -1.5), rc.robot_rotation_distance_figurine)
     figurine_prise = on_segment((2.0,-0.99), (1.49, -1.5), rc.robot_back_length)
     display = (rc.robot_rotation_distance_figurine, -1.25)
     display_pose = (rc.robot_back_length, -1.25)
+    
+    a_prise_zone1 = (0.67, -0.9, 90)
+    a_retour_zone_depart = (0.7, -1.2, -90)
+    
     g1 = (rc.robot_rotation_distance_figurine, -0.4)
     
     g2 = (0.7, -1.05)
@@ -119,7 +132,7 @@ class YellowPoses:
     ]
     #start to display
     
-class BluePoses:
+class PurplePoses:
     # start_pose = (0.8, -1.4 + robot_width * 0.5, 0)
     start_pose = symetrie(YellowPoses.start_pose)
     figurine_pivot = symetrie(YellowPoses.figurine_pivot)
@@ -127,6 +140,10 @@ class BluePoses:
     figurine_prise = symetrie(YellowPoses.figurine_prise)
     display = symetrie(YellowPoses.display)
     display_pose = symetrie(YellowPoses.display_pose)
+    
+    #actions
+    a_prise_zone1 = symetrie(YellowPoses.a_prise_zone1)
+    a_retour_zone_depart = symetrie(YellowPoses.a_retour_zone_depart)
     
     g1 = symetrie(YellowPoses.g1)
     g2 = symetrie(YellowPoses.g2)
@@ -148,38 +165,20 @@ async def pointAndGoRetry(p, speed, yaw_rate):
     await propulsion.pointTo(p, yaw_rate)
     await propulsion.moveToRetry(p, speed)
     
-    
-@robot.sequence
-async def test_recalage():
-    #test recalage coin bleu
-    await propulsion.setMotorsEnable(True)
-    await propulsion.setEnable(True)
-    await propulsion.setAccelerationLimits(2,2,2,2)
-    await propulsion.setPose([0.40, 1.0], -90)
-    await propulsion.reposition(-1.0, 0.2)
-    await propulsion.measureNormal(-90, -1.5 + rc.robot_back_length)
-    await propulsion.translation(0.20, 0.2)
-    await propulsion.faceDirection(0, 0.6)
-    await propulsion.reposition(-1.0, 0.2)
-    await propulsion.measureNormal(0, 0 + rc.robot_back_length)
-    await propulsion.translation(0.15, 0.2)
-    await propulsion.moveTo(BluePoses.start_pose, 0.2)
-    await propulsion.faceDirection(-90, 0.8)
-    
+ 
 
 @robot.sequence
 async def prematch():
     global poses
     
-    if robot.side == Side.Blue:
-        poses = BluePoses
+    if robot.side == Side.Purple:
+        poses = PurplePoses
     elif robot.side == Side.Yellow:
         poses = YellowPoses
     else:
         raise RuntimeError('Side not set')
         
-    fanion_ferme = 8000
-        
+    print('prematch1')
     await lidar.start()
     await robot.setScore(0)
 
@@ -196,7 +195,8 @@ async def prematch():
     #await propulsion.setPose(poses.start_pose[0:2], poses.start_pose[2])
     #a = await propulsion.reposition(0.1, 0.1)
     await propulsion.setPose(poses.start_pose[0:2], poses.start_pose[2])
-    await propulsion.translation(0.05, 0.2)
+    
+    #await propulsion.translation(0.05, 0.2)
     
     load_strategy()
     print('loaded')
@@ -224,14 +224,15 @@ async def depose_figurine():
     
     
 @robot.sequence
-async def action1():
+async def prise_zone1():
+    # fill with things with arms
     print('SEQUENCE: action 1')
     await asyncio.sleep(1)
     print('SEQUENCE: action 1 finished ')
     strategy.current_action.enabled = False  
 
 @robot.sequence
-async def action2():
+async def retour_zone_depart():
     print('SEQUENCE: action 2')
     await asyncio.sleep(1)
     print('SEQUENCE: action 2 finished ')
@@ -239,17 +240,17 @@ async def action2():
     
     
 def load_strategy():
-    a = strategy.create_action('action1')
-    a.sequence = 'action1'
+    a = strategy.create_action('prise_zone1')
+    a.sequence = 'prise_zone1'
     a.enabled = True
     a.priority = 1
-    a.begin_pose = (poses.figurine_preprise[0], poses.figurine_preprise[1], -45)
+    a.begin_pose = poses.a_prise_zone1
     
-    a = strategy.create_action('action2')
-    a.sequence = 'action2'
+    a = strategy.create_action('retour_zone_depart')
+    a.sequence = 'retour_zone_depart'
     a.priority = 0
     a.enabled = True
-    a.begin_pose = (0.15, 0.5, 0)
+    a.begin_pose = poses.a_retour_zone_depart
 
     
     
@@ -259,8 +260,8 @@ async def start_match():
     Sequence called at the start of the match, before trying any action.
     This will typically be used to setup actuators and get out of the starting area.
     """
-    if robot.side == Side.Blue:
-        poses = BluePoses
+    if robot.side == Side.Purple:
+        poses = PurplePoses
     elif robot.side == Side.Yellow:
         poses = YellowPoses
     else:
@@ -268,6 +269,7 @@ async def start_match():
         
     await propulsion.setMotorsEnable(True)
     await propulsion.setEnable(True)
+    
     #await propulsion.setPose(poses.start_pose[0:2], poses.start_pose[2])
     
     #strategy.addTimerCallback(3, end_match)
@@ -311,9 +313,6 @@ async def start_match():
 
 async def end_match():
     print('end match callback')
-    #await servos.move('fanion', fanion_ouvert)
-    #await sleep(2)
-    #await servos.move('fanion', fanion_ferme)
     await robot.setScore(42)
 
 async def check_secondary_robot():
@@ -328,20 +327,3 @@ async def check_secondary_robot():
         print('No')    
 
 
-
-@robot.sequence
-async def test_emergency_stop():
-    await propulsion.setAccelerationLimits(0.5,0.5,0.5,0.5)
-    await propulsion.setPose([0,0], 0)
-    await propulsion.setMotorsEnable(True)
-    await propulsion.setEnable(True)
-
-    await propulsion.reposition(0.2,0.1)
-
-    task = asyncio.create_task(propulsion.translation(0.5, 0.1))
-    await sleep(1)
-    await propulsion.setTargetSpeed(0.3)
-    await sleep(1)
-    print('estop')
-    await propulsion.emergencyStop()
-    await task
