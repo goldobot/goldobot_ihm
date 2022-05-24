@@ -67,7 +67,7 @@ class Map:
     
     
 class YellowPoses:
-    start_pose = (0.675, -1.20, 90)
+    start_pose = (0.675, -1.235, 90)
     
     figurine_pivot = (1.5, -1.0)
     figurine_preprise = on_segment((2.0,-0.99), (1.49, -1.5), rc.robot_rotation_distance_figurine)
@@ -77,6 +77,12 @@ class YellowPoses:
     
     a_prise_zone1 = (0.67, -0.9, 90)
     a_retour_zone_depart = (0.7, -1.2, -90)
+
+    pose_rush_3hex = (0.675, -0.780, 90)
+    pose_prise_3hex = (0.675, -0.900, 90)
+    pose_pompe_3hex = (0.675, -0.950, 90)
+
+    pose_ejecteur = (1.5, -1.0, -45)
     
     g1 = (rc.robot_rotation_distance_figurine, -0.4)
     
@@ -144,6 +150,12 @@ class PurplePoses:
     #actions
     a_prise_zone1 = symetrie(YellowPoses.a_prise_zone1)
     a_retour_zone_depart = symetrie(YellowPoses.a_retour_zone_depart)
+
+    pose_rush_3hex = symetrie(YellowPoses.pose_rush_3hex)
+    pose_prise_3hex = symetrie(YellowPoses.pose_prise_3hex)
+    pose_pompe_3hex = symetrie(YellowPoses.pose_pompe_3hex)
+
+    pose_ejecteur = symetrie(YellowPoses.pose_ejecteur)
     
     g1 = symetrie(YellowPoses.g1)
     g2 = symetrie(YellowPoses.g2)
@@ -164,6 +176,46 @@ class PurplePoses:
 async def pointAndGoRetry(p, speed, yaw_rate):
     await propulsion.pointTo(p, yaw_rate)
     await propulsion.moveToRetry(p, speed)
+
+@robot.sequence
+async def recalage():
+    if robot.side == Side.Purple:
+        poses = PurplePoses
+    elif robot.side == Side.Yellow:
+        poses = YellowPoses
+
+    await propulsion.setMotorsEnable(True)
+    await propulsion.setEnable(True)
+    await propulsion.setAccelerationLimits(0.3,0.3,3,3)
+    if robot.side == Side.Purple:
+        await propulsion.setPose([0.40, 1.0], 0)
+    elif robot.side == Side.Yellow:
+        await propulsion.setPose([0.40, -1.0], 0)
+    print("recalage X")
+    await propulsion.reposition(-1.0, 0.2)
+    await propulsion.measureNormal(0, 0 + rc.robot_back_length)
+    print("decollage bordure")
+    await propulsion.translation(poses.start_pose[0] - rc.robot_back_length, 0.2)
+    if robot.side == Side.Purple:
+        print("orientation violette")
+        await propulsion.faceDirection(-90, 0.6)
+        print("recalage violet")
+        await propulsion.reposition(-1.0, 0.2)
+        await propulsion.measureNormal(-90, -1.5 + rc.robot_back_length)
+    elif robot.side == Side.Yellow:
+        print("orientation jaune")
+        await propulsion.faceDirection(90, 0.6)
+        print("recalage jaune")
+        await propulsion.reposition(-1.0, 0.2)
+        await propulsion.measureNormal(90, -1.5 + rc.robot_back_length)
+    print("decollage bordure")    
+    await propulsion.translation(0.05, 0.2)
+    print("go depart")
+    await propulsion.moveTo(poses.start_pose, 0.2)
+    if robot.side == Side.Purple:
+        await propulsion.faceDirection(-90, 0.6)
+    elif robot.side == Side.Yellow:
+        await propulsion.faceDirection(90, 0.6)
     
  
 
@@ -179,25 +231,31 @@ async def prematch():
         raise RuntimeError('Side not set')
         
     print('prematch1')
-    await lidar.start()
-    await robot.setScore(0)
+    await lidar.stop()
 
+    # Pince
+    taskpince = asyncio.create_task(pince_ravisseuse.initialize_pince())
+    
     # Bras
     await actuators.arms_initialize()
+    await taskpince
 
+    # Ejecteur
+    await ejecteur.ejecteur_initialize()
 
+    await asyncio.sleep(2)
+
+    # Propulsion
     await odrive.clearErrors()
     await propulsion.clearError()
     await propulsion.setAccelerationLimits(1,1,2,2)    
     await propulsion.setMotorsEnable(True)    
     await propulsion.setEnable(True)
+    await recalage()
     
-    #await propulsion.setPose(poses.start_pose[0:2], poses.start_pose[2])
-    #a = await propulsion.reposition(0.1, 0.1)
-    await propulsion.setPose(poses.start_pose[0:2], poses.start_pose[2])
-    
-    #await propulsion.translation(0.05, 0.2)
-    
+    await lidar.start()
+    await robot.setScore(0)
+
     load_strategy()
     print('loaded')
 
@@ -221,28 +279,27 @@ async def depose_figurine():
 # async def inital_rush():
 #     print('rush_initial')
 #     await propulsion.trajectorySpline(poses.traj_rush, speed=0.2)
-    
-    
+
 @robot.sequence
 async def prise_zone1():
     # fill with things with arms
     print('SEQUENCE: action 1')
-    await asyncio.sleep(1)
+    
     print('SEQUENCE: action 1 finished ')
-    strategy.current_action.enabled = False  
+    strategy.current_action.enabled = False
 
 @robot.sequence
 async def retour_zone_depart():
     print('SEQUENCE: action 2')
     await asyncio.sleep(1)
     print('SEQUENCE: action 2 finished ')
-    strategy.current_action.enabled = False     
+    strategy.current_action.enabled = False 
     
     
 def load_strategy():
     a = strategy.create_action('prise_zone1')
     a.sequence = 'prise_zone1'
-    a.enabled = True
+    a.enabled = False
     a.priority = 1
     a.begin_pose = poses.a_prise_zone1
     
@@ -252,6 +309,37 @@ def load_strategy():
     a.enabled = True
     a.begin_pose = poses.a_retour_zone_depart
 
+async def arms_prise_3hex():
+    if robot.side == Side.Purple:
+        poses = PurplePoses
+    elif robot.side == Side.Yellow:
+        poses = YellowPoses
+    await servos.setMaxTorque(actuators.arms_servos, 1)
+    await actuators.arms_prep_prise_3hex()
+    while abs(propulsion.pose.position.y) > abs(poses.pose_pompe_3hex[1]):
+        print("pose = " + abs(propulsion.pose.position.y) + " | objective = " + abs(poses.pose_pompe_3hex[1]))
+        await asyncio.sleep(0.01)
+    await robot.gpioSet('pompe_g', True)
+    await robot.gpioSet('pompe_d', True)
+    while abs(propulsion.pose.position.y) > abs(poses.pose_prise_3hex[1]):
+        await asyncio.sleep(0.005)
+    await actuators.lifts_prise_3hex()
+    await actuators.arms_serrage_3hex()
+
+@robot.sequence
+async def abri_chantier():
+    #await propulsion.faceDirection(-45)
+    print("lifts")
+    await actuators.lifts_ejecteur()
+    print("ejecteur")
+    await ejecteur.ejecteur_trigger()
+    print("pumps")
+    await robot.gpioSet('pompe_g', False)
+    await robot.gpioSet('pompe_d', False)
+    strategy.current_action.enabled = False
+    await actuators.lifts_top()
+    await actuators.bras_ecartes()
+    await propulsion.reposition(0.30, 0.2)
     
     
 @robot.sequence
@@ -269,47 +357,17 @@ async def start_match():
         
     await propulsion.setMotorsEnable(True)
     await propulsion.setEnable(True)
-    
-    #await propulsion.setPose(poses.start_pose[0:2], poses.start_pose[2])
-    
-    #strategy.addTimerCallback(3, end_match)
-    #strategy.addTimerCallback(1, check_secondary_robot)
-    
-    #await propulsion.trajectorySpline(poses.t1, speed=1.0)    
-    
-    return
-    #await lidar.stop()
-    #robot._adversary_detection_enable = False
-    
-    yaw_rate = 5.0
-    
-    #prepare to get group 1 (south)
-    await propulsion.trajectorySpline(poses.t1, speed=1.0)    
-    await propulsion.pointTo(poses.g4, yaw_rate)
-    await pales.move(both='ouvert')
-    await asyncio.sleep(1)
-    
-    # bring group 1 into starting area
-    await propulsion.trajectorySpline(poses.t2, speed=0.5)  
-    await robot.setScore(20)
 
-    # get out of starting area     
-    await propulsion.pointAndGo(poses.g2, 1.0, yaw_rate, back = True)
-    await pales.move(both='ferme')
-    await asyncio.sleep(1)
-    
-    # prepare to push group 2
-    await propulsion.pointTo(poses.g3, yaw_rate)
-    await propulsion.trajectorySpline(poses.t3, speed=1.0)
-    await propulsion.pointTo(poses.g2, yaw_rate)
-    await pales.move(both='ouvert') 
-    await asyncio.sleep(1)
-    await propulsion.moveTo(poses.g2, speed=1.0)    
-    return
-    
+    arms_task = asyncio.create_task(arms_prise_3hex())
+    await propulsion.moveTo(poses.pose_rush_3hex, 1.0)
+    await arms_task
+    a = strategy.create_action('abri_chantier')
+    a.sequence = 'abri_chantier'
+    a.enabled = True
+    a.priority = 4
+    a.begin_pose = poses.pose_ejecteur
 
-    
-    #strategy.actions['action1'].enabled = True
+  
 
 async def end_match():
     print('end match callback')
@@ -325,5 +383,3 @@ async def check_secondary_robot():
         await robot.setScore(robot.score + 10)
     else:
         print('No')    
-
-

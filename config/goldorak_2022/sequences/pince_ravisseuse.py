@@ -14,8 +14,8 @@ mors_g_opened = 1023
 
 chariot_g_mid = 512
 chariot_d_mid = 512
-chariot_g_closed = 0
-chariot_d_closed = 0
+chariot_g_closed = 130
+chariot_d_closed = 130
 chariot_g_opened = 1023
 
 lift_up = 3379

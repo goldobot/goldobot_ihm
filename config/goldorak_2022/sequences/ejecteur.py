@@ -11,9 +11,11 @@ async def ejecteur_neutral():
 
 @robot.sequence
 async def ejecteur_trigger():
+    await servos.setEnable(['ejecteur'], True)
     await servos.moveMultiple({'ejecteur': ejecteur_trigger_pos}, 1)
     await asyncio.sleep(0.3)
     await servos.moveMultiple({'ejecteur': ejecteur_neutral_pos}, 1)
+    await servos.setEnable(['ejecteur'], False)
 
 @robot.sequence
 async def ejecteur_lock():
