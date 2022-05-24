@@ -78,12 +78,12 @@ class YellowPoses:
     a_prise_zone1 = (0.67, -0.9, 90)
     a_retour_zone_depart = (0.7, -1.2, -90)
 
-    pose_rush_3hex = (0.675, -0.780, 90)
-    pose_prise_3hex = (0.675, -0.900, 90)
+    pose_rush_3hex = (0.675, -0.750, 90)
+    pose_prise_3hex = (0.675, -0.890, 90)
     pose_pompe_3hex = (0.675, -0.950, 90)
 
     pose_ejecteur = (1.5, -1.0, -45)
-    
+    pose_prise_abri = (1.6, -1.1, -45)
     g1 = (rc.robot_rotation_distance_figurine, -0.4)
     
     g2 = (0.7, -1.05)
@@ -156,6 +156,7 @@ class PurplePoses:
     pose_pompe_3hex = symetrie(YellowPoses.pose_pompe_3hex)
 
     pose_ejecteur = symetrie(YellowPoses.pose_ejecteur)
+    pose_prise_abri = symetrie(YellowPoses.pose_prise_abri)
     
     g1 = symetrie(YellowPoses.g1)
     g2 = symetrie(YellowPoses.g2)
@@ -317,18 +318,24 @@ async def arms_prise_3hex():
     await servos.setMaxTorque(actuators.arms_servos, 1)
     await actuators.arms_prep_prise_3hex()
     while abs(propulsion.pose.position.y) > abs(poses.pose_pompe_3hex[1]):
-        print("pose = " + abs(propulsion.pose.position.y) + " | objective = " + abs(poses.pose_pompe_3hex[1]))
         await asyncio.sleep(0.01)
     await robot.gpioSet('pompe_g', True)
     await robot.gpioSet('pompe_d', True)
     while abs(propulsion.pose.position.y) > abs(poses.pose_prise_3hex[1]):
         await asyncio.sleep(0.005)
     await actuators.lifts_prise_3hex()
+    while abs(propulsion.pose.position.y) > abs(poses.pose_rush_3hex[1]):
+        await asyncio.sleep(0.01)
     await actuators.arms_serrage_3hex()
 
 @robot.sequence
 async def abri_chantier():
-    #await propulsion.faceDirection(-45)
+    if robot.side == Side.Purple:
+        poses = PurplePoses
+        await propulsion.faceDirection(45)
+    elif robot.side == Side.Yellow:
+        poses = YellowPoses
+        await propulsion.faceDirection(-45)
     print("lifts")
     await actuators.lifts_ejecteur()
     print("ejecteur")
@@ -336,11 +343,41 @@ async def abri_chantier():
     print("pumps")
     await robot.gpioSet('pompe_g', False)
     await robot.gpioSet('pompe_d', False)
-    strategy.current_action.enabled = False
+    await asyncio.sleep(10)
+    await actuators.lifts_top()
+    await propulsion.moveTo(poses.pose_prise_abri, 0.6)
+    await actuators.prise_abri_chantier()
     await actuators.lifts_top()
     await actuators.bras_ecartes()
     await propulsion.reposition(0.30, 0.2)
-    
+    strategy.current_action.enabled = False
+    a = strategy.create_action('prise_statuette')
+    a.sequence = 'prise_statuette'
+    a.enabled = True
+    a.priority = 4
+    a.begin_pose = poses.pose_ejecteur
+
+@robot.sequence
+async def prise_statuette():
+    await propulsion.faceDirection(135)
+    await propulsion.reposition(-0.30, 0.2)
+    if sensors['hall_statuette'] == True:
+        await propulsion.faceDirection(137)
+        await propulsion.faceDirection(133)
+        await propulsion.faceDirection(137)
+        await propulsion.faceDirection(133)
+    await propulsion.translation(0.05, 0.2)
+
+@robot.sequence
+async def depose_statuette():
+    await propulsion.faceDirection(0, 0.2)
+    await propulsion.reposition(-0.30, 0.2)
+    if sensors['hall_statuette'] == False:
+        await propulsion.faceDirection(-2)
+        await propulsion.faceDirection(2)
+        await propulsion.faceDirection(-2)
+        await propulsion.faceDirection(2)
+    await propulsion.translation(0.05, 0.2)
     
 @robot.sequence
 async def start_match():
@@ -361,13 +398,12 @@ async def start_match():
     arms_task = asyncio.create_task(arms_prise_3hex())
     await propulsion.moveTo(poses.pose_rush_3hex, 1.0)
     await arms_task
+    await asyncio.sleep(5)
     a = strategy.create_action('abri_chantier')
     a.sequence = 'abri_chantier'
     a.enabled = True
     a.priority = 4
     a.begin_pose = poses.pose_ejecteur
-
-  
 
 async def end_match():
     print('end match callback')

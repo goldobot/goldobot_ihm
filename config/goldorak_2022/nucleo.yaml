@@ -87,7 +87,7 @@ nucleo:
     - name: epaule_g
       id: 83
       type: DYNAMIXEL_MX28
-      max_speed: 0x3ff
+      max_speed: 8000
       max_torque: 0x3ff
       cw_limit: 917
       ccw_limit: 3316
@@ -103,7 +103,7 @@ nucleo:
     - name: epaule_d
       id: 81
       type: DYNAMIXEL_MX28
-      max_speed: 0x3ff
+      max_speed: 8000
       max_torque: 0x3ff
       cw_limit: 766
       ccw_limit: 3171
@@ -119,7 +119,7 @@ nucleo:
     - name: lift_pince
       id: 85
       type: DYNAMIXEL_MX28
-      max_speed: 0x3ff
+      max_speed: 8000
       max_torque: 0x3ff
       cw_limit: 289
       ccw_limit: 3867

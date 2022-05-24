@@ -55,8 +55,8 @@ arms_pos_ecartes = {
 }
 
 lifts_pos_prise_3hex = {
-    'lift_left': 200,
-    'lift_right': 200,
+    'lift_left': 300,
+    'lift_right': 300,
 }
 
 lifts_pos_leve_3hex = {
@@ -70,8 +70,8 @@ lifts_pos_prise_gnd = {
 }
 
 lifts_pos_ejecteur = {
-    'lift_left': 200,
-    'lift_right': 200,
+    'lift_left': 300,
+    'lift_right': 300,
 }
 
 lifts_pos_top = {
@@ -137,7 +137,7 @@ async def arms_prep_prise_3hex():
 async def arms_serrage_3hex():
     await servos.setEnable(['coude_g', 'coude_d', 'epaule_d', 'epaule_g'], True)
     await servos.setMaxTorque(arms_servos, 0.8)
-    await servos.moveMultiple(lifts_pos_leve_3hex, speed=1)
+    #await servos.moveMultiple(lifts_pos_leve_3hex, speed=1)
     await servos.moveMultiple(arms_pos_serrage_3hex, speed=1)
 
 @robot.sequence
@@ -146,7 +146,6 @@ async def lifts_prise_3hex():
     await servos.setMaxTorque(arms_servos, 1)
     await servos.moveMultiple(lifts_pos_prise_gnd, speed=1)
     await servos.moveMultiple(arms_pos_prise_3hex, speed=1)
-    await servos.moveMultiple(lifts_pos_prise_3hex, speed=1)
     while sensors['sick_bras_g'] == True and sensors['sick_bras_d'] == True:
         await asyncio.sleep(0.005)
     await servos.moveMultiple(arms_coude_plat, speed=1)
@@ -180,6 +179,7 @@ async def prise_abri_chantier():
     await servos.moveMultiple(arms_pos_prise_abri, speed=1)
     await start_pumps()
     await servos.moveMultiple(lifts_pos_prise_abri, speed=1)
+    await asyncio.sleep(0.3)
 
 @robot.sequence
 async def start_pumps():
