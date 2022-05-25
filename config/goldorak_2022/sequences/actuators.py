@@ -3,6 +3,11 @@ import asyncio
 #epaule_g
 #coude_g
 
+epaule_g_square = 1510
+epaule_g_straight = 2032
+epaule_d_square = 2633
+epaule_d_straight = 2034
+
 arms_pos_init_1 = {
     'coude_g': 816,
     'coude_d': 218
@@ -80,8 +85,18 @@ lifts_pos_top = {
 }
 
 lifts_pos_prise_abri = {
-    'lift_left': 1200,
-    'lift_right': 1200,
+    'lift_left': 700,
+    'lift_right': 700,
+}
+
+arms_pos_left_push = {
+    'lift_left': 1700,
+    'coude_g': 380
+}
+
+arms_pos_right_push = {
+    'lift_right': 1700,
+    'coude_d': 645
 }
 
 arms_servos = ['epaule_g', 'epaule_d', 'coude_g', 'coude_d']
@@ -161,7 +176,7 @@ async def lifts_ejecteur():
 async def lifts_top():
     await servos.setEnable(['coude_g', 'coude_d'], False)
     await servos.setMaxTorque(arms_servos, 1)
-    await servos.moveMultiple(arms_pos_ecartes, speed=1)
+    await servos.moveMultiple(lifts_pos_top, speed=1)
     await asyncio.sleep(0.1)
 
 @robot.sequence
@@ -176,16 +191,34 @@ async def bras_ecartes():
 async def prise_abri_chantier():
     await servos.setEnable(['coude_g', 'coude_d', 'epaule_d', 'epaule_g'], True)
     await servos.setMaxTorque(arms_servos, 1)
-    await servos.moveMultiple(arms_pos_prise_abri, speed=1)
     await start_pumps()
     await servos.moveMultiple(lifts_pos_prise_abri, speed=1)
-    await asyncio.sleep(0.3)
+    await asyncio.sleep(0.5)
+
+@robot.sequence
+async def preprise_abri_chantier():
+    await servos.setEnable(['coude_g', 'coude_d', 'epaule_d', 'epaule_g'], True)
+    await servos.moveMultiple(arms_pos_prise_abri, speed=1)
+    
+@robot.sequence
+async def push_square_left_arm():
+    await servos.setEnable(['coude_g', 'epaule_g'], True)
+    await servos.moveMultiple(arms_pos_left_push, speed=1)
+    await servos.moveMultiple({'epaule_g': epaule_g_square}, speed=1)
+    await servos.moveMultiple({'epaule_g': epaule_g_straight}, speed=1)
+
+@robot.sequence
+async def push_square_right_arm():
+    await servos.setEnable(['coude_d', 'epaule_d'], True)
+    await servos.moveMultiple(arms_pos_right_push, speed=1)
+    await servos.moveMultiple({'epaule_d': epaule_d_square}, speed=1)
+    await servos.moveMultiple({'epaule_d': epaule_d_straight}, speed=1)
+
 
 @robot.sequence
 async def start_pumps():
     await robot.gpioSet('pompe_g', True)
     await robot.gpioSet('pompe_d', True)
-
 
 @robot.sequence
 async def stop_pumps():

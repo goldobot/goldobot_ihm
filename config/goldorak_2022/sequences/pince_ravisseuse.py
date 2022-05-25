@@ -4,7 +4,7 @@ from numpy import true_divide
 
 class Side:
     Unknown = 0
-    Blue = 1
+    Purple = 1
     Yellow = 2
 
 mors_d_closed = 12
@@ -17,6 +17,7 @@ chariot_d_mid = 512
 chariot_g_closed = 130
 chariot_d_closed = 130
 chariot_g_opened = 1023
+chariot_d_opened = 1023
 
 lift_up = 3379
 lift_tryohm = 2393
@@ -35,7 +36,6 @@ chariot_d_take_replica = 340
 mors_g_take_replica = 722
 chariot_g_take_replica = 353
 
-truc = False
 
 #tryohm
 mors_opened = {
@@ -57,6 +57,17 @@ chariot_closed = {
     'chariot_g': chariot_g_closed,
     'chariot_d': chariot_d_closed
 }
+
+pince_left_init_pos = {
+    'mors_g': mors_g_closed,
+    'chariot_g': chariot_g_closed,
+}
+
+pince_right_init_pos = {
+    'mors_d': mors_d_closed,
+    'chariot_d': chariot_d_closed,
+}
+
 
 
 @robot.sequence
@@ -114,8 +125,13 @@ async def take_replica_left():
 
     await asyncio.sleep(1)
 
-async def open_chariot():
+async def open_chariot_g():
     await servos.moveMultiple({'chariot_g': chariot_g_opened}, 0.4)
+    tryohm_g_touched = True
+    return
+
+async def open_chariot_d():
+    await servos.moveMultiple({'chariot_g': chariot_d_opened}, 0.4)
     truc = True
     return
 
@@ -123,20 +139,20 @@ async def open_chariot():
 async def measure_tryohm_left():
     tryohm_val = None
     push = False
-    truc = False
     await servos.setMaxTorque(['chariot_g', 'mors_g'], 0.50)
     await servos.setMaxTorque(['lift_pince'], 1)
     await servos.setEnable(['chariot_g', 'mors_g', 'lift_pince'], True)
     await servos.moveMultiple({'mors_g': mors_g_closed}, 0.4)
     await servos.moveMultiple({'lift_pince': lift_tryohm}, 1)
-    task = asyncio.create_task(open_chariot())
-    while robot.tryOhm == None and truc == False:
+    task = asyncio.create_task(open_chariot_g())
+    while robot.tryOhm == None and not task.done():
         await asyncio.sleep(0.01)
     task.cancel()
     tryohm_val = robot.tryOhm
     await servos.moveMultiple({'lift_pince': lift_tryohm+400, 'chariot_g': servos.states['chariot_g'].measured_position}, 1)
     await servos.moveMultiple({'chariot_g': 300}, 1)
-    if robot.side == Side.Blue and tryohm_val == 'purple':
+    return tryohm_val
+    if robot.side == Side.Purple and tryohm_val == 'purple':
         push = True
     elif robot.side == Side.Yellow and tryohm_val == 'yellow':
         push = True
@@ -146,3 +162,49 @@ async def measure_tryohm_left():
         await servos.moveMultiple({'chariot_g':chariot_g_opened}, 1)
         await asyncio.sleep(0.5)
         await servos.moveMultiple({'chariot_g':chariot_g_closed}, 1)
+
+@robot.sequence
+async def measure_tryohm_right():
+    tryohm_val = None
+    push = False
+    await servos.setMaxTorque(['chariot_d', 'mors_d'], 0.50)
+    await servos.setMaxTorque(['lift_pince'], 0.5)
+    await servos.setEnable(['chariot_d', 'mors_d', 'lift_pince'], True)
+    await servos.moveMultiple(pince_right_init_pos, 1)
+    await servos.moveMultiple({'lift_pince': lift_tryohm}, 1)
+    task = asyncio.create_task(open_chariot_d())
+    while robot.tryOhm == None and not task.done():
+        await asyncio.sleep(0.01)
+    task.cancel()
+    tryohm_val = robot.tryOhm
+    await servos.moveMultiple({'lift_pince': lift_tryohm+400, 'chariot_d': servos.states['chariot_d'].measured_position}, 1)
+    await servos.moveMultiple({'chariot_d': 300}, 1)
+    return tryohm_val
+    if robot.side == Side.Purple and tryohm_val == 'purple':
+        push = True
+    elif robot.side == Side.Yellow and tryohm_val == 'yellow':
+        push = True
+    if push:
+        await servos.setMaxTorque(['chariot_g'], 1)
+        await servos.moveMultiple({'lift_pince': lift_push_square}, 1)
+        await servos.moveMultiple({'chariot_g':chariot_g_opened}, 1)
+        await asyncio.sleep(0.5)
+        await servos.moveMultiple({'chariot_g':chariot_g_closed}, 1)
+
+@robot.sequence
+async def push_square_right():
+    await servos.setEnable(['chariot_d', 'mors_d', 'lift_pince'], True)
+    await servos.setMaxTorque(['chariot_d'], 1)
+    await servos.moveMultiple({'lift_pince': lift_push_square}, 1)
+    await servos.moveMultiple({'chariot_d':chariot_d_opened}, 1)
+    await asyncio.sleep(0.1)
+    await servos.moveMultiple({'chariot_d':chariot_d_closed}, 1)
+
+@robot.sequence
+async def push_square_left():
+    await servos.setEnable(['chariot_g', 'mors_g', 'lift_pince'], True)
+    await servos.setMaxTorque(['chariot_g'], 1)
+    await servos.moveMultiple({'lift_pince': lift_push_square}, 1)
+    await servos.moveMultiple({'chariot_g':chariot_g_opened}, 1)
+    #await asyncio.sleep(0)
+    await servos.moveMultiple({'chariot_g':chariot_g_closed}, 1)

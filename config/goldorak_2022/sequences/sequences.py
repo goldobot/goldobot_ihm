@@ -83,7 +83,9 @@ class YellowPoses:
     pose_pompe_3hex = (0.675, -0.950, 90)
 
     pose_ejecteur = (1.5, -1.0, -45)
-    pose_prise_abri = (1.6, -1.1, -45)
+    pose_prise_abri = (1.615, -1.115, -45)
+    pose_depose_statuette = (0.4, -1.275, 0)
+
     g1 = (rc.robot_rotation_distance_figurine, -0.4)
     
     g2 = (0.7, -1.05)
@@ -157,6 +159,7 @@ class PurplePoses:
 
     pose_ejecteur = symetrie(YellowPoses.pose_ejecteur)
     pose_prise_abri = symetrie(YellowPoses.pose_prise_abri)
+    pose_depose_statuette = symetrie(YellowPoses.pose_depose_statuette)
     
     g1 = symetrie(YellowPoses.g1)
     g2 = symetrie(YellowPoses.g2)
@@ -255,7 +258,7 @@ async def prematch():
     await recalage()
     
     await lidar.start()
-    await robot.setScore(0)
+    await robot.setScore(4)
 
     load_strategy()
     print('loaded')
@@ -328,6 +331,11 @@ async def arms_prise_3hex():
         await asyncio.sleep(0.01)
     await actuators.arms_serrage_3hex()
 
+# S'orienter vers l'abri de chantier
+# Lever les éléments dans les bras, et éjecter l'élément du milieu
+# Poser les éléments dans les bras, lever les bras, récupérer ceux de l'abri
+# Ecarter les bras, pousser les éléments sous l'abri
+# Prendre la statuette
 @robot.sequence
 async def abri_chantier():
     if robot.side == Side.Purple:
@@ -340,44 +348,193 @@ async def abri_chantier():
     await actuators.lifts_ejecteur()
     print("ejecteur")
     await ejecteur.ejecteur_trigger()
+    await robot.setScore(robot.score + 5)
     print("pumps")
     await robot.gpioSet('pompe_g', False)
     await robot.gpioSet('pompe_d', False)
-    await asyncio.sleep(10)
     await actuators.lifts_top()
+    await actuators.preprise_abri_chantier()
+    await asyncio.sleep(0.5)
     await propulsion.moveTo(poses.pose_prise_abri, 0.6)
     await actuators.prise_abri_chantier()
+    await robot.setScore(robot.score + 2)
     await actuators.lifts_top()
     await actuators.bras_ecartes()
     await propulsion.reposition(0.30, 0.2)
+    await robot.setScore(robot.score + 10)
+    await propulsion.moveTo(poses.pose_ejecteur, 0.2)
+    await prise_statuette()
+    await asyncio.sleep(1)
     strategy.current_action.enabled = False
-    a = strategy.create_action('prise_statuette')
-    a.sequence = 'prise_statuette'
-    a.enabled = True
-    a.priority = 4
-    a.begin_pose = poses.pose_ejecteur
 
+# S'orienter dos à la statuette et reculer en mode recalage pour la récupérer
+# Si le capteur Hall ne détecte pas la prise de la statuette, petit wobble
 @robot.sequence
 async def prise_statuette():
     await propulsion.faceDirection(135)
     await propulsion.reposition(-0.30, 0.2)
-    if sensors['hall_statuette'] == True:
+    if sensors['hall_statuette'] == False:
         await propulsion.faceDirection(137)
         await propulsion.faceDirection(133)
         await propulsion.faceDirection(137)
         await propulsion.faceDirection(133)
-    await propulsion.translation(0.05, 0.2)
+    await propulsion.translation(0.15, 0.2)
+    await robot.setScore(robot.score + 5)
+    a = strategy.create_action('depose_statuette')
+    a.sequence = 'depose_statuette'
+    a.priority = 4
+    a.enabled = True
+    a.begin_pose = poses.pose_depose_statuette
 
+
+# S'orienter dos à la vitrine et reculer en mode recalage pour poser la statuette
+# Si le capteur à effet Hall ne detecte pas que la statuette est décrochée, petit wobble
 @robot.sequence
 async def depose_statuette():
     await propulsion.faceDirection(0, 0.2)
-    await propulsion.reposition(-0.30, 0.2)
-    if sensors['hall_statuette'] == False:
+    await propulsion.reposition(-1.0, 0.2)
+    if sensors['hall_statuette'] == True:
         await propulsion.faceDirection(-2)
         await propulsion.faceDirection(2)
         await propulsion.faceDirection(-2)
         await propulsion.faceDirection(2)
-    await propulsion.translation(0.05, 0.2)
+    await propulsion.translation(0.10, 0.2)
+    await robot.setScore(robot.score + 20)
+    strategy.current_action.enabled = False
+
+@robot.sequence
+async def carres_fouille_purple():
+    tryohm_val = None
+    between_squares = 0.185
+    offset = 0
+    poses = PurplePoses
+    await propulsion.faceDirection(-90)
+    tryohm_val = await pince_ravisseuse.measure_tryohm_left()
+    # Premier carré bonne couleur, on pousse les 2 premiers
+    if tryohm_val == 'purple':
+        task_pince = pince_ravisseuse.push_square_left()
+        task_arm = actuators.push_square_left_arm()
+        await task_pince
+        await task_arm
+        await robot.setScore(robot.score + 15)
+    # Premier carré pas bonne couleur, on pousse le 2 et 3
+    elif tryohm_val == 'red':
+        offset = between_squares
+        await propulsion.translation(offset, 0.6)
+        task_pince = pince_ravisseuse.push_square_left()
+        task_arm = asyncio.create_task(actuators.push_square_left_arm())
+        await task_pince
+        await task_arm
+        await robot.setScore(robot.score + 15)
+    # On arrive pas à lire, failsafe
+    else:
+        print("Failed to read square")
+        await(actuators.push_square_left_arm)
+        await robot.setScore(robot.score + 10)
+
+    # On avance au 4ème carré
+    await propulsion.translation(3 * between_squares - offset, 0.6)
+    # Mesure 4ème carré
+    tryohm_val = await pince_ravisseuse.measure_tryohm_left()
+    # Si bonne couleur, on le tape et on tape le 7eme
+    if tryohm_val == 'purple':
+        await pince_ravisseuse.push_square_left()
+        await robot.setScore(robot.score + 5)
+        await propulsion.translation(2 * between_squares)
+        await actuators.push_square_left_arm()
+        await robot.setScore(robot.score + 5)
+    # Si mauvaise couleur, on avance et on tape les 2 du milieu
+    elif tryohm_val == 'yellow':
+        await propulsion.translation(between_squares)
+        task_pince = pince_ravisseuse.push_square_left()
+        task_arm = asyncio.create_task(actuators.push_square_left_arm())
+        await task_pince
+        await task_arm
+        await robot.setScore(robot.score + 10)
+    # Si on arrive pas à lire, on tape les 4 du milieu
+    else:
+        task_pince = pince_ravisseuse.push_square_left()
+        task_arm = asyncio.create_task(actuators.push_square_left_arm())
+        await task_pince
+        await task_arm
+        await propulsion.translation(2 * between_squares)
+        task_pince = pince_ravisseuse.push_square_left()
+        task_arm = asyncio.create_task(actuators.push_square_left_arm())
+        await task_pince
+        await task_arm
+        await robot.setScore(robot.score + 10)
+
+@robot.sequence
+async def carres_fouille_yellow():
+    tryohm_val = None
+    between_squares = 0.185
+    offset = 0
+    poses = YellowPoses
+    await propulsion.faceDirection(90)
+    tryohm_val = await pince_ravisseuse.measure_tryohm_right()
+    # Premier carré bonne couleur, on pousse les 2 premiers
+    if tryohm_val == 'yellow':
+        task_pince = pince_ravisseuse.push_square_right()
+        task_arm = actuators.push_square_right_arm()
+        await task_pince
+        await task_arm
+        await robot.setScore(robot.score + 15)
+    # Premier carré pas bonne couleur, on pousse le 2 et 3
+    elif tryohm_val == 'red':
+        offset = between_squares
+        await propulsion.translation(offset, 0.6)
+        task_pince = pince_ravisseuse.push_square_right()
+        task_arm = asyncio.create_task(actuators.push_square_right_arm())
+        await task_pince
+        await task_arm
+        await robot.setScore(robot.score + 15)
+    # On arrive pas à lire, failsafe
+    else:
+        print("Failed to read square")
+        await(actuators.push_square_right_arm)
+        await robot.setScore(robot.score + 10)
+
+    # On avance au 4ème carré
+    await propulsion.translation(3 * between_squares - offset, 0.6)
+    # Mesure 4ème carré
+    tryohm_val = await pince_ravisseuse.measure_tryohm_right()
+    # Si bonne couleur, on le tape et on tape le 7eme
+    if tryohm_val == 'yellow':
+        await pince_ravisseuse.push_square_right()
+        await robot.setScore(robot.score + 5)
+        await propulsion.translation(2 * between_squares)
+        await actuators.push_square_right_arm()
+        await robot.setScore(robot.score + 5)
+    # Si mauvaise couleur, on avance et on tape les 2 du milieu
+    elif tryohm_val == 'purple':
+        await propulsion.translation(between_squares)
+        task_pince = pince_ravisseuse.push_square_right()
+        task_arm = asyncio.create_task(actuators.push_square_right_arm())
+        await task_pince
+        await task_arm
+        await robot.setScore(robot.score + 10)
+    # Si on arrive pas à lire, on tape les 4 du milieu
+    else:
+        task_pince = pince_ravisseuse.push_square_right()
+        task_arm = asyncio.create_task(actuators.push_square_right_arm())
+        await task_pince
+        await task_arm
+        await propulsion.translation(2 * between_squares)
+        task_pince = pince_ravisseuse.push_square_right()
+        task_arm = asyncio.create_task(actuators.push_square_right_arm())
+        await task_pince
+        await task_arm
+        await robot.setScore(robot.score + 10)
+
+@robot.sequence
+async def carres_fouille():
+    if robot.side == Side.Purple:
+        poses = PurplePoses
+        await carres_fouille_purple()
+    elif robot.side == Side.Yellow:
+        poses = YellowPoses
+        await carres_fouille_yellow()  
+
     
 @robot.sequence
 async def start_match():
@@ -398,7 +555,6 @@ async def start_match():
     arms_task = asyncio.create_task(arms_prise_3hex())
     await propulsion.moveTo(poses.pose_rush_3hex, 1.0)
     await arms_task
-    await asyncio.sleep(5)
     a = strategy.create_action('abri_chantier')
     a.sequence = 'abri_chantier'
     a.enabled = True
