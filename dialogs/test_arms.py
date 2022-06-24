@@ -18,7 +18,8 @@ speeds = [100,75,50,25,10]
 class ArmValuesWidget(QWidget):
     def __init__(self, servos):
         super(ArmValuesWidget, self).__init__()
-        self.ids = [s[1] for s in servos]        
+        self.ids = [s[1] for s in servos]
+        self._pos_val = {}
         self._widgets = {}
         layout = QGridLayout()
 
@@ -31,10 +32,14 @@ class ArmValuesWidget(QWidget):
         layout.addWidget(QLabel('Load'),0,6)
 
         for k, id_ in servos:
-            wid_goal_pos = QSpinBox()
-            wid_goal_pos.setRange(0,4096)
+
+            #wid_goal_pos = QSpinBox()
+            wid_goal_pos = QLineEdit()
+            #wid_goal_pos.setRange(0,4096)
+            wid_goal_pos.setText("0")
             cb = (lambda b: lambda : self._on_goal_position_changed(b))(id_)
-            wid_goal_pos.valueChanged.connect(cb)
+            #wid_goal_pos.valueChanged.connect(cb)
+            wid_goal_pos.returnPressed.connect(cb)
 
             wid_torque_enable = QCheckBox()
             cb = (lambda b: lambda : self._on_torque_enable_changed(b))(id_)
@@ -63,6 +68,7 @@ class ArmValuesWidget(QWidget):
             layout.addWidget(wid_current_load,i,6)
             self._widgets[id_] = (wid_goal_pos, wid_torque_enable, wid_torque_limit, wid_current_pos, wid_current_speed,
              wid_current_load)
+            self._pos_val[id_] = 0
             i+=1
         self._button_read_state = QPushButton('read')
         self._button_copy_state = QPushButton('copy')
@@ -131,9 +137,12 @@ class ArmValuesWidget(QWidget):
         self._combobox_position.clear()
         i = 0
         for k,v in cfg.robot_config.dynamixels_positions.items():
+            #print (k)
+            #print (v)
             self._combobox_position.addItem(k)
             msg = struct.pack('<BB', 0, i) + b''.join([struct.pack('<H', p) for p in v])
             self._client.send_message(160, msg)
+            i+=1
         
     def _on_dynamixel_registers(self, id_, address, data):
         if address == 36 and len(data) == 8:
@@ -155,9 +164,13 @@ class ArmValuesWidget(QWidget):
 
     def _on_goal_position_changed(self, id_):
         wids = self._widgets[id_]
-        # Set position
-        if wids[1].isChecked():
-            self._client.send_message(message_types.DbgDynamixelSetGoalPosition,struct.pack('<BH',id_, wids[0].value()))
+        # Send position
+        #if (wids[1].isChecked()) and (wids[0].value() != self._pos_val[id_]):
+        if (wids[1].isChecked()) and (int(wids[0].text()) != self._pos_val[id_]):
+            print(int(wids[0].text()))
+            #self._pos_val[id_] = int(wids[0].value())
+            self._pos_val[id_] = int(wids[0].text())
+            self._client.send_message(message_types.DbgDynamixelSetGoalPosition,struct.pack('<BH',id_, self._pos_val[id_]))
         # Read registers
         self._client.send_message(message_types.DbgDynamixelGetRegisters, struct.pack('<BBB',id_, 0x24, 8))
 

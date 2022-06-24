@@ -39,74 +39,157 @@ end sequence
 # 4
 begin sequence prematch_common
 pump.set_pwm pwm_pump_off
-#call range_bras
-call range_flag
+call range_bras_droit
+call range_bras_gauche
 delay delay1
 propulsion.motors_enable
 propulsion.enable
 end sequence
 
 # 5
-begin sequence deploie_droit
-set_servo griffe_d,servo_griffe_droit_attack,100
+begin sequence range_bras_droit
+set_servo bras_d,servo_bras_droit_retrait,100
 end sequence
 
 # 6
-begin sequence deploie_gauche
-set_servo griffe_g,servo_griffe_gauche_attack,100
+begin sequence range_bras_gauche
+set_servo bras_g,servo_bras_gauche_retrait,100
 end sequence
 
 # 7
-begin sequence range_bras
-set_servo griffe_g,servo_griffe_gauche_retrait,100
-set_servo griffe_d,servo_griffe_droit_retrait,100
+begin sequence deploie_bras_droit
+set_servo bras_d,servo_bras_droit_attack,100
 end sequence
 
 # 8
-begin sequence range_flag
-set_servo flag,servo_flag_ranged,100
+begin sequence deploie_bras_gauche
+set_servo bras_g,servo_bras_gauche_attack,100
 end sequence
 
 # 9
-begin sequence raise_flag
-set_servo flag,servo_flag_raised,100
+begin sequence depose_galerie
+delay delay03
+propulsion.reposition reposition_speed
+delay delay1
+delay delay05
+propulsion.motors_disable
+delay delay03
+propulsion.disable
+delay delay1
+propulsion.motors_enable
+delay delay03
+propulsion.enable
+delay delay03
+arm.go_to_position galerie_depose,1,100
+delay delay05
+pump.set_pwm pwm_pump_off
+delay delay03
+arm.go_to_position galerie_pre_depose,1,30
+delay delay03
 end sequence
 
 # 10
-begin sequence pale_droite_serre
-set_servo pale_d,servo_pale_droite_serre,100
+begin sequence chope_distrib_vertical1
+delay delay03
+propulsion.reposition reposition_speed
+delay delay1
+delay delay05
+propulsion.motors_disable
+delay delay03
+propulsion.disable
+delay delay1
+propulsion.motors_enable
+delay delay03
+propulsion.enable
+delay delay03
+arm.go_to_position galerie_pre_depose,1,100
+delay delay03
+arm.go_to_position dist_chope,1,100
+delay delay03
+arm.go_to_position dist_preprise,1,100
+delay delay03
+arm.go_to_position dist_prise1_0,1,100
+delay delay03
+pump.set_pwm pwm_pump_activated
+delay delay03
+arm.go_to_position dist_prise1_1,1,30
+delay delay03
+arm.go_to_position dist_postprise1,1,30
+delay delay03
+arm.go_to_position galerie_pre_depose,1,30
+delay delay03
 end sequence
 
 # 11
-begin sequence pale_droite_ouvre
-set_servo pale_d,servo_pale_droite_ouvre,100
+begin sequence chope_distrib_vertical2
+delay delay03
+propulsion.reposition reposition_speed
+delay delay1
+delay delay05
+propulsion.motors_disable
+delay delay03
+propulsion.disable
+delay delay1
+propulsion.motors_enable
+delay delay03
+propulsion.enable
+delay delay03
+arm.go_to_position galerie_pre_depose,1,100
+delay delay03
+arm.go_to_position dist_chope,1,100
+delay delay03
+arm.go_to_position dist_preprise,1,100
+delay delay03
+arm.go_to_position dist_prise2_0,1,100
+delay delay03
+pump.set_pwm pwm_pump_activated
+delay delay03
+arm.go_to_position dist_prise2_1,1,30
+delay delay03
+arm.go_to_position dist_postprise2,1,30
+delay delay03
+arm.go_to_position galerie_pre_depose,1,30
+delay delay03
 end sequence
 
 # 12
-begin sequence pale_gauche_serre
-set_servo pale_g,servo_pale_gauche_serre,100
+begin sequence chope_distrib_horizontal
+delay delay05
+propulsion.reposition reposition_speed
+delay delay05
+arm.go_to_position galerie_pre_depose,1,100
+delay delay03
+arm.go_to_position dist_h_prise,1,100
+delay delay03
+pump.set_pwm pwm_pump_activated
+delay delay03
+arm.go_to_position galerie_pre_depose,1,30
+delay delay03
 end sequence
 
 # 13
-begin sequence pale_gauche_ouvre
-set_servo pale_g,servo_pale_gauche_ouvre,100
+begin sequence chope_sol
+arm.go_to_position galerie_pre_depose,1,100
+delay delay03
+arm.go_to_position sol_preprise,1,100
+delay delay03
+arm.go_to_position sol_prise,1,100
+delay delay03
+pump.set_pwm pwm_pump_activated
+delay delay03
+arm.go_to_position galerie_pre_depose,1,30
+delay delay03
 end sequence
 
 # 14
-begin sequence pales_ouvre
-set_servo pale_d,servo_pale_droite_ouvre,100
-set_servo pale_g,servo_pale_gauche_ouvre,100
-end sequence
-
-# 15
-begin sequence pales_serre
-set_servo pale_d,servo_pale_droite_serre,100
-set_servo pale_g,servo_pale_gauche_serre,100
-end sequence
-
-# 16
-begin sequence pales_serre_un_peu
-set_servo pale_d,servo_pale_droite_serre_un_peu,100
-set_servo pale_g,servo_pale_gauche_serre_un_peu,100
+begin sequence flip_sample
+arm.go_to_position galerie_pre_depose,1,100
+delay delay03
+arm.go_to_position flip,1,100
+delay delay03
+pump.set_pwm pwm_pump_off
+delay delay03
+arm.go_to_position galerie_pre_depose,1,30
+delay delay03
 end sequence
 

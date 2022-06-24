@@ -161,21 +161,27 @@ propulsion:
 dynamixels:
   - name: rail
     type: mx28
-    id: 81
-    cw_limit: 850
-    ccw_limit: 1850    
+    id: 84
+    cw_limit: 1900
+    ccw_limit: 2700    
     torque_limit: 512
-  - name: coude
+  - name: epaule
     id: 82
     type: mx28
-    cw_limit: 800
-    ccw_limit: 3150   
+    cw_limit: 900
+    ccw_limit: 3200   
     torque_limit: 512
-  - name: tete
+  - name: coude
+    id: 2
+    type: ax12
+    cw_limit: 300
+    ccw_limit: 1010    
+    torque_limit: 512
+  - name: poignet
     id: 1
     type: ax12
-    cw_limit: 250
-    ccw_limit: 850    
+    cw_limit: 300
+    ccw_limit: 980    
     torque_limit: 512
 servos:
   - name: pale_d
@@ -188,12 +194,12 @@ servos:
     max_speed: 40000
     cw_limit: 12000
     ccw_limit: 48000 
-  - name: griffe_g
+  - name: bras_g
     id: 2
     max_speed: 40000
     cw_limit: 19000
     ccw_limit: 51000 
-  - name: griffe_d
+  - name: bras_d
     id: 1
     max_speed: 40000
     cw_limit: 16000

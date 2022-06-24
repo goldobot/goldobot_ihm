@@ -68,24 +68,17 @@ var vec3 speed_180=(180mm,500mm,300mm)
 #--ramasse ligne chaos
 var vec3 speed_100=(45mm,300mm,300mm)
 
+var float reposition_speed=100mm
 
 ####################################################################
 #							Position servo
 ####################################################################
 
-#--HACK 2021
-var int servo_griffe_gauche_attack=51000
-var int servo_griffe_gauche_retrait=27000
-var int servo_griffe_droit_attack=16000
-var int servo_griffe_droit_retrait=40000
-var int servo_flag_ranged=16000
-var int servo_flag_raised=34000
-var int servo_pale_droite_serre=32000
-var int servo_pale_droite_serre_un_peu=17000
-var int servo_pale_droite_ouvre=14000
-var int servo_pale_gauche_serre=33000
-var int servo_pale_gauche_serre_un_peu=48000
-var int servo_pale_gauche_ouvre=51000
+#--HACK 2022
+var int servo_bras_gauche_retrait=53000
+var int servo_bras_gauche_attack=29000
+var int servo_bras_droit_retrait=16000
+var int servo_bras_droit_attack=40000
 
 ####################################################################
 #							Capteur

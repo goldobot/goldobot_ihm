@@ -74,6 +74,14 @@ class TableViewWidget(QGraphicsView):
         background = QColor(40,40,40)
         darker = QColor(20,20,20)
 
+# FIXME : DEBUG : HACK SCORE 2022 ++
+        self._score_val = 0
+        self._act1_done = False
+        self._act2_done = False
+        self._act3_done = False
+        self._act4_done = False
+# FIXME : DEBUG : HACK SCORE 2022 --
+
         little_robot_poly = QPolygonF([
             QPointF(  50,   0),
             QPointF( 100,  85),
@@ -362,6 +370,70 @@ class TableViewWidget(QGraphicsView):
         self._little_robot.setRotation(telemetry.yaw * 180 / math.pi)
         self._little_robot_x = telemetry.x * 1000
         self._little_robot_y = telemetry.y * 1000
+
+# FIXME : DEBUG : HACK SCORE 2022 ++
+        is_neg = False
+        disp_window = self.parent().parent()
+        if (not self._act1_done):
+            act1_x_mm = 1850
+            act1_y_mm = -600.0
+            delta_x_mm = (telemetry.x * 1000 - act1_x_mm)
+            delta_y_mm = (telemetry.y * 1000 - act1_y_mm)
+            delta_d_mm = math.sqrt(delta_x_mm*delta_x_mm + delta_y_mm*delta_y_mm)
+            if (delta_d_mm<10.0):
+                self._score_val = self._score_val + 5
+                disp_window._score.setText("Score:\n{:d}".format(self._score_val))
+                self._act1_done = True
+                is_neg = True
+            act1_y_mm = 600.0
+            delta_y_mm = (telemetry.y * 1000 - act1_y_mm)
+            delta_d_mm = math.sqrt(delta_x_mm*delta_x_mm + delta_y_mm*delta_y_mm)
+            if (delta_d_mm<10.0):
+                self._score_val = self._score_val + 5
+                disp_window._score.setText("Score:\n{:d}".format(self._score_val))
+                self._act1_done = True
+                is_neg = False
+        if self._act1_done and (not self._act2_done):
+            act2_x_mm = 1850
+            if (is_neg):
+                act2_y_mm = -240.0
+            else:
+                act2_y_mm = 240.0
+            delta_x_mm = (telemetry.x * 1000 - act2_x_mm)
+            delta_y_mm = (telemetry.y * 1000 - act2_y_mm)
+            delta_d_mm = math.sqrt(delta_x_mm*delta_x_mm + delta_y_mm*delta_y_mm)
+            if (delta_d_mm<10.0):
+                self._score_val = self._score_val + 5
+                disp_window._score.setText("Score:\n{:d}".format(self._score_val))
+                self._act2_done = True
+        if self._act1_done and (not self._act3_done):
+            act3_x_mm = 1850
+            if (is_neg):
+                act3_y_mm = -50.0
+            else:
+                act3_y_mm = 50.0
+            delta_x_mm = (telemetry.x * 1000 - act3_x_mm)
+            delta_y_mm = (telemetry.y * 1000 - act3_y_mm)
+            delta_d_mm = math.sqrt(delta_x_mm*delta_x_mm + delta_y_mm*delta_y_mm)
+            if (delta_d_mm<10.0):
+                self._score_val = self._score_val + 5
+                disp_window._score.setText("Score:\n{:d}".format(self._score_val))
+                self._act3_done = True
+        if self._act1_done and (not self._act4_done):
+            act4_x_mm = 1850
+            if (is_neg):
+                act4_y_mm = 280.0
+            else:
+                act4_y_mm = -280.0
+            delta_x_mm = (telemetry.x * 1000 - act4_x_mm)
+            delta_y_mm = (telemetry.y * 1000 - act4_y_mm)
+            delta_d_mm = math.sqrt(delta_x_mm*delta_x_mm + delta_y_mm*delta_y_mm)
+            if (delta_d_mm<10.0):
+                self._score_val = self._score_val + 5
+                disp_window._score.setText("Score:\n{:d}".format(self._score_val))
+                self._act4_done = True
+# FIXME : DEBUG : HACK SCORE 2022 --
+
         # FIXME : DEBUG
         if TableViewWidget.g_debug:
             new_theta = telemetry.yaw * 180 / math.pi

@@ -216,11 +216,12 @@ class MainWindow(QMainWindow):
         right_layout.addStretch(16)
 
         main_layout.addWidget(self._widget_robot_status)
+        self._score_val = 0
         if self._ihm_type == "raspi":
             my_font = QFont ( "Arial", 40, QFont.Bold)
             self._score.setFont(my_font)
             self._score.setAlignment(Qt.AlignCenter)
-            self._score.setText("Score:\n80")
+            self._score.setText("Score:\n{:d}".format(self._score_val))
             main_layout.addWidget(self._score)
         main_layout.addLayout(table_layout)
         if self._ihm_type != "raspi":
