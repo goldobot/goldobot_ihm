@@ -2,15 +2,6 @@ import asyncio
 
 from numpy import true_divide
 
-import inspect
-
-def debug_goldo(caller):
-    print ()
-    print ("************************************************")
-    print (" GOLDO DEBUG :  {:32s}".format(inspect.currentframe().f_back.f_code.co_name))
-    print ("************************************************")
-    print ()
-
 class Side:
     Unknown = 0
     Purple = 1
@@ -29,8 +20,6 @@ chariot_g_opened = 1023
 chariot_d_opened = 1023
 
 lift_up = 3379
-# FIXME : TODO : remove
-#lift_tryohm = 2393
 lift_tryohm = 2400
 lift_push_square = 1355
 
@@ -46,8 +35,6 @@ mors_d_take_replica = 721
 chariot_d_take_replica = 340
 mors_g_take_replica = 722
 mors_g_hold_replica = 700
-# FIXME : TODO : remove
-#chariot_g_take_replica = 353
 chariot_g_take_replica = 335
 
 lift_pos_put_replica = 1552
@@ -126,8 +113,6 @@ async def disable_pince_only():
 
 @robot.sequence
 async def initialize_pince():
-    debug_goldo(__name__)
-
     await servos.setMaxTorque(['chariot_g', 'chariot_d', 'mors_g', 'mors_d'], 0.50)    
     await servos.setEnable(['chariot_g', 'chariot_d'], False)
     await servos.setEnable(['mors_g', 'mors_d'], True)
@@ -151,8 +136,6 @@ async def close_pince():
 
 @robot.sequence
 async def take_replica_right():
-    debug_goldo(__name__)
-
     await servos.setMaxTorque(['chariot_g', 'chariot_d', 'mors_g', 'mors_d', 'lift_pince'], 0.80)    
     await servos.setEnable(['chariot_g', 'chariot_d'], True)
     await servos.setEnable(['mors_g', 'mors_d','lift_pince'], True)
@@ -173,8 +156,6 @@ async def take_replica_right():
 
 @robot.sequence
 async def take_replica_left():
-    debug_goldo(__name__)
-
     await servos.setMaxTorque(['chariot_g', 'mors_g', 'lift_pince'], 0.80)    
     await servos.setEnable(['chariot_g'], True)
     await servos.setEnable(['mors_g', 'lift_pince'], True)
@@ -223,11 +204,9 @@ async def open_chariot_d():
     await servos.moveMultiple({'chariot_g': chariot_d_opened}, 0.4)
     truc = True
     return
-
+    
 @robot.sequence
 async def measure_tryohm_left():
-    debug_goldo(__name__)
-
     tryohm_val = None
     push = False
     await servos.setMaxTorque(['chariot_g', 'mors_g'], 0.50)
@@ -243,22 +222,9 @@ async def measure_tryohm_left():
     await servos.moveMultiple({'lift_pince': lift_tryohm+400, 'chariot_g': servos.states['chariot_g'].measured_position}, 1)
     await servos.moveMultiple({'chariot_g': 300}, 1)
     return tryohm_val
-    # FIXME : TODO : OK to remove this?
-    #if robot.side == Side.Purple and tryohm_val == 'purple':
-    #    push = True
-    #elif robot.side == Side.Yellow and tryohm_val == 'yellow':
-    #    push = True
-    #if push:
-    #    await servos.setMaxTorque(['chariot_g'], 1)
-    #    await servos.moveMultiple({'lift_pince': lift_push_square}, 1)
-    #    await servos.moveMultiple({'chariot_g':chariot_g_opened}, 1)
-    #    await asyncio.sleep(0.5)
-    #    await servos.moveMultiple({'chariot_g':chariot_g_closed}, 1)
 
 @robot.sequence
 async def measure_tryohm_right():
-    debug_goldo(__name__)
-
     tryohm_val = None
     push = False
     await servos.setMaxTorque(['chariot_d', 'mors_d'], 0.50)
@@ -274,22 +240,9 @@ async def measure_tryohm_right():
     await servos.moveMultiple({'lift_pince': lift_tryohm+400, 'chariot_d': servos.states['chariot_d'].measured_position}, 1)
     await servos.moveMultiple({'chariot_d': 300}, 1)
     return tryohm_val
-    # FIXME : TODO : OK to remove this?
-    #if robot.side == Side.Purple and tryohm_val == 'purple':
-    #    push = True
-    #elif robot.side == Side.Yellow and tryohm_val == 'yellow':
-    #    push = True
-    #if push:
-    #    await servos.setMaxTorque(['chariot_g'], 1)
-    #    await servos.moveMultiple({'lift_pince': lift_push_square}, 1)
-    #    await servos.moveMultiple({'chariot_g':chariot_g_opened}, 1)
-    #    await asyncio.sleep(0.5)
-    #    await servos.moveMultiple({'chariot_g':chariot_g_closed}, 1)
 
 @robot.sequence
 async def push_square_right():
-    debug_goldo(__name__)
-
     await servos.setEnable(['chariot_d', 'mors_d', 'lift_pince'], True)
     await servos.setMaxTorque(['chariot_d'], 1)
     await servos.moveMultiple({'lift_pince': lift_push_square}, 1)
@@ -299,8 +252,6 @@ async def push_square_right():
 
 @robot.sequence
 async def push_square_left():
-    debug_goldo(__name__)
-
     await servos.setEnable(['chariot_g', 'mors_g', 'lift_pince'], True)
     await servos.setMaxTorque(['chariot_g'], 1)
     await servos.moveMultiple({'lift_pince': lift_push_square}, 1)

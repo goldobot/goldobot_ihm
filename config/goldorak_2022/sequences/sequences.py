@@ -12,14 +12,23 @@ import math
 from .poses import YellowPoses, PurplePoses
 
 from . import robot_config as rc
-from . import test_actuators
-from . import test_sequences
+#from . import test_actuators
+#from . import test_sequences
 
 from . import actuators
 from . import pince_ravisseuse
 from . import ejecteur
 from . import tests_2022
-from . import tests_2022_goldo
+#from . import tests_2022_goldo
+
+import inspect
+
+def debug_goldo(caller):
+    print ()
+    print ("************************************************")
+    print (" GOLDO DEBUG :  {:32s}".format(inspect.currentframe().f_back.f_code.co_name))
+    print ("************************************************")
+    print ()
 
 # objects included in the _sequences_globals of RobotMain class, defined in robot_main.py of goldo_main, are available as global variables
 # those objects are used to interact with the robot (send commands, read data)
@@ -49,7 +58,7 @@ def on_segment(p1, p2, d):
     
 #strategie homologation
 #depart robot parallele au bord de latable
-#avancée vers les fanions
+#avancee vers les fanions
 
 class Pose:
     pass
@@ -183,6 +192,8 @@ async def pointAndGoRetry(p, speed, yaw_rate):
 
 @robot.sequence
 async def recalage():
+    debug_goldo(__name__)
+
     if robot.side == Side.Purple:
         poses = PurplePoses
     elif robot.side == Side.Yellow:
@@ -197,7 +208,9 @@ async def recalage():
         await propulsion.setPose([0.40, -1.0], 0)
     print("recalage X")
     await propulsion.reposition(-1.0, 0.2)
-    await propulsion.measureNormal(0, 0 + rc.robot_back_length)
+    # FIXME : TODO : remove
+    #await propulsion.measureNormal(0, 0 + rc.robot_back_length)
+    await propulsion.setPose([0+rc.robot_back_length, propulsion.pose.position.y], 0)
     print("decollage bordure")
     await propulsion.translation(poses.start_pose[0] - rc.robot_back_length, 0.2)
     if robot.side == Side.Purple:
@@ -205,13 +218,17 @@ async def recalage():
         await propulsion.faceDirection(-90, 0.6)
         print("recalage violet")
         await propulsion.reposition(-1.0, 0.2)
-        await propulsion.measureNormal(-90, -1.5 + rc.robot_back_length)
+        # FIXME : TODO : remove
+        #await propulsion.measureNormal(-90, -1.5 + rc.robot_back_length)
+        await propulsion.setPose([propulsion.pose.position.x, 1.5 - rc.robot_back_length, ], -90)
     elif robot.side == Side.Yellow:
         print("orientation jaune")
         await propulsion.faceDirection(90, 0.6)
         print("recalage jaune")
         await propulsion.reposition(-1.0, 0.2)
-        await propulsion.measureNormal(90, -1.5 + rc.robot_back_length)
+        # FIXME : TODO : remove
+        #await propulsion.measureNormal(90, -1.5 + rc.robot_back_length)
+        await propulsion.setPose([propulsion.pose.position.x, -1.5 + rc.robot_back_length, ], 90)
     print("decollage bordure")    
     await propulsion.translation(0.05, 0.2)
     print("go depart")
@@ -226,7 +243,9 @@ async def recalage():
 @robot.sequence
 async def prematch():
     global poses
-    
+
+    debug_goldo(__name__)
+
     if robot.side == Side.Purple:
         poses = PurplePoses
     elif robot.side == Side.Yellow:
@@ -257,7 +276,7 @@ async def prematch():
     await propulsion.setEnable(True)
     await recalage()
     
-    await lidar.start()
+    #await lidar.start()
     await robot.setScore(4)
 
     load_strategy()
@@ -286,6 +305,8 @@ async def depose_figurine():
 
 @robot.sequence
 async def prise_zone1():
+    debug_goldo(__name__)
+
     # fill with things with arms
     print('SEQUENCE: action 1')
     
@@ -294,6 +315,8 @@ async def prise_zone1():
 
 @robot.sequence
 async def retour_zone_depart():
+    debug_goldo(__name__)
+
     print('SEQUENCE: action 2')
     await asyncio.sleep(1)
     print('SEQUENCE: action 2 finished ')
@@ -338,6 +361,8 @@ async def arms_prise_3hex():
 # Prendre la statuette
 @robot.sequence
 async def abri_chantier():
+    debug_goldo(__name__)
+
     if robot.side == Side.Purple:
         poses = PurplePoses
         await propulsion.faceDirection(45)
@@ -371,6 +396,8 @@ async def abri_chantier():
 # Si le capteur Hall ne détecte pas la prise de la statuette, petit wobble
 @robot.sequence
 async def prise_statuette():
+    debug_goldo(__name__)
+
     await propulsion.faceDirection(135)
     await propulsion.reposition(-0.30, 0.2)
     if sensors['hall_statuette'] == False:
@@ -391,6 +418,8 @@ async def prise_statuette():
 # Si le capteur à effet Hall ne detecte pas que la statuette est décrochée, petit wobble
 @robot.sequence
 async def depose_statuette():
+    debug_goldo(__name__)
+
     await propulsion.faceDirection(0, 0.2)
     await propulsion.reposition(-1.0, 0.2)
     if sensors['hall_statuette'] == True:
@@ -404,6 +433,8 @@ async def depose_statuette():
 
 @robot.sequence
 async def carres_fouille_purple():
+    debug_goldo(__name__)
+
     tryohm_val = None
     between_squares = 0.185
     offset = 0
@@ -466,6 +497,8 @@ async def carres_fouille_purple():
 
 @robot.sequence
 async def carres_fouille_yellow():
+    debug_goldo(__name__)
+
     tryohm_val = None
     between_squares = 0.185
     offset = 0
@@ -528,6 +561,8 @@ async def carres_fouille_yellow():
 
 @robot.sequence
 async def carres_fouille():
+    debug_goldo(__name__)
+
     if robot.side == Side.Purple:
         poses = PurplePoses
         await carres_fouille_purple()
@@ -542,6 +577,8 @@ async def start_match():
     Sequence called at the start of the match, before trying any action.
     This will typically be used to setup actuators and get out of the starting area.
     """
+    debug_goldo(__name__)
+
     if robot.side == Side.Purple:
         poses = PurplePoses
     elif robot.side == Side.Yellow:
