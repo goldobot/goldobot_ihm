@@ -42,6 +42,8 @@ pump.set_pwm pwm_pump_off
 call range_bras_droit
 call range_bras_gauche
 delay delay1
+arm.go_to_position default,1,100
+delay delay1
 propulsion.motors_enable
 propulsion.enable
 end sequence
@@ -141,7 +143,7 @@ delay delay03
 arm.go_to_position dist_preprise,1,100
 delay delay03
 arm.go_to_position dist_prise2_0,1,100
-delay delay03
+delay delay1
 pump.set_pwm pwm_pump_activated
 delay delay03
 arm.go_to_position dist_prise2_1,1,30
