@@ -276,7 +276,7 @@ async def prematch():
     await propulsion.setEnable(True)
     await recalage()
     
-    #await lidar.start()
+    await lidar.start()
     await robot.setScore(4)
 
     load_strategy()

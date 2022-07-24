@@ -402,6 +402,11 @@ async def lift_left_test_homing():
     await servos.liftDoHoming(0)
 
 @robot.sequence
+async def lift_test_combined_500_500():
+    await servos.liftsRaw(500, 80, 500, 80)
+    await asyncio.sleep(1)
+
+@robot.sequence
 async def lift_left_test_0():
     await servos.liftsRaw(0, 80, 0, 0)
     await asyncio.sleep(1)
