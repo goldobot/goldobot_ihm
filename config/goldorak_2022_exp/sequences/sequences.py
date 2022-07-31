@@ -86,6 +86,7 @@ class YellowPoses:
     
     a_prise_zone1 = (0.67, -0.9, 90)
     a_retour_zone_depart = (0.7, -1.2, -90)
+    a_retour_presque_zone_depart = (0.8, -1.3, -90)
 
     pose_rush_3hex = (0.675, -0.750, 90)
     pose_prise_3hex = (0.675, -0.890, 90)
@@ -161,6 +162,7 @@ class PurplePoses:
     #actions
     a_prise_zone1 = symetrie(YellowPoses.a_prise_zone1)
     a_retour_zone_depart = symetrie(YellowPoses.a_retour_zone_depart)
+    a_retour_presque_zone_depart = symetrie(YellowPoses.a_retour_presque_zone_depart)
 
     pose_rush_3hex = symetrie(YellowPoses.pose_rush_3hex)
     pose_prise_3hex = symetrie(YellowPoses.pose_prise_3hex)
@@ -289,7 +291,6 @@ async def debug_abri_chantier():
     print("DEBUG RETURN")
     return
     ################################################################
-    #strategy.current_action.enabled = False
 
 @robot.sequence
 async def debug_stop_pumps():
@@ -329,16 +330,16 @@ async def debug_start_match2():
         raise RuntimeError('Side not set')
         
     await propulsion.pointTo(poses.pose_ejecteur, 2.0)
-    await asyncio.sleep(5)
+    await asyncio.sleep(0.5)
     await propulsion.moveTo(poses.pose_ejecteur, 1.0)
-    await asyncio.sleep(5)
+    await asyncio.sleep(0.5)
     if robot.side == Side.Purple:
         await propulsion.faceDirection(45)
     elif robot.side == Side.Yellow:
         await propulsion.faceDirection(-45)
-    await asyncio.sleep(5)
+    await asyncio.sleep(0.5)
     await actuators.arms_serrage_3hex()
-    await asyncio.sleep(5)
+    await asyncio.sleep(0.5)
 
 
 
@@ -468,7 +469,8 @@ async def prise_zone1():
     print('SEQUENCE: action 1')
     
     print('SEQUENCE: action 1 finished ')
-    strategy.current_action.enabled = False
+    # FIXME : DEBUG
+    #strategy.current_action.enabled = False
 
 @robot.sequence
 async def retour_zone_depart():
@@ -477,7 +479,8 @@ async def retour_zone_depart():
     print('SEQUENCE: action 2')
     await asyncio.sleep(1)
     print('SEQUENCE: action 2 finished ')
-    strategy.current_action.enabled = False 
+    # FIXME : DEBUG
+    #strategy.current_action.enabled = False
     
     
 def load_strategy():
@@ -546,7 +549,8 @@ async def abri_chantier():
     await propulsion.moveTo(poses.pose_ejecteur, 0.2)
     await prise_statuette()
     await asyncio.sleep(1)
-    strategy.current_action.enabled = False
+    # FIXME : DEBUG
+    #strategy.current_action.enabled = False
 
 # S'orienter dos à la statuette et reculer en mode recalage pour la récupérer
 # Si le capteur Hall ne détecte pas la prise de la statuette, petit wobble
@@ -586,7 +590,8 @@ async def depose_statuette():
         await propulsion.faceDirection(2)
     await propulsion.translation(0.10, 0.2)
     await robot.setScore(robot.score + 20)
-    strategy.current_action.enabled = False
+    # FIXME : DEBUG
+    #strategy.current_action.enabled = False
 
 @robot.sequence
 async def carres_fouille_purple():
@@ -750,11 +755,36 @@ async def start_match():
     arms_task = asyncio.create_task(arms_prise_3hex())
     await propulsion.moveTo(poses.pose_rush_3hex, 1.0)
     await arms_task
+
+    # FIXME : DEBUG : EXPERIMENTAL
     #a = strategy.create_action('abri_chantier')
     #a.sequence = 'abri_chantier'
     #a.enabled = True
     #a.priority = 4
     #a.begin_pose = poses.pose_ejecteur
+
+    await debug_start_match2()
+
+    await abri_chantier()
+
+    print ("DEBUG : DEPOSE")
+
+    await propulsion.pointTo(poses.pose_depose_statuette, 2.0)
+    await asyncio.sleep(0.5)
+    await propulsion.moveTo(poses.pose_depose_statuette, 1.0)
+    await asyncio.sleep(0.5)
+
+    await depose_statuette()
+
+    await propulsion.faceDirection(0, 0.8)
+    await asyncio.sleep(0.5)
+    await propulsion.pointTo(poses.a_retour_presque_zone_depart, 2.0)
+    await asyncio.sleep(0.5)
+    await propulsion.moveTo(poses.a_retour_presque_zone_depart, 1.0)
+    await asyncio.sleep(0.5)
+    await propulsion.faceDirection(-90, 0.8)
+    await asyncio.sleep(0.5)
+    await debug_stop_pumps()
 
 async def end_match():
     print('end match callback')

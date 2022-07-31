@@ -70,6 +70,13 @@ arms_pos_preprise_3hex = {
     'coude_d': 540
 }
 
+arms_pos_depose_galerie = {
+    'epaule_g': 2032,
+    'epaule_d': 2034,
+    'coude_g': 700,
+    'coude_d': 300
+}
+
 arms_pos_prise_abri = {
     'epaule_g': 2032,
     'epaule_d': 2034,
@@ -164,6 +171,14 @@ arms_pos_right_push = {
 arms_servos = ['epaule_g', 'epaule_d', 'coude_g', 'coude_d']
 
 @robot.sequence
+async def debug_depose_galerie():
+    debug_goldo(__name__)
+
+    await servos.moveMultiple(arms_pos_depose_galerie, speed=1)
+    await servos.liftsRaw(250, 60, 0, 0)
+    await servos.liftsRaw(0, 0, 250, 60)
+
+@robot.sequence
 async def arms_disable():
     debug_goldo(__name__)
 
@@ -195,8 +210,8 @@ async def arms_initialize():
     await asyncio.sleep(0.2)
     
     # initialisation ascenceurs    
-    await servos.liftDoHoming(0)
-    await servos.liftDoHoming(1)
+    #await servos.liftDoHoming(0)
+    #await servos.liftDoHoming(1)
     
     await asyncio.sleep(1)
     
@@ -233,7 +248,12 @@ async def arms_serrage_3hex():
     await servos.setMaxTorque(arms_servos, 0.8)
     # FIXME : TODO : remove
     #await servos.moveMultiple(lifts_pos_leve_3hex, speed=1)
-    await servos.liftsRaw(0, 60, 0, 60)
+    # FIXME : TODO : fix
+    #await servos.liftsRaw(0, 60, 0, 60)
+    await servos.liftsRaw(0, 60, 0, 0)
+    await asyncio.sleep(0.1)
+    await servos.liftsRaw(0, 0, 0, 60)
+    await asyncio.sleep(0.1)
     await servos.moveMultiple(arms_pos_serrage_3hex, speed=1)
 
 @robot.sequence
@@ -312,7 +332,7 @@ async def bras_ecartes():
     #await servos.moveMultiple(lifts_pos_under_top, speed=0.5)
     # FIXME : TODO : beware to max height!
     #await servos.liftsRaw(1500, 50, 1500, 50)
-    await servos.liftsRaw(1670, 50, 1550, 50)
+    await servos.liftsRaw(1680, 50, 1580, 50)
     await servos.moveMultiple(arms_pos_ecartes, speed=1)
     await asyncio.sleep(0.3)
 
