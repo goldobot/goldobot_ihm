@@ -20,7 +20,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='goldo.nucleo.fpga',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x17goldo/nucleo/fpga.proto\x12\x11goldo.nucleo.fpga\x1a\x17goldo/pb2_options.proto\"$\n\x07RegRead\x12\x19\n\x0b\x61pb_address\x18\x01 \x01(\x07\x42\x04\x80\xb5\x18\x07\"C\n\rRegReadStatus\x12\x19\n\x0b\x61pb_address\x18\x01 \x01(\x07\x42\x04\x80\xb5\x18\x07\x12\x17\n\tapb_value\x18\x02 \x01(\x07\x42\x04\x80\xb5\x18\x07\">\n\x08RegWrite\x12\x19\n\x0b\x61pb_address\x18\x01 \x01(\x07\x42\x04\x80\xb5\x18\x07\x12\x17\n\tapb_value\x18\x02 \x01(\x07\x42\x04\x80\xb5\x18\x07\x62\x06proto3')
+  serialized_pb=_b('\n\x17goldo/nucleo/fpga.proto\x12\x11goldo.nucleo.fpga\x1a\x17goldo/pb2_options.proto\"$\n\x07RegRead\x12\x19\n\x0b\x61pb_address\x18\x01 \x01(\x07\x42\x04\x80\xb5\x18\x07\"C\n\rRegReadStatus\x12\x19\n\x0b\x61pb_address\x18\x01 \x01(\x07\x42\x04\x80\xb5\x18\x07\x12\x17\n\tapb_value\x18\x02 \x01(\x07\x42\x04\x80\xb5\x18\x07\">\n\x08RegWrite\x12\x19\n\x0b\x61pb_address\x18\x01 \x01(\x07\x42\x04\x80\xb5\x18\x07\x12\x17\n\tapb_value\x18\x02 \x01(\x07\x42\x04\x80\xb5\x18\x07\"\x1d\n\x07\x41\x64\x63Read\x12\x12\n\x04\x63han\x18\x01 \x01(\x07\x42\x04\x80\xb5\x18\x07\"2\n\nAdcReadOut\x12\x12\n\x04\x63han\x18\x01 \x01(\x07\x42\x04\x80\xb5\x18\x07\x12\x10\n\x08\x63han_val\x18\x02 \x01(\x02\x62\x06proto3')
   ,
   dependencies=[goldo_dot_pb2__options__pb2.DESCRIPTOR,])
 
@@ -133,9 +133,80 @@ _REGWRITE = _descriptor.Descriptor(
   serialized_end=240,
 )
 
+
+_ADCREAD = _descriptor.Descriptor(
+  name='AdcRead',
+  full_name='goldo.nucleo.fpga.AdcRead',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='chan', full_name='goldo.nucleo.fpga.AdcRead.chan', index=0,
+      number=1, type=7, cpp_type=3, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=_b('\200\265\030\007'), file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=242,
+  serialized_end=271,
+)
+
+
+_ADCREADOUT = _descriptor.Descriptor(
+  name='AdcReadOut',
+  full_name='goldo.nucleo.fpga.AdcReadOut',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='chan', full_name='goldo.nucleo.fpga.AdcReadOut.chan', index=0,
+      number=1, type=7, cpp_type=3, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=_b('\200\265\030\007'), file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='chan_val', full_name='goldo.nucleo.fpga.AdcReadOut.chan_val', index=1,
+      number=2, type=2, cpp_type=6, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=273,
+  serialized_end=323,
+)
+
 DESCRIPTOR.message_types_by_name['RegRead'] = _REGREAD
 DESCRIPTOR.message_types_by_name['RegReadStatus'] = _REGREADSTATUS
 DESCRIPTOR.message_types_by_name['RegWrite'] = _REGWRITE
+DESCRIPTOR.message_types_by_name['AdcRead'] = _ADCREAD
+DESCRIPTOR.message_types_by_name['AdcReadOut'] = _ADCREADOUT
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 RegRead = _reflection.GeneratedProtocolMessageType('RegRead', (_message.Message,), dict(
@@ -159,10 +230,26 @@ RegWrite = _reflection.GeneratedProtocolMessageType('RegWrite', (_message.Messag
   ))
 _sym_db.RegisterMessage(RegWrite)
 
+AdcRead = _reflection.GeneratedProtocolMessageType('AdcRead', (_message.Message,), dict(
+  DESCRIPTOR = _ADCREAD,
+  __module__ = 'goldo.nucleo.fpga_pb2'
+  # @@protoc_insertion_point(class_scope:goldo.nucleo.fpga.AdcRead)
+  ))
+_sym_db.RegisterMessage(AdcRead)
+
+AdcReadOut = _reflection.GeneratedProtocolMessageType('AdcReadOut', (_message.Message,), dict(
+  DESCRIPTOR = _ADCREADOUT,
+  __module__ = 'goldo.nucleo.fpga_pb2'
+  # @@protoc_insertion_point(class_scope:goldo.nucleo.fpga.AdcReadOut)
+  ))
+_sym_db.RegisterMessage(AdcReadOut)
+
 
 _REGREAD.fields_by_name['apb_address']._options = None
 _REGREADSTATUS.fields_by_name['apb_address']._options = None
 _REGREADSTATUS.fields_by_name['apb_value']._options = None
 _REGWRITE.fields_by_name['apb_address']._options = None
 _REGWRITE.fields_by_name['apb_value']._options = None
+_ADCREAD.fields_by_name['chan']._options = None
+_ADCREADOUT.fields_by_name['chan']._options = None
 # @@protoc_insertion_point(module_scope)

@@ -35,6 +35,7 @@ class ZmqClient(QObject):
     dynamixel_registers = pyqtSignal(int, int, object)
     fpga_registers = pyqtSignal(int, int)
     fpga_registers_crc = pyqtSignal(int, int, int)
+    fpga_adc = pyqtSignal(int, float)
     asserv_plot = pyqtSignal(int, int)
     sensors = pyqtSignal(int)
     gpio = pyqtSignal(int)
@@ -111,6 +112,8 @@ class ZmqClient(QObject):
             self.propulsion_controller_config.emit(msg)
         if topic == 'nucleo/out/fpga/reg':
             self.fpga_registers.emit(msg.apb_address, msg.apb_value)
+        if topic == 'nucleo/out/fpga/adc/read_out':
+            self.fpga_adc.emit(msg.chan, msg.chan_val)
         if topic == 'rplidar/out/scan':
             self.rplidar_plot.emit(msg)
         if topic == 'gui/in/robot_state':

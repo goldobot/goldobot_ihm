@@ -10,6 +10,28 @@ from goldobot_ihm.widgets.table_view import TableViewWidget
 import google.protobuf as _pb
 _sym_db = _pb.symbol_database.Default()
 
+Rcalib_l = (84.27, 63.81, 45.84, 33.82, 25.04, 18.67, 12.78)
+Tcalib_l = (26.00, 32.00, 41.00, 51.00, 61.00, 70.00, 80.00)
+def conv_temp(adc_val):
+    #Vmess = (3.3/4096)*adc_val
+    Vmess = adc_val
+    R = 22.0*Vmess/(3.3-Vmess)
+    n = len(Rcalib_l)
+    R0 = Rcalib_l[0]
+    T0 = Tcalib_l[0]
+    R1 = Rcalib_l[1]
+    T1 = Tcalib_l[1]
+    i = 1
+    while (R<R1) and (i<(n-1)):
+        R0 = Rcalib_l[i]
+        T0 = Tcalib_l[i]
+        R1 = Rcalib_l[i+1]
+        T1 = Tcalib_l[i+1]
+        i = i+1
+    alpha = (T1-T0)/(R1-R0)
+    T = T0 + alpha*(R-R0)
+    return T
+
 class Goldo1(QWidget):
     def __init__(self, client, table_view, **kwarg):
         super().__init__(**kwarg)
@@ -96,6 +118,18 @@ class Goldo1(QWidget):
         self.testAstarB.setDisabled(False)
         self.testAstarB.clicked.connect(self._test_astar)
 
+        self.liftTempL = QLabel()
+        self.liftTempL.setText("Lift motor temp:")
+        self.liftTempL.setDisabled(False)
+
+        self.tempLeftL = QLabel()
+        self.tempLeftL.setText(" L : ")
+        self.tempLeftL.setDisabled(False)
+
+        self.tempRightL = QLabel()
+        self.tempRightL.setText(" R : ")
+        self.tempRightL.setDisabled(False)
+
         right_layout = QVBoxLayout()
         right_layout.addWidget(self.zoomL)
         right_layout.addWidget(self.zoomPlusB)
@@ -116,11 +150,19 @@ class Goldo1(QWidget):
         right_layout.addWidget(self.simulPauseB)
         right_layout.addWidget(self.simulResumeB)
         right_layout.addWidget(self.testAstarB)
+        right_layout.addWidget(self.liftTempL)
+        right_layout.addWidget(self.tempLeftL)
+        right_layout.addWidget(self.tempRightL)
         right_layout.addStretch(16)
         self.setLayout(right_layout)
 
         self._table_view._scene.dbg_mouse_info.connect(self._update_mouse_dbg)
 
+        self._timer = QTimer(self)
+        self._timer.timeout.connect(self._on_timer)
+        self._timer.start(500)
+        self._client.fpga_adc.connect(self._on_fpga_adc)
+        self.adc_chan = 2
 
     def _prematch(self):
         purple = 1
@@ -162,3 +204,18 @@ class Goldo1(QWidget):
         msg = _sym_db.GetSymbol('google.protobuf.Empty')()
         self._client.publishTopic('robot/test_astar', msg)
 
+    def _on_timer(self):
+        msg = _sym_db.GetSymbol('goldo.nucleo.fpga.AdcRead')(chan = self.adc_chan)
+        self._client.publishTopic('nucleo/in/fpga/adc/read', msg)
+        if self.adc_chan == 2:
+            self.adc_chan = 4
+        elif self.adc_chan == 4:
+            self.adc_chan = 2
+
+    def _on_fpga_adc(self, adc_chan, adc_val):
+        if adc_chan == 2:
+            temp = conv_temp(adc_val)
+            self.tempLeftL.setText(" L: {:>6.1f}°".format(temp))
+        elif adc_chan == 4:
+            temp = conv_temp(adc_val)
+            self.tempRightL.setText(" R: {:>6.1f}°".format(temp))

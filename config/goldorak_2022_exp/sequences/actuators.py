@@ -422,6 +422,10 @@ async def stop_pumps():
     await robot.gpioSet('pompe_d', False)
 
 @robot.sequence
+async def lift_left_disable():
+    await servos.liftSetEnable(0,False)
+
+@robot.sequence
 async def lift_left_test_homing():
     await servos.liftDoHoming(0)
 
@@ -436,6 +440,11 @@ async def lift_left_test_0():
     await asyncio.sleep(1)
 
 @robot.sequence
+async def lift_left_test_20():
+    await servos.liftsRaw(20, 80, 0, 0)
+    await asyncio.sleep(1)
+
+@robot.sequence
 async def lift_left_test_500():
     await servos.liftsRaw(500, 80, 0, 0)
     await asyncio.sleep(1)
@@ -444,6 +453,20 @@ async def lift_left_test_500():
 async def lift_left_test_1000():
     await servos.liftsRaw(1000, 80, 0, 0)
     await asyncio.sleep(1)
+
+@robot.sequence
+async def lift_left_test_1500():
+    await servos.liftsRaw(1500, 80, 0, 0)
+    await asyncio.sleep(1)
+
+@robot.sequence
+async def lift_left_test_1800():
+    await servos.liftsRaw(1800, 80, 0, 0)
+    await asyncio.sleep(1)
+
+@robot.sequence
+async def lift_right_disable():
+    await servos.liftSetEnable(1,False)
 
 @robot.sequence
 async def lift_right_test_homing():
@@ -455,6 +478,11 @@ async def lift_right_test_0():
     await asyncio.sleep(1)
 
 @robot.sequence
+async def lift_right_test_20():
+    await servos.liftsRaw(0, 0, 20, 80)
+    await asyncio.sleep(1)
+
+@robot.sequence
 async def lift_right_test_500():
     await servos.liftsRaw(0, 0, 500, 80)
     await asyncio.sleep(1)
@@ -462,5 +490,15 @@ async def lift_right_test_500():
 @robot.sequence
 async def lift_right_test_1000():
     await servos.liftsRaw(0, 0, 1000, 80)
+    await asyncio.sleep(1)
+
+@robot.sequence
+async def lift_right_test_1500():
+    await servos.liftsRaw(0, 0, 1500, 80)
+    await asyncio.sleep(1)
+
+@robot.sequence
+async def lift_right_test_1800():
+    await servos.liftsRaw(0, 0, 1800, 80)
     await asyncio.sleep(1)
 
