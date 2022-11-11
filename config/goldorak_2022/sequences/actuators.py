@@ -198,7 +198,7 @@ async def arms_initialize():
     await servos.liftDoHoming(0)
     await servos.liftDoHoming(1)
     
-    await asyncio.sleep(1)
+    await asyncio.sleep(3)
     
     # FIXME : TODO : remove
     #await servos.moveMultiple(arms_lifts_init_3, speed=0.8)

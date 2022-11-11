@@ -276,12 +276,15 @@ async def prematch():
     await propulsion.setEnable(True)
     await recalage()
     
-    await lidar.start()
+    print("GOLDO DEBUG : don't start lidar")
+    #await lidar.start()
     await robot.setScore(4)
 
+    print("GOLDO DEBUG : load_strategy() ..")
     load_strategy()
     print('loaded')
 
+    print("GOLDO DEBUG : prematch done")
     return True
     #robot._adversary_detection_enable = False
 

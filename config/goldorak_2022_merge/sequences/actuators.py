@@ -178,12 +178,13 @@ arms_pos_right_push = {
 arms_servos = ['epaule_g', 'epaule_d', 'coude_g', 'coude_d']
 
 @robot.sequence
-async def debug_depose_galerie():
+async def prepare_depose_galerie():
     debug_goldo(__name__)
 
     await servos.moveMultiple(arms_pos_depose_galerie, speed=1)
     await servos.liftsRaw(450, 60, 0, 0)
     await servos.liftsRaw(0, 0, 450, 60)
+    await asyncio.sleep(0.5)
 
 @robot.sequence
 async def arms_disable():
@@ -192,6 +193,7 @@ async def arms_disable():
     await servos.liftSetEnable(0,False)
     await servos.liftSetEnable(1,False)
     await servos.setEnable(['epaule_g', 'coude_g', 'epaule_d', 'coude_d', 'lift_left', 'lift_right'], False)
+    await asyncio.sleep(0.5)
     
 @robot.sequence
 async def arms_initialize():
@@ -224,8 +226,6 @@ async def arms_initialize():
     
     await asyncio.sleep(3)
     
-    # FIXME : TODO : remove
-    #await servos.moveMultiple(arms_lifts_init_3, speed=0.8)
     await servos.liftsRaw(1700, 60, 0, 0)
     await asyncio.sleep(1)
     await servos.liftsRaw(0, 0, 400, 60)
@@ -240,12 +240,7 @@ async def arms_prep_prise_3hex():
 
     await servos.setEnable(['coude_g', 'coude_d', 'epaule_d', 'epaule_g'], True)
     await servos.setMaxTorque(arms_servos, 1)
-    # FIXME : TODO : remove
-    #await servos.moveMultiple(arms_pos_prise_3hex, speed=1)
-    #await servos.moveMultiple(lifts_pos_prise_3hex, speed=1)
     await servos.moveMultiple(arms_pos_preprise_3hex, speed=1)
-    # FIXME : TODO : fix
-    #await servos.liftsRaw(150, 60, 150, 60)
     await servos.liftsRaw(250, 60, 0, 0)
     await servos.liftsRaw(0, 0, 250, 60)
 
@@ -255,10 +250,6 @@ async def arms_serrage_3hex():
 
     await servos.setEnable(['coude_g', 'coude_d', 'epaule_d', 'epaule_g'], True)
     await servos.setMaxTorque(arms_servos, 0.8)
-    # FIXME : TODO : remove
-    #await servos.moveMultiple(lifts_pos_leve_3hex, speed=1)
-    # FIXME : TODO : fix
-    #await servos.liftsRaw(0, 60, 0, 60)
     await servos.liftsRaw(0, 60, 0, 0)
     await asyncio.sleep(0.1)
     await servos.liftsRaw(0, 0, 0, 60)
@@ -272,16 +263,12 @@ async def lifts_prise_3hex():
     sensors_retries = 0
     await servos.setEnable(['coude_g', 'coude_d', 'epaule_d', 'epaule_g'], True)
     await servos.setMaxTorque(arms_servos, 1)
-    # FIXME : TODO : remove
-    #await servos.moveMultiple(lifts_pos_prise_gnd, speed=1)
-    # FIXME : TODO : fix
-    #await servos.liftsRaw(10,60,10,60)
     await servos.liftsRaw(0,60,0,0)
     await asyncio.sleep(0.2)
     await servos.liftsRaw(0,0,0,60)
     await asyncio.sleep(0.2)
     await servos.moveMultiple(arms_pos_prise_3hex, speed=1)
-    await asyncio.sleep(4.0)
+    await asyncio.sleep(0.5)
     while (sensors['sick_bras_g'] == True or sensors['sick_bras_d'] == True) and (sensors_retries < 100):
         await asyncio.sleep(0.005)
         sensors_retries = sensors_retries + 1
@@ -300,14 +287,10 @@ async def lifts_ejecteur():
 
     await servos.setEnable(['coude_g', 'coude_d', 'epaule_d', 'epaule_g'], True)
     await servos.setMaxTorque(arms_servos, 1)
-    # FIXME : TODO : remove
-    #await servos.moveMultiple(lifts_pos_ejecteur, speed=1)
-    # FIXME : TODO : fix
-    #await servos.liftsRaw(300, 60, 300, 60)
-    await servos.liftsRaw(400, 60, 0, 0)
-    await asyncio.sleep(0.5)
-    await servos.liftsRaw(0, 0, 400, 60)
-    await asyncio.sleep(0.5)
+    await servos.liftsRaw(400, 80, 0, 0)
+    await asyncio.sleep(0.3)
+    await servos.liftsRaw(0, 0, 400, 80)
+    await asyncio.sleep(0.3)
 
 @robot.sequence
 async def lifts_top():
@@ -315,12 +298,8 @@ async def lifts_top():
 
     await servos.setEnable(['coude_g', 'coude_d'], False)
     await servos.setMaxTorque(arms_servos, 1)
-    # FIXME : TODO : remove
-    #await servos.moveMultiple(lifts_pos_top, speed=1)
-    # FIXME : TODO : 1872 ca force a droite!
-    #await servos.liftsRaw(1872, 60, 1872, 60)
-    await servos.liftsRaw(1870, 60, 1870, 60)
-    await asyncio.sleep(0.5)
+    await servos.liftsRaw(1900, 60, 1900, 60)
+    await asyncio.sleep(1.0)
 
 @robot.sequence
 async def lifts_almost_top():
@@ -333,19 +312,10 @@ async def lifts_almost_top():
 async def bras_ecartes():
     debug_goldo(__name__)
 
-    # FIXME : TODO : remove
-    #await servos.setEnable(['coude_g', 'coude_d', 'epaule_d', 'epaule_g'], True)
-    #await servos.setMaxTorque(arms_servos, 1)
-    #await servos.moveMultiple(lifts_pos_top, speed=1)
-    #await servos.moveMultiple(arms_pos_ecartes, speed=1)
-    #await asyncio.sleep(0.3)
     await servos.setEnable(['coude_g', 'coude_d', 'epaule_d', 'epaule_g'], True)
     await servos.setMaxTorque(arms_servos, 1)
-    # FIXME : TODO : remove
-    #await servos.moveMultiple(lifts_pos_under_top, speed=0.5)
-    # FIXME : TODO : beware to max height!
-    #await servos.liftsRaw(1500, 50, 1500, 50)
-    await servos.liftsRaw(1680, 50, 1580, 50)
+    #await servos.liftsRaw(1680, 50, 1580, 50)
+    await servos.liftsRaw(1800, 50, 1800, 50)
     await servos.moveMultiple(arms_pos_ecartes, speed=1)
     await asyncio.sleep(0.3)
 
@@ -353,8 +323,6 @@ async def bras_ecartes():
 async def bras_ouverts():
     await servos.setEnable(['coude_g', 'coude_d', 'epaule_d', 'epaule_g'], True)
     await servos.setMaxTorque(arms_servos, 1)
-    # FIXME : TODO : remove
-    #await servos.moveMultiple(lifts_pos_top, speed=0.5)
     await servos.liftsRaw(1872, 50, 1872, 50)
     await servos.moveMultiple(arms_pos_ouverts, speed=1)
     await asyncio.sleep(0.3)
@@ -363,8 +331,6 @@ async def bras_ouverts():
 async def bras_storage_front_lu_rd():
     await servos.setEnable(['coude_g', 'coude_d', 'epaule_d', 'epaule_g'], True)
     await servos.setMaxTorque(arms_servos, 1)
-    # FIXME : TODO : remove
-    #await servos.moveMultiple(lifts_storage_front_lu_rd, speed=1)
     await servos.liftsRaw(1872, 90, 400, 90)
     await servos.moveMultiple(arms_storage_front, speed=1)
     await asyncio.sleep(0.3)
@@ -373,8 +339,6 @@ async def bras_storage_front_lu_rd():
 async def bras_storage_front_ld_ru():
     await servos.setEnable(['coude_g', 'coude_d', 'epaule_d', 'epaule_g'], True)
     await servos.setMaxTorque(arms_servos, 1)
-    # FIXME : TODO : remove
-    #await servos.moveMultiple(lifts_storage_front_ld_ru, speed=1)
     await servos.liftsRaw(400, 90, 1872, 90)
     await servos.moveMultiple(arms_storage_front, speed=1)
     await asyncio.sleep(0.3)
@@ -386,9 +350,6 @@ async def prise_abri_chantier():
     await servos.setEnable(['coude_g', 'coude_d', 'epaule_d', 'epaule_g'], True)
     await servos.setMaxTorque(arms_servos, 1)
     await start_pumps()
-    # FIXME : TODO : remove (old lifts code)
-    #await servos.moveMultiple(lifts_pos_prise_abri, speed=1)
-    #await asyncio.sleep(0.5)
     await servos.liftsRaw(660, 60, 660, 60)
     await asyncio.sleep(1)
 

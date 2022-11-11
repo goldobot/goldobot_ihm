@@ -160,7 +160,7 @@ class Goldo1(QWidget):
 
         self._timer = QTimer(self)
         self._timer.timeout.connect(self._on_timer)
-        self._timer.start(500)
+        self._timer.start(5000)
         self._client.fpga_adc.connect(self._on_fpga_adc)
         self.adc_chan = 2
 
