@@ -118,6 +118,11 @@ class Goldo1(QWidget):
         self.testAstarB.setDisabled(False)
         self.testAstarB.clicked.connect(self._test_astar)
 
+        self.testVerB = QPushButton()
+        self.testVerB.setText("Test Ver.")
+        self.testVerB.setDisabled(False)
+        self.testVerB.clicked.connect(self._test_firmware_ver)
+
         self.liftTempL = QLabel()
         self.liftTempL.setText("Lift motor temp:")
         self.liftTempL.setDisabled(False)
@@ -150,6 +155,7 @@ class Goldo1(QWidget):
         right_layout.addWidget(self.simulPauseB)
         right_layout.addWidget(self.simulResumeB)
         right_layout.addWidget(self.testAstarB)
+        right_layout.addWidget(self.testVerB)
         right_layout.addWidget(self.liftTempL)
         right_layout.addWidget(self.tempLeftL)
         right_layout.addWidget(self.tempRightL)
@@ -163,6 +169,7 @@ class Goldo1(QWidget):
         self._timer.start(5000)
         self._client.fpga_adc.connect(self._on_fpga_adc)
         self.adc_chan = 2
+        self._client.nucleo_firmware_version.connect(self._on_nucleo_firmware_version)
 
     def _prematch(self):
         purple = 1
@@ -204,6 +211,14 @@ class Goldo1(QWidget):
         msg = _sym_db.GetSymbol('google.protobuf.Empty')()
         self._client.publishTopic('robot/test_astar', msg)
 
+    def _test_firmware_ver(self):
+        #print ("Test GetNucleoFirmwareVersion")
+        msg = _sym_db.GetSymbol('google.protobuf.Empty')()
+        self._client.publishTopic('nucleo/in/get_nucleo_firmware_version', msg)
+
+    def _on_nucleo_firmware_version(self, fw_ver_str):
+        print("Nucleo firmware version : {:s}".format(fw_ver_str))
+
     def _on_timer(self):
         msg = _sym_db.GetSymbol('goldo.nucleo.fpga.AdcRead')(chan = self.adc_chan)
         self._client.publishTopic('nucleo/in/fpga/adc/read', msg)
@@ -219,3 +234,4 @@ class Goldo1(QWidget):
         elif adc_chan == 4:
             temp = conv_temp(adc_val)
             self.tempRightL.setText(" R: {:>6.1f}°".format(temp))
+

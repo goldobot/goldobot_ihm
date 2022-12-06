@@ -129,6 +129,8 @@ class ZmqClient(QObject):
             self._goldo_log_fd.write("{} {}\n". format(ts,pos))
             self._goldo_log_fd.flush()
             self.asserv_plot.emit(ts, pos)
+        if topic == 'nucleo/out/get_nucleo_firmware_version':
+            self.nucleo_firmware_version.emit(msg.value)
 
     def _on_socket_main_sub(self):
         self._notifier_main.setEnabled(False)
