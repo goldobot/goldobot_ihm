@@ -82,7 +82,7 @@ class YellowPoses:
     a_retour_zone_depart = (0.7, -1.2, -90)
     a_retour_presque_zone_depart = (0.8, -1.3, -90)
     a_prepare_depose_galerie = (0.4, -0.695, 180)
-    a_depose_galerie = (0.240, -0.695, 180)
+    a_depose_galerie = (0.210, -0.695, 180)
 
     # FIXME : DEBUG
     #pose_rush_3hex = (0.675, -0.750, 90)

@@ -183,7 +183,9 @@ async def prepare_depose_galerie():
 
     await servos.moveMultiple(arms_pos_depose_galerie, speed=1)
     await servos.liftsRaw(450, 60, 0, 0)
+    await asyncio.sleep(0.3)
     await servos.liftsRaw(0, 0, 450, 60)
+    await asyncio.sleep(0.3)
     await asyncio.sleep(0.5)
 
 @robot.sequence
@@ -242,7 +244,9 @@ async def arms_prep_prise_3hex():
     await servos.setMaxTorque(arms_servos, 1)
     await servos.moveMultiple(arms_pos_preprise_3hex, speed=1)
     await servos.liftsRaw(250, 60, 0, 0)
+    await asyncio.sleep(0.3)
     await servos.liftsRaw(0, 0, 250, 60)
+    await asyncio.sleep(0.3)
 
 @robot.sequence
 async def arms_serrage_3hex():
@@ -251,9 +255,9 @@ async def arms_serrage_3hex():
     await servos.setEnable(['coude_g', 'coude_d', 'epaule_d', 'epaule_g'], True)
     await servos.setMaxTorque(arms_servos, 0.8)
     await servos.liftsRaw(0, 60, 0, 0)
-    await asyncio.sleep(0.1)
+    await asyncio.sleep(0.3)
     await servos.liftsRaw(0, 0, 0, 60)
-    await asyncio.sleep(0.1)
+    await asyncio.sleep(0.3)
     await servos.moveMultiple(arms_pos_serrage_3hex, speed=1)
 
 @robot.sequence
@@ -264,9 +268,9 @@ async def lifts_prise_3hex():
     await servos.setEnable(['coude_g', 'coude_d', 'epaule_d', 'epaule_g'], True)
     await servos.setMaxTorque(arms_servos, 1)
     await servos.liftsRaw(0,60,0,0)
-    await asyncio.sleep(0.2)
+    await asyncio.sleep(0.3)
     await servos.liftsRaw(0,0,0,60)
-    await asyncio.sleep(0.2)
+    await asyncio.sleep(0.3)
     await servos.moveMultiple(arms_pos_prise_3hex, speed=1)
     await asyncio.sleep(0.5)
     while (sensors['sick_bras_g'] == True or sensors['sick_bras_d'] == True) and (sensors_retries < 100):
@@ -276,6 +280,8 @@ async def lifts_prise_3hex():
 
 @robot.sequence
 async def arms_push_abri():
+    debug_goldo(__name__)
+
     await servos.setEnable(['coude_g', 'coude_d', 'epaule_d', 'epaule_g'], True)
     await servos.setMaxTorque(arms_servos, 1)
     await servos.moveMultiple(lifts_pos_prise_gnd, speed=0.6)
@@ -303,10 +309,12 @@ async def lifts_top():
 
 @robot.sequence
 async def lifts_almost_top():
+    debug_goldo(__name__)
+
     await servos.setEnable(['coude_g', 'coude_d'], False)
     await servos.setMaxTorque(arms_servos, 1)
     await servos.liftsRaw(1620, 60, 1620, 60)
-    await asyncio.sleep(0.1)
+    await asyncio.sleep(0.3)
 
 @robot.sequence
 async def bras_ecartes():
@@ -316,30 +324,40 @@ async def bras_ecartes():
     await servos.setMaxTorque(arms_servos, 1)
     #await servos.liftsRaw(1680, 50, 1580, 50)
     await servos.liftsRaw(1800, 50, 1800, 50)
+    await asyncio.sleep(0.3)
     await servos.moveMultiple(arms_pos_ecartes, speed=1)
     await asyncio.sleep(0.3)
 
 @robot.sequence
 async def bras_ouverts():
+    debug_goldo(__name__)
+
     await servos.setEnable(['coude_g', 'coude_d', 'epaule_d', 'epaule_g'], True)
     await servos.setMaxTorque(arms_servos, 1)
     await servos.liftsRaw(1872, 50, 1872, 50)
+    await asyncio.sleep(0.3)
     await servos.moveMultiple(arms_pos_ouverts, speed=1)
     await asyncio.sleep(0.3)
 
 @robot.sequence
 async def bras_storage_front_lu_rd():
+    debug_goldo(__name__)
+
     await servos.setEnable(['coude_g', 'coude_d', 'epaule_d', 'epaule_g'], True)
     await servos.setMaxTorque(arms_servos, 1)
     await servos.liftsRaw(1872, 90, 400, 90)
+    await asyncio.sleep(0.3)
     await servos.moveMultiple(arms_storage_front, speed=1)
     await asyncio.sleep(0.3)
 
 @robot.sequence
 async def bras_storage_front_ld_ru():
+    debug_goldo(__name__)
+
     await servos.setEnable(['coude_g', 'coude_d', 'epaule_d', 'epaule_g'], True)
     await servos.setMaxTorque(arms_servos, 1)
     await servos.liftsRaw(400, 90, 1872, 90)
+    await asyncio.sleep(0.3)
     await servos.moveMultiple(arms_storage_front, speed=1)
     await asyncio.sleep(0.3)
 
@@ -396,27 +414,39 @@ async def stop_pumps():
 
 @robot.sequence
 async def lift_left_disable():
+    debug_goldo(__name__)
+
     await servos.liftSetEnable(0,False)
 
 @robot.sequence
 async def lift_left_test_homing():
+    debug_goldo(__name__)
+
     await servos.liftDoHoming(0)
 
 @robot.sequence
 async def lift_left_test_0():
+    debug_goldo(__name__)
+
     await servos.liftsRaw(0, 80, 0, 0)
     await asyncio.sleep(1)
 
 @robot.sequence
 async def lift_right_disable():
+    debug_goldo(__name__)
+
     await servos.liftSetEnable(1,False)
 
 @robot.sequence
 async def lift_right_test_homing():
+    debug_goldo(__name__)
+
     await servos.liftDoHoming(1)
 
 @robot.sequence
 async def lift_right_test_0():
+    debug_goldo(__name__)
+
     await servos.liftsRaw(0, 0, 0, 80)
     await asyncio.sleep(1)
 
