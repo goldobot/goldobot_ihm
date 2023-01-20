@@ -9,5 +9,7 @@
 #--position de depart
 #var vec3 start_pose_violet=(515mm,1395mm,-90deg) # 2022
 #var vec3 start_pose_violet=(895mm,1380mm,180deg) # 2022
-var vec3 start_pose_violet=(895mm,1375mm,0deg) # 2022
+#var vec3 start_pose_violet=(895mm,1375mm,0deg) # 2022
+#var vec3 start_pose_violet=(1898mm,0mm,180deg) # 2022
+var vec3 start_pose_violet=(1850mm,1398mm,-90deg) # 2022
 

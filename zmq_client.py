@@ -8,7 +8,7 @@ from messages import PropulsionTelemetry
 from messages import PropulsionTelemetryEx
 from messages import GoldoTelemetry
 from messages import GoldoDebugVec
-from messages import RplidarPlot
+from messages import RplidarPlot, RplidarDebugPlot
 from messages import RplidarRobotDetection
 from messages import OdometryConfig
 from messages import PropulsionControllerConfig
@@ -29,6 +29,7 @@ class ZmqClient(QObject):
     goldo_telemetry = pyqtSignal(object)
     goldo_debug_traj = pyqtSignal(object)
     rplidar_plot = pyqtSignal(object)
+    rplidar_debug_plot = pyqtSignal(object)
     rplidar_robot_detection = pyqtSignal(object)
     astar_dbg_map = pyqtSignal(object)
     odometry_config = pyqtSignal(object)
@@ -237,6 +238,10 @@ class ZmqClient(QObject):
         if msg_type == message_types.RplidarPlot:
             my_plot = RplidarPlot(msg[2:])
             self.rplidar_plot.emit(my_plot)
+
+        if msg_type == message_types.RplidarDebugPlot:
+            my_debug_plot = RplidarDebugPlot(msg[2:])
+            self.rplidar_debug_plot.emit(my_debug_plot)
 
         if msg_type == message_types.RplidarRobotDetection:
             other_robot = RplidarRobotDetection(msg[2:])

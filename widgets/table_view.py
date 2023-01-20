@@ -1,3 +1,4 @@
+import struct
 import math
 import os
 
@@ -10,6 +11,17 @@ from PyQt5.QtWidgets import QGraphicsPixmapItem
 from PyQt5.QtGui import QPolygonF, QPen, QBrush, QColor, QFont, QTransform
 from PyQt5.QtGui import QImage, QImageReader, QPixmap
 
+from PyQt5.QtCore import QTimer
+
+from messages import RplidarPlot, RplidarDebugPlot
+from gps import process_plot
+
+def normalize_angle(theta_rad):
+    while theta_rad>math.pi:
+        theta_rad -= 2.0*math.pi
+    while theta_rad<=-math.pi:
+        theta_rad += 2.0*math.pi
+    return theta_rad
 
 class MyGraphicsScene(QGraphicsScene):
     def mouseMoveEvent(self, event):
@@ -42,7 +54,7 @@ class TableViewWidget(QGraphicsView):
     g_rplidar_remanence = False
     #g_rplidar_plot_life_ms = 1000 # FIXME : DEBUG : FSCK QT!
     g_rplidar_plot_life_ms = 300
-    g_update_other_robots = True
+    g_update_other_robots = False
     g_show_theme = False
     g_debug = True
     g_dbg_plt_sz = 1.2
@@ -53,7 +65,7 @@ class TableViewWidget(QGraphicsView):
         super(TableViewWidget, self).__init__(parent)
         if ihm_type=='pc':
             #self.setFixedSize(900,600)
-            self.setFixedSize(960,660)
+            self.setFixedSize(1000,700)
         elif ihm_type=='pc-mini':
             #self.setFixedSize(600,400)
             self.setFixedSize(640,440)
@@ -61,26 +73,9 @@ class TableViewWidget(QGraphicsView):
             #self.setFixedSize(225,150)
             self.setFixedSize(240,165)
         #self.setSceneRect(QRectF(0,-1500,2000,3000))
-        self.setSceneRect(QRectF(-100,-1600,2200,3200))
+        self.setSceneRect(QRectF(-200,-1700,2400,3400))
         #self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         #self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-
-        redium = QColor.fromCmykF(0,1,1,0.1)
-        greenium = QColor.fromCmykF(0.7,0,0.9,0)
-        blueium = QColor.fromCmykF(0.9,0.4,0,0)
-        goldenium = QColor('white')
-        yellow = QColor.fromCmykF(0,0.25,1,0)
-        purple = QColor.fromCmykF(0.5,0.9,0,0.05)
-        background = QColor(40,40,40)
-        darker = QColor(20,20,20)
-
-# FIXME : DEBUG : HACK SCORE 2022 ++
-        self._score_val = 0
-        self._act1_done = False
-        self._act2_done = False
-        self._act3_done = False
-        self._act4_done = False
-# FIXME : DEBUG : HACK SCORE 2022 --
 
         little_robot_poly = QPolygonF([
             QPointF(  50,   0),
@@ -94,7 +89,7 @@ class TableViewWidget(QGraphicsView):
             QPointF( 100, -85)
             ])
 
-        beacon_poly = QPolygonF([
+        old_beacon_poly = QPolygonF([
             QPointF( 50,  50),
 
             QPointF(-50,  50),
@@ -140,19 +135,65 @@ class TableViewWidget(QGraphicsView):
             QPointF( 50, -50)
             ])
 
-        #self._scene = QGraphicsScene(QRectF(0,-1500,2000,3000))
-        #self._scene = QGraphicsScene(QRectF(-100,-1600,2200,3200))
-        self._scene = MyGraphicsScene(QRectF(-100,-1600,2200,3200),self)
+        beacon_poly = QPolygonF([
+            QPointF( 50, -50),
 
-        self._beacon_left_middle = self._scene.addPolygon(beacon_poly, QPen(), QBrush(QColor('white')))
-        self._beacon_left_middle.setZValue(1)
-        self._beacon_left_middle.setPos(1000.0, -1573.0)
-        self._beacon_right_back = self._scene.addPolygon(beacon_poly, QPen(), QBrush(QColor('white')))
-        self._beacon_right_back.setZValue(1)
-        self._beacon_right_back.setPos(50.0, 1573.0)
-        self._beacon_right_front = self._scene.addPolygon(beacon_poly, QPen(), QBrush(QColor('white')))
-        self._beacon_right_front.setZValue(1)
-        self._beacon_right_front.setPos(1950.0, 1573.0)
+            QPointF( 50,  50),
+
+            QPointF( 40,  50),
+            QPointF( 40, -50),
+            QPointF( 40,  50),
+
+            QPointF( 30,  50),
+            QPointF( 30, -50),
+            QPointF( 30,  50),
+
+            QPointF( 20,  50),
+            QPointF( 20, -50),
+            QPointF( 20,  50),
+
+            QPointF( 10,  50),
+            QPointF( 10, -50),
+            QPointF( 10,  50),
+
+            QPointF(  0,  50),
+            QPointF(  0, -50),
+            QPointF(  0,  50),
+
+            QPointF(-10,  50),
+            QPointF(-10, -50),
+            QPointF(-10,  50),
+
+            QPointF(-20,  50),
+            QPointF(-20, -50),
+            QPointF(-20,  50),
+
+            QPointF(-30,  50),
+            QPointF(-30, -50),
+            QPointF(-30,  50),
+
+            QPointF(-40,  50),
+            QPointF(-40, -50),
+            QPointF(-40,  50),
+
+            QPointF(-50,  50),
+
+            QPointF(-50, -50)
+            ])
+
+
+        #self._scene = QGraphicsScene(QRectF(0,-1500,2000,3000))
+        self._scene = MyGraphicsScene(QRectF(-200,-1700,2400,3400),self)
+
+        self._beacon_middle = self._scene.addPolygon(beacon_poly, QPen(QBrush(QColor('black')),0.2), QBrush(QColor('white')))
+        self._beacon_middle.setZValue(1)
+        self._beacon_middle.setPos(-73.0, 0.0)
+        self._beacon_left = self._scene.addPolygon(beacon_poly, QPen(QBrush(QColor('black')),0.2), QBrush(QColor('white')))
+        self._beacon_left.setZValue(1)
+        self._beacon_left.setPos(2073.0, -1450.0)
+        self._beacon_right = self._scene.addPolygon(beacon_poly, QPen(QBrush(QColor('black')),0.2), QBrush(QColor('white')))
+        self._beacon_right.setZValue(1)
+        self._beacon_right.setPos(2073.0, 1450.0)
 
 #        self._big_robot = self._scene.addPolygon(big_robot_poly, QPen(), QBrush(QColor('red')))
 #        self._big_robot.setZValue(1)
@@ -214,6 +255,9 @@ class TableViewWidget(QGraphicsView):
             self._my_scale = 0.075
         self.scale(self._my_scale, -self._my_scale)
 
+        #purple = QColor.fromCmykF(0.5,0.9,0,0.05)
+        #background = QColor(40,40,40)
+        #darker = QColor(20,20,20)
         #self._scene.addRect(QRectF(0,-1500,2000,3000),QPen(), QBrush(background))
 
         if TableViewWidget.g_show_theme:
@@ -229,66 +273,6 @@ class TableViewWidget(QGraphicsView):
             self._scene.addItem(self._bg_img);
         else:
             self._scene.addRect(QRectF(0,-1500,2000,3000))
-
-        # Scenario 2020
-
-        #Port principal "bleu"
-        self._scene.addRect(QRectF(500,-1120,570,20),QPen(), QBrush(blueium))
-        self._scene.addRect(QRectF(500,-1500,30,400),QPen(), QBrush(greenium))
-        self._scene.addRect(QRectF(1070,-1500,30,400),QPen(), QBrush(redium))
-
-        #Port secondaire "bleu"
-        self._scene.addRect(QRectF(1700,150,20,300),QPen(), QBrush(blueium))
-        self._scene.addRect(QRectF(1700,150,300,100),QPen(), QBrush(greenium))
-        self._scene.addRect(QRectF(1700,350,300,100),QPen(), QBrush(redium))
-
-        #Bouees cote "bleu"
-        self._scene.addEllipse(QRectF(1200-35,-1200-35,70,70),QPen(), QBrush(greenium))
-        self._scene.addEllipse(QRectF(1080-35,-1050-35,70,70),QPen(), QBrush(redium))
-        self._scene.addEllipse(QRectF(510-35,-1050-35,70,70),QPen(), QBrush(greenium))
-        self._scene.addEllipse(QRectF(400-35,-1200-35,70,70),QPen(), QBrush(redium))
-
-        self._scene.addEllipse(QRectF(100-35,-830-35,70,70),QPen(), QBrush(redium))
-        self._scene.addEllipse(QRectF(400-35,-550-35,70,70),QPen(), QBrush(greenium))
-        self._scene.addEllipse(QRectF(800-35,-400-35,70,70),QPen(), QBrush(redium))
-        self._scene.addEllipse(QRectF(1200-35,-230-35,70,70),QPen(), QBrush(greenium))
-
-        self._scene.addEllipse(QRectF(1650-35,-435-35,70,70),QPen(), QBrush(greenium))
-        self._scene.addEllipse(QRectF(1650-35,-165-35,70,70),QPen(), QBrush(redium))
-        self._scene.addEllipse(QRectF(1955-35,-495-35,70,70),QPen(), QBrush(redium))
-        self._scene.addEllipse(QRectF(1955-35,-105-35,70,70),QPen(), QBrush(greenium))
-
-        #Port principal "jaune"
-        self._scene.addRect(QRectF(500,1100,570,20),QPen(), QBrush(yellow))
-        self._scene.addRect(QRectF(500,1100,30,400),QPen(), QBrush(redium))
-        self._scene.addRect(QRectF(1070,1100,30,400),QPen(), QBrush(greenium))
-
-        #Port secondaire "jaune"
-        self._scene.addRect(QRectF(1700,-450,20,300),QPen(), QBrush(yellow))
-        self._scene.addRect(QRectF(1700,-450,300,100),QPen(), QBrush(greenium))
-        self._scene.addRect(QRectF(1700,-250,300,100),QPen(), QBrush(redium))
-
-        #Bouees cote "jaune"
-        self._scene.addEllipse(QRectF(1200-35,1200-35,70,70),QPen(), QBrush(redium))
-        self._scene.addEllipse(QRectF(1080-35,1050-35,70,70),QPen(), QBrush(greenium))
-        self._scene.addEllipse(QRectF(510-35,1050-35,70,70),QPen(), QBrush(redium))
-        self._scene.addEllipse(QRectF(400-35,1200-35,70,70),QPen(), QBrush(greenium))
-
-        self._scene.addEllipse(QRectF(100-35,830-35,70,70),QPen(), QBrush(greenium))
-        self._scene.addEllipse(QRectF(400-35,550-35,70,70),QPen(), QBrush(redium))
-        self._scene.addEllipse(QRectF(800-35,400-35,70,70),QPen(), QBrush(greenium))
-        self._scene.addEllipse(QRectF(1200-35,230-35,70,70),QPen(), QBrush(redium))
-
-        self._scene.addEllipse(QRectF(1650-35,435-35,70,70),QPen(), QBrush(redium))
-        self._scene.addEllipse(QRectF(1650-35,165-35,70,70),QPen(), QBrush(greenium))
-        self._scene.addEllipse(QRectF(1955-35,495-35,70,70),QPen(), QBrush(greenium))
-        self._scene.addEllipse(QRectF(1955-35,105-35,70,70),QPen(), QBrush(redium))
-
-        #dbg_plt_sz = 3
-        #self._scene.addEllipse(1000 - dbg_plt_sz, 0 - dbg_plt_sz, 2*dbg_plt_sz, 2*dbg_plt_sz, QPen(QBrush(QColor('white')),4), QBrush(QColor('white')))
-
-        self._points = []
-        #self.setSceneRect(QRectF(0,-150,200,300))
 
         self._traj_segm_l = []
 
@@ -309,42 +293,81 @@ class TableViewWidget(QGraphicsView):
         self._dbg_shift_rot_mm = 0
         self._dbg_rot_cnt = 0
 
+        # Debug lidar plots
+        dbg_plt_sz = 1
+        self.plot_obj0 = []
+        self.plot_obj1 = []
+        self.plot_obj2 = []
+        self.plot_obj3 = []
+        self.plot_obj4 = []
+        self.plot_obj5 = []
+        self.plot_obj6 = []
+        self.plot_obj7 = []
+        for i in range(0,2000):
+            plt_sz = dbg_plt_sz
+            my_plot_obj0 = self._scene.addRect(QRectF(-plt_sz, -plt_sz, 2*plt_sz, 2*plt_sz), QPen(QBrush(QColor('black')),0.2), QBrush(QColor('black')))
+            my_plot_obj0.setZValue(100)
+            my_plot_obj0.setPos(-2 * 1000, -2 * 1000)
+            self.plot_obj0.append(my_plot_obj0)
+        for i in range(0,500):
+            plt_sz = dbg_plt_sz
+            my_plot_obj1 = self._scene.addRect(QRectF(-plt_sz, -plt_sz, 2*plt_sz, 2*plt_sz), QPen(QBrush(QColor('black')),0.2), QBrush(QColor('red')))
+            my_plot_obj1.setZValue(100)
+            my_plot_obj1.setPos(-2 * 1000 + 100, -2 * 1000)
+            self.plot_obj1.append(my_plot_obj1)
+            plt_sz = dbg_plt_sz
+            my_plot_obj2 = self._scene.addRect(QRectF(-plt_sz, -plt_sz, 2*plt_sz, 2*plt_sz), QPen(QBrush(QColor('black')),0.2), QBrush(QColor('blue')))
+            my_plot_obj2.setZValue(100)
+            my_plot_obj2.setPos(-2 * 1000 + 200, -2 * 1000)
+            self.plot_obj2.append(my_plot_obj2)
+            my_plot_obj3 = self._scene.addRect(QRectF(-plt_sz, -plt_sz, 2*plt_sz, 2*plt_sz), QPen(QBrush(QColor('black')),0.2), QBrush(QColor('green')))
+            my_plot_obj3.setZValue(100)
+            my_plot_obj3.setPos(-2 * 1000 + 300, -2 * 1000)
+            self.plot_obj3.append(my_plot_obj3)
+            my_plot_obj4 = self._scene.addEllipse(-plt_sz, -plt_sz, 2*plt_sz, 2*plt_sz, QPen(QBrush(QColor('black')),0.2), QBrush(QColor('red')))
+            my_plot_obj4.setZValue(100)
+            my_plot_obj4.setPos(-2 * 1000 + 400, -2 * 1000)
+            self.plot_obj4.append(my_plot_obj4)
+            my_plot_obj5 = self._scene.addEllipse(-plt_sz, -plt_sz, 2*plt_sz, 2*plt_sz, QPen(QBrush(QColor('black')),0.2), QBrush(QColor('blue')))
+            my_plot_obj5.setZValue(100)
+            my_plot_obj5.setPos(-2 * 1000 + 500, -2 * 1000)
+            self.plot_obj5.append(my_plot_obj5)
+            my_plot_obj6 = self._scene.addEllipse(-plt_sz, -plt_sz, 2*plt_sz, 2*plt_sz, QPen(QBrush(QColor('black')),0.2), QBrush(QColor('green')))
+            my_plot_obj6.setZValue(100)
+            my_plot_obj6.setPos(-2 * 1000 + 600, -2 * 1000)
+            self.plot_obj6.append(my_plot_obj6)
+            my_plot_obj7 = self._scene.addEllipse(-plt_sz, -plt_sz, 2*plt_sz, 2*plt_sz, QPen(QBrush(QColor('black')),0.2), QBrush(QColor('yellow')))
+            my_plot_obj7.setZValue(100)
+            my_plot_obj7.setPos(-2 * 1000 + 700, -2 * 1000)
+            self.plot_obj7.append(my_plot_obj7)
+
+        self.beacon_corner1 = self._scene.addRect(QRectF(-4*plt_sz, -4*plt_sz, 8*plt_sz, 8*plt_sz), QPen(QBrush(QColor('black')),0.2), QBrush(QColor('blue')))
+        self.beacon_corner1.setZValue(100)
+        self.beacon_corner1.setPos(-2 * 1000 + 500, -2 * 1000)
+        self.beacon_corner2 = self._scene.addRect(QRectF(-4*plt_sz, -4*plt_sz, 8*plt_sz, 8*plt_sz), QPen(QBrush(QColor('black')),0.2), QBrush(QColor('green')))
+        self.beacon_corner2.setZValue(100)
+        self.beacon_corner2.setPos(-2 * 1000 + 510, -2 * 1000)
+        self.beacon_corner3 = self._scene.addRect(QRectF(-4*plt_sz, -4*plt_sz, 8*plt_sz, 8*plt_sz), QPen(QBrush(QColor('black')),0.2), QBrush(QColor('red')))
+        self.beacon_corner3.setZValue(100)
+        self.beacon_corner3.setPos(-2 * 1000 + 520, -2 * 1000)
+        self.beacon_corner4 = self._scene.addRect(QRectF(-4*plt_sz, -4*plt_sz, 8*plt_sz, 8*plt_sz), QPen(QBrush(QColor('black')),0.2), QBrush(QColor('yellow')))
+        self.beacon_corner4.setZValue(100)
+        self.beacon_corner4.setPos(-2 * 1000 + 530, -2 * 1000)
+
         self.last_plot_ts = 0
-        self.plot_graph_l = []
+        self.curr_plot_ts = 0
+        self.plot_l = []
+        self.plot_dbg = 0
+        self.plot_once = True
+        self.max_edge_plt_score = 0.0
+
+        self.plot_timer = QTimer(self)
+        #self.plot_timer.timeout.connect(self.refresh_plot_display)
+        self.plot_timer.timeout.connect(self.refresh_debug_plot_display)
+        self.plot_timer.start(100)
 
         TableViewWidget.g_table_view = self
 
-    def _add_cubes(self, x, y):
-        self._scene.addRect(QRectF(x-29, y-29,58,58))
-        self._scene.addRect(QRectF(x-87, y-29,58,58))
-        self._scene.addRect(QRectF(x+29, y-29,58,58))
-        self._scene.addRect(QRectF(x-29, y-87,58,58))
-        self._scene.addRect(QRectF(x-29, y+29,58,58))
-
-    def add_points_for_cubes(self, x, y, dist):
-        points = [
-        (x-87-dist,y),
-        (x,y + 87 + dist),
-        (x+87 + dist,y),
-        (x,y - 87 - dist)]
-        self.add_points(points)
-
-    def add_points_for_cubes_2(self, x, y, dist):
-        radius = math.ceil(math.sqrt(29**2+87**2)) + dist
-        foo = math.ceil(dist/math.sqrt(2))
-        points = [
-        (x-radius,y),
-        (x-foo,y+foo),
-        (x,y+radius),
-        ]
-        self.add_points(points)
-
-
-    def add_points(self, points):
-        for p in points:
-            pt = self._scene.addEllipse(p[0]-10, p[1]-10, 20, 20,  QPen(), QBrush(QColor('grey')))
-            pt.setZValue(1)
-            self._points.append((pt, p))
 
     def sizeHint(self):
         return QSize(600,400)
@@ -355,10 +378,8 @@ class TableViewWidget(QGraphicsView):
         self._client.propulsion_telemetry_ex.connect(self.update_telemetry_ex)
         self._client.goldo_debug_traj.connect(self.update_goldo_debug_traj)
         self._client.rplidar_plot.connect(self.update_plots)
+        self._client.rplidar_debug_plot.connect(self.update_debug_plots)
         self._client.rplidar_robot_detection.connect(self.update_other_robots)
-        
-    def draw_strategy(self,strategy):
-        pass
         
 
     def update_telemetry(self, telemetry):
@@ -370,69 +391,6 @@ class TableViewWidget(QGraphicsView):
         self._little_robot.setRotation(telemetry.yaw * 180 / math.pi)
         self._little_robot_x = telemetry.x * 1000
         self._little_robot_y = telemetry.y * 1000
-
-# FIXME : DEBUG : HACK SCORE 2022 ++
-        is_neg = False
-        disp_window = self.parent().parent()
-        if (not self._act1_done):
-            act1_x_mm = 1850
-            act1_y_mm = -600.0
-            delta_x_mm = (telemetry.x * 1000 - act1_x_mm)
-            delta_y_mm = (telemetry.y * 1000 - act1_y_mm)
-            delta_d_mm = math.sqrt(delta_x_mm*delta_x_mm + delta_y_mm*delta_y_mm)
-            if (delta_d_mm<10.0):
-                self._score_val = self._score_val + 5
-                disp_window._score.setText("Score:\n{:d}".format(self._score_val))
-                self._act1_done = True
-                is_neg = True
-            act1_y_mm = 600.0
-            delta_y_mm = (telemetry.y * 1000 - act1_y_mm)
-            delta_d_mm = math.sqrt(delta_x_mm*delta_x_mm + delta_y_mm*delta_y_mm)
-            if (delta_d_mm<10.0):
-                self._score_val = self._score_val + 5
-                disp_window._score.setText("Score:\n{:d}".format(self._score_val))
-                self._act1_done = True
-                is_neg = False
-        if self._act1_done and (not self._act2_done):
-            act2_x_mm = 1850
-            if (is_neg):
-                act2_y_mm = -240.0
-            else:
-                act2_y_mm = 240.0
-            delta_x_mm = (telemetry.x * 1000 - act2_x_mm)
-            delta_y_mm = (telemetry.y * 1000 - act2_y_mm)
-            delta_d_mm = math.sqrt(delta_x_mm*delta_x_mm + delta_y_mm*delta_y_mm)
-            if (delta_d_mm<10.0):
-                self._score_val = self._score_val + 5
-                disp_window._score.setText("Score:\n{:d}".format(self._score_val))
-                self._act2_done = True
-        if self._act1_done and (not self._act3_done):
-            act3_x_mm = 1850
-            if (is_neg):
-                act3_y_mm = -50.0
-            else:
-                act3_y_mm = 50.0
-            delta_x_mm = (telemetry.x * 1000 - act3_x_mm)
-            delta_y_mm = (telemetry.y * 1000 - act3_y_mm)
-            delta_d_mm = math.sqrt(delta_x_mm*delta_x_mm + delta_y_mm*delta_y_mm)
-            if (delta_d_mm<10.0):
-                self._score_val = self._score_val + 5
-                disp_window._score.setText("Score:\n{:d}".format(self._score_val))
-                self._act3_done = True
-        if self._act1_done and (not self._act4_done):
-            act4_x_mm = 1850
-            if (is_neg):
-                act4_y_mm = 280.0
-            else:
-                act4_y_mm = -280.0
-            delta_x_mm = (telemetry.x * 1000 - act4_x_mm)
-            delta_y_mm = (telemetry.y * 1000 - act4_y_mm)
-            delta_d_mm = math.sqrt(delta_x_mm*delta_x_mm + delta_y_mm*delta_y_mm)
-            if (delta_d_mm<10.0):
-                self._score_val = self._score_val + 5
-                disp_window._score.setText("Score:\n{:d}".format(self._score_val))
-                self._act4_done = True
-# FIXME : DEBUG : HACK SCORE 2022 --
 
         # FIXME : DEBUG
         if TableViewWidget.g_debug:
@@ -499,18 +457,6 @@ class TableViewWidget(QGraphicsView):
                 new_p = self._scene.addEllipse(self._dbg_traj_x_mm-dbg_plt_sz, self._dbg_traj_y_mm-dbg_plt_sz, 2*dbg_plt_sz, 2*dbg_plt_sz, QPen(QBrush(QColor('blue')),dbg_pen_sz), QBrush(QColor('red')))
                 new_p.setZValue(100)
 
-
-    def update_plots(self, my_plot):
-        dbg_plt_sz = 1
-        self.last_plot_ts = my_plot.timestamp
-        my_plot_ellipse = self._scene.addEllipse(my_plot.x * 1000 - dbg_plt_sz, my_plot.y * 1000 - dbg_plt_sz, 2*dbg_plt_sz, 2*dbg_plt_sz, QPen(QBrush(QColor('black')),2), QBrush(QColor('red')))
-        my_plot_ellipse.setZValue(100)
-        self.plot_graph_l.append((my_plot,my_plot_ellipse))
-        for rec in self.plot_graph_l:
-            if (self.last_plot_ts-rec[0].timestamp>TableViewWidget.g_rplidar_plot_life_ms):
-                rec_ellipse = rec[1]
-                self._scene.removeItem(rec_ellipse)
-                self.plot_graph_l.remove(rec)
 
     def update_other_robots(self, other_robot):
         if (not TableViewWidget.g_update_other_robots):
@@ -608,5 +554,142 @@ class TableViewWidget(QGraphicsView):
     def zoomMinus(self):
         self._my_scale = 0.5
         self.scale(self._my_scale, self._my_scale)
+
+    def update_plots(self, my_plot):
+        self.last_plot_ts = my_plot.timestamp
+        if self.curr_plot_ts == 0: self.curr_plot_ts = my_plot.timestamp
+        self.plot_l.append(my_plot)
+
+    def refresh_plot_display(self):
+        for i in range(0,len(self.plot_obj0)):
+            self.plot_obj0[i].setPos(-2 * 1000 + 100, -2 * 1000)
+        i = 0
+        for pl in self.plot_l:
+            if (self.last_plot_ts-pl.timestamp>TableViewWidget.g_rplidar_plot_life_ms):
+                self.plot_l.remove(pl)
+        for pl in self.plot_l:
+            if (i>=len(self.plot_obj0)):
+                print ("WARNING : not enough plot obj")
+                break
+            self.plot_obj0[i].setPos(pl.x * 1000, pl.y * 1000)
+            i = i + 1
+
+    def update_debug_plots(self, my_debug_plot):
+        self.last_plot_ts = my_debug_plot.timestamp
+        if self.curr_plot_ts == 0: self.curr_plot_ts = my_debug_plot.timestamp
+        self.plot_l.append(my_debug_plot)
+
+    def refresh_debug_plot_display(self):
+        for i in range(0,len(self.plot_obj0)):
+            self.plot_obj0[i].setPos(-2 * 1000, -2 * 1000)
+        for i in range(0,len(self.plot_obj1)):
+            self.plot_obj1[i].setPos(-2 * 1000 + 100, -2 * 1000)
+            self.plot_obj2[i].setPos(-2 * 1000 + 200, -2 * 1000)
+            self.plot_obj3[i].setPos(-2 * 1000 + 300, -2 * 1000)
+            self.plot_obj4[i].setPos(-2 * 1000 + 400, -2 * 1000)
+            self.plot_obj5[i].setPos(-2 * 1000 + 500, -2 * 1000)
+            self.plot_obj6[i].setPos(-2 * 1000 + 600, -2 * 1000)
+            self.plot_obj7[i].setPos(-2 * 1000 + 700, -2 * 1000)
+        self.beacon_corner1.setPos(-2 * 1000 + 500, -2 * 1000)
+        self.beacon_corner2.setPos(-2 * 1000 + 510, -2 * 1000)
+        self.beacon_corner3.setPos(-2 * 1000 + 520, -2 * 1000)
+        self.beacon_corner4.setPos(-2 * 1000 + 530, -2 * 1000)
+
+        if self.curr_plot_ts != 0: self.curr_plot_ts = self.curr_plot_ts + 100
+
+        for pl in self.plot_l:
+            if (self.curr_plot_ts-pl.timestamp>TableViewWidget.g_rplidar_plot_life_ms):
+                self.plot_l.remove(pl)
+
+        # FIXME : DEBUG
+        process_plot(self.plot_l)
+
+        i0 = 0
+        i1 = 0
+        i2 = 0
+        i3 = 0
+        i4 = 0
+        i5 = 0
+        i6 = 0
+        i7 = 0
+        calib_y=0.0
+        calib_n=0
+        for pl in self.plot_l:
+            my_x = pl.x
+            my_y = pl.y
+            if (pl.dbg_i==0):
+                if (i0>=len(self.plot_obj0)):
+                    #print ("WARNING : not enough plot obj0")
+                    pass
+                else:
+                    self.plot_obj0[i0].setPos(my_x * 1000, my_y * 1000)
+                i0 = i0 + 1
+                if (my_x>1.5) and (my_x<2.0) and (my_y>-1.5) and (my_y<1.3):
+                    calib_y = calib_y + (my_y*1000)
+                    calib_n = calib_n + 1
+            elif (pl.dbg_i==1):
+                if (i1>=len(self.plot_obj1)):
+                    print ("WARNING : not enough plot obj1")
+                    pass
+                else:
+                    self.plot_obj1[i1].setPos(my_x * 1000, my_y * 1000)
+                i1 = i1 + 1
+            elif (pl.dbg_i==2):
+                if (i2>=len(self.plot_obj2)):
+                    print ("WARNING : not enough plot obj2")
+                    pass
+                else:
+                    self.plot_obj2[i2].setPos(my_x * 1000, my_y * 1000)
+                i2 = i2 + 1
+            elif (pl.dbg_i==3):
+                if (i3>=len(self.plot_obj3)):
+                    print ("WARNING : not enough plot obj3")
+                    pass
+                else:
+                    self.plot_obj3[i3].setPos(my_x * 1000, my_y * 1000)
+                i3 = i3 + 1
+            elif (pl.dbg_i==4):
+                if (i4>=len(self.plot_obj4)):
+                    print ("WARNING : not enough plot obj4")
+                    pass
+                else:
+                    self.plot_obj4[i4].setPos(my_x * 1000, my_y * 1000)
+                i4 = i4 + 1
+            elif (pl.dbg_i==5):
+                if (i5>=len(self.plot_obj5)):
+                    print ("WARNING : not enough plot obj5")
+                    pass
+                else:
+                    self.plot_obj5[i5].setPos(my_x * 1000, my_y * 1000)
+                i5 = i5 + 1
+            elif (pl.dbg_i==6):
+                if (i6>=len(self.plot_obj6)):
+                    print ("WARNING : not enough plot obj6")
+                    pass
+                else:
+                    self.plot_obj6[i6].setPos(my_x * 1000, my_y * 1000)
+                i6 = i6 + 1
+            elif (pl.dbg_i==7):
+                if (i7>=len(self.plot_obj7)):
+                    print ("WARNING : not enough plot obj7")
+                    pass
+                else:
+                    self.plot_obj7[i7].setPos(my_x * 1000, my_y * 1000)
+                i7 = i7 + 1
+            elif (pl.dbg_i==10):
+                self.beacon_corner1.setPos(my_x * 1000, my_y * 1000)
+            elif (pl.dbg_i==20):
+                self.beacon_corner2.setPos(my_x * 1000, my_y * 1000)
+            elif (pl.dbg_i==30):
+                self.beacon_corner3.setPos(my_x * 1000, my_y * 1000)
+            elif (pl.dbg_i==40):
+                self.beacon_corner4.setPos(my_x * 1000, my_y * 1000)
+
+        self.plot_dbg = self.plot_dbg + 1
+        if (self.plot_dbg==10):
+            self.plot_dbg = 0
+            if (calib_n!=0):
+                #print ("{:8.1f}".format(1398.0 - (calib_y/calib_n)))
+                pass
 
 

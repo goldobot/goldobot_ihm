@@ -60,6 +60,20 @@ class RplidarPlot:
         self.x = unpacked[1] * 1.0e-3
         self.y = unpacked[2] * 1.0e-3
 
+class RplidarDebugPlot:
+    def __init__(self, data):
+        unpacked = struct.unpack('<ifffffif', data)
+        self.timestamp = unpacked[0]
+        self.raw_R = unpacked[1] * 1.0e-3
+        self.raw_theta = unpacked[2]
+        self.odo_x = unpacked[3] * 1.0e-3
+        self.odo_y = unpacked[4] * 1.0e-3
+        self.odo_theta = unpacked[5]
+        self.dbg_i = unpacked[6]
+        self.dbg_f = unpacked[7]
+        self.x = self.raw_R * math.cos (self.raw_theta + self.odo_theta) + self.odo_x;
+        self.y = self.raw_R * math.sin (self.raw_theta + self.odo_theta) + self.odo_y;
+
 class RplidarRobotDetection:
     def __init__(self, data):
         unpacked = struct.unpack('<iihhhhhhi', data)

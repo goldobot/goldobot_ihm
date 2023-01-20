@@ -114,6 +114,7 @@ RplidarStart=1024
 RplidarStop=1025
 
 RplidarPlot=1270
+RplidarDebugPlot=1271
 
 RplidarRobotDetection=1280
 
