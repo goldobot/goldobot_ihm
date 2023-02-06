@@ -1,3 +1,15 @@
+import struct
+import math
+import os
+
+
+def normalize_angle(theta_rad):
+    while theta_rad>math.pi:
+        theta_rad -= 2.0*math.pi
+    while theta_rad<=-math.pi:
+        theta_rad += 2.0*math.pi
+    return theta_rad
+
 def get_corner(plot_l,min_x,min_y,max_x,max_y,ref_x,ref_y):
     min_corner_score = 1.0
     corner_x = -1000
@@ -26,8 +38,7 @@ def get_corner(plot_l,min_x,min_y,max_x,max_y,ref_x,ref_y):
 
     return (min_corner_score,corner_i,corner_x,corner_y,corner_theta)
 
-
-def process_plot(plot_l):
+def process_plots(plot_l):
     (min_corner1_score,corner1_i,corner1_x,corner1_y,corner1_theta) = get_corner(plot_l,1.9,-1.6,2.2,-1.3,1.9,-1.3)
     (min_corner2_score,corner2_i,corner2_x,corner2_y,corner2_theta) = get_corner(plot_l,-0.2,-0.15,0.1,0.15,0.1,-0.15)
     (min_corner3_score,corner3_i,corner3_x,corner3_y,corner3_theta) = get_corner(plot_l,-0.2,-0.15,0.1,0.15,0.1,0.15)
@@ -86,4 +97,62 @@ def process_plot(plot_l):
     if (N1!=0) or (N2!=0) or (N3!=0) or (N4!=0) or (N5!=0) or (N6!=0) or (N7!=0):
         print(N1, N2, N3, N4, N5, N6, N7)
 
+        new_l = plot_l.copy()
 
+        s0 = get_global_score(new_l)
+        #print ("S000 : {}".format(s0))
+
+        recompute_plot_xy(new_l,0.001,0,0)
+        s = get_global_score(new_l)
+        print ("dSp00 : {:7.4f}".format(s-s0))
+
+        recompute_plot_xy(new_l,-0.001,0,0)
+        s = get_global_score(new_l)
+        print ("dSm00 : {:7.4f}".format(s-s0))
+
+        recompute_plot_xy(new_l,0,0.001,0)
+        s = get_global_score(new_l)
+        print ("dS0p0 : {:7.4f}".format(s-s0))
+
+        recompute_plot_xy(new_l,0,-0.001,0)
+        s = get_global_score(new_l)
+        print ("dS0m0 : {:7.4f}".format(s-s0))
+
+        recompute_plot_xy(new_l,0,0,0.001)
+        s = get_global_score(new_l)
+        print ("dS00p : {:7.4f}".format(s-s0))
+
+        recompute_plot_xy(new_l,0,0,-0.001)
+        s = get_global_score(new_l)
+        print ("dS00m : {:7.4f}".format(s-s0))
+
+        print ()
+
+def get_plot_score(pl):
+    s = 0
+    if (pl.dbg_i == 1) or (pl.dbg_i == 10):
+        s = abs (pl.x - (2.023))
+    elif (pl.dbg_i == 2):
+        s = abs (pl.x - (-0.023))
+    elif (pl.dbg_i == 3):
+        s = abs (pl.y - (1.400))
+    elif (pl.dbg_i == 4):
+        s = abs (pl.y - (-1.400))
+    elif (pl.dbg_i == 5) or (pl.dbg_i == 20):
+        s = abs (pl.y - (-0.050))
+    elif (pl.dbg_i == 6) or (pl.dbg_i == 40):
+        s = abs (pl.x - (2.023))
+    elif (pl.dbg_i == 7) or (pl.dbg_i == 30):
+        s = abs (pl.y - (0.050))
+    return s
+
+def get_global_score(plot_l):
+    s = 0
+    for pl in plot_l:
+        s = s + get_plot_score(pl)
+    return s
+
+def recompute_plot_xy(plot_l,dx,dy,dtheta):
+    for pl in plot_l:
+        pl.x = pl.raw_R * math.cos (pl.raw_theta + pl.odo_theta + dtheta) + pl.odo_x + dx;
+        pl.y = pl.raw_R * math.sin (pl.raw_theta + pl.odo_theta + dtheta) + pl.odo_y + dy;

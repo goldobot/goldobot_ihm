@@ -14,14 +14,7 @@ from PyQt5.QtGui import QImage, QImageReader, QPixmap
 from PyQt5.QtCore import QTimer
 
 from messages import RplidarPlot, RplidarDebugPlot
-from gps import process_plot
-
-def normalize_angle(theta_rad):
-    while theta_rad>math.pi:
-        theta_rad -= 2.0*math.pi
-    while theta_rad<=-math.pi:
-        theta_rad += 2.0*math.pi
-    return theta_rad
+from gps import process_plots
 
 class MyGraphicsScene(QGraphicsScene):
     def mouseMoveEvent(self, event):
@@ -602,7 +595,10 @@ class TableViewWidget(QGraphicsView):
                 self.plot_l.remove(pl)
 
         # FIXME : DEBUG
-        process_plot(self.plot_l)
+        self.plot_dbg = self.plot_dbg + 1
+        if (self.plot_dbg==10):
+            process_plots(self.plot_l)
+            self.plot_dbg = 0
 
         i0 = 0
         i1 = 0
@@ -685,11 +681,7 @@ class TableViewWidget(QGraphicsView):
             elif (pl.dbg_i==40):
                 self.beacon_corner4.setPos(my_x * 1000, my_y * 1000)
 
-        self.plot_dbg = self.plot_dbg + 1
-        if (self.plot_dbg==10):
-            self.plot_dbg = 0
+        if (self.plot_dbg==0):
             if (calib_n!=0):
                 #print ("{:8.1f}".format(1398.0 - (calib_y/calib_n)))
                 pass
-
-
