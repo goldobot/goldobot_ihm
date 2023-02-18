@@ -1,6 +1,7 @@
 import struct
 import math
 import os
+import copy
 
 from PyQt5.QtCore import QObject, pyqtSignal, QSize, QRectF, QPointF, Qt
 
@@ -14,7 +15,7 @@ from PyQt5.QtGui import QImage, QImageReader, QPixmap
 from PyQt5.QtCore import QTimer
 
 from messages import RplidarPlot, RplidarDebugPlot
-from gps import process_plots
+from gps import process_plots, do_gps
 
 class MyGraphicsScene(QGraphicsScene):
     def mouseMoveEvent(self, event):
@@ -556,9 +557,9 @@ class TableViewWidget(QGraphicsView):
             pl.timestamp = int(tok[0])
             pl.raw_R     = float(tok[1])
             pl.raw_theta = float(tok[2])
-            pl.odo_x     = float(tok[3]) + 0.03
-            pl.odo_y     = float(tok[4]) + 0.02
-            pl.odo_theta = float(tok[5]) + 0.05
+            pl.odo_x     = float(tok[3])# + 0.008
+            pl.odo_y     = float(tok[4])# - 0.004
+            pl.odo_theta = float(tok[5])# + 0.005
             pl.dbg_i     = int(tok[6])
             pl.dbg_f     = float(tok[7])
             pl.x         = pl.raw_R * math.cos (pl.raw_theta + pl.odo_theta) + pl.odo_x;
@@ -611,10 +612,18 @@ class TableViewWidget(QGraphicsView):
             if (self.curr_plot_ts-pl.timestamp>TableViewWidget.g_rplidar_plot_life_ms):
                 self.plot_l.remove(pl)
 
+        (N1, N2, N3, N4, N5, N6, N7) = process_plots(self.plot_l)
+
         # FIXME : DEBUG
         self.plot_dbg = self.plot_dbg + 1
         if (self.plot_dbg==10):
-            process_plots(self.plot_l)
+            if (N1!=0) or (N2!=0) or (N3!=0) or (N4!=0) or (N5!=0) or (N6!=0) or (N7!=0):
+                new_l = copy.deepcopy(self.plot_l)
+                (corr_x,corr_y,corr_theta) = do_gps(new_l)
+                print("corr_x={:12.4f}".format(corr_x))
+                print("corr_y={:12.4f}".format(corr_y))
+                print("corr_theta={:12.4f}".format(corr_theta))
+                print()
             self.plot_dbg = 0
 
         i0 = 0

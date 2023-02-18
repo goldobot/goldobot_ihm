@@ -1,6 +1,7 @@
 import struct
 import math
 import os
+from numpy import arange
 
 
 def normalize_angle(theta_rad):
@@ -9,6 +10,11 @@ def normalize_angle(theta_rad):
     while theta_rad<=-math.pi:
         theta_rad += 2.0*math.pi
     return theta_rad
+
+def recompute_plot_xy(plot_l,dx,dy,dtheta):
+    for pl in plot_l:
+        pl.x = pl.raw_R * math.cos (pl.raw_theta + pl.odo_theta + dtheta) + pl.odo_x + dx;
+        pl.y = pl.raw_R * math.sin (pl.raw_theta + pl.odo_theta + dtheta) + pl.odo_y + dy;
 
 def get_corner(plot_l,min_x,min_y,max_x,max_y,ref_x,ref_y):
     min_corner_score = 1.0
@@ -94,39 +100,13 @@ def process_plots(plot_l):
     if (min_corner4_score<0.999):
         plot_l[corner4_i].dbg_i = 40
 
-    if (N1!=0) or (N2!=0) or (N3!=0) or (N4!=0) or (N5!=0) or (N6!=0) or (N7!=0):
-        print(N1, N2, N3, N4, N5, N6, N7)
+    #if (N1!=0) or (N2!=0) or (N3!=0) or (N4!=0) or (N5!=0) or (N6!=0) or (N7!=0):
+    #    print(N1, N2, N3, N4, N5, N6, N7)
+    #    new_l = plot_l.copy()
+    #    s0 = get_global_score(new_l)
+    #    print ("s0 = {}".format(s0))
 
-        new_l = plot_l.copy()
-
-        s0 = get_global_score(new_l)
-        #print ("S000 : {}".format(s0))
-
-        recompute_plot_xy(new_l,0.001,0,0)
-        s = get_global_score(new_l)
-        print ("dSp00 : {:7.4f}".format(s-s0))
-
-        recompute_plot_xy(new_l,-0.001,0,0)
-        s = get_global_score(new_l)
-        print ("dSm00 : {:7.4f}".format(s-s0))
-
-        recompute_plot_xy(new_l,0,0.001,0)
-        s = get_global_score(new_l)
-        print ("dS0p0 : {:7.4f}".format(s-s0))
-
-        recompute_plot_xy(new_l,0,-0.001,0)
-        s = get_global_score(new_l)
-        print ("dS0m0 : {:7.4f}".format(s-s0))
-
-        recompute_plot_xy(new_l,0,0,0.001)
-        s = get_global_score(new_l)
-        print ("dS00p : {:7.4f}".format(s-s0))
-
-        recompute_plot_xy(new_l,0,0,-0.001)
-        s = get_global_score(new_l)
-        print ("dS00m : {:7.4f}".format(s-s0))
-
-        print ()
+    return (N1, N2, N3, N4, N5, N6, N7)
 
 def get_plot_score(pl):
     s = 0
@@ -152,7 +132,41 @@ def get_global_score(plot_l):
         s = s + get_plot_score(pl)
     return s
 
-def recompute_plot_xy(plot_l,dx,dy,dtheta):
-    for pl in plot_l:
-        pl.x = pl.raw_R * math.cos (pl.raw_theta + pl.odo_theta + dtheta) + pl.odo_x + dx;
-        pl.y = pl.raw_R * math.sin (pl.raw_theta + pl.odo_theta + dtheta) + pl.odo_y + dy;
+def get_min_score(plot_l,err_x0,err_y0,err_theta0,q):
+    min_s = 1000000.0
+    min_x = 0.0
+    for err_x in arange(err_x0-10.0*q,err_x0+10.0*q,q):
+        recompute_plot_xy(plot_l,err_x,err_y0,err_theta0)
+        s = get_global_score(plot_l)
+        if min_s>s:
+            min_s=s
+            min_x=err_x
+
+    min_s = 1000000.0
+    min_y = 0.0
+    for err_y in arange(err_y0-10.0*q,err_y0+10.0*q,q):
+        recompute_plot_xy(plot_l,err_x0,err_y,err_theta0)
+        s = get_global_score(plot_l)
+        if min_s>s:
+            min_s=s
+            min_y=err_y
+
+    min_s = 1000000.0
+    min_theta = 0.0
+    for err_theta in arange(err_theta0-10.0*q,err_theta0+10.0*q,q):
+        recompute_plot_xy(plot_l,err_x0,err_y0,err_theta)
+        s = get_global_score(plot_l)
+        if min_s>s:
+            min_s=s
+            min_theta=err_theta
+
+    return (min_x,min_y,min_theta)
+
+def do_gps(plot_l):
+    new_l = plot_l.copy()
+    (min_x0,min_y0,min_theta0) = get_min_score(new_l,0.0,0.0,0.0,0.01)
+    (min_x1,min_y1,min_theta1) = get_min_score(new_l,min_x0,min_y0,min_theta0,0.01)
+    (min_x2,min_y2,min_theta2) = get_min_score(new_l,min_x1,min_y1,min_theta1,0.01)
+    (min_x3,min_y3,min_theta3) = get_min_score(new_l,min_x2,min_y2,min_theta2,0.001)
+    (min_x4,min_y4,min_theta4) = get_min_score(new_l,min_x3,min_y3,min_theta3,0.001)
+    return (min_x4,min_y4,min_theta4)
