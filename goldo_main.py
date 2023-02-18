@@ -139,6 +139,11 @@ class MainWindow(QMainWindow):
         self.zoomMinusB.setDisabled(False)
         self.zoomMinusB.clicked.connect(self._table_view.zoomMinus)
 
+        self.testPlotB = QPushButton()
+        self.testPlotB.setText("Test Plot")
+        self.testPlotB.setDisabled(False)
+        self.testPlotB.clicked.connect(self._table_view.testPlot)
+
         self.posL = QLabel()
         self.posL.setText("Pos & dist:")
         self.posL.setDisabled(False)
@@ -205,6 +210,7 @@ class MainWindow(QMainWindow):
         right_layout.addWidget(self.zoomPlusB)
         right_layout.addWidget(self.zoomDefB)
         right_layout.addWidget(self.zoomMinusB)
+        right_layout.addWidget(self.testPlotB)
         right_layout.addWidget(self.posL)
         right_layout.addWidget(self.posXL)
         right_layout.addWidget(self.posYL)

@@ -548,6 +548,23 @@ class TableViewWidget(QGraphicsView):
         self._my_scale = 0.5
         self.scale(self._my_scale, self._my_scale)
 
+    def testPlot(self):
+        data_fd = open("data/test.txt")
+        for li in data_fd.readlines():
+            tok=li.split()
+            pl = RplidarDebugPlot(b'\0'*32)
+            pl.timestamp = int(tok[0])
+            pl.raw_R     = float(tok[1])
+            pl.raw_theta = float(tok[2])
+            pl.odo_x     = float(tok[3]) + 0.03
+            pl.odo_y     = float(tok[4]) + 0.02
+            pl.odo_theta = float(tok[5]) + 0.05
+            pl.dbg_i     = int(tok[6])
+            pl.dbg_f     = float(tok[7])
+            pl.x         = pl.raw_R * math.cos (pl.raw_theta + pl.odo_theta) + pl.odo_x;
+            pl.y         = pl.raw_R * math.sin (pl.raw_theta + pl.odo_theta) + pl.odo_y;
+            self.plot_l.append(pl)
+
     def update_plots(self, my_plot):
         self.last_plot_ts = my_plot.timestamp
         if self.curr_plot_ts == 0: self.curr_plot_ts = my_plot.timestamp
