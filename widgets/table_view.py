@@ -769,7 +769,6 @@ class TableViewWidget(QGraphicsView):
                 new_l.append(npl)
                 if (len(new_l)>400): break
             (corr_x,corr_y,corr_theta) = do_gps(new_l)
-            print ("after do_gps : {}".format(len(self.plot_l)))
             print("corr_x={:12.4f}".format(corr_x))
             print("corr_y={:12.4f}".format(corr_y))
             print("corr_theta={:12.4f}".format(corr_theta))
