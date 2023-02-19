@@ -751,7 +751,6 @@ class TableViewWidget(QGraphicsView):
     def refresh_debug_gps(self):
         if (self.N1!=0) or (self.N2!=0) or (self.N3!=0) or (self.N4!=0) or (self.N5!=0) or (self.N6!=0) or (self.N7!=0):
             self.plot_lock = True
-            print ("before copy : {}".format(len(self.plot_l)))
             #new_l = copy.deepcopy(self.plot_l)
             new_l = []
             c_l = self.plot_l
@@ -769,7 +768,6 @@ class TableViewWidget(QGraphicsView):
                 npl.y         = pl.y
                 new_l.append(npl)
                 if (len(new_l)>400): break
-            print ("after copy : {}".format(len(self.plot_l)))
             (corr_x,corr_y,corr_theta) = do_gps(new_l)
             print ("after do_gps : {}".format(len(self.plot_l)))
             print("corr_x={:12.4f}".format(corr_x))
@@ -780,7 +778,6 @@ class TableViewWidget(QGraphicsView):
                 if ((self.curr_plot_ts-pl.timestamp)<=TableViewWidget.g_rplidar_plot_life_ms):
                     n_l.append(pl)
             self.plot_l = n_l
-            print ("after remove : {}".format(len(self.plot_l)))
             self.plot_lock = False
             print()
 
