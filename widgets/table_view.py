@@ -2,6 +2,7 @@ import struct
 import math
 import os
 import copy
+import time
 
 from PyQt5.QtCore import QObject, pyqtSignal, QSize, QRectF, QPointF, Qt
 
@@ -348,17 +349,30 @@ class TableViewWidget(QGraphicsView):
         self.beacon_corner4.setZValue(100)
         self.beacon_corner4.setPos(-2 * 1000 + 530, -2 * 1000)
 
-        self.last_plot_ts = 0
+        self.t0 = 0.0
+        self.first_plot_ts = 0
         self.curr_plot_ts = 0
         self.plot_l = []
+        self.N1 = 0
+        self.N2 = 0
+        self.N3 = 0
+        self.N4 = 0
+        self.N5 = 0
+        self.N6 = 0
+        self.N7 = 0
         self.plot_dbg = 0
         self.plot_once = True
         self.max_edge_plt_score = 0.0
+        self.plot_lock = False
 
         self.plot_timer = QTimer(self)
         #self.plot_timer.timeout.connect(self.refresh_plot_display)
         self.plot_timer.timeout.connect(self.refresh_debug_plot_display)
         self.plot_timer.start(100)
+
+        self.gps_timer = QTimer(self)
+        self.gps_timer.timeout.connect(self.refresh_debug_gps)
+        self.gps_timer.start(3000)
 
         TableViewWidget.g_table_view = self
 
@@ -567,17 +581,30 @@ class TableViewWidget(QGraphicsView):
             self.plot_l.append(pl)
 
     def update_plots(self, my_plot):
-        self.last_plot_ts = my_plot.timestamp
-        if self.curr_plot_ts == 0: self.curr_plot_ts = my_plot.timestamp
+        #if self.curr_plot_ts == 0: self.curr_plot_ts = my_plot.timestamp
+        if self.curr_plot_ts == 0:
+            self.t0=time.time()
+            self.first_plot_ts = my_plot.timestamp
+            self.curr_plot_ts = my_plot.timestamp
         self.plot_l.append(my_plot)
 
     def refresh_plot_display(self):
+        #if self.curr_plot_ts != 0: self.curr_plot_ts = self.curr_plot_ts + 100
+        if self.curr_plot_ts != 0:
+            t0=self.t0
+            t1=time.time()
+            self.curr_plot_ts = self.first_plot_ts + int((t1-t0)*1000)
         for i in range(0,len(self.plot_obj0)):
             self.plot_obj0[i].setPos(-2 * 1000 + 100, -2 * 1000)
         i = 0
+        #for pl in self.plot_l:
+        #    if (self.curr_plot_ts-pl.timestamp>TableViewWidget.g_rplidar_plot_life_ms):
+        #        self.plot_l.remove(pl)
+        n_l = []
         for pl in self.plot_l:
-            if (self.last_plot_ts-pl.timestamp>TableViewWidget.g_rplidar_plot_life_ms):
-                self.plot_l.remove(pl)
+            if ((self.curr_plot_ts-pl.timestamp)<=TableViewWidget.g_rplidar_plot_life_ms):
+                n_l.append(pl)
+        self.plot_l = n_l
         for pl in self.plot_l:
             if (i>=len(self.plot_obj0)):
                 print ("WARNING : not enough plot obj")
@@ -586,11 +613,25 @@ class TableViewWidget(QGraphicsView):
             i = i + 1
 
     def update_debug_plots(self, my_debug_plot):
-        self.last_plot_ts = my_debug_plot.timestamp
-        if self.curr_plot_ts == 0: self.curr_plot_ts = my_debug_plot.timestamp
+        #if self.curr_plot_ts == 0: self.curr_plot_ts = my_debug_plot.timestamp
+        if self.curr_plot_ts == 0:
+            self.t0=time.time()
+            self.first_plot_ts = my_debug_plot.timestamp
+            self.curr_plot_ts = my_debug_plot.timestamp
+        if self.plot_lock:
+            return
         self.plot_l.append(my_debug_plot)
 
     def refresh_debug_plot_display(self):
+        #if self.curr_plot_ts != 0: self.curr_plot_ts = self.curr_plot_ts + 100
+        if self.curr_plot_ts != 0:
+            t0=self.t0
+            t1=time.time()
+            self.curr_plot_ts = self.first_plot_ts + int((t1-t0)*1000)
+
+        if self.plot_lock:
+            return
+
         for i in range(0,len(self.plot_obj0)):
             self.plot_obj0[i].setPos(-2 * 1000, -2 * 1000)
         for i in range(0,len(self.plot_obj1)):
@@ -606,25 +647,16 @@ class TableViewWidget(QGraphicsView):
         self.beacon_corner3.setPos(-2 * 1000 + 520, -2 * 1000)
         self.beacon_corner4.setPos(-2 * 1000 + 530, -2 * 1000)
 
-        if self.curr_plot_ts != 0: self.curr_plot_ts = self.curr_plot_ts + 100
-
+        #for pl in self.plot_l:
+        #    if (self.curr_plot_ts-pl.timestamp>TableViewWidget.g_rplidar_plot_life_ms):
+        #        self.plot_l.remove(pl)
+        n_l = []
         for pl in self.plot_l:
-            if (self.curr_plot_ts-pl.timestamp>TableViewWidget.g_rplidar_plot_life_ms):
-                self.plot_l.remove(pl)
+            if ((self.curr_plot_ts-pl.timestamp)<=TableViewWidget.g_rplidar_plot_life_ms):
+                n_l.append(pl)
+        self.plot_l = n_l
 
-        (N1, N2, N3, N4, N5, N6, N7) = process_plots(self.plot_l)
-
-        # FIXME : DEBUG
-        self.plot_dbg = self.plot_dbg + 1
-        if (self.plot_dbg==10):
-            if (N1!=0) or (N2!=0) or (N3!=0) or (N4!=0) or (N5!=0) or (N6!=0) or (N7!=0):
-                new_l = copy.deepcopy(self.plot_l)
-                (corr_x,corr_y,corr_theta) = do_gps(new_l)
-                print("corr_x={:12.4f}".format(corr_x))
-                print("corr_y={:12.4f}".format(corr_y))
-                print("corr_theta={:12.4f}".format(corr_theta))
-                print()
-            self.plot_dbg = 0
+        (self.N1, self.N2, self.N3, self.N4, self.N5, self.N6, self.N7) = process_plots(self.plot_l)
 
         i0 = 0
         i1 = 0
@@ -707,7 +739,48 @@ class TableViewWidget(QGraphicsView):
             elif (pl.dbg_i==40):
                 self.beacon_corner4.setPos(my_x * 1000, my_y * 1000)
 
+        self.plot_dbg = self.plot_dbg + 1
+        if (self.plot_dbg==10):
+            self.plot_dbg = 0
+
         if (self.plot_dbg==0):
             if (calib_n!=0):
                 #print ("{:8.1f}".format(1398.0 - (calib_y/calib_n)))
                 pass
+
+    def refresh_debug_gps(self):
+        if (self.N1!=0) or (self.N2!=0) or (self.N3!=0) or (self.N4!=0) or (self.N5!=0) or (self.N6!=0) or (self.N7!=0):
+            self.plot_lock = True
+            print ("before copy : {}".format(len(self.plot_l)))
+            #new_l = copy.deepcopy(self.plot_l)
+            new_l = []
+            c_l = self.plot_l
+            for pl in c_l:
+                npl = RplidarDebugPlot(b'\0'*32)
+                npl.timestamp = pl.timestamp
+                npl.raw_R     = pl.raw_R
+                npl.raw_theta = pl.raw_theta
+                npl.odo_x     = pl.odo_x
+                npl.odo_y     = pl.odo_y
+                npl.odo_theta = pl.odo_theta
+                npl.dbg_i     = pl.dbg_i
+                npl.dbg_f     = pl.dbg_f
+                npl.x         = pl.x
+                npl.y         = pl.y
+                new_l.append(npl)
+                if (len(new_l)>400): break
+            print ("after copy : {}".format(len(self.plot_l)))
+            (corr_x,corr_y,corr_theta) = do_gps(new_l)
+            print ("after do_gps : {}".format(len(self.plot_l)))
+            print("corr_x={:12.4f}".format(corr_x))
+            print("corr_y={:12.4f}".format(corr_y))
+            print("corr_theta={:12.4f}".format(corr_theta))
+            n_l = []
+            for pl in self.plot_l:
+                if ((self.curr_plot_ts-pl.timestamp)<=TableViewWidget.g_rplidar_plot_life_ms):
+                    n_l.append(pl)
+            self.plot_l = n_l
+            print ("after remove : {}".format(len(self.plot_l)))
+            self.plot_lock = False
+            print()
+
