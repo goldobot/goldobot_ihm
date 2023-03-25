@@ -11,6 +11,7 @@ import random
 #import modules from sequence directory
 #purple replaces 2021's Blue
 from .poses import YellowPoses, PurplePoses
+from . import pince_ravisseuse
 
 from . import robot_config as rc
 
@@ -125,19 +126,18 @@ async def prematch():
     else:
         raise RuntimeError('Side not set')
 
-    await lidar.stop()
+    await lidar.start()
 
     # Propulsion
     await odrive.clearErrors()
     await propulsion.clearError()
-    await propulsion.setAccelerationLimits(1,1,2,2)    
+    await propulsion.setAccelerationLimits(1,1,5,5)    
     await propulsion.setMotorsEnable(True)    
     await propulsion.setEnable(True)
     await recalage()
-
+    await pince_ravisseuse.initialize_pince()
+    await pince_ravisseuse.lift_pince_top()
     load_strategy()
-
-    robot._adversary_detection_enable = True
     return True
     
 def load_strategy():
@@ -150,38 +150,39 @@ def load_strategy():
         raise RuntimeError('Side not set')
 
     priorities = random.sample(range(0, 50), 4)
-    """
+
     print("Hippodrome 1 : priority = {} | position = {}".format(priorities[0], poses.hippodrome_1) )
     print("Hippodrome 2 : priority = {} | position = {}".format(priorities[1], poses.hippodrome_2) )
     print("Hippodrome 3 : priority = {} | position = {}".format(priorities[2], poses.hippodrome_3) )
     print("Hippodrome 4 : priority = {} | position = {}".format(priorities[3], poses.hippodrome_4) )
-    """
 
     a = strategy.create_action('hippodrome_1')
     a.sequence = 'hippodrome_1'
     a.enabled = True
-    #a.priority = priorities[0]
-    a.priority = 2
+    a.opponent_radius = 0.40
+    a.speed = 1.2
+    a.priority = priorities[0]
     a.begin_pose = poses.hippodrome_1
     
     a = strategy.create_action('hippodrome_2')
     a.sequence = 'hippodrome_2'
-    #a.priority = priorities[1]
-    a.priority = 1
+    a.priority = priorities[1]
     a.enabled = True
+    a.opponent_radius = 0.50
+    a.speed = 1.5
     a.begin_pose = poses.hippodrome_2
 
     a = strategy.create_action('hippodrome_3')
     a.sequence = 'hippodrome_3'
-    #a.priority = priorities[2]
-    a.priority = 3
+    a.priority = priorities[2]
     a.enabled = True
+    a.opponent_radius = 0.30
+    a.speed = 0.6
     a.begin_pose = poses.hippodrome_3
 
     a = strategy.create_action('hippodrome_4')
     a.sequence = 'hippodrome_4'
-    #a.priority = priorities[3]
-    a.priority = 4
+    a.priority = priorities[3]
     a.enabled = True
     a.begin_pose = poses.hippodrome_4
 
@@ -202,31 +203,51 @@ async def start_match():
         
     await propulsion.setMotorsEnable(True)
     await propulsion.setEnable(True)
+    await lidar.start()
+
+    robot._adversary_detection_enable = True
 
 @robot.sequence
 async def hippodrome_1():
-    await asyncio.sleep(2)
+    await pince_ravisseuse.lift_pince_bottom()
+    await pince_ravisseuse.lift_pince_top()
     print("Hippodrome 1 sequence")
     strategy.current_action.enabled = False
 
 @robot.sequence
 async def hippodrome_2():
-    await asyncio.sleep(4)
+    await pince_ravisseuse.lift_pince_bottom()
+    await pince_ravisseuse.lift_pince_top()
+    await pince_ravisseuse.lift_pince_bottom()
+    await pince_ravisseuse.lift_pince_top()
     print("Hippodrome 2 sequence")
     strategy.current_action.enabled = False
 
 @robot.sequence
 async def hippodrome_3():
-    await asyncio.sleep(3)
+    await pince_ravisseuse.lift_pince_bottom()
+    await pince_ravisseuse.lift_pince_top()
+    await pince_ravisseuse.lift_pince_bottom()
+    await pince_ravisseuse.lift_pince_top()
+    await pince_ravisseuse.lift_pince_bottom()
+    await pince_ravisseuse.lift_pince_top()
     print("Hippodrome 3 sequence")
     strategy.current_action.enabled = False
 
 @robot.sequence
 async def hippodrome_4():
-    await asyncio.sleep(1)
+    await pince_ravisseuse.lift_pince_bottom()
+    await pince_ravisseuse.lift_pince_top()
+    await pince_ravisseuse.lift_pince_bottom()
+    await pince_ravisseuse.lift_pince_top()
+    await pince_ravisseuse.lift_pince_bottom()
+    await pince_ravisseuse.lift_pince_top()
+    await pince_ravisseuse.lift_pince_bottom()
+    await pince_ravisseuse.lift_pince_top()
     print("Hippodrome 4 sequence")
     strategy.current_action.enabled = False
 
 async def end_match():
     print('end match callback')
     await robot.setScore(42)
+    await lidar.start()
