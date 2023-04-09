@@ -8,6 +8,8 @@ from PyQt5.QtGui import QPainterPath
 
 
 class TrajectoryView:
+    g_trajectory_remanence = False
+
     def __init__(self, parent):
         self._parent = weakref.ref(parent)
         self._scene = parent._scene
@@ -31,8 +33,9 @@ class TrajectoryView:
         itm.setPen(pen)
         itm.setZValue(3)
         if self._path_item is not None:
-            self._scene.removeItem(self._path_item)
-            self._item_group.removeFromGoup(self._path_item)
+            if not TrajectoryView.g_trajectory_remanence:
+                self._scene.removeItem(self._path_item)
+                self._item_group.removeFromGoup(self._path_item)
             self._path_item = None
         self._item_group.addToGroup(itm)
         self._path_item = itm
@@ -53,8 +56,9 @@ class TrajectoryView:
         itm.setPen(pen)
         
         if self._path_item is not None:
-            self._scene.removeItem(self._path_item)
-            self._item_group.removeFromGroup(self._path_item)
+            if not TrajectoryView.g_trajectory_remanence:
+                self._scene.removeItem(self._path_item)
+                self._item_group.removeFromGroup(self._path_item)
             self._path_item = None
         self._item_group.addToGroup(itm)
         self._path_item = itm

@@ -6,6 +6,7 @@ from PyQt5.QtWidgets import QWidget, QHBoxLayout, QComboBox, QMessageBox, QShort
 from PyQt5.QtGui import QKeySequence
 
 from goldobot_ihm.widgets.table_view import TableViewWidget
+from goldobot_ihm.widgets.table_view.trajectory_view import TrajectoryView
 
 import google.protobuf as _pb
 _sym_db = _pb.symbol_database.Default()
@@ -63,6 +64,12 @@ class Goldo1(QWidget):
         self.showThemeC.setDisabled(False)
         self.showThemeC.setChecked(True)
         self.showThemeC.clicked.connect(self._enable_theme_display)
+
+        self.remaTrajC = QCheckBox()
+        self.remaTrajC.setText("Remanent\nTrajectory")
+        self.remaTrajC.setDisabled(False)
+        self.remaTrajC.setChecked(False)
+        self.remaTrajC.clicked.connect(self._enable_remanent_trajectory)
 
         self.clearTelemetryB = QPushButton()
         self.clearTelemetryB.setText("Clear Telemetry")
@@ -141,6 +148,7 @@ class Goldo1(QWidget):
         right_layout.addWidget(self.zoomDefB)
         right_layout.addWidget(self.zoomMinusB)
         right_layout.addWidget(self.showThemeC)
+        right_layout.addWidget(self.remaTrajC)
         right_layout.addWidget(self.clearTelemetryB)
         right_layout.addWidget(self.posL)
         right_layout.addWidget(self.posXL)
@@ -183,6 +191,9 @@ class Goldo1(QWidget):
     def _enable_theme_display(self):
         TableViewWidget.g_show_theme = self.showThemeC.isChecked()
         self._table_view.refreshTheme()
+
+    def _enable_remanent_trajectory(self):
+        TrajectoryView.g_trajectory_remanence = self.remaTrajC.isChecked()
 
     def _update_mouse_dbg(self, x_mm, y_mm, rel_x_mm, rel_y_mm, d_mm):
         self.posXL.setText(" x: {:>6.1f}".format(x_mm))
