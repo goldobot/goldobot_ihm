@@ -16,7 +16,7 @@ from PyQt5.QtWidgets import QGraphicsPathItem
 from PyQt5.QtGui import QPolygonF, QPen, QBrush, QColor, QFont, QTransform
 from PyQt5.QtGui import QImage, QImageReader, QPixmap, QPainterPath
 
-from .table_2022 import Table
+from .table_2023 import Table
 from .robot import Robot
 
 import numpy as np
@@ -52,10 +52,8 @@ class DebugTrajectory:
     def onMousePress(self, x, y):
         """"x, y in mm"""        
         print ("pix:<{},{}>".format(event.x(),event.y()))
-        #realY = 3000.0*(event.x()-450.0)/900.0
-        #realX = 2000.0*(event.y())/600.0
-        realY = 3200.0*(event.x()-480.0)/960.0
-        realX = 2200.0*(event.y()-30.0)/660.0
+        realY = 2200.0*(event.x()-30.0)/660.0
+        realX = 3200.0*(event.y()-480.0)/960.0
         print ("real:<{},{}>".format(realX,realY))
         if self._debug_trajectory._edit_mode:
             self._debug_trajectory.line_to(realX, realY)
@@ -178,7 +176,7 @@ class TableViewWidget(QGraphicsView):
         else:
             #self.setFixedSize(225,150)
             self.setFixedSize(240,165)
-        self.setSceneRect(QRectF(-100,-1600,2200,3200))
+        self.setSceneRect(QRectF(-500,-1500,4000,3000))
         #self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         #self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         
@@ -202,8 +200,7 @@ class TableViewWidget(QGraphicsView):
         background = QColor(40,40,40)
         darker = QColor(20,20,20)
 
-        #self._scene = QGraphicsScene(QRectF(-100,-1600,2200,3200))
-        self._scene = DebugGraphicsScene(QRectF(-100,-1600,2200,3200),self)
+        self._scene = DebugGraphicsScene(QRectF(-100,-1100,3200,2200),self)
         
         self._layers = {
             'astar': AstarView(self),
@@ -270,7 +267,7 @@ class TableViewWidget(QGraphicsView):
         
         self._debug_trajectory = DebugTrajectory(self._scene)
 
-        self.rotate(90)
+        self.rotate(0)
         if ihm_type=='pc':
             self.scale(0.3, -0.3)
         elif ihm_type=='pc-mini':
@@ -278,7 +275,7 @@ class TableViewWidget(QGraphicsView):
         else:
             self.scale(0.075, -0.075)
 
-        self._scene.addRect(QRectF(0,-1500,2000,3000))
+        self._scene.addRect(QRectF(0,-1000,3000,2000))
         
 
         self._points = []
@@ -554,7 +551,7 @@ class TableViewWidget(QGraphicsView):
 
     def zoomDef(self):
         self.resetTransform()
-        self.rotate(90)
+        self.rotate(0)
         self._my_scale = 0.3
         self.scale(self._my_scale, -self._my_scale)
 
