@@ -11,7 +11,7 @@ robot_geometry:
           - { x: 10, y: 20}
 
 rplidar:
-  theta_offset: 145
+  theta_offset: 150
   tresholds:
     near: 0.1
     mid: 0.3
