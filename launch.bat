@@ -1,1 +1,1 @@
-python  main.py --robot-ip robot01 --config-path config/goldorak_2022
+python  main.py --robot-ip robot01 --config-path config/goldorak_2023

@@ -10,7 +10,7 @@ import random
 
 #import modules from sequence directory
 #purple replaces 2021's Blue
-from .poses import YellowPoses, PurplePoses
+from .poses import GreenPoses, BluePoses
 from . import pince_ravisseuse
 
 from . import robot_config as rc
@@ -22,8 +22,8 @@ import inspect
 # those objects are used to interact with the robot (send commands, read data)
 class Side:
     Unknown = 0
-    Purple = 1
-    Yellow = 2
+    Green = 1
+    Blue = 2
 
 
 def symetrie(pose):
@@ -46,26 +46,26 @@ class Pose:
     pass
     
 class RefPoses:
-    __ref_side__ = Side.Yellow
+    __ref_side__ = Side.Green
     start_pose: Pose = (0.955, -1.5 + rc.robot_width * 0.5 + 5e-3, 0)
 
 class Map:
     zone_depart_x_min = 0.4
     zone_depart_x_max = 1.0    
     
-class YellowPoses:
-    start_pose = (0.675, -1.235, 90)
-    hippodrome_1 =(0.5, 1, 90)
-    hippodrome_2 =(0.5, -1, 0)
-    hippodrome_3 =(1.5, 1, 180)
-    hippodrome_4 =(1.5, -1, -90)
+class GreenPoses:
+    start_pose = (0.2, 0.7, 0)
+    hippodrome_1 =(0.5, -0.5, 90)
+    hippodrome_2 =(2.5, -0.5 , 0)
+    hippodrome_3 =(0.5, 0.5, 180)
+    hippodrome_4 =(2.5, 0.5, -90)
 
-class PurplePoses:
-    start_pose = symetrie(YellowPoses.start_pose)
-    hippodrome_1 =(0.5, 1, 90)
-    hippodrome_2 =(0.5, -1, 0)
-    hippodrome_3 =(1.5, 1, 180)
-    hippodrome_4 =(1.5, -1, -90)
+class BluePoses:
+    start_pose = symetrie(GreenPoses.start_pose)
+    hippodrome_1 =(0.5, -0.5, 90)
+    hippodrome_2 =(2.5, -0.5 , 0)
+    hippodrome_3 =(0.5, 0.5, 180)
+    hippodrome_4 =(2.5, 0.5, -90)
             
 async def pointAndGoRetry(p, speed, yaw_rate):
     await propulsion.pointTo(p, yaw_rate)
@@ -73,45 +73,39 @@ async def pointAndGoRetry(p, speed, yaw_rate):
 
 @robot.sequence
 async def recalage():
-    if robot.side == Side.Purple:
-        poses = PurplePoses
-    elif robot.side == Side.Yellow:
-        poses = YellowPoses
+    if robot.side == Side.Blue:
+        poses = BluePoses
+    elif robot.side == Side.Green:
+        poses = GreenPoses
 
     await propulsion.setMotorsEnable(True)
     await propulsion.setEnable(True)
     await propulsion.setAccelerationLimits(0.3,0.3,3,3)
-    if robot.side == Side.Purple:
-        await propulsion.setPose([0.40, 1.0], 0)
-    elif robot.side == Side.Yellow:
-        await propulsion.setPose([0.40, -1.0], 0)
-
-    print("recalage X")
-    await propulsion.reposition(-1.0, 0.2)
-    await propulsion.setPose([0+rc.robot_back_length, propulsion.pose.position.y], 0)
-    await propulsion.translation(poses.start_pose[0] - rc.robot_back_length, 0.2)
+    if robot.side == Side.Blue:
+        await propulsion.setPose([0.40, -0.7], 0)
+    elif robot.side == Side.Green:
+        await propulsion.setPose([0.40, -0.7], 0)
 
     print("recalage Y")
-    if robot.side == Side.Purple:
-        print("orientation violette")
-        await propulsion.faceDirection(-90, 0.6)
-        print("recalage violet")
+    if robot.side == Side.Blue:
+        print("recalage bleu")
         await propulsion.reposition(-1.0, 0.2)
-        await propulsion.setPose([propulsion.pose.position.x, 1.5 - rc.robot_back_length, ], -90)
-    elif robot.side == Side.Yellow:
-        print("orientation jaune")
-        await propulsion.faceDirection(90, 0.6)
-        print("recalage jaune")
+        await propulsion.setPose([0.40, -1 + rc.robot_back_length, ], 90)
+    elif robot.side == Side.Green:
+        print("recalage vert")
         await propulsion.reposition(-1.0, 0.2)
-        await propulsion.setPose([propulsion.pose.position.x, -1.5 + rc.robot_back_length, ], 90)
+        await propulsion.setPose([0.40, 1 - rc.robot_back_length, ], -90)
     print("decollage bordure")    
-    await propulsion.translation(0.05, 0.2)
+    await propulsion.translation(0.20, 0.2)
+    
+    print("orientation X")
+    await propulsion.faceDirection(0, 0.6)
+    await propulsion.reposition(-1.0, 0.2)
+    await propulsion.setPose([rc.robot_back_length , propulsion.pose.position.y, ], 90)
+
     print("go depart")
     await propulsion.moveTo(poses.start_pose, 0.2)
-    if robot.side == Side.Purple:
-        await propulsion.faceDirection(-90, 0.6)
-    elif robot.side == Side.Yellow:
-        await propulsion.faceDirection(90, 0.6)
+    await propulsion.faceDirection(0, 0.6)
     
  
 
@@ -119,10 +113,10 @@ async def recalage():
 async def prematch():
     global poses
 
-    if robot.side == Side.Purple:
-        poses = PurplePoses
-    elif robot.side == Side.Yellow:
-        poses = YellowPoses
+    if robot.side == Side.Blue:
+        poses = BluePoses
+    elif robot.side == Side.Green:
+        poses = GreenPoses
     else:
         raise RuntimeError('Side not set')
 
@@ -142,10 +136,10 @@ async def prematch():
     
 def load_strategy():
 
-    if robot.side == Side.Purple:
-        poses = PurplePoses
-    elif robot.side == Side.Yellow:
-        poses = YellowPoses
+    if robot.side == Side.Blue:
+        poses = BluePoses
+    elif robot.side == Side.Green:
+        poses = GreenPoses
     else:
         raise RuntimeError('Side not set')
 
@@ -194,10 +188,10 @@ async def start_match():
     This will typically be used to setup actuators and get out of the starting area.
     """
 
-    if robot.side == Side.Purple:
-        poses = PurplePoses
-    elif robot.side == Side.Yellow:
-        poses = YellowPoses
+    if robot.side == Side.Blue:
+        poses = BluePoses
+    elif robot.side == Side.Green:
+        poses = GreenPoses
     else:
         raise RuntimeError('Side not set')
         

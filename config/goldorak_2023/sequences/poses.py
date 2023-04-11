@@ -8,11 +8,11 @@ def symetrie(pose):
     return (pose[0], -pose[1], -pose[2])
     
 
-class PurplePoses:    
-    start_pose = (0.955, -1.5 + rc.robot_width * 0.5 + 5e-3, 0)
+class BluePoses:    
+    useless_pose = (0.955, -1.5 + rc.robot_width * 0.5 + 5e-3, 0)
 
     
 
-class YellowPoses(object):
-    start_pose = symetrie(PurplePoses.start_pose)
+class GreenPoses(object):
+    useless_pose = symetrie(BluePoses.useless_pose)
 
