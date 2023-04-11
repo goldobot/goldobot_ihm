@@ -84,24 +84,28 @@ async def recalage():
     if robot.side == Side.Blue:
         await propulsion.setPose([0.40, -0.7], 0)
     elif robot.side == Side.Green:
-        await propulsion.setPose([0.40, -0.7], 0)
+        await propulsion.setPose([0.40, 0.7], 0)
 
     print("recalage Y")
     if robot.side == Side.Blue:
         print("recalage bleu")
         await propulsion.reposition(-1.0, 0.2)
-        await propulsion.setPose([0.40, -1 + rc.robot_back_length, ], 90)
+        await propulsion.setPose([0.40, -1 + rc.robot_back_length], 90)
     elif robot.side == Side.Green:
         print("recalage vert")
         await propulsion.reposition(-1.0, 0.2)
-        await propulsion.setPose([0.40, 1 - rc.robot_back_length, ], -90)
+        await propulsion.setPose([0.40, 1 - rc.robot_back_length], -90)
     print("decollage bordure")    
-    await propulsion.translation(0.20, 0.2)
+    await propulsion.translation(0.30 - rc.robot_back_length, 0.2)
+
+    await asyncio.sleep(1.0)
     
     print("orientation X")
     await propulsion.faceDirection(0, 0.6)
     await propulsion.reposition(-1.0, 0.2)
-    await propulsion.setPose([rc.robot_back_length , propulsion.pose.position.y, ], 90)
+    await propulsion.setPose([rc.robot_back_length , propulsion.pose.position.y], 0)
+
+    await asyncio.sleep(1.0)
 
     print("go depart")
     await propulsion.moveTo(poses.start_pose, 0.2)

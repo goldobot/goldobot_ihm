@@ -27,7 +27,7 @@ class AstarView:
         self._client.registerCallback('strategy/debug/astar_arr', self.on_msg_astar)
        
     def on_msg_astar(self, msg):
-        image = QImage(msg.value, 300, 200, QImage.Format_Grayscale8)
+        image = QImage(msg.value, 200, 300, QImage.Format_Grayscale8)
         image.setColorTable([Qt.black, Qt.white])
 
         goldo_pixmap = QPixmap()
@@ -39,7 +39,7 @@ class AstarView:
         self._bg_img = QGraphicsPixmapItem(goldo_pixmap)
         self._bg_img.setTransform(QTransform(1.0, 0.0, 0.0,  0.0, -1.0, 0.0,   0.0, 0.0, 0.1))
         self._bg_img.setRotation(-90)
-        self._bg_img.setPos(0, -1500)
+        self._bg_img.setPos(0, -1000)
         self._bg_img.setZValue(-9)
         self._bg_img.setOpacity(0.2)
         
