@@ -130,6 +130,16 @@ class Goldo1(QWidget):
         self.testVerB.setDisabled(False)
         self.testVerB.clicked.connect(self._test_firmware_ver)
 
+        self.rplidarStartB = QPushButton()
+        self.rplidarStartB.setText("Start Rplidar")
+        self.rplidarStartB.setDisabled(False)
+        self.rplidarStartB.clicked.connect(self._on_start_rplidar)
+
+        self.rplidarStopB = QPushButton()
+        self.rplidarStopB.setText("Stop Rplidar")
+        self.rplidarStopB.setDisabled(False)
+        self.rplidarStopB.clicked.connect(self._on_stop_rplidar)
+
         self.liftTempL = QLabel()
         self.liftTempL.setText("Lift motor temp:")
         self.liftTempL.setDisabled(False)
@@ -164,6 +174,8 @@ class Goldo1(QWidget):
         right_layout.addWidget(self.simulResumeB)
         right_layout.addWidget(self.testAstarB)
         right_layout.addWidget(self.testVerB)
+        right_layout.addWidget(self.rplidarStartB)
+        right_layout.addWidget(self.rplidarStopB)
         right_layout.addWidget(self.liftTempL)
         right_layout.addWidget(self.tempLeftL)
         right_layout.addWidget(self.tempRightL)
@@ -222,6 +234,14 @@ class Goldo1(QWidget):
         msg = _sym_db.GetSymbol('google.protobuf.Empty')()
         self._client.publishTopic('robot/test_astar', msg)
 
+    def _on_start_rplidar(self):
+        msg = _sym_db.GetSymbol('google.protobuf.Empty')()
+        self._client.publishTopic('rplidar/in/start', msg)
+        
+    def _on_stop_rplidar(self):
+        msg = _sym_db.GetSymbol('google.protobuf.Empty')()
+        self._client.publishTopic('rplidar/in/stop', msg)
+        
     def _test_firmware_ver(self):
         #print ("Test GetNucleoFirmwareVersion")
         msg = _sym_db.GetSymbol('google.protobuf.Empty')()
