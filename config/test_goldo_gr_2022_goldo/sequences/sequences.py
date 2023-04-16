@@ -17,7 +17,7 @@ from . import robot_config as rc
 
 from . import actuators
 from . import pince_ravisseuse
-from . import ejecteur
+from . import distrib_cerises
 
 import inspect
 
@@ -819,14 +819,18 @@ async def test_goldo_prematch():
     await propulsion.setMotorsEnable(True)
     await propulsion.setEnable(True)
     
-    #await lidar.start()
+    await lidar.start()
 
     if robot.side == Side.Purple:
         await propulsion.setPose([0.25,  0.75], -45)
     elif robot.side == Side.Yellow:
         await propulsion.setPose([0.25, -0.75],  45)
 
+    await distrib_cerises.distrib_enable()
+    await distrib_cerises.distrib_neutral()
     await actuators.test_goldo_init_cake()
+    await propulsion.translation(-0.05, 0.2)
+    await robot.setScore(5)
 
     return True
 
@@ -858,17 +862,17 @@ async def test_goldo_traj():
 async def test_goldo_match():
     debug_goldo(__name__)
 
-    test_match_goldo0 = ( 0.250,  0.750)
+    test_match_goldo0 = ( 0.214,  0.785)
     test_match_goldo1 = ( 1.100, -0.100)
     test_match_goldo2 = ( 1.500, -0.100)
     test_match_goldo3 = ( 1.500,  0.250)
     test_match_goldo4 = ( 1.125,  0.274)
-    test_match_goldo5 = ( 0.675,  0.300)
-    test_match_goldo6 = ( 0.775,  0.545)
-    test_match_goldo7 = ( 0.250,  0.545)
-    test_match_goldo8 = ( 0.375,  0.545)
-    test_match_goldo9 = ( 0.550,  0.545)
-    test_match_goldo_fin = ( 1.650,  0.545)
+    test_match_goldo5 = ( 0.675,  0.355)#pos marron
+    test_match_goldo6 = ( 0.775,  0.550)#ancienne valeur Y 0.545 / Pos construction
+    test_match_goldo7 = ( 0.250,  0.550)#pos gateau le plus au fond
+    test_match_goldo8 = ( 0.375,  0.550)#pos gateau milieu
+    test_match_goldo9 = ( 0.550,  0.550)#pos gateau le plus proche
+    test_match_goldo_fin = ( 1.650,  0.550)
 
     traj_test_match_goldo = [
         test_match_goldo0,
@@ -896,27 +900,13 @@ async def test_goldo_match():
             test_match_goldo3,
         ]
 
+    robot._adversary_detection_enable = True
     await propulsion.setAccelerationLimits(1,1,20,20)
 
     await propulsion.pointTo(test_match_goldo1, 20.0)
     await asyncio.sleep(0.5)
 
     await propulsion.trajectorySpline(traj_test_match_goldo, speed=1.0)
-
-    #await propulsion.pointTo(test_match_goldo1, 20.0)
-    #await asyncio.sleep(0.5)
-    #await propulsion.moveTo(test_match_goldo1, 1.0)
-    #await asyncio.sleep(0.5)
-
-    #await propulsion.pointTo(test_match_goldo2, 20.0)
-    #await asyncio.sleep(0.5)
-    #await propulsion.moveTo(test_match_goldo2, 1.0)
-    #await asyncio.sleep(0.5)
-
-    #await propulsion.pointTo(test_match_goldo3, 20.0)
-    #await asyncio.sleep(0.5)
-    #await propulsion.moveTo(test_match_goldo3, 1.0)
-    #await asyncio.sleep(0.5)
 
     await propulsion.pointTo(test_match_goldo4, 20.0)
     await asyncio.sleep(0.5)
@@ -943,36 +933,51 @@ async def test_goldo_match():
         await actuators.test_goldo_cake1()
     else:
         await actuators.test_goldo_cake1_b()
-    await asyncio.sleep(1.0)
+    await asyncio.sleep(0.5)
 
     await propulsion.moveTo(test_match_goldo7, 1.0)
     await asyncio.sleep(0.5)
+    await distrib_cerises.distrib_lache()
+    await robot.setScore(robot.score + 10)
+    await actuators.stop_pumps()
+    await asyncio.sleep(0.5)
     await propulsion.moveTo(test_match_goldo6, 1.0)
+    await propulsion.pointTo(test_match_goldo7, 20.0)
     await asyncio.sleep(0.5)
 
     if robot.side == Side.Purple:
         await actuators.test_goldo_cake2()
     else:
         await actuators.test_goldo_cake2_b()
-    await asyncio.sleep(1.0)
+    await asyncio.sleep(0.5)
 
     await propulsion.moveTo(test_match_goldo8, 1.0)
     await asyncio.sleep(0.5)
+    await distrib_cerises.distrib_lache()
+    await robot.setScore(robot.score + 10)
+    await actuators.stop_pumps()
+    await asyncio.sleep(0.5)    
     await propulsion.moveTo(test_match_goldo6, 1.0)
+    await propulsion.pointTo(test_match_goldo7, 20.0)
     await asyncio.sleep(0.5)
 
     if robot.side == Side.Purple:
         await actuators.test_goldo_cake3()
     else:
         await actuators.test_goldo_cake3_b()
-    await asyncio.sleep(1.0)
+    await asyncio.sleep(0.5)
 
     await propulsion.moveTo(test_match_goldo9, 1.0)
+    await asyncio.sleep(0.5)
+    await distrib_cerises.distrib_lache()
+    await robot.setScore(robot.score + 10)
+    await actuators.stop_pumps()
     await asyncio.sleep(0.5)
     await propulsion.moveTo(test_match_goldo6, 1.0)
     await asyncio.sleep(0.5)
 
     await propulsion.moveTo(test_match_goldo_fin, 1.0)
+    await robot.setScore(robot.score + 15)
     await asyncio.sleep(0.5)
 
 @robot.sequence

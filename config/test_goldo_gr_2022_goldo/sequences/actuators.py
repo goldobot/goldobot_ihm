@@ -497,9 +497,11 @@ epaule_g_prise_m = 1800
 epaule_d_prise_m = 2300
 
 epaule_d_depose  = 1500
+epaule_d_depose_b  = 1550
 #epaule_d_depose  = 1450
 #epaule_g_depose  = 2700
-epaule_g_depose  = 2650
+#epaule_g_depose  = 2650
+epaule_g_depose  = 2640
 
 arms_cake_init = {
     'coude_g': coude_g_retrait,
@@ -533,6 +535,7 @@ async def test_goldo_init_cake():
 async def test_goldo_manip_tranche_gateau(tempo_s, lift, lift_pos_init, lift_pos_prise, lift_pos_transport, lift_pos_depose, epaule, epaule_init, epaule_prise, epaule_depose, coude, coude_bas, coude_haut, pompe):
     await goldo_lift_move(lift, lift_pos_transport)
     await asyncio.sleep(tempo_s)
+    await servos.moveMultiple({coude: coude_haut}, speed=1)
     await servos.moveMultiple({epaule: epaule_prise}, speed=1)
     await asyncio.sleep(tempo_s)
     await goldo_lift_move(lift, lift_pos_prise)
@@ -562,7 +565,7 @@ async def test_goldo_cake1():
 
     tempo_s = 0.2
 
-    await test_goldo_manip_tranche_gateau(tempo_s, GoldoLift.Left, 500, 500, 500, 20, 'epaule_g', epaule_g_init, epaule_g_prise_m, epaule_g_depose, 'coude_g', coude_g_bas, coude_g_haut, 'pompe_g')
+    await test_goldo_manip_tranche_gateau(tempo_s, GoldoLift.Left, 500, 500, 500, 50, 'epaule_g', epaule_g_init, epaule_g_prise_m, epaule_g_depose, 'coude_g', coude_g_bas, coude_g_haut, 'pompe_g')
 
     tempo_s = 0.2
 
@@ -576,7 +579,7 @@ async def test_goldo_cake1_b():
 
     tempo_s = 0.2
 
-    await test_goldo_manip_tranche_gateau(tempo_s, GoldoLift.Right, 500, 500, 500, 20, 'epaule_d', epaule_d_init, epaule_d_prise_m, epaule_d_depose, 'coude_d', coude_d_bas, coude_d_haut, 'pompe_d')
+    await test_goldo_manip_tranche_gateau(tempo_s, GoldoLift.Right, 500, 500, 500, 50, 'epaule_d', epaule_d_init, epaule_d_prise_m, epaule_d_depose_b, 'coude_d', coude_d_bas, coude_d_haut, 'pompe_d')
 
     tempo_s = 0.2
 
@@ -590,7 +593,7 @@ async def test_goldo_cake2():
 
     tempo_s = 0.2
 
-    await test_goldo_manip_tranche_gateau(tempo_s, GoldoLift.Left, 500, 250, 500, 20, 'epaule_g', epaule_g_init, epaule_g_prise_m, epaule_g_depose, 'coude_g', coude_g_bas, coude_g_haut, 'pompe_g')
+    await test_goldo_manip_tranche_gateau(tempo_s, GoldoLift.Left, 500, 250, 500, 50, 'epaule_g', epaule_g_init, epaule_g_prise_m, epaule_g_depose, 'coude_g', coude_g_bas, coude_g_haut, 'pompe_g')
 
     tempo_s = 0.2
 
@@ -604,7 +607,7 @@ async def test_goldo_cake2_b():
 
     tempo_s = 0.2
 
-    await test_goldo_manip_tranche_gateau(tempo_s, GoldoLift.Right, 500, 250, 500, 20, 'epaule_d', epaule_d_init, epaule_d_prise_m, epaule_d_depose, 'coude_d', coude_d_bas, coude_d_haut, 'pompe_d')
+    await test_goldo_manip_tranche_gateau(tempo_s, GoldoLift.Right, 500, 250, 500, 50, 'epaule_d', epaule_d_init, epaule_d_prise_m, epaule_d_depose_b, 'coude_d', coude_d_bas, coude_d_haut, 'pompe_d')
 
     tempo_s = 0.2
 
@@ -618,7 +621,7 @@ async def test_goldo_cake3():
 
     tempo_s = 0.2
 
-    await test_goldo_manip_tranche_gateau(tempo_s, GoldoLift.Left, 500, 20, 500, 20, 'epaule_g', epaule_g_init, epaule_g_prise_m, epaule_g_depose, 'coude_g', coude_g_bas, coude_g_haut, 'pompe_g')
+    await test_goldo_manip_tranche_gateau(tempo_s, GoldoLift.Left, 500, 20, 500, 50, 'epaule_g', epaule_g_init, epaule_g_prise_m, epaule_g_depose, 'coude_g', coude_g_bas, coude_g_haut, 'pompe_g')
 
     tempo_s = 0.2
 
@@ -632,7 +635,7 @@ async def test_goldo_cake3_b():
 
     tempo_s = 0.2
 
-    await test_goldo_manip_tranche_gateau(tempo_s, GoldoLift.Right, 500, 20, 500, 20, 'epaule_d', epaule_d_init, epaule_d_prise_m, epaule_d_depose, 'coude_d', coude_d_bas, coude_d_haut, 'pompe_d')
+    await test_goldo_manip_tranche_gateau(tempo_s, GoldoLift.Right, 500, 20, 500, 50, 'epaule_d', epaule_d_init, epaule_d_prise_m, epaule_d_depose_b, 'coude_d', coude_d_bas, coude_d_haut, 'pompe_d')
 
     tempo_s = 0.2
 
