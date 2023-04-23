@@ -15,14 +15,14 @@ class Side:
 
 
 class GreenPoses:
-    plat_start_pose = (0.2, 0.8, 0)
-    plat_inter_pose = (0.2, 0.7, 0)
+    plat_start_pose = (0.24, 0.8, 0)
+    plat_inter_pose = (0.24, 0.7, 0)
     assiette_start_pose = (2.8, -0.7, 180)
     zone_fin = (2.6, 0.3, 0)
 
     # Poses depart plat
     prise_marron = (1.03, 0.285, 30)
-    depose_marron = (0.644, 0.361, -135)
+    depose_marron = (0.640, 0.370, -135)
     pose_construction = (0.850-rc.robot_back_length,  0.523, 180)
     
 
