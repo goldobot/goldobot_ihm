@@ -173,7 +173,7 @@ nucleo:
       id: 3
     - name: emergency_stop
       type: NUCLEO
-      id: 6
+      id: 7
     - name: recalage_ascensceur_gauche
       type: FPGA
       id: 15

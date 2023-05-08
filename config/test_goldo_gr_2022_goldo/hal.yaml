@@ -33,6 +33,12 @@ nucleo:
         pin: PC8
         mode: IN
 
+      # Raspi direct
+      - id: 7
+        name: raspi_emergency_stop
+        pin: PC0
+        mode: IN
+
       #Pumps
       - id: 10
         name: pompe_d

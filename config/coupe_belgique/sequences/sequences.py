@@ -56,7 +56,7 @@ async def prematch():
     # Actionneurs
     await distrib_cerises.distrib_enable()
     await distrib_cerises.distrib_neutral()
-    #await canon_cerises.canon_initialize()
+    await canon_cerises.canon_initialize()
     await actuators.arms_initialize()
 
     # Placement
@@ -94,18 +94,38 @@ async def start_match():
         await propulsion.faceDirection(-90, 1.5)
 
     # await propulsion.pointTo(poses.prise_marron, 1.5)
-    # robot._adversary_detection_enable = True
+    robot._adversary_detection_enable = True
     tasklidar = asyncio.create_task(check_areas())
     # await propulsion.moveTo(poses.prise_marron, 1.0)
-    await propulsion.trajectorySpline(traj_depart, speed=1.0)
-    await taskarms
+
+    try:
+        await propulsion.trajectorySpline(traj_depart, speed=0.40)
+        await taskarms
+    except:
+        print("*************************************************")
+        print("Initial action failed")
+        print("*************************************************")
+        print("*************************************************")
+        print("Try to clear error & continue..")
+        print("*************************************************")
+        await propulsion.clearError()
+        await asyncio.sleep(10.0)
+        robot._adversary_detection_enable = False
+        await propulsion.pointTo(poses.pose_gateau_1, 1.5)
+        robot._adversary_detection_enable = True
+        await propulsion.moveTo(poses.pose_gateau_1, 0.51)
+        await robot.setScore(robot.score + 10)
+        print("*************************************************")
+        print("That's all folks!..")
+        print("*************************************************")
+        return
     
     # Prise avec les bras
     await actuators.arms_take()
 
     # Depose marron
     await propulsion.pointTo(poses.pose_construction, 1.5)
-    await propulsion.moveTo(poses.pose_construction, 1.0)
+    await propulsion.moveTo(poses.pose_construction, 0.51)
     await propulsion.pointTo(poses.depose_marron, 1.5)
     await propulsion.moveTo(poses.depose_marron, 0.5)
 
@@ -114,7 +134,7 @@ async def start_match():
     await asyncio.sleep(0.2)
 
     # Pose construction
-    await propulsion.moveTo(poses.pose_construction, 1.0)
+    await propulsion.moveTo(poses.pose_construction, 0.51)
     await propulsion.faceDirection(180, 1.5)
 
 
@@ -124,7 +144,7 @@ async def start_match():
     else:
         await actuators.construction_gateau_haut_bleu()
     await actuators.goldo_lifts_move(60, 80)
-    await propulsion.moveTo(poses.pose_gateau_1, 1.0)
+    await propulsion.moveTo(poses.pose_gateau_1, 0.51)
     await actuators.arms_take()
     await distrib_cerises.distrib_lache()
     await asyncio.sleep(0.2)
@@ -132,72 +152,121 @@ async def start_match():
     await robot.setScore(robot.score + 10)
 
     # Construction gateau 2
-    await propulsion.moveTo(poses.pose_construction, 1.0)
+    await propulsion.moveTo(poses.pose_construction, 0.51)
     await propulsion.faceDirection(180, 1.5)
     if robot.side == pos.Side.Green:
         await actuators.construction_gateau_milieu_vert()
     else:
         await actuators.construction_gateau_milieu_bleu()
     await actuators.goldo_lifts_move(60, 80)
-    await propulsion.moveTo(poses.pose_gateau_2, 1.0)
+    await propulsion.moveTo(poses.pose_gateau_2, 0.51)
     await actuators.arms_take()
     await distrib_cerises.distrib_lache()
     await asyncio.sleep(0.2)
     await actuators.arms_open()
-    await robot.setScore(robot.score + 10)
+    await robot.setScore(robot.score + 6)
 
     # Construction gateau 3
-    await propulsion.moveTo(poses.pose_construction, 1.0)
+    await propulsion.moveTo(poses.pose_construction, 0.51)
     await propulsion.faceDirection(180, 1.5)
     if robot.side == pos.Side.Green:
         await actuators.construction_gateau_bas_vert()
     else:
         await actuators.construction_gateau_bas_bleu()
     await actuators.goldo_lifts_move(60, 80)
-    await propulsion.moveTo(poses.pose_gateau_3, 1.0)
+    await propulsion.moveTo(poses.pose_gateau_3, 0.51)
     await actuators.arms_take()
     await distrib_cerises.distrib_lache()
     await asyncio.sleep(0.2)
     await actuators.arms_open()
-    await robot.setScore(robot.score + 10)
+    await robot.setScore(robot.score + 6)
 
     # Recul
-    await propulsion.translation(-0.15, 1.0)
+    await propulsion.translation(-0.15, 0.51)
     
     # Prise marron
     if assiette_1:
         await propulsion.pointTo(poses.marron_assiette_1, 1.5)
-        await propulsion.moveTo(poses.marron_assiette_1, 1.0)
+        try :
+            await propulsion.moveTo(poses.marron_assiette_1, 0.40)
+        except:
+            print("*************************************************")
+            print("Go home failed")
+            print("*************************************************")
+            print("*************************************************")
+            print("Try to clear error & go home again..")
+            print("*************************************************")
+            await propulsion.clearError()
+            await asyncio.sleep(10.0)
+            await go_home()
         await actuators.arms_take()
         await propulsion.pointTo(poses.assiette_1, 1.5)
-        await propulsion.moveTo(poses.assiette_1, 1.0)
+        await propulsion.moveTo(poses.assiette_1, 0.51)
         await distrib_cerises.distrib_lache()
         await actuators.arms_open()
         await robot.setScore(robot.score + 7)
         await asyncio.sleep(0.2)
-        await propulsion.translation(-0.15, 1.0)
+        await propulsion.translation(-0.15, 0.36)
 
     if assiette_2:
         await propulsion.pointTo(poses.marron_assiette_2, 1.5)
-        await propulsion.moveTo(poses.marron_assiette_2, 1.0)
+        try :
+            await propulsion.moveTo(poses.marron_assiette_2, 0.40)
+        except:
+            print("*************************************************")
+            print("Go home failed")
+            print("*************************************************")
+            print("*************************************************")
+            print("Try to clear error & go home again..")
+            print("*************************************************")
+            await propulsion.clearError()
+            await asyncio.sleep(10.0)
+            await go_home()
         await actuators.arms_take()
         await propulsion.pointTo(poses.assiette_2, 1.5)
-        await propulsion.moveTo(poses.assiette_2, 1.0)
+        await propulsion.moveTo(poses.assiette_2, 0.51)
         await distrib_cerises.distrib_lache()
         await actuators.arms_open()
         await robot.setScore(robot.score + 7)
         await asyncio.sleep(0.2)
-        await propulsion.translation(-0.15, 1.0)
+        await propulsion.translation(-0.15, 0.36)
     
 
 
     check_areas = False
 
     # retour en zone
-    await propulsion.pointTo(poses.zone_fin, 1.5)
-    await propulsion.moveTo(poses.zone_fin, 1.0)
-    await robot.setScore(robot.score + 10)
+    try :
+        await propulsion.pointTo(poses.zone_fin, 1.5)
+        await propulsion.moveTo(poses.zone_fin, 0.36)
+        await robot.setScore(robot.score + 15)
+    except:
+        print("*************************************************")
+        print("Go home failed")
+        print("*************************************************")
+        print("*************************************************")
+        print("Try to clear error & go home again..")
+        print("*************************************************")
+        await propulsion.clearError()
+        await asyncio.sleep(10.0)
+        await go_home()
 
+async def go_home():
+    try :
+        await propulsion.pointTo(poses.zone_fin, 1.5)
+        await propulsion.moveTo(poses.zone_fin, 0.36)
+        await robot.setScore(robot.score + 15)
+        await asyncio.sleep(100.0)
+    except:
+        print("*************************************************")
+        print("Go home failed")
+        print("*************************************************")
+        print("*************************************************")
+        print("Try to clear error & go home again..")
+        print("*************************************************")
+        await propulsion.clearError()
+        await asyncio.sleep(10.0)
+        await go_home()
 
 async def end_match():
     print('end match callback')

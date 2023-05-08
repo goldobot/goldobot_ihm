@@ -99,7 +99,7 @@ class RobotStatusWidget(QWidget):
         layout.addWidget(self._button,5,0,1,2)
         self.setLayout(layout)
         self._button.clicked.connect(self._on_emergency_stop_button_clicked)
-        self._sensors_wid.setText('sensors')
+        self._sensors_wid.setText("Sensors:\nT=? S=?")
 
         self.goldo_dbg_info = 0
 
@@ -112,6 +112,15 @@ class RobotStatusWidget(QWidget):
         self._client.gpio.connect(self.update_gpio)
         self._client.debug_goldo.connect(self.update_debug_goldo)
         self._client.match_state_change.connect(self.match_state_change)
+        self._client.registerCallback('gui/in/robot_state', self._on_robot_state)
+
+    def _on_robot_state(self, msg):
+        my_sensors = msg.sensors
+        #print ("\n")
+        #print ("Sensors:T={} S={}".format(my_sensors["tirette"], my_sensors["emergency_stop"]))
+        #print ("\n")
+        #print ("\n")
+        self._sensors_wid.setText("Sensors:\nT={} S={}".format(my_sensors["tirette"], my_sensors["emergency_stop"]))
 
     def update_heartbeat(self, timestamp):
         self._time_wid.setText("%.1f"%(timestamp*1e-3))
@@ -121,12 +130,16 @@ class RobotStatusWidget(QWidget):
         
     def update_telemetry_ex(self, telemetry_ex):
         self._telemetry_ex_props.set_value(telemetry_ex)
-        
+
+    # FIXME : TODO : remove
     def update_sensors(self, sensors):
-        self._sensors_wid.setText('{0:b}'.format(sensors).zfill(6))
+        #self._sensors_wid.setText('{0:b}'.format(sensors).zfill(6))
+        pass
         
+    # FIXME : TODO : remove
     def update_gpio(self, sensors):
-        self._gpio_wid.setText('{0:b}'.format(sensors).zfill(6))
+        #self._gpio_wid.setText('{0:b}'.format(sensors).zfill(6))
+        pass
         
     def update_debug_goldo(self, dbg_info):
         if self.goldo_dbg_info != dbg_info:
