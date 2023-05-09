@@ -3,111 +3,88 @@ from PyQt5.QtWidgets import QPushButton
 from PyQt5.QtWidgets import QDialog
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtWidgets import QLabel
-from PyQt5.QtWidgets import QSpinBox
+from PyQt5.QtWidgets import QTextEdit
 from PyQt5.QtWidgets import QCheckBox
 from PyQt5.QtWidgets import QLineEdit
 from PyQt5.QtWidgets import QTabWidget
 
 import struct
-from goldobot import message_types
 
+from goldobot import message_types
+from goldobot import config
+import goldobot.pb2 as _pb2
 import google.protobuf as _pb
+
 _sym_db = _pb.symbol_database.Default()
 
-ax12_registers = [
-    ('model_number',0x00, 2, 'r'),
-    ('firmware_version',0x02, 1, 'r'),
-    ('id',0x03, 1, 'rwp'),
-    ('baud_rate',0x04, 1, 'rwp'),
-    ('return_delay_time', 0x05, 1, 'rwp'),
-    ('cw_angle_limit', 0x06, 2, 'rw'),
-    ('ccw_angle_limit', 0x08, 2, 'rw'),
-    ('temperature_max_limit', 0x0B, 1, 'rw'),
-    ('voltage_min_limit', 0x0C, 1, 'rw'),
-    ('voltage_max_limit', 0x0D, 1, 'rw'),
-    ('max_torque', 0x0E, 2, 'rw'),
-    ('status_return_level', 0x10, 1, 'rw'),
-    ('alarm_led', 0x11, 1, 'rw'),
-    ('alarm_shutdown', 0x12, 1, 'rw'),
-    ('down_calibration', 0x14, 2, 'r'),
-    ('up_calibration', 0x16, 2, 'r'),
-    ]
-dynamixel_registers = [
-    ('model_number',0x00, 2, 'r'),
-    ('firmware_version',0x02, 1, 'r'),
-    ('id',0x03, 1, 'rwp'),
-    ('baud_rate',0x04, 1, 'rwp'),
-    ('return_delay_time', 0x05, 1, 'rwp')
-    ]
+
+class Dynamixel():
+    index = 0
+    enable = False
+    id = 0
+    name = "Dynamixel"
+    pos = 0
+
+    def __init__(self, index, enable, id, name, pos):
+        self.index = index
+        self.enable = enable
+        self.id = id
+        self.name = name
+        self.pos = pos
+
+    def toggle(self):
+        self.enable = not self.enable
+        print("Dynamixel index = " + str(self.index) + ", enable = " + str(self.enable) + ", id = " + str(self.id) + ",name =" + self.name + ", pos = " + str(self.pos))
+
 
 class TestDynamixelAx12Dialog(QDialog):
     def __init__(self, parent = None):
         super(TestDynamixelAx12Dialog, self).__init__(None)
-        self._registers = ax12_registers
-        self._sequence_number = 0
 
         layout = QGridLayout()
-        self._spinbox_id = QSpinBox()
-        self._spinbox_id.setRange(0,253)
-        layout.addWidget(self._spinbox_id, 0,1)
+        self.dynamixels = []
+        self.pos_labels = []
+        i = 0
 
-        self._widgets = {}
-        i = 1
-        for k,a,s,r in self._registers:            
-            wid = QLineEdit()
-            layout.addWidget(QLabel(k), i, 0)
-            layout.addWidget(wid, i, 1)
-            self._widgets[k] = wid
-            i += 1
+        for s in config.robot_config.config_proto.servos:
+            if s.type == _pb2.goldo.nucleo.servos_pb2.ServoType.DYNAMIXEL_AX12 or s.type == _pb2.goldo.nucleo.servos_pb2.ServoType.DYNAMIXEL_MX28 : 
+                self.dynamixels.append(Dynamixel(i, False, s.id, s.name, 0))
+                # Checkbox enable
+                enable_box = QCheckBox()
+                enable_box.setChecked = False
+                enable_box.toggled.connect(self.dynamixels[i].toggle)
+                layout.addWidget(enable_box, i, 0)
+                layout.addWidget(QLabel(str(self.dynamixels[i].id)), i, 1)
+                layout.addWidget(QLabel(str(self.dynamixels[i].name)), i, 2)
+                self.pos_labels.append(QLabel(str(self.dynamixels[i].pos)))
+                layout.addWidget(self.pos_labels[i], i, 3)
+                i += 1
 
-        self._button_read_registers = QPushButton('Read')
-        layout.addWidget(self._button_read_registers, i, 0)
+        self._text_field = QTextEdit()
+        layout.addWidget(self._text_field, i, 0, 1, 4)
 
-        self._button_write_registers = QPushButton('Write')
-        layout.addWidget(self._button_write_registers, i, 1)
+        self._button_read = QPushButton('Read')
+        layout.addWidget(self._button_read, i+1, 0, 1, 4)
 
         self.setLayout(layout)
 
-        self._button_read_registers.clicked.connect(self.read_registers)
-        self._button_write_registers.clicked.connect(self.write_registers)       
+        self._button_read.clicked.connect(self.read_registers)    
 
     def set_client(self, client):
         self._client = client
-        self._client.dynamixel_registers.connect(self._on_dynamixel_registers)
+        self._client.registerCallback('gui/in/robot_state', self._on_robot_state)
 
     def read_registers(self):
-        id_ = self._spinbox_id.value()
-        for k, a, s, r in self._registers:
-            self.read_register(id_, a, s)
+        values = ""
+        for d in self.dynamixels:
+            if d.enable is True:
+                if values:
+                    values += ",\n"
+                values += "'" + d.name + "': " + str(d.pos)
+        self._text_field.setText(values)
 
-    def read_register(self, id_, address, size):       
-        self._sequence_number = (self._sequence_number + 1) % 2**16
-        msg = _sym_db.GetSymbol('goldo.nucleo.dynamixels.RequestPacket')(
-                sequence_number=self._sequence_number,
-                protocol_version=1,
-                id=id_,
-                command=0x02,
-                payload=struct.pack('BB', address, size)
-                )
-        self._client.publishTopic('nucleo/in/dynamixels/request', msg)
-            
-    def write_registers(self):
-        id_ = self._spinbox_id.value()
-        for k, a, s, r in self._registers:
-            if 'w' in r and 'p' not in r:
-                if s == 1:
-                    self._client.send_message(78,struct.pack('<BBB',id_, a, int(self._widgets[k].text())))
-                else:
-                    self._client.send_message(78,struct.pack('<BBH',id_, a, int(self._widgets[k].text())))
-                    
-
-
-    def _on_dynamixel_registers(self, id_, address, data):
-        if id_ == self._spinbox_id.value():
-            for k, a, s, r in self._registers:
-                if address == a and len(data) == s:
-                    if s == 1:
-                        val = struct.unpack('<B', data)[0]
-                    else:
-                        val = struct.unpack('<H', data)[0]
-                    self._widgets[k].setText(str(val))
+    def _on_robot_state(self, msg):
+        self._servo_states = msg.servos
+        for d in self.dynamixels:
+            d.pos = self._servo_states[d.name].measured_position
+            self.pos_labels[d.index].setText(str(d.pos))
