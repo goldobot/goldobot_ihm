@@ -12,7 +12,7 @@ from . import barillet
 # objects included in the _sequences_globals of RobotMain class, defined in robot_main.py of goldo_main, are available as global variables
 # those objects are used to interact with the robot (send commands, read data)
 
-check_areas = True
+check_areas_b = True
 assiette_1 = True
 assiette_2 = True
 assiette_3 = True
@@ -32,8 +32,8 @@ async def check_areas():
     global assiette_3
     global rose_2
     global jaune_2
-    global check_areas
-    while check_areas:
+    global check_areas_b
+    while check_areas_b:
         if lidar.objectInDisk(poses.marron_assiette_1, 0.20):
             assiette_1 = False
         if lidar.objectInDisk(poses.marron_assiette_2, 0.20):
@@ -69,6 +69,13 @@ async def prematch():
     await propulsion.setAccelerationLimits(1,1,2,2)
     await propulsion.setMotorsEnable(True)
     await propulsion.setEnable(True)
+
+    await pneumatic.lcd_off()
+    await barillet.barillet_init()
+    await asyncio.sleep(2)
+    await pince.pince_init()
+    await pince.pince_take()
+    await pince.chariot_close()
     
     # Lidar
     robot._adversary_detection_enable = False
@@ -78,7 +85,6 @@ async def prematch():
     await recalages.recalage()
 
     # Score +5 pour presence panier
-    await robot.setScore(5)
     await robot.gpioSet('keyboard_led', True)
 
     return True
@@ -103,7 +109,7 @@ async def start_match():
     global assiette_3
     global rose_2
     global jaune_2
-    global check_areas
+    global check_areas_b
     global five_secs_limit
     global in_zone
 
@@ -122,42 +128,30 @@ async def start_match():
     robot._adversary_detection_enable = True
     tasklidar = asyncio.create_task(check_areas())
 
+    await propulsion.pointTo(poses.marron_assiette_3, 1.5)
+    await pince.pince_open()
+    await asyncio.sleep(0.5)
+    await propulsion.moveToRetry(poses.marron_assiette_3, 0.5)
+    await pince.pince_take()
+    await asyncio.sleep(0.5)
+    await propulsion.pointTo(poses.assiette_3, 1.5)
+    await propulsion.moveToRetry(poses.assiette_3, 0.5)
+    await pince.pince_open()
+    await asyncio.sleep(0.5)
+    await propulsion.translation(-0.2, 0.5)
+    await robot.setScore(robot.score + 6)
+    await pince.pince_take()
 
-    if robot.start_zone == 1 or robot.start_zone == 10: 
-        try:
-            await propulsion.trajectorySpline(traj_depart, speed=0.5)
-        except:
-            await propulsion.clearError()
-            await propulsion.translation(-0.15, 0.5)
-            await propulsion.pointTo(poses.prise_marron, 1.0)
-            await propulsion.moveToRetry(poses.prise_marron, 0.5)
-    elif robot.start_zone == 2 or robot.start_zone == 9:
-        print("alt start zone")
-        await propulsion.moveToRetry(poses.prise_marron_alt, 1.0)
-        assiette_1 = False
-    else:
-        await propulsion.pointTo(poses.prise_marron, 1.0)
-        await propulsion.moveToRetry(poses.prise_marron, 0.5)
-    await taskarms
-
-    # Depose marron
-    await propulsion.pointTo(poses.pose_construction, 1.5)
-    await propulsion.moveToRetry(poses.pose_construction, 1.0)
-    await propulsion.pointTo(poses.depose_marron, 1.5)
-    await propulsion.moveToRetry(poses.depose_marron, 0.5)
-
-    # Pose construction
-    await propulsion.moveToRetry(poses.pose_construction, 1.0)
-    await propulsion.faceDirection(180, 1.5)
-
-    check_areas = False
+    check_areas_b = False
 
     # retour en zone
     await propulsion.pointTo(poses.zone_fin, 1.5)
-    await propulsion.moveToRetry(poses.zone_fin, 1.0)
+    await propulsion.moveToRetry(poses.zone_fin, 0.5)
     end_action.enabled = False
     in_zone = True
-    await propulsion.faceDirection(0, 1.5)
+    await robot.gpioSet('keyboard_led', False)
+    await lidar.stop()
+    await propulsion.faceDirection(0, 0.5)
 
 
 async def need_end_match():
@@ -174,14 +168,8 @@ async def the_end():
 async def end_match():
     global in_zone
     print('end match callback')
-    if robot.side == pos.Side.Green:
-        if lidar.objectInRectangle([2.60, 0.40], [2.999, 0.0]):
-            if in_zone is True:
-                robot.setScore(robot.score + 15)
-    else:
-        if lidar.objectInRectangle([2.60, -0.40], [2.999, 0.0]):
-            if in_zone is True:
-                robot.setScore(robot.score + 15)
-
+    await pneumatic.lcd_on()
+    await robot.setScore(robot.score + 5)
+    strategy.current_action.enabled = False
     await robot.gpioSet('keyboard_led', False)
-    lidar.stop()
+    await lidar.stop()

@@ -34,3 +34,11 @@ async def test_add_cakes():
     await field.add_cake(20, 0.4, 0.3, 4)
     await asyncio.sleep(3)
     await field.add_cake(20, 0.6, 0.3, 4)
+
+@robot.sequence
+async def deguisement_on():
+    await pneumatic.lcd_on()
+
+@robot.sequence
+async def deguisement_off():
+    await pneumatic.lcd_off()

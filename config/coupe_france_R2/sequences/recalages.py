@@ -130,11 +130,11 @@ async def recalage_zone_4():
 
     # Robot is to put approximately at its start pose
     await propulsion.setPose([poses.zone4_start_pose[0],
-                              poses.zone4_start_pose[1]], 0)
+                              poses.zone4_start_pose[1]], 180)
 
     print("Recalage axe X")
     await propulsion.reposition(-1.0, 0.2)
-    await propulsion.setPose([3.00 - rc.robot_back_length , propulsion.pose.position.y], 0)
+    await propulsion.setPose([3.00 - rc.robot_back_length , propulsion.pose.position.y], 180)
     await asyncio.sleep(0.5)
 
     print("Orientation axe Y")    
@@ -224,11 +224,11 @@ async def recalage_zone_7():
 
     # Robot is to put approximately at its start pose
     await propulsion.setPose([poses.zone7_start_pose[0],
-                              poses.zone7_start_pose[1]], 0)
+                              poses.zone7_start_pose[1]], 180)
 
     print("Recalage axe X")
     await propulsion.reposition(-1.0, 0.2)
-    await propulsion.setPose([3.00 - rc.robot_back_length , propulsion.pose.position.y], 0)
+    await propulsion.setPose([3.00 - rc.robot_back_length , propulsion.pose.position.y], 180)
     await asyncio.sleep(0.5)
 
     print("Orientation axe Y")    

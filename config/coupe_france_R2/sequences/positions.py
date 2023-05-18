@@ -33,7 +33,7 @@ class GreenPoses:
     plat_start_pose = (0.2, 0.8, 0)
     plat_inter_pose = (0.2, 0.7, 0)
     assiette_start_pose = (2.8, -0.7, 180)
-    zone_fin = (2.55, 0.3, 0)
+    zone_fin = (2.75, 0.3, 0)
 
     # Poses depart plat
     prise_marron = (1.03, 0.285, 30)

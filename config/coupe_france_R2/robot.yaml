@@ -14,5 +14,5 @@ rplidar:
   theta_offset: 150
   tresholds:
     near: 0.1
-    mid: 0.3
-    far: 0.4
+    mid: 0.45
+    far: 0.65
