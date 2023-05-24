@@ -29,25 +29,31 @@ class GreenPoses:
     zone8_start_pose = (1.875, -0.8, 90)
     zone10_start_pose = (0.2, -0.8, 0)
 
+    waypoint_rush_initial = (2.5, -0.3, 90)
 
     plat_start_pose = (0.2, 0.8, 0)
     plat_inter_pose = (0.2, 0.7, 0)
     assiette_start_pose = (2.8, -0.7, 180)
-    zone_fin = (2.75, 0.3, 0)
+    zone_fin = (2.80, 0.3, 0)
+
+    pose_inter_fin = (2.3, 0.4, 0)
 
     # Poses depart plat
-    prise_marron = (1.03, 0.285, 30)
+    prise_marron = (1.875, -0.275, 30)
+    prise_jaune = (2.325, -0.775, 180)
+    prise_rose = (2.525, -0.775, 180)
+
+    # Poses gateaux finis
+    pose_gateau_1 = (2.80, -0.775, 0)
+    pose_gateau_2 = (2.70, -0.775, 0)
+    pose_gateau_3 = (2.60, -0.775, 0)
+
     prise_marron_alt = (1.125, -0.290, 90)
     depose_marron = (0.644, 0.370, -135)
     pose_construction = (0.850-rc.robot_back_length,  0.523, 180)
 
     # Pose tir cerises:
     tir_cerises = (0.480, 0.80, 90)
-    
-    # Poses gateaux finis
-    pose_gateau_1 = (0.20, 0.523, 180)
-    pose_gateau_2 = (0.32, 0.523, 180)
-    pose_gateau_3 = (0.44, 0.523, 180)
 
     # Gateaux marrons
     marron_assiette_1 = (1.125, -0.275, -90)
@@ -87,6 +93,8 @@ class BluePoses:
     zone8_start_pose = (1.875, -0.8, 90)
     zone10_start_pose = (0.2, -0.8, 0)
 
+    waypoint_rush_initial = symetrie(GreenPoses.waypoint_rush_initial)
+
     # Pose tir cerises:
     tir_cerises = (0.480, -0.8, -90)
 
@@ -95,11 +103,15 @@ class BluePoses:
     assiette_start_pose = symetrie(GreenPoses.assiette_start_pose)
     zone_fin = symetrie(GreenPoses.zone_fin)
 
+    pose_inter_fin = symetrie(GreenPoses.pose_inter_fin)
     # Poses depart plat
-    prise_marron = symetrie(GreenPoses.prise_marron)
     prise_marron_alt = symetrie(GreenPoses.prise_marron_alt)
     depose_marron = symetrie(GreenPoses.depose_marron)
     pose_construction = symetrie(GreenPoses.pose_construction)
+
+    prise_marron = symetrie(GreenPoses.prise_marron)
+    prise_jaune = symetrie(GreenPoses.prise_jaune)
+    prise_rose = symetrie(GreenPoses.prise_rose)
 
     # Poses gateaux finis
     pose_gateau_1 = symetrie(GreenPoses.pose_gateau_1)

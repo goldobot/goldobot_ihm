@@ -75,38 +75,23 @@ nucleo:
     cruise_torque_limit: 0.6
     reposition_torque_limit: 0.06
   servos:
-    - name: distrib_cerises
-      id: 11
-      type: STANDARD
-      max_speed: 65000
-      max_torque: 10
-      cw_limit: 4900
-      ccw_limit: 10500
-    - name: canon_cerises
-      id: 10
-      type: STANDARD
-      max_speed: 65000
-      max_torque: 10
-      cw_limit: 8200
-      ccw_limit: 12000
-
     # Barillet
     - name: ascenseur
       id: 86
       type: DYNAMIXEL_MX28
-      max_speed: 0x3ff
+      max_speed: 12000
       max_torque: 0x3ff
       cw_limit: 148
       ccw_limit: 4051
     - name: rotor
       id: 82
       type: DYNAMIXEL_MX28
-      max_speed: 0x3ff
+      max_speed: 8000
       max_torque: 0x3ff
       cw_limit: 0
       ccw_limit: 4095
       
-    # Pinces G
+    # Pince G
     - name: chariot_g
       id: 10
       type: DYNAMIXEL_AX12
@@ -163,7 +148,7 @@ nucleo:
     - name: tryohm_bit_1
       type: FPGA
       id: 10
-    - name: sick_bras_g
+    - name: sick_cerise_rotor
       type: FPGA
       id: 21
     - name: sick_bras_d
@@ -181,18 +166,6 @@ nucleo:
     - name: baumer_loin
       type: FPGA
       id: 16
-
-  lifts:
-    - max_pwm: 0x20
-      max_range: 1000
-      kp: 0
-      ki: 0
-      kd: 0
-    - max_pwm: 0x20
-      max_range: 1000
-      kp: 0
-      ki: 0
-      kd: 0
 
   sequence_files:
     - "sequences/constants.txt"

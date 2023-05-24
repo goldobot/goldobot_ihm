@@ -8,7 +8,6 @@ from . import positions as pos
 from . import recalages
 from . import robot_config as rc
 from . import barillet
-from . import gateau
 
 # objects included in the _sequences_globals of RobotMain class, defined in robot_main.py of goldo_main, are available as global variables
 # those objects are used to interact with the robot (send commands, read data)
@@ -49,7 +48,7 @@ async def check_areas():
             jaune_1 = False
         if lidar.objectInDisk(poses.jaune_2, 0.20):
             jaune_2 = False
-        await asyncio.sleep(0.3)
+        await asyncio.sleep(0.2)
 
 
 @robot.sequence
@@ -70,16 +69,14 @@ async def prematch():
     await propulsion.setAccelerationLimits(1,1,2,2)
     await propulsion.setMotorsEnable(True)
     await propulsion.setEnable(True)
-
+    
     await pneumatic.lcd_off()
-    await barillet.reset_valves()
     await barillet.start_compressor()
     await barillet.barillet_init()
     await asyncio.sleep(2)
     await pince.pince_init()
     await pince.pince_take()
     await pince.chariot_close()
-    await barillet.barillet_pose_2()
     
     # Lidar
     robot._adversary_detection_enable = False
@@ -87,8 +84,8 @@ async def prematch():
 
     # Placement
     await recalages.recalage()
-    await propulsion.pointTo(poses.waypoint_rush_initial)
 
+    await robot.setScore(0)
     # Score +5 pour presence panier
     await robot.gpioSet('keyboard_led', True)
 
@@ -101,18 +98,10 @@ async def start_match():
     Sequence called at the start of the match, before trying any action.
     This will typically be used to setup actuators and get out of the starting area.
     """
-
-    pose_depart = (propulsion.pose.position.x, propulsion.pose.position.y, 180)
     traj_depart = [
-        pose_depart,
-        poses.waypoint_rush_initial,
+        poses.plat_start_pose,
+        poses.plat_inter_pose,
         poses.prise_marron
-    ]
-
-    traj_retour = [
-        poses.prise_marron,
-        poses.waypoint_rush_initial,
-        pose_depart
     ]
 
     global assiette_1
@@ -138,54 +127,52 @@ async def start_match():
 
     # await propulsion.pointTo(poses.prise_marron, 1.5)
     robot._adversary_detection_enable = True
-    #tasklidar = asyncio.create_task(check_areas())
+    tasklidar = asyncio.create_task(check_areas())
 
+    await propulsion.pointTo(poses.prise_marron, 5.0)
     await pince.pince_open()
-    await propulsion.trajectorySpline(traj_depart, 1.2)
     await asyncio.sleep(0.2)
-    await gateau.prend_gateau1()
+    await propulsion.moveToRetry(poses.prise_marron, 1.2)
+    await pince.pince_take()
+    await asyncio.sleep(0.5)
     await propulsion.pointTo(poses.pose_gateau_1, 5.0)
+    await propulsion.moveToRetry(poses.pose_gateau_1, 1.0)
     await propulsion.faceDirection(0, 3.0)
-    await propulsion.trajectorySpline(traj_retour, 1.2)
+    await pince.pince_open()
     await asyncio.sleep(0.2)
-    await propulsion.pointTo(poses.prise_rose, 5.0)
+    await propulsion.translation(-0.17, 0.5)
+    await robot.setScore(robot.score + 3)
+    await pince.pince_take()
+    await propulsion.faceDirection(180, 5.0)
     await pince.pince_open()
     await asyncio.sleep(0.2)
     await propulsion.moveToRetry(poses.prise_rose, 1.0)
-    await gateau.prend_gateau5()
+    await pince.pince_take()
+    await asyncio.sleep(0.5)
+    await propulsion.pointTo(poses.pose_gateau_2, 5.0)
+    await propulsion.moveToRetry(poses.pose_gateau_2, 1.0)
     await pince.pince_open()
     await asyncio.sleep(0.2)
-    await propulsion.pointTo(poses.prise_jaune, 5.0)
+    await propulsion.translation(-0.2, 0.5)
+    await robot.setScore(robot.score + 3)
+    await propulsion.faceDirection(180, 5.0)
+    await pince.pince_open()
     await asyncio.sleep(0.2)
     await propulsion.moveToRetry(poses.prise_jaune, 1.0)
-    await gateau.prend_gateau3()
-    await propulsion.pointTo(poses.pose_gateau_1, 5.0)
-    await propulsion.moveToRetry(poses.pose_gateau_1, 0.5)
-    await gateau.build_cake(1,3,5,2)
-    await propulsion.translation(-0.20, 0.5)
-    if sensors['sick_cerise_rotor'] is False:
-        await robot.setScore(robot.score + 10)
-    else:
-        await robot.setScore(robot.score + 7)
-    await gateau.build_cake(1,3,5,4)
-    await propulsion.translation(-0.20, 0.5)
-    if sensors['sick_cerise_rotor'] is False:
-        await robot.setScore(robot.score + 10)
-    else:
-        await robot.setScore(robot.score + 7)
-    await gateau.build_last_cake()
-    await propulsion.translation(-0.20, 0.5)
-    if sensors['sick_cerise_rotor'] is False:
-        await robot.setScore(robot.score + 10)
-    else:
-        await robot.setScore(robot.score + 7)
     await pince.pince_take()
-    await barillet.reset_valves()
-
-    check_areas_b = False
-
+    await asyncio.sleep(0.5)
+    await propulsion.pointTo(poses.pose_gateau_3, 5.0)
+    await propulsion.moveToRetry(poses.pose_gateau_3, 1.0)
+    await pince.pince_open()
+    await asyncio.sleep(0.2)
+    await propulsion.translation(-0.25, 0.5)
+    await robot.setScore(robot.score + 3)
+    await pince.pince_take()
+        
     await propulsion.pointTo(poses.pose_inter_fin, 5.0)
     await propulsion.moveToRetry(poses.pose_inter_fin, 1.2)
+
+    check_areas_b = False
 
     # retour en zone
     await propulsion.pointTo(poses.zone_fin, 5)
@@ -204,7 +191,6 @@ async def need_end_match():
 
 async def the_end():
     global disguised
-    await barillet.reset_valves()
     await pneumatic.lcd_on()
     await robot.setScore(robot.score + 5)
     await robot.gpioSet('keyboard_led', False)
