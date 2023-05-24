@@ -89,10 +89,17 @@ nucleo:
       max_torque: 10
       cw_limit: 8200
       ccw_limit: 12000
+    - name: ascenseur_cerises
+      id: 9
+      type: STANDARD
+      max_speed: 65000
+      max_torque: 10
+      cw_limit: 6000
+      ccw_limit: 14000
       
     # Bras G
     - name: epaule_g
-      id: 83
+      id: 85
       type: DYNAMIXEL_MX28
       max_speed: 8000
       max_torque: 0x3ff
@@ -108,7 +115,7 @@ nucleo:
 
     # Bras D
     - name: epaule_d
-      id: 81
+      id: 84
       type: DYNAMIXEL_MX28
       max_speed: 8000
       max_torque: 0x3ff
@@ -168,16 +175,16 @@ nucleo:
     - name: sick_bras_d
       type: FPGA
       id: 20
-    - name: sick_lat_g
+    - name: sick_niveau2
       type: FPGA
       id: 18
-    - name: sick_lat_d
+    - name: sick_niveau3
       type: FPGA
       id: 19
-    - name: baumer_proche
+    - name: baumer_niveau4
       type: FPGA
       id: 17
-    - name: baumer_loin
+    - name: baumer_niveau1
       type: FPGA
       id: 16
 

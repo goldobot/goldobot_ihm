@@ -36,10 +36,13 @@ class GreenPoses:
     zone_fin = (2.55, 0.3, 0)
 
     # Poses depart plat
-    prise_marron = (1.03, 0.285, 30)
+    #prise_marron = (1.03, 0.285, 30)
+    prise_marron = (1.04, 0.283, 30)
     prise_marron_alt = (1.125, -0.290, 90)
-    depose_marron = (0.644, 0.370, -135)
-    pose_construction = (0.850-rc.robot_back_length,  0.523, 180)
+    #depose_marron = (0.644, 0.370, -135)
+    #depose_marron = (0.660, 0.385, -135)
+    depose_marron = (0.648, 0.390, -135)
+    pose_construction = (0.850-rc.robot_back_length, 0.527, 180)
 
     # Pose tir cerises:
     tir_cerises = (0.480, 0.80, 90)
@@ -61,6 +64,7 @@ class GreenPoses:
 
     marron_assiette_3 = (1.875, -0.275, -90)
     assiette_3 = (1.760, 0.6, 90)
+    #assiette_3 = (1.280, -0.6, 90)
     
     rose_1 = (0.575, -0.775, 0)
     dep_rose_1 = (0.9, -0.775, 0)

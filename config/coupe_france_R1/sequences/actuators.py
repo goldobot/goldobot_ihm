@@ -8,14 +8,16 @@ class GoldoLift:
 
 
 async def goldo_lift_move(side,pos):
+    lift_factor = 1.090
     if (side==GoldoLift.Left):
-        await servos.liftsRaw(pos, 80, 0, 0)
+        await servos.liftsRaw(int(pos*lift_factor), 80, 0, 0)
     if (side==GoldoLift.Right):
-        await servos.liftsRaw(0, 0, pos, 80)
+        await servos.liftsRaw(0, 0, int(pos*lift_factor), 80)
 
 
 async def goldo_lifts_move(pos, speed = 80):
-    await servos.liftsRaw(pos, speed, pos, speed)
+    lift_factor = 1.090
+    await servos.liftsRaw(int(pos*lift_factor), speed, int(pos*lift_factor), speed)
 
 
 async def pump_on(left, right):
@@ -78,9 +80,13 @@ coudes_leves = {
 }
 
 # Cote vert
+#bras_droit_prise_jaune = {
+#    'epaule_d': 3124,
+#    'coude_d': 515
+#}
 bras_droit_prise_jaune = {
     'epaule_d': 3124,
-    'coude_d': 515
+    'coude_d': 530
 }
 
 bras_droit_depose_jaune = {
@@ -88,9 +94,14 @@ bras_droit_depose_jaune = {
     'coude_d': 515
 }
 
+# Cote rose
+#bras_droit_prise_rose = {
+#    'epaule_d': 2411,
+#    'coude_d': 515
+#}
 bras_droit_prise_rose = {
     'epaule_d': 2411,
-    'coude_d': 515
+    'coude_d': 530
 }
 
 bras_droit_depose_rose = {
@@ -164,29 +175,41 @@ async def arms_initialize():
     await servos.liftDoHoming(1)
     await asyncio.sleep(3)
     
-    await servos.liftsRaw(60, 60, 60, 60)
+    await servos.liftsRaw(50, 60, 50, 60)
     await asyncio.sleep(3)
     await servos.moveMultiple(epaules_rentrees, speed=0.7)
     await servos.setMaxTorque(['epaule_g', 'epaule_d'], 1)
     await servos.setMaxTorque(['coude_g', 'coude_d'], 1)
 
 
+@robot.sequence
 async def arms_open():
     await servos.moveMultiple(epaules_ouvertes, speed=1)
 
+@robot.sequence
 async def arms_take():
     await servos.moveMultiple(epaules_prise, speed=1)
 
+@robot.sequence
 async def arms_centering():
     await goldo_lifts_move(140,60)
     await servos.moveMultiple(epaules_prise, speed=1)
 
+@robot.sequence
+async def arms_collect():
+    await servos.moveMultiple(epaules_ouvertes, speed=1)
+    await asyncio.sleep(0.1)
+    await goldo_lifts_move(140,60)
+
+@robot.sequence
 async def arms_close():
     await servos.moveMultiple(epaules_rentrees, speed=1)
 
 # Constructions vertes
+@robot.sequence
 async def construction_gateau_haut_vert():
-    await goldo_lifts_move(500, 80)
+    ####await goldo_lifts_move(500, 80)
+    await goldo_lifts_move(520, 80)
     await pump_on(True, True)
     # bras au dessus du jaune et du marron
     taskarms = asyncio.create_task(servos.moveMultiple(bras_droit_prise_jaune, 1))
@@ -197,7 +220,8 @@ async def construction_gateau_haut_vert():
     await goldo_lifts_move(400, 80)
     await asyncio.sleep(0.2)
     # depose marron
-    tasklifts = asyncio.create_task(goldo_lifts_move(450, 80))
+    ####tasklifts = asyncio.create_task(goldo_lifts_move(450, 80))
+    tasklifts = asyncio.create_task(goldo_lifts_move(480, 80))
     await servos.moveMultiple(bras_gauche_depose_marron, 1)
     await asyncio.sleep(0.2)
     await tasklifts
@@ -207,11 +231,13 @@ async def construction_gateau_haut_vert():
     await asyncio.sleep(0.2)
 
     # retrait bras gauche
-    await goldo_lift_move(GoldoLift.Left, 500)
+    ####await goldo_lift_move(GoldoLift.Left, 500)
+    await goldo_lift_move(GoldoLift.Left, 520)
     taskarms = asyncio.create_task(servos.moveMultiple(bras_gauche_prise_marron, 1))
 
     # depose jaune
-    await goldo_lift_move(GoldoLift.Right, 800)
+    ####await goldo_lift_move(GoldoLift.Right, 800)
+    await goldo_lift_move(GoldoLift.Right, 820)
     await servos.moveMultiple(bras_droit_depose_jaune, 1)
     await goldo_lift_move(GoldoLift.Right, 600)
     await asyncio.sleep(0.3)
@@ -219,6 +245,9 @@ async def construction_gateau_haut_vert():
     await asyncio.sleep(0.2)
 
     # prise rose
+    ####
+    await goldo_lift_move(GoldoLift.Right, 620)
+    await asyncio.sleep(0.3)
     await servos.moveMultiple(bras_droit_prise_rose, 1)
     await asyncio.sleep(0.2)
     await goldo_lift_move(GoldoLift.Right, 400)
@@ -227,6 +256,7 @@ async def construction_gateau_haut_vert():
 
     # depose rose
     await goldo_lift_move(GoldoLift.Right, 550)
+    await asyncio.sleep(0.3)
     await servos.moveMultiple(bras_droit_depose_rose, 1)
     await asyncio.sleep(0.3)
     await right_pump_off()
@@ -238,8 +268,10 @@ async def construction_gateau_haut_vert():
     await servos.moveMultiple(epaules_ouvertes, 1)
     await taskarms
 
+@robot.sequence
 async def construction_gateau_milieu_vert():
-    await goldo_lifts_move(300, 80)
+    ####await goldo_lifts_move(300, 80)
+    await goldo_lifts_move(320, 80)
     await pump_on(True, True)
     # bras au dessus du jaune et du marron
     taskarms = asyncio.create_task(servos.moveMultiple(bras_droit_prise_jaune, 1))
@@ -250,7 +282,8 @@ async def construction_gateau_milieu_vert():
     await goldo_lifts_move(200, 80)
     await asyncio.sleep(0.2)
     # depose marron
-    tasklifts = asyncio.create_task(goldo_lifts_move(300, 80))
+    ####tasklifts = asyncio.create_task(goldo_lifts_move(300, 80))
+    tasklifts = asyncio.create_task(goldo_lifts_move(320, 80))
     await servos.moveMultiple(bras_gauche_depose_marron, 1)
     await asyncio.sleep(0.2)
     await tasklifts
@@ -260,11 +293,13 @@ async def construction_gateau_milieu_vert():
     await asyncio.sleep(0.2)
 
     # retrait bras gauche
-    await goldo_lift_move(GoldoLift.Left, 300)
+    ####await goldo_lift_move(GoldoLift.Left, 300)
+    await goldo_lift_move(GoldoLift.Left, 320)
     taskarms = asyncio.create_task(servos.moveMultiple(bras_gauche_prise_marron, 1))
 
     # depose jaune
-    await goldo_lift_move(GoldoLift.Right, 600)
+    ####await goldo_lift_move(GoldoLift.Right, 600)
+    await goldo_lift_move(GoldoLift.Right, 620)
     await servos.moveMultiple(bras_droit_depose_jaune, 1)
     await asyncio.sleep(0.2)
     await goldo_lift_move(GoldoLift.Right, 400)
@@ -273,6 +308,8 @@ async def construction_gateau_milieu_vert():
     await asyncio.sleep(0.2)
 
     # prise rose
+    ####
+    await goldo_lift_move(GoldoLift.Right, 420)
     await servos.moveMultiple(bras_droit_prise_rose, 1)
     await asyncio.sleep(0.2)
     await goldo_lift_move(GoldoLift.Right, 200)
@@ -293,8 +330,10 @@ async def construction_gateau_milieu_vert():
     await servos.moveMultiple(epaules_ouvertes, 1)
     await taskarms
 
+@robot.sequence
 async def construction_gateau_bas_vert():
-    await goldo_lifts_move(100, 80)
+    ####await goldo_lifts_move(100, 80)
+    await goldo_lifts_move(120, 80)
     await pump_on(True, True)
     # bras au dessus du jaune et du marron
     taskarms = asyncio.create_task(servos.moveMultiple(bras_droit_prise_jaune, 1))
@@ -305,7 +344,8 @@ async def construction_gateau_bas_vert():
     await goldo_lifts_move(40, 80)
     await asyncio.sleep(0.2)
     # depose marron
-    tasklifts = asyncio.create_task(goldo_lifts_move(100, 80))
+    ####tasklifts = asyncio.create_task(goldo_lifts_move(100, 80))
+    tasklifts = asyncio.create_task(goldo_lifts_move(120, 80))
     await servos.moveMultiple(bras_gauche_depose_marron, 1)
     await asyncio.sleep(0.2)
     await tasklifts
@@ -315,11 +355,13 @@ async def construction_gateau_bas_vert():
     await asyncio.sleep(0.2)
 
     # retrait bras gauche
-    await goldo_lift_move(GoldoLift.Left, 100)
+    ####await goldo_lift_move(GoldoLift.Left, 100)
+    await goldo_lift_move(GoldoLift.Left, 120)
     taskarms = asyncio.create_task(servos.moveMultiple(bras_gauche_prise_marron, 1))
 
     # depose jaune
-    await goldo_lift_move(GoldoLift.Right, 400)
+    ####await goldo_lift_move(GoldoLift.Right, 400)
+    await goldo_lift_move(GoldoLift.Right, 420)
     await servos.moveMultiple(bras_droit_depose_jaune, 1)
     await asyncio.sleep(0.2)
     await goldo_lift_move(GoldoLift.Right, 400)
@@ -335,7 +377,8 @@ async def construction_gateau_bas_vert():
     await asyncio.sleep(0.2)
 
     # depose rose
-    await goldo_lift_move(GoldoLift.Right, 600)
+    ####await goldo_lift_move(GoldoLift.Right, 600)
+    await goldo_lift_move(GoldoLift.Right, 620)
     await asyncio.sleep(0.1)
     await servos.moveMultiple(bras_droit_depose_rose, 1)
     await asyncio.sleep(0.3)
@@ -349,9 +392,33 @@ async def construction_gateau_bas_vert():
     await taskarms
 
 
+@robot.sequence
+async def test_prise_gauche():
+    await goldo_lifts_move(100, 80)
+    await asyncio.sleep(5)
+    await right_pump_on()
+    # bras au dessus du jaune
+    taskarms = asyncio.create_task(servos.moveMultiple(bras_droit_prise_jaune, 1))
+    await taskarms
+    await asyncio.sleep(5)
+    # descente pour prise
+    await goldo_lifts_move(40, 80)
+    await asyncio.sleep(5)
+    # depose jaune
+    await goldo_lift_move(GoldoLift.Right, 400)
+    await servos.moveMultiple(bras_droit_depose_jaune, 1)
+    await asyncio.sleep(0.2)
+    await goldo_lift_move(GoldoLift.Right, 400)
+    await asyncio.sleep(0.2)
+    await right_pump_off()
+    await asyncio.sleep(0.1)
+
+
+
 # Constructions bleues
 async def construction_gateau_haut_bleu():
-    await goldo_lifts_move(500, 80)
+    ####await goldo_lifts_move(500, 80)
+    await goldo_lifts_move(520, 80)
     await pump_on(True, True)
     # bras au dessus du jaune et du marron
     taskarms = asyncio.create_task(servos.moveMultiple(bras_gauche_prise_jaune, 1))
@@ -362,7 +429,8 @@ async def construction_gateau_haut_bleu():
     await goldo_lifts_move(430, 80)
     await asyncio.sleep(0.2)
     # depose marron
-    tasklifts = asyncio.create_task(goldo_lifts_move(430, 80))
+    ####tasklifts = asyncio.create_task(goldo_lifts_move(430, 80))
+    tasklifts = asyncio.create_task(goldo_lifts_move(480, 80))
     await servos.moveMultiple(bras_droit_depose_marron, 1)
     await asyncio.sleep(0.2)
     await tasklifts
@@ -372,11 +440,13 @@ async def construction_gateau_haut_bleu():
     await asyncio.sleep(0.2)
 
     # retrait bras droit
-    await goldo_lift_move(GoldoLift.Right, 500)
+    #await goldo_lift_move(GoldoLift.Right, 500)
+    await goldo_lift_move(GoldoLift.Right, 520)
     taskarms = asyncio.create_task(servos.moveMultiple(bras_droit_prise_marron, 1))
 
     # depose jaune
-    await goldo_lift_move(GoldoLift.Left, 800)
+    #await goldo_lift_move(GoldoLift.Left, 800)
+    await goldo_lift_move(GoldoLift.Left, 820)
     await servos.moveMultiple(bras_gauche_depose_jaune, 1)
     await goldo_lift_move(GoldoLift.Left, 600)
     await asyncio.sleep(0.3)
@@ -384,6 +454,8 @@ async def construction_gateau_haut_bleu():
     await asyncio.sleep(0.2)
 
     # prise rose
+    ####
+    await goldo_lift_move(GoldoLift.Left, 620)
     await servos.moveMultiple(bras_gauche_prise_rose, 1)
     await asyncio.sleep(0.2)
     await goldo_lift_move(GoldoLift.Left, 430)
@@ -404,7 +476,8 @@ async def construction_gateau_haut_bleu():
     await taskarms
 
 async def construction_gateau_milieu_bleu():
-    await goldo_lifts_move(300, 80)
+    ####await goldo_lifts_move(300, 80)
+    await goldo_lifts_move(320, 80)
     await pump_on(True, True)
     # bras au dessus du jaune et du marron
     taskarms = asyncio.create_task(servos.moveMultiple(bras_gauche_prise_jaune, 1))
@@ -415,7 +488,8 @@ async def construction_gateau_milieu_bleu():
     await goldo_lifts_move(210, 80)
     await asyncio.sleep(0.2)
     # depose marron
-    tasklifts = asyncio.create_task(goldo_lifts_move(300, 80))
+    ####tasklifts = asyncio.create_task(goldo_lifts_move(300, 80))
+    tasklifts = asyncio.create_task(goldo_lifts_move(320, 80))
     await servos.moveMultiple(bras_droit_depose_marron, 1)
     await asyncio.sleep(0.2)
     await tasklifts
@@ -425,11 +499,13 @@ async def construction_gateau_milieu_bleu():
     await asyncio.sleep(0.2)
 
     # retrait bras droit
-    await goldo_lift_move(GoldoLift.Right, 300)
+    ####await goldo_lift_move(GoldoLift.Right, 300)
+    await goldo_lift_move(GoldoLift.Right, 320)
     taskarms = asyncio.create_task(servos.moveMultiple(bras_droit_prise_marron, 1))
 
     # depose jaune
-    await goldo_lift_move(GoldoLift.Left, 600)
+    ####await goldo_lift_move(GoldoLift.Left, 600)
+    await goldo_lift_move(GoldoLift.Left, 620)
     await servos.moveMultiple(bras_gauche_depose_jaune, 1)
     await asyncio.sleep(0.2)
     await goldo_lift_move(GoldoLift.Left, 400)
@@ -438,6 +514,8 @@ async def construction_gateau_milieu_bleu():
     await asyncio.sleep(0.2)
 
     # prise rose
+    ####
+    await goldo_lift_move(GoldoLift.Left, 420)
     await servos.moveMultiple(bras_gauche_prise_rose, 1)
     await asyncio.sleep(0.2)
     await goldo_lift_move(GoldoLift.Left, 210)
@@ -459,7 +537,8 @@ async def construction_gateau_milieu_bleu():
     await taskarms
 
 async def construction_gateau_bas_bleu():
-    await goldo_lifts_move(100, 80)
+    ####await goldo_lifts_move(100, 80)
+    await goldo_lifts_move(120, 80)
     await pump_on(True, True)
     # bras au dessus du jaune et du marron
     taskarms = asyncio.create_task(servos.moveMultiple(bras_gauche_prise_jaune, 1))
@@ -470,7 +549,8 @@ async def construction_gateau_bas_bleu():
     await goldo_lifts_move(40, 80)
     await asyncio.sleep(0.2)
     # depose marron
-    tasklifts = asyncio.create_task(goldo_lifts_move(100, 80))
+    ####tasklifts = asyncio.create_task(goldo_lifts_move(100, 80))
+    tasklifts = asyncio.create_task(goldo_lifts_move(120, 80))
     await servos.moveMultiple(bras_droit_depose_marron, 1)
     await asyncio.sleep(0.2)
     await tasklifts
@@ -480,11 +560,13 @@ async def construction_gateau_bas_bleu():
     await asyncio.sleep(0.2)
 
     # retrait bras droit
-    await goldo_lift_move(GoldoLift.Right, 100)
+    ####await goldo_lift_move(GoldoLift.Right, 100)
+    await goldo_lift_move(GoldoLift.Right, 120)
     taskarms = asyncio.create_task(servos.moveMultiple(bras_droit_prise_marron, 1))
 
     # depose jaune
-    await goldo_lift_move(GoldoLift.Left, 400)
+    ####await goldo_lift_move(GoldoLift.Left, 400)
+    await goldo_lift_move(GoldoLift.Left, 420)
     await servos.moveMultiple(bras_gauche_depose_jaune, 1)
     await asyncio.sleep(0.2)
     await goldo_lift_move(GoldoLift.Left, 400)
@@ -500,7 +582,8 @@ async def construction_gateau_bas_bleu():
     await asyncio.sleep(0.2)
 
     # depose rose
-    await goldo_lift_move(GoldoLift.Left, 600)
+    ####await goldo_lift_move(GoldoLift.Left, 600)
+    await goldo_lift_move(GoldoLift.Left, 620)
     await asyncio.sleep(0.2)
     await servos.moveMultiple(bras_gauche_depose_rose, 1)
     await asyncio.sleep(0.2)
