@@ -24,6 +24,8 @@ rose_2 = True
 five_secs_limit = False
 in_zone = False
 end_action = None
+cherry_in_dispenser = 6
+cherry_in_gun = 1
 
 #Task pour verifier si un robot prend les gateaux marrons
 async def check_areas():
@@ -119,6 +121,8 @@ async def start_match():
     global five_secs_limit
     global in_zone
     global end_action
+    global cherry_in_dispenser
+    global cherry_in_gun
 
     check_areas_b = True
     assiette_1 = True
@@ -131,12 +135,14 @@ async def start_match():
     five_secs_limit = False
     in_zone = False
     end_action = None
+    cherry_in_dispenser = 6
+    cherry_in_gun = 1
 
     await propulsion.setAccelerationLimits(1,1,20,20)
     # FIXME : DEBUG ++
     strategy.addTimerCallback(1, end_match)
-    strategy.addTimerCallback(1, robot_in_zone)
-    strategy.addTimerCallback(10, need_end_match)
+    strategy.addTimerCallback(2, robot_in_zone)
+    strategy.addTimerCallback(11, need_end_match)
 
     end_action = strategy.create_action('return_home')
     end_action.opponent_radius = 0.3
@@ -243,6 +249,7 @@ async def start_match():
         test = 1
 
     await distrib_cerises.distrib_pose_cerise()
+    cherry_in_dispenser = cherry_in_dispenser-1
     await asyncio.sleep(0.2)
     #await actuators.arms_open()
     await actuators.arms_collect()
@@ -307,6 +314,7 @@ async def start_match():
         test = 1
     
     await distrib_cerises.distrib_pose_cerise()
+    cherry_in_dispenser = cherry_in_dispenser-1
     await asyncio.sleep(0.2)
     #await actuators.arms_open()
     await actuators.arms_collect()
@@ -371,6 +379,7 @@ async def start_match():
         test = 1
     
     await distrib_cerises.distrib_pose_cerise()
+    cherry_in_dispenser = cherry_in_dispenser-1
     await asyncio.sleep(0.2)
     #await actuators.arms_open()
     await actuators.arms_collect()
@@ -427,18 +436,19 @@ async def start_match():
 
     # Shoot
     await actuators.arms_close()
-    await propulsion.pointTo(poses.tir_cerises, 1.5)
+    await propulsion.pointTo(poses.tir_cerises, 5.0)
     await propulsion.moveToRetry(poses.tir_cerises, 1.0)
     await asyncio.sleep(0.2)
-    await propulsion.faceDirection(90, 1.5)
+    await propulsion.faceDirection(90, 5.0)
 
     # FIXME : DEBUG
     await canon_cerises.canon_shoot()
     await propulsion.faceDirection(0, 5.0)
     await propulsion.translation(0.2, 1.0)
-    await robot.setScore(robot.score + 8)
+    cherry_score = 5 + cherry_in_gun
+    await robot.setScore(robot.score + cherry_score)
     print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-    print ("$ Score +8 pour 'canon_cerises.canon_shoot()'")
+    print ("$ Score +{} pour 'canon_cerises.canon_shoot()'".format(cherry_score))
     print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
     #await actuators.arms_open()
     await actuators.arms_collect()
@@ -451,7 +461,7 @@ async def start_match():
     #assiette_1 = False
     # Prise marron
     await distrib_cerises.distrib_haut()
-    if assiette_1 == True and five_secs_limit == False:
+    if assiette_1 == True and five_secs_limit == False and (cherry_in_dispenser>0):
         print('******************')
         print('******************')
         print('    assiette_1    ')
@@ -474,6 +484,7 @@ async def start_match():
             test = 1
 
         await distrib_cerises.distrib_pose_cerise()
+        cherry_in_dispenser = cherry_in_dispenser-1
         #await actuators.arms_open()
         await actuators.arms_collect()
 
@@ -520,7 +531,7 @@ async def start_match():
     # FIXME : DEBUG
     #jaune_1 = False
     await distrib_cerises.distrib_haut()
-    if jaune_1 == True and five_secs_limit == False:
+    if jaune_1 == True and five_secs_limit == False and (cherry_in_dispenser>0):
         print('******************')
         print('******************')
         print('     jaune_1      ')
@@ -547,6 +558,7 @@ async def start_match():
             test = 1
         
         await distrib_cerises.distrib_pose_cerise()
+        cherry_in_dispenser = cherry_in_dispenser-1
         #await actuators.arms_open()
         await actuators.arms_collect()
 
@@ -609,7 +621,7 @@ async def start_match():
     # FIXME : DEBUG
     #assiette_2 = False
     await distrib_cerises.distrib_haut()
-    if assiette_2 == True and five_secs_limit == False:
+    if assiette_2 == True and five_secs_limit == False and (cherry_in_dispenser>0):
         print('******************')
         print('******************')
         print('    assiette_2    ')
@@ -632,6 +644,7 @@ async def start_match():
             test = 1
 
         await distrib_cerises.distrib_pose_cerise()
+        cherry_in_dispenser = cherry_in_dispenser-1
         #await actuators.arms_open()
         await actuators.arms_collect()
 
@@ -675,7 +688,7 @@ async def start_match():
     # FIXME : DEBUG
     #assiette_3 = False
     await distrib_cerises.distrib_haut()
-    if assiette_3 == True and five_secs_limit == False:
+    if assiette_3 == True and five_secs_limit == False and (cherry_in_dispenser>0):
         print('******************')
         print('******************')
         print('    assiette_3    ')
@@ -698,6 +711,7 @@ async def start_match():
             test = 1
 
         await distrib_cerises.distrib_pose_cerise()
+        cherry_in_dispenser = cherry_in_dispenser-1
         #await actuators.arms_open()
         await actuators.arms_collect()
 
@@ -759,20 +773,114 @@ async def start_match():
     await goto_final_pose()
     end_action.enabled = False
 
+def get_point_zone(x,y):
+    my_x = x
+    my_y = y
+
+    if (my_x>0.0)   and (my_x<0.5)   and (my_y>0.4)   and (my_y<1.0)   and (robot.side == pos.Side.Green):
+        return 1
+    if (my_x>0.85)  and (my_x<1.4)   and (my_y>0.4)   and (my_y<1.0)   and (robot.side == pos.Side.Blue):
+        return 2
+    if (my_x>1.6)   and (my_x<2.15)  and (my_y>0.4)   and (my_y<1.0)   and (robot.side == pos.Side.Green):
+        return 3
+    if (my_x>2.5)   and (my_x<3.0)   and (my_y>0.4)   and (my_y<1.0)   and (robot.side == pos.Side.Blue):
+        return 4
+    if (my_x>2.4)   and (my_x<3.0)   and (my_y>0.0)   and (my_y<0.55)  and (robot.side == pos.Side.Green):
+        return 5
+    if (my_x>2.4)   and (my_x<3.0)   and (my_y<0.0)   and (my_y>-0.55) and (robot.side == pos.Side.Blue):
+        return 6
+    if (my_x>2.5)   and (my_x<3.0)   and (my_y<-0.4)  and (my_y>-1.0)  and (robot.side == pos.Side.Green):
+        return 7
+    if (my_x>1.6)   and (my_x<2.15)  and (my_y<-0.4)  and (my_y>-1.0)  and (robot.side == pos.Side.Blue):
+        return 8
+    if (my_x>0.85)  and (my_x<1.4)   and (my_y<-0.4)  and (my_y>-1.0)  and (robot.side == pos.Side.Green):
+        return 9
+    if (my_x>0.0)   and (my_x<0.5)   and (my_y<-0.4)  and (my_y>-1.0)  and (robot.side == pos.Side.Blue):
+        return 10
+
+    return 0
+
+def get_robot_actual_zone():
+    my_x = propulsion.pose.position.x
+    my_y = propulsion.pose.position.y
+
+    return get_point_zone(my_x,my_y)
+
+def get_buddy_actual_zone():
+    if lidar.objectInRectangle([0.0, 0.5], [0.5, 1.0])  and (robot.side == pos.Side.Green):
+        return 1
+    if lidar.objectInRectangle([0.85, 0.5], [1.4, 1.0]) and (robot.side == pos.Side.Blue):
+        return 2
+    if lidar.objectInRectangle([1.6, 0.5], [2.15, 1.0]) and (robot.side == pos.Side.Green):
+        return 3
+    if lidar.objectInRectangle([2.5, 0.5], [3.0, 1.0])  and (robot.side == pos.Side.Blue):
+        return 4
+    if lidar.objectInRectangle([2.5, 0.0], [3.0, 0.55]) and (robot.side == pos.Side.Green):
+        return 5
+    if lidar.objectInRectangle([2.5, 0.0], [3.0,-0.55]) and (robot.side == pos.Side.Blue):
+        return 6
+    if lidar.objectInRectangle([2.5,-0.5], [3.0,-1.0])  and (robot.side == pos.Side.Green):
+        return 7
+    if lidar.objectInRectangle([1.6,-0.5], [2.15,-1.0]) and (robot.side == pos.Side.Blue):
+        return 8
+    if lidar.objectInRectangle([0.85,-0.5], [1.4,-1.0]) and (robot.side == pos.Side.Green):
+        return 9
+    if lidar.objectInRectangle([0.0,-0.5], [0.5,-1.0])  and (robot.side == pos.Side.Blue):
+        return 10
+
+    return 0
+
 @robot.sequence
 async def goto_final_pose():
+    global in_zone
     print('******************')
     print('******************')
     print('  retour en zone  ')
     print('******************')
     print('******************')
     await propulsion.pointTo(poses.zone_presque_fin, 5.0)
-    await propulsion.moveToRetry(poses.zone_presque_fin, 1.0)
-    #await robot_in_zone()
-    await propulsion.pointTo(poses.zone_fin, 5.0)
-    await propulsion.moveToRetry(poses.zone_fin, 0.3)
-    in_zone = True
-    await propulsion.faceDirection(0, 5.0)
+    final_speed = 1.0
+    final_zone = get_point_zone(poses.zone_fin[0],poses.zone_fin[1])
+    print ("final_zone = {}".format(final_zone))
+    for i in range(1,3):
+        try:
+            await propulsion.moveTo(poses.zone_presque_fin, final_speed)
+            break
+        except:
+            print('!!!!!!!!!!!!!!!!!!!!!')
+            print(' EXCEPTION           ')
+            print('!!!!!!!!!!!!!!!!!!!!!')
+            print(" robot_pose = ({}, {})".format(propulsion.pose.position.x, propulsion.pose.position.y))
+            await asyncio.sleep(1.0)
+            print('Clear error')
+            await propulsion.clearError()
+            final_speed = 0.4
+            my_x = propulsion.pose.position.x
+            my_y = propulsion.pose.position.y
+            zpf_x = poses.zone_presque_fin[0]
+            zpf_y = poses.zone_presque_fin[1]
+            dx = zpf_x - my_x
+            dy = zpf_y - my_y
+            if ((dx*dx+dy*dy)<(0.15*0.15)):
+                print('Disable adversary detection')
+                robot._adversary_detection_enable = False
+                await asyncio.sleep(0.5)
+                break
+    robot._adversary_detection_enable = False
+    robot_actual_zone = get_robot_actual_zone()
+    print ("robot_actual_zone = {}".format(robot_actual_zone))
+    if robot_actual_zone == final_zone:
+        return
+    buddy_actual_zone = get_buddy_actual_zone()
+    if (final_zone == buddy_actual_zone):
+        await propulsion.pointTo(poses.zone_fin, 5.0)
+        await propulsion.moveToRetry(poses.zone_fin, 0.2)
+        in_zone = True
+        await propulsion.faceDirection(0, 5.0)
+    else:
+        await propulsion.pointTo(poses.zone_fin_au_fond, 5.0)
+        await propulsion.moveToRetry(poses.zone_fin_au_fond, 0.2)
+        in_zone = True
 
 async def need_end_match():
     global five_secs_limit
@@ -814,32 +922,26 @@ async def end_match():
     await lidar.stop()
     await asyncio.sleep(1.0)
 
+
+@robot.sequence
 async def robot_in_zone():
-    is_okay = False
-    if propulsion.pose.position.y > 0.4:
-        if robot.side == pos.Side.Blue:
-            if propulsion.pose.position.x > 2.4 or (propulsion.pose.position.x > 0.8 and propulsion.pose.position.x < 1.45):
-                is_okay = True
-        else:
-            if propulsion.pose.position.x < 0.6 or (propulsion.pose.position.x > 1.55 and propulsion.pose.position.x < 2.2):
-                is_okay = True
-    if propulsion.pose.position.y < -0.4:
-        if robot.side == pos.Side.Blue:
-            if propulsion.pose.position.x < 0.6 or (propulsion.pose.position.x > 1.55 and propulsion.pose.position.x < 2.2):
-                is_okay = True
-        else:
-            if propulsion.pose.position.x > 2.4 or (propulsion.pose.position.x > 0.8 and propulsion.pose.position.x < 1.45):
-                is_okay = True
-    if propulsion.pose.position.x > 2.4:
-        if robot.side == pos.Side.Blue:
-            if propulsion.pose.position.y < 0.0 and propulsion.pose.position.y > -0.6:
-                is_okay = True
-        else:
-            if propulsion.pose.position.y > 0.0 and propulsion.pose.position.y < 0.6:
-                is_okay = True
-    if is_okay is True:
+    robot._adversary_detection_enable = False
+    print('******************')
+    print('******************')
+    print(' robot_in_zone()  ')
+    print('******************')
+    print('******************')
+    await asyncio.sleep(1.0)
+    print(" robot_pose = ({}, {})".format(propulsion.pose.position.x, propulsion.pose.position.y))
+
+    my_final_zone = get_robot_actual_zone()
+    print(" my_final_zone = {}".format(my_final_zone))
+    buddy_final_zone = get_buddy_actual_zone()
+    print(" buddy_final_zone = {}".format(buddy_final_zone))
+
+    if my_final_zone > 0:
         print("Robot in zone")
-        if lidar.objectFrontFar():
+        if buddy_final_zone == my_final_zone:
             print("Other robot in zone")
             await robot.setScore(robot.score + 15)
             print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")

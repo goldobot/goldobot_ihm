@@ -33,8 +33,9 @@ class GreenPoses:
     plat_start_pose = (0.2, 0.8, 0)
     plat_inter_pose = (0.2, 0.7, 0)
     assiette_start_pose = (2.8, -0.7, 180)
-    zone_presque_fin = (2.45, 0.3, 0)
+    zone_presque_fin = (2.35, 0.3, 0)
     zone_fin = (2.50, 0.3, 0)
+    zone_fin_au_fond = (2.85, 0.3, 0)
 
     # Poses depart plat
     #prise_marron = (1.03, 0.285, 30)
@@ -100,6 +101,7 @@ class BluePoses:
     assiette_start_pose = symetrie(GreenPoses.assiette_start_pose)
     zone_presque_fin = symetrie(GreenPoses.zone_presque_fin)
     zone_fin = symetrie(GreenPoses.zone_fin)
+    zone_fin_au_fond = symetrie(GreenPoses.zone_fin_au_fond)
 
     # Poses depart plat
     prise_marron = symetrie(GreenPoses.prise_marron)

@@ -165,8 +165,12 @@ bras_gauche_prise_rose = {
     'coude_g': 500
 }
 
+#bras_gauche_depose_rose = {
+#    'epaule_g': 2555,
+#    'coude_g': 500
+#}
 bras_gauche_depose_rose = {
-    'epaule_g': 2555,
+    'epaule_g': 2600,
     'coude_g': 500
 }
 
