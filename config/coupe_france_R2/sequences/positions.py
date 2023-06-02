@@ -17,7 +17,7 @@ class Side:
 class GreenPoses:
     # Poses recalages vert:
     zone1_start_pose = (0.2, 0.8, 0)
-    zone3_start_pose = (1.875, 0.8, -90)
+    zone3_start_pose = (1.875, 0.7, -90)
     zone5_start_pose = (2.8, 0.275, 180)
     zone7_start_pose = (2.8, -0.8, 180)
     zone9_start_pose = (1.125, -0.8, 90)
@@ -26,34 +26,28 @@ class GreenPoses:
     zone2_start_pose = (1.125, 0.8, -90)
     zone4_start_pose = (2.8, 0.8, 180)
     zone6_start_pose = (2.8, -0.275, 180)    
-    zone8_start_pose = (1.875, -0.8, 90)
+    zone8_start_pose = (1.875, -0.7, 90)
     zone10_start_pose = (0.2, -0.8, 0)
 
+    # demarrage coin
     waypoint_rush_initial = (2.5, -0.3, 90)
 
-    plat_start_pose = (0.2, 0.8, 0)
-    plat_inter_pose = (0.2, 0.7, 0)
-    assiette_start_pose = (2.8, -0.7, 180)
-    zone_fin = (2.80, 0.3, 0)
+    # retour en zone
+    zone_fin = (2.83, 0.3, 0)
+    pose_inter_fin = (2.3, 0.3, 0)
 
-    pose_inter_fin = (2.3, 0.4, 0)
-
-    # Poses depart plat
+    # Poses depart coin
     prise_marron = (1.875, -0.275, 30)
     prise_jaune = (2.325, -0.775, 180)
     prise_rose = (2.525, -0.775, 180)
 
+    prise_marron_alt = (1.875, 0.275, -90)
+    prise_jaune_alt = (2.225, 0.775, 180)
+    prise_rose_alt = (2.425, 0.775, 180)
+
     # Poses gateaux finis
     pose_gateau_1 = (2.80, -0.775, 0)
-    pose_gateau_2 = (2.70, -0.775, 0)
-    pose_gateau_3 = (2.60, -0.775, 0)
 
-    prise_marron_alt = (1.125, -0.290, 90)
-    depose_marron = (0.644, 0.370, -135)
-    pose_construction = (0.850-rc.robot_back_length,  0.523, 180)
-
-    # Pose tir cerises:
-    tir_cerises = (0.480, 0.80, 90)
 
     # Gateaux marrons
     marron_assiette_1 = (1.125, -0.275, -90)
@@ -89,34 +83,27 @@ class BluePoses:
     # Poses recalages bleu:
     zone2_start_pose = (1.125, 0.8, -90)
     zone4_start_pose = (2.8, 0.8, 180)
-    zone6_start_pose = (2.8, -0.275, 180)    
+    zone6_start_pose = (2.8, -0.275, 180)
     zone8_start_pose = (1.875, -0.8, 90)
     zone10_start_pose = (0.2, -0.8, 0)
 
+    # demarrage coin
     waypoint_rush_initial = symetrie(GreenPoses.waypoint_rush_initial)
-
-    # Pose tir cerises:
-    tir_cerises = (0.480, -0.8, -90)
-
-    plat_start_pose = symetrie(GreenPoses.plat_start_pose)
-    plat_inter_pose = symetrie(GreenPoses.plat_inter_pose)
-    assiette_start_pose = symetrie(GreenPoses.assiette_start_pose)
+   
+    # retour en zone
     zone_fin = symetrie(GreenPoses.zone_fin)
-
     pose_inter_fin = symetrie(GreenPoses.pose_inter_fin)
-    # Poses depart plat
-    prise_marron_alt = symetrie(GreenPoses.prise_marron_alt)
-    depose_marron = symetrie(GreenPoses.depose_marron)
-    pose_construction = symetrie(GreenPoses.pose_construction)
 
     prise_marron = symetrie(GreenPoses.prise_marron)
     prise_jaune = symetrie(GreenPoses.prise_jaune)
     prise_rose = symetrie(GreenPoses.prise_rose)
 
+    prise_marron_alt = symetrie(GreenPoses.prise_marron_alt)
+    prise_jaune_alt = symetrie(GreenPoses.prise_jaune_alt)
+    prise_rose_alt = symetrie(GreenPoses.prise_rose_alt)
+
     # Poses gateaux finis
     pose_gateau_1 = symetrie(GreenPoses.pose_gateau_1)
-    pose_gateau_2 = symetrie(GreenPoses.pose_gateau_2)
-    pose_gateau_3 = symetrie(GreenPoses.pose_gateau_3)
 
     # Gateaux marrons
     marron_assiette_1 = symetrie(GreenPoses.marron_assiette_1)

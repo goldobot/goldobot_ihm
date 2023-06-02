@@ -65,6 +65,7 @@ async def prematch():
         raise RuntimeError('Side not set')
 
     # Propulsion
+    await lidar.stop()
     await odrive.clearErrors()
     await propulsion.clearError()
     await propulsion.setAccelerationLimits(1,1,2,2)
@@ -83,15 +84,16 @@ async def prematch():
     
     # Lidar
     robot._adversary_detection_enable = False
-    await lidar.start()
 
     # Placement
     await recalages.recalage()
-    await propulsion.pointTo(poses.waypoint_rush_initial)
+    if robot.start_zone == 4 or robot.start_zone == 7:
+        await propulsion.pointTo(poses.waypoint_rush_initial, 1.0)
 
     # Score +5 pour presence panier
+    await robot.setScore(0)
     await robot.gpioSet('keyboard_led', True)
-
+    await lidar.start()
     return True
 
 
@@ -103,6 +105,7 @@ async def start_match():
     """
 
     pose_depart = (propulsion.pose.position.x, propulsion.pose.position.y, 180)
+    
     traj_depart = [
         pose_depart,
         poses.waypoint_rush_initial,
@@ -113,6 +116,12 @@ async def start_match():
         poses.prise_marron,
         poses.waypoint_rush_initial,
         pose_depart
+    ]
+
+    traj_retour_alt = [
+        poses.prise_marron_alt,
+        pose_depart,
+        poses.prise_jaune_alt
     ]
 
     global assiette_1
@@ -126,6 +135,17 @@ async def start_match():
     global five_secs_limit
     global in_zone
 
+    assiette_1 = True
+    rose_1 = True
+    jaune_1 = True
+    assiette_2 = True
+    assiette_3 = True
+    rose_2 = True
+    jaune_2 = True
+    check_areas_b = True
+    five_secs_limit = False
+    in_zone = False
+
     await propulsion.setAccelerationLimits(1,1,20,20)
     strategy.addTimerCallback(1, the_end)
 
@@ -136,53 +156,81 @@ async def start_match():
     end_action.priority = 0
     end_action.begin_pose = poses.zone_fin
 
-    # await propulsion.pointTo(poses.prise_marron, 1.5)
     robot._adversary_detection_enable = True
     #tasklidar = asyncio.create_task(check_areas())
 
-    await pince.pince_open()
-    await propulsion.trajectorySpline(traj_depart, 1.2)
-    await asyncio.sleep(0.2)
-    await gateau.prend_gateau1()
-    await propulsion.pointTo(poses.pose_gateau_1, 5.0)
-    await propulsion.faceDirection(0, 3.0)
-    await propulsion.trajectorySpline(traj_retour, 1.2)
-    await asyncio.sleep(0.2)
-    await propulsion.pointTo(poses.prise_rose, 5.0)
-    await pince.pince_open()
-    await asyncio.sleep(0.2)
-    await propulsion.moveToRetry(poses.prise_rose, 1.0)
-    await gateau.prend_gateau5()
-    await pince.pince_open()
-    await asyncio.sleep(0.2)
-    await propulsion.pointTo(poses.prise_jaune, 5.0)
-    await asyncio.sleep(0.2)
-    await propulsion.moveToRetry(poses.prise_jaune, 1.0)
-    await gateau.prend_gateau3()
+    # Collecte gateaux
+    if robot.start_zone == 4 or robot.start_zone == 7:
+        await pince.pince_open()
+        await propulsion.trajectorySpline(traj_depart, 1.2)
+
+        await gateau.prend_gateau1()
+
+        await propulsion.pointTo(poses.pose_gateau_1, 5.0)
+        await propulsion.trajectorySpline(traj_retour, 1.2)
+        await propulsion.pointTo(poses.prise_rose, 5.0)
+        await pince.pince_open()
+        await asyncio.sleep(0.2)
+        await propulsion.moveToRetry(poses.prise_rose, 1.0)
+        
+        await gateau.prend_gateau5()
+
+        await pince.pince_open()
+        await asyncio.sleep(0.2)
+        await propulsion.moveToRetry(poses.prise_jaune, 1.0)
+
+        await gateau.prend_gateau3()
+    elif robot.start_zone == 3 or robot.start_zone == 8:
+        await pince.pince_open()
+        await propulsion.moveToRetry(poses.prise_marron_alt, 1.2)
+        await asyncio.sleep(0.2)
+
+        await gateau.prend_gateau1()
+
+        await pince.pince_open()
+        await propulsion.pointTo(pose_depart, 5.0)
+        await propulsion.trajectorySpline(traj_retour_alt, 1.0)
+
+        await gateau.prend_gateau3()
+
+        await pince.pince_open()
+        await propulsion.pointTo(poses.prise_rose_alt, 5.0)
+        await propulsion.moveToRetry(poses.prise_rose_alt, 1.2)
+
+        await gateau.prend_gateau5()
+
+        await propulsion.translation(-0.3, 1.2)
+    else:
+        return
+
+    # Construction gateaux
     await propulsion.pointTo(poses.pose_gateau_1, 5.0)
     await propulsion.moveToRetry(poses.pose_gateau_1, 0.5)
+    await propulsion.faceDirection(0, 5.0)
+
     await gateau.build_cake(1,3,5,2)
-    await propulsion.translation(-0.20, 0.5)
     if sensors['sick_cerise_rotor'] is False:
         await robot.setScore(robot.score + 10)
     else:
         await robot.setScore(robot.score + 7)
+    await propulsion.translation(-0.15, 0.5)
+
     await gateau.build_cake(1,3,5,4)
-    await propulsion.translation(-0.20, 0.5)
     if sensors['sick_cerise_rotor'] is False:
         await robot.setScore(robot.score + 10)
     else:
         await robot.setScore(robot.score + 7)
+    await propulsion.translation(-0.15, 0.5)
+
     await gateau.build_last_cake()
-    await propulsion.translation(-0.20, 0.5)
     if sensors['sick_cerise_rotor'] is False:
         await robot.setScore(robot.score + 10)
     else:
         await robot.setScore(robot.score + 7)
+    await propulsion.translation(-0.20, 0.5)
+
     await pince.pince_take()
     await barillet.reset_valves()
-
-    check_areas_b = False
 
     await propulsion.pointTo(poses.pose_inter_fin, 5.0)
     await propulsion.moveToRetry(poses.pose_inter_fin, 1.2)
@@ -203,7 +251,6 @@ async def need_end_match():
 
 
 async def the_end():
-    global disguised
     await barillet.reset_valves()
     await pneumatic.lcd_on()
     await robot.setScore(robot.score + 5)
