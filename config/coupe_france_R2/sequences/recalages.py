@@ -106,7 +106,7 @@ async def recalage_zone_3():
     await asyncio.sleep(0.5)
 
     print("Orientation axe Y")    
-    await propulsion.moveTo([poses.zone3_start_pose[0], propulsion.pose.position.y], 0.2)
+    await propulsion.moveTo([1.875, propulsion.pose.position.y], 0.2)
     await propulsion.faceDirection(-90, 1)
     await asyncio.sleep(0.5)
 
@@ -263,7 +263,7 @@ async def recalage_zone_8():
     await asyncio.sleep(0.5)
 
     print("Orientation axe Y")    
-    await propulsion.moveTo([poses.zone8_start_pose[0], propulsion.pose.position.y], 0.2)
+    await propulsion.moveTo([1.875, propulsion.pose.position.y], 0.2)
     await propulsion.faceDirection(90, 1)
     await asyncio.sleep(0.5)
 
