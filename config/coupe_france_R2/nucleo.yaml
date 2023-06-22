@@ -98,7 +98,7 @@ nucleo:
       max_speed: 0x3ff
       max_torque: 0x3ff
       cw_limit: 518
-      ccw_limit: 807
+      ccw_limit: 820
     - name: pale_g
       id: 9
       type: DYNAMIXEL_AX12
@@ -113,7 +113,7 @@ nucleo:
       type: DYNAMIXEL_AX12
       max_speed: 0x3ff
       max_torque: 0x3ff
-      cw_limit: 213
+      cw_limit: 200
       ccw_limit: 493
     - name: pale_d
       id: 4
@@ -148,16 +148,16 @@ nucleo:
     - name: tryohm_bit_1
       type: FPGA
       id: 10
-    - name: sick_cerise_rotor
+    - name: sick_niveau_1
       type: FPGA
       id: 21
-    - name: sick_bras_d
+    - name: sick_niveau_2
       type: FPGA
       id: 20
-    - name: sick_lat_g
+    - name: sick_niveau_4
       type: FPGA
       id: 18
-    - name: sick_lat_d
+    - name: sick_niveau_3
       type: FPGA
       id: 19
     - name: baumer_proche

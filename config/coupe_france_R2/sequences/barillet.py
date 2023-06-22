@@ -15,11 +15,14 @@ valve_3 = 0
 valve_5 = 0
 valve_purge = 0
 
-
 barillet = [[Slice.EMPTY, Slice.EMPTY, Slice.EMPTY], [Slice.EMPTY, Slice.EMPTY, Slice.EMPTY], [Slice.EMPTY, Slice.EMPTY, Slice.EMPTY]]
 
 barillet_haut = {
     'ascenseur': 367,
+}
+
+barillet_parking = {
+    'ascenseur': 4060
 }
 
 barillet_niv_1_c = {
@@ -53,39 +56,29 @@ barillet_niv_4_g = {
 barillet_0 = {
     'rotor': 0,
 }
-"""
-barillet_1 = {
-    'rotor': 1729,
-}
-"""
 
 barillet_1 = {
-    'rotor': 1723,
+    'rotor': 1742,
 }
 
 barillet_2 = {
-    'rotor': 1044,
+    'rotor': 1062,
 }
 
 barillet_3 = {
-    'rotor': 364,
+    'rotor': 380,
 }
 
 barillet_4 = {
-    'rotor': 3777,
+    'rotor': 3792,
 }
 
-"""
 barillet_5 = {
-    'rotor': 3100,
-}
-"""
-barillet_5 = {
-    'rotor': 3096,
+    'rotor': 3111,
 }
 
 barillet_6 = {
-    'rotor': 2409,
+    'rotor': 2428,
 }
 
 # barillet bas  = 4051
@@ -111,7 +104,10 @@ async def valve1():
     global valve_3
     global valve_5
     global valve_purge
-    valve_1 = 1
+    if valve_1 == 0:
+        valve_1 = 1
+    else:
+        valve_1 = 0
     await pneumatic.set_valves(valve_1, valve_5, valve_3, valve_purge)
 
 @robot.sequence
@@ -120,7 +116,10 @@ async def valve5():
     global valve_3
     global valve_5
     global valve_purge
-    valve_5 = 1
+    if valve_5 == 0:
+        valve_5 = 1
+    else:
+        valve_5 == 0
     await pneumatic.set_valves(valve_1, valve_5, valve_3, valve_purge)
 
 @robot.sequence
@@ -129,24 +128,39 @@ async def valve3():
     global valve_3
     global valve_5
     global valve_purge
-    valve_3 = 1
+    if(valve_3 == 0):
+        valve_3 = 1
+    else:
+        valve_3 = 0
     await pneumatic.set_valves(valve_1, valve_5, valve_3, valve_purge)
 
 @robot.sequence
 async def valves():
     await pneumatic.set_valves(1, 1, 1, 0)
 
-@robot.sequence
-async def pulse1():
-    await pneumatic.pulse_valves(1, 0, 0, 0)
+async def pulse(slot):
+    if slot == 1:
+        await pneumatic.pulse_valves(1, 0, 0, 0)
+    elif slot == 3:
+        await pneumatic.pulse_valves(0, 0, 1, 0)
+    elif slot == 5:
+        await pneumatic.pulse_valves(0, 1, 0, 0)
+    else:
+        return
+
 
 @robot.sequence
-async def pulse5():
-    await pneumatic.pulse_valves(0, 1, 0, 0)
+async def pulse1():
+    await pulse(1)
 
 @robot.sequence
 async def pulse3():
-    await pneumatic.pulse_valves(0, 0, 1, 0)
+    await pulse(3)
+
+@robot.sequence
+async def pulse5():
+    await pulse(5)
+
 
 @robot.sequence
 async def reset_valves():
@@ -256,14 +270,6 @@ async def barillet_spin(pos):
         await barillet_pose_5()
     elif pos == 6:
         await barillet_pose_6()
-
-async def barillet_pulse(pos):
-    if pos == 1:
-        await pulse1()
-    elif pos == 3:
-        await pulse3()
-    elif pos == 5:
-        await pulse5()
 
 @robot.sequence
 async def print_sensors():

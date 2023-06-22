@@ -26,8 +26,8 @@ pales_depose = {
 }
 
 chariot_rentre = {
-    'chariot_g': 807,
-    'chariot_d': 207
+    'chariot_g': 810,
+    'chariot_d': 200
 }
 
 chariot_sorti = {
@@ -35,11 +35,35 @@ chariot_sorti = {
     'chariot_d': 493
 }
 
-prise = {
+chariot_prise = {
+    'chariot_g': 797,
+    'chariot_d': 219
+}
+
+prise_cerise = {
     'chariot_g': 799,
     'pale_g': 373,
     'chariot_d': 218,
     'pale_d': 621
+}
+
+prise_tempaxe = {
+    'chariot_g': 800,
+    'chariot_d': 230,
+    'pale_g': 373,
+    'pale_d': 635
+}
+
+serrage_tempaxe = {
+    'chariot_g': 800,
+    'chariot_d': 230,
+    'pale_g': 368,
+    'pale_d': 640
+}
+
+release_pince = {
+    'pale_g': 410,
+    'pale_d': 580
 }
 
 prise_g = {
@@ -76,7 +100,7 @@ async def pince_close():
 
 @robot.sequence
 async def pince_take():
-    await servos.moveMultiple(prise, speed=1)
+    await servos.moveMultiple(prise_tempaxe, speed=1)
 
 @robot.sequence
 async def pince_depose():
@@ -102,3 +126,24 @@ async def chariot_open():
 async def chariot_close():
     await servos.moveMultiple(chariot_rentre, speed=1)
     
+@robot.sequence
+async def recentre_tempaxe():
+    await servos.moveMultiple(serrage_tempaxe, speed=1)
+    await asyncio.sleep(0.1)
+    await servos.moveMultiple(release_pince, speed=1)
+    await asyncio.sleep(0.1)
+    await servos.moveMultiple(serrage_tempaxe, speed=1)
+    await asyncio.sleep(0.1)
+    await servos.moveMultiple(prise_tempaxe, speed=1)
+    await asyncio.sleep(0.2)
+    await servos.moveMultiple(release_pince, speed=1)
+    await asyncio.sleep(0.2)
+    await chariot_close()
+
+@robot.sequence
+async def recentre_cerise():
+    await servos.moveMultiple(prise_cerise, speed=1)
+    await asyncio.sleep(0.05)
+    await servos.moveMultiple(release, speed=1)
+    await asyncio.sleep(0.05)
+    await servos.moveMultiple(prise_cerise, speed=1)

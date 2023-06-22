@@ -90,10 +90,18 @@ async def prematch():
     if robot.start_zone == 4 or robot.start_zone == 7:
         await propulsion.pointTo(poses.waypoint_rush_initial, 1.0)
 
-    # Score +5 pour presence panier
     await robot.setScore(0)
     await robot.gpioSet('keyboard_led', True)
     await lidar.start()
+    await field.init()
+
+    end_action = strategy.create_action('return_home')
+    end_action.sequence_prepare = ''
+    end_action.sequence = 'end_match'
+    end_action.enabled = True
+    end_action.priority = 0
+    end_action.begin_pose = poses.zone_fin
+
     return True
 
 
@@ -135,26 +143,13 @@ async def start_match():
     global five_secs_limit
     global in_zone
 
-    assiette_1 = True
-    rose_1 = True
-    jaune_1 = True
-    assiette_2 = True
-    assiette_3 = True
-    rose_2 = True
-    jaune_2 = True
-    check_areas_b = True
+    field.start()
+
     five_secs_limit = False
     in_zone = False
 
     await propulsion.setAccelerationLimits(1,1,20,20)
     strategy.addTimerCallback(1, the_end)
-
-    end_action = strategy.create_action('return_home')
-    end_action.sequence_prepare = ''
-    end_action.sequence = 'end_match'
-    end_action.enabled = True
-    end_action.priority = 0
-    end_action.begin_pose = poses.zone_fin
 
     robot._adversary_detection_enable = True
     #tasklidar = asyncio.create_task(check_areas())
@@ -163,7 +158,7 @@ async def start_match():
     if robot.start_zone == 4 or robot.start_zone == 7:
         await pince.pince_open()
         await propulsion.trajectorySpline(traj_depart, 1.2)
-
+    
         await gateau.prend_gateau1()
 
         await propulsion.pointTo(poses.pose_gateau_1, 5.0)
