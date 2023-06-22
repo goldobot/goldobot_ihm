@@ -20,6 +20,58 @@ async def goldo_lifts_move(pos, speed = 80):
     await servos.liftsRaw(int(pos*lift_factor), speed, int(pos*lift_factor), speed)
 
 
+@robot.sequence
+async def goldo_lifts_test_initialize():
+    # initialisation ascenseurs    
+    await servos.liftDoHoming(0)
+    await servos.liftDoHoming(1)
+    await asyncio.sleep(3)
+    await servos.liftsRaw(65, 60, 65, 60)
+    await asyncio.sleep(3)
+
+
+#@robot.sequence
+#async def goldo_lift_l_test_pos_200():
+#    await goldo_lift_move(GoldoLift.Left,200)
+#
+#@robot.sequence
+#async def goldo_lift_l_test_pos_400():
+#    await goldo_lift_move(GoldoLift.Left,400)
+#
+#@robot.sequence
+#async def goldo_lift_l_test_pos_600():
+#    await goldo_lift_move(GoldoLift.Left,600)
+#
+#@robot.sequence
+#async def goldo_lift_l_test_pos_800():
+#    await goldo_lift_move(GoldoLift.Left,800)
+#
+#@robot.sequence
+#async def goldo_lift_l_test_pos_1000():
+#    await goldo_lift_move(GoldoLift.Left,1000)
+#
+#
+#@robot.sequence
+#async def goldo_lift_r_test_pos_200():
+#    await goldo_lift_move(GoldoLift.Right,200)
+#
+#@robot.sequence
+#async def goldo_lift_r_test_pos_400():
+#    await goldo_lift_move(GoldoLift.Right,400)
+#
+#@robot.sequence
+#async def goldo_lift_r_test_pos_600():
+#    await goldo_lift_move(GoldoLift.Right,600)
+#
+#@robot.sequence
+#async def goldo_lift_r_test_pos_800():
+#    await goldo_lift_move(GoldoLift.Right,800)
+#
+#@robot.sequence
+#async def goldo_lift_r_test_pos_1000():
+#    await goldo_lift_move(GoldoLift.Right,1000)
+#
+
 async def pump_on(left, right):
     if left:
         await robot.gpioSet('pompe_g', True)
@@ -174,7 +226,52 @@ bras_gauche_depose_rose = {
     'coude_g': 500
 }
 
+bras_d_prep_minicake = {
+    'epaule_d': 1400,
+    'coude_d': 500
+}
 
+bras_d_take_minicake = {
+    'epaule_d': 1400,
+    'coude_d': 500
+}
+
+bras_d_rotate_minicake = {
+    'epaule_d': 2200,
+    'coude_d': 500
+}
+
+bras_d_end_minicake = {
+    'epaule_d': 2200,
+    'coude_d': 204
+}
+
+bras_g_prep_minicake = {
+    'epaule_g': 2700,
+    'coude_g': 500
+}
+
+bras_g_take_minicake = {
+    'epaule_g': 2700,
+    'coude_g': 500
+}
+
+bras_g_rotate_minicake = {
+    'epaule_g': 1900,
+    'coude_g': 500
+}
+
+bras_g_end_minicake = {
+    'epaule_g': 1900,
+    'coude_g': 827
+}
+
+bras_prep_minicake = {
+    'epaule_d': 1400,
+    'coude_d': 500,
+    'epaule_g': 2700,
+    'coude_g': 500
+}
 
 
 @robot.sequence
@@ -193,40 +290,112 @@ async def arms_initialize():
     await servos.moveMultiple(coudes_leves, speed=0.7)
     await asyncio.sleep(0.2)
     
-    # initialisation ascenceurs    
+    # initialisation ascenseurs    
     await servos.liftDoHoming(0)
     await servos.liftDoHoming(1)
     await asyncio.sleep(3)
     
     await servos.liftsRaw(65, 60, 65, 60)
-    await asyncio.sleep(3)
+    await asyncio.sleep(1)
     await servos.moveMultiple(epaules_rentrees, speed=0.7)
     await servos.setMaxTorque(['epaule_g', 'epaule_d'], 1)
     await servos.setMaxTorque(['coude_g', 'coude_d'], 1)
 
 
+async def minicake_prepare_left():
+    await goldo_lift_move(GoldoLift.Left,600)
+    await asyncio.sleep(0.4)
+    await servos.moveMultiple(bras_g_prep_minicake, speed=1)
+    await asyncio.sleep(0.4)
+
+async def minicake_prepare_right():
+    await goldo_lift_move(GoldoLift.Right,1000)
+    await asyncio.sleep(0.4)
+    await servos.moveMultiple(bras_d_prep_minicake, speed=1)
+    await asyncio.sleep(0.4)
+
+@robot.sequence
+async def minicake_prepare():
+    await servos.liftsRaw(600, 80, 1000, 60)
+    await asyncio.sleep(0.5)
+    await servos.moveMultiple(bras_prep_minicake, speed=1)
+    await asyncio.sleep(0.2)
+
+@robot.sequence
+async def minicake_make_left():
+    await left_pump_on()
+    await asyncio.sleep(0.1)
+    await goldo_lift_move(GoldoLift.Left,380)
+    await asyncio.sleep(0.3)
+    await servos.moveMultiple(bras_g_take_minicake, speed=1)
+    await asyncio.sleep(0.1)
+    await goldo_lift_move(GoldoLift.Left,420)
+    await asyncio.sleep(0.2)
+    await servos.moveMultiple(bras_g_rotate_minicake, speed=1)
+    await asyncio.sleep(0.2)
+    await goldo_lift_move(GoldoLift.Left,140)
+    await asyncio.sleep(0.2)
+    await left_pump_off()
+    await asyncio.sleep(0.1)
+    await goldo_lift_move(GoldoLift.Left,600)
+    await asyncio.sleep(0.3)
+    await servos.moveMultiple(bras_g_end_minicake, speed=1)
+    await asyncio.sleep(0.1)
+
+@robot.sequence
+async def minicake_make_right():
+    await right_pump_on()
+    await asyncio.sleep(0.1)
+    await goldo_lift_move(GoldoLift.Right,140)
+    await asyncio.sleep(0.4)
+    await servos.moveMultiple(bras_d_take_minicake, speed=1)
+    await asyncio.sleep(0.1)
+    await goldo_lift_move(GoldoLift.Right,220)
+    await asyncio.sleep(0.2)
+    await servos.moveMultiple(bras_d_rotate_minicake, speed=1)
+    await asyncio.sleep(0.2)
+    await goldo_lift_move(GoldoLift.Right,140)
+    await asyncio.sleep(0.2)
+    await right_pump_off()
+    await asyncio.sleep(0.1)
+    await goldo_lift_move(GoldoLift.Right,600)
+    await asyncio.sleep(0.3)
+    await servos.moveMultiple(bras_d_end_minicake, speed=1)
+    await asyncio.sleep(0.1)
+
+
 @robot.sequence
 async def arms_open():
     await servos.moveMultiple(epaules_ouvertes, speed=1)
+    await asyncio.sleep(0.1)
+    await servos.moveMultiple(coudes_leves, speed=1)
 
 @robot.sequence
 async def arms_take():
     await servos.moveMultiple(epaules_prise, speed=1)
+    await asyncio.sleep(0.1)
+    await servos.moveMultiple(coudes_leves, speed=1)
 
 @robot.sequence
 async def arms_centering():
-    await goldo_lifts_move(140,60)
+    await goldo_lifts_move(130,60)
     await servos.moveMultiple(epaules_prise, speed=1)
+    await asyncio.sleep(0.1)
+    await servos.moveMultiple(coudes_leves, speed=1)
 
 @robot.sequence
 async def arms_collect():
     await servos.moveMultiple(epaules_ouvertes, speed=1)
     await asyncio.sleep(0.1)
-    await goldo_lifts_move(140,60)
+    await servos.moveMultiple(coudes_leves, speed=1)
+    await asyncio.sleep(0.1)
+    await goldo_lifts_move(130,60)
 
 @robot.sequence
 async def arms_close():
     await servos.moveMultiple(epaules_rentrees, speed=1)
+    await asyncio.sleep(0.1)
+    await servos.moveMultiple(coudes_leves, speed=1)
 
 # Constructions vertes
 @robot.sequence
@@ -244,12 +413,12 @@ async def construction_gateau_haut_vert():
     await asyncio.sleep(0.2)
     # depose marron
     ####tasklifts = asyncio.create_task(goldo_lifts_move(450, 80))
-    tasklifts = asyncio.create_task(goldo_lifts_move(520, 80))
+    tasklifts = asyncio.create_task(goldo_lifts_move(540, 80))
     await servos.moveMultiple(bras_gauche_depose_marron, 1)
     await asyncio.sleep(0.2)
     await tasklifts
-    await goldo_lift_move(GoldoLift.Left, 150)
-    await asyncio.sleep(0.3)
+    await goldo_lift_move(GoldoLift.Left, 140)
+    await asyncio.sleep(0.2)
     await left_pump_off()
     await asyncio.sleep(0.2)
 
@@ -260,10 +429,11 @@ async def construction_gateau_haut_vert():
 
     # depose jaune
     ####await goldo_lift_move(GoldoLift.Right, 800)
-    await goldo_lift_move(GoldoLift.Right, 820)
+    await goldo_lift_move(GoldoLift.Right, 840)
+    await asyncio.sleep(0.2)
     await servos.moveMultiple(bras_droit_depose_jaune, 1)
-    await goldo_lift_move(GoldoLift.Right, 600)
-    await asyncio.sleep(0.3)
+    await goldo_lift_move(GoldoLift.Right, 400)
+    await asyncio.sleep(0.2)
     await right_pump_off()
     await asyncio.sleep(0.2)
 

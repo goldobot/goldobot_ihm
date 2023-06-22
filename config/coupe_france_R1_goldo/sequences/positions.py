@@ -54,15 +54,16 @@ class GreenPoses:
     pose_gateau_2 = (0.32, 0.523, 180)
     pose_gateau_3 = (0.44, 0.523, 180)
 
-    # Gateaux marrons
+    # Gateaux monocouleur
     marron_assiette_1 = (1.125, -0.275, -90)
-    marron_assiette_2 = (1.875, 0.275, 90)
-    assiette_1 = (1.200, -0.70, -90)
-    depose_j_1 = (1.0, -0.60, -90)
-    depose_r_1 = (0.850, -0.60, -90)
-    assiette_2 = (1.940, 0.6, 90)
+    assiette_1 = (1.125, -0.67, -90)
     prise_j1 = (0.805, -0.700, -90)
+    depose_j_1 = (1.0, -0.60, -90)
     prise_r1 = (0.575, -0.700, -90)
+    depose_r_1 = (0.850, -0.60, -90)
+
+    marron_assiette_2 = (1.875, 0.275, 90)
+    assiette_2 = (1.875, 0.67, 90)
 
     marron_assiette_3 = (1.875, -0.275, -90)
     assiette_3 = (1.760, 0.6, 90)
