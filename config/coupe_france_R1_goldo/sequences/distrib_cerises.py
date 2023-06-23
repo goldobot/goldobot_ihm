@@ -9,7 +9,7 @@ ascenseur_pose_neutral = 9500
 ascenseur_pose_niveau1 = 7600
 ascenseur_pose_niveau2 = 10000
 ascenseur_pose_niveau3 = 12400
-ascenseur_pose_haut = 12400
+ascenseur_pose_haut = 12750
 
 @robot.sequence
 async def distrib_enable():
@@ -65,7 +65,7 @@ async def distrib_pose_cerise():
 
 @robot.sequence
 async def get_layers():
-    if sensors['baumer_niveau4'] is True and sensors['sick_niveau3'] is True and sensors['sick_niveau2'] is True and sensors['baumer_niveau1'] is True:
+    if sensors['sick_niveau4'] is False and sensors['sick_niveau3'] is True and sensors['sick_niveau2'] is True and sensors['baumer_niveau1'] is True:
         return 4
     elif sensors['sick_niveau3'] is True and sensors['sick_niveau2'] is True and sensors['baumer_niveau1'] is True:
         return 3

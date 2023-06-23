@@ -181,7 +181,7 @@ nucleo:
     - name: sick_niveau3
       type: FPGA
       id: 19
-    - name: baumer_niveau4
+    - name: sick_niveau4
       type: FPGA
       id: 17
     - name: baumer_niveau1

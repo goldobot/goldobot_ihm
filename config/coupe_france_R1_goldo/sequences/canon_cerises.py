@@ -1,8 +1,8 @@
 import asyncio
 from time import sleep
 
-canon_pose_lock = 8200  # ou 8550 pour mieux bloquer
-canon_pose_shoot = 11850
+canon_pose_lock = 8800  # ou 8550 pour mieux bloquer
+canon_pose_shoot = 11800
 canon_pose_neutral = 9500
 
 @robot.sequence
