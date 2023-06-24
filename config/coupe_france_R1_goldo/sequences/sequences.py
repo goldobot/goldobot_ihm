@@ -16,6 +16,8 @@ from . import robot_config as rc
 # those objects are used to interact with the robot (send commands, read data)
 
 check_areas_b = True
+minicake_done = False
+available_stacks = 7
 assiette_1 = True
 assiette_2 = True
 assiette_3 = True
@@ -25,12 +27,15 @@ jaune_2 = True
 rose_2 = True
 five_secs_limit = False
 in_zone = False
+robot_in_zone_done = False
 end_action = None
 cherry_in_dispenser = 6
 cherry_in_gun = 1
 
 #Task pour verifier si un robot prend les gateaux marrons
 async def check_areas():
+    global available_stacks
+    global minicake_done
     global assiette_1
     global rose_1
     global jaune_1
@@ -42,18 +47,25 @@ async def check_areas():
     while check_areas_b:
         if lidar.objectInDisk(poses.marron_assiette_1, 0.20):
             assiette_1 = False
+            available_stacks = available_stacks - 1
         if lidar.objectInDisk(poses.marron_assiette_2, 0.20):
             assiette_2 = False
+            available_stacks = available_stacks - 1
         if lidar.objectInDisk(poses.marron_assiette_3, 0.20):
             assiette_3 = False
+            available_stacks = available_stacks - 1
         if lidar.objectInDisk(poses.rose_1, 0.20):
             rose_1 = False
+            available_stacks = available_stacks - 1
         if lidar.objectInDisk(poses.rose_2, 0.20):
             rose_2 = False
+            available_stacks = available_stacks - 1
         if lidar.objectInDisk(poses.jaune_1, 0.20):
             jaune_1 = False
+            available_stacks = available_stacks - 1
         if lidar.objectInDisk(poses.jaune_2, 0.20):
             jaune_2 = False
+            available_stacks = available_stacks - 1
         await asyncio.sleep(0.2)
 
 
@@ -89,7 +101,7 @@ async def match_minicake():
     await asyncio.sleep(tempo)
     await distrib_cerises.distrib_lache()
     await asyncio.sleep(tempo+0.2)
-    await propulsion.translation(-0.085, speed)
+    await propulsion.translation(-0.083, speed)
     await asyncio.sleep(tempo)
     await distrib_cerises.distrib_niveau2()
     await asyncio.sleep(tempo)
@@ -101,7 +113,7 @@ async def match_minicake():
     await asyncio.sleep(tempo)
     await distrib_cerises.distrib_lache()
     await asyncio.sleep(tempo+0.2)
-    await propulsion.translation(-0.085, speed)
+    await propulsion.translation(-0.083, speed)
     await asyncio.sleep(tempo)
     await distrib_cerises.distrib_niveau1()
     await asyncio.sleep(tempo)
@@ -143,7 +155,9 @@ async def prematch():
     # Actionneurs
     await distrib_cerises.distrib_enable()
     await distrib_cerises.distrib_neutral()
+    # FIXME : DEBUG
     await canon_cerises.canon_initialize()
+    #await asyncio.sleep(10.0)
     await distrib_cerises.distrib_haut()
     await actuators.arms_initialize()
 
@@ -175,6 +189,8 @@ async def start_match():
         poses.prise_marron
     ]
 
+    global available_stacks
+    global minicake_done
     global assiette_1
     global rose_1
     global jaune_1
@@ -185,11 +201,14 @@ async def start_match():
     global check_areas_b
     global five_secs_limit
     global in_zone
+    global robot_in_zone_done
     global end_action
     global cherry_in_dispenser
     global cherry_in_gun
 
     check_areas_b = True
+    available_stacks = 7
+    minicake_done = False
     assiette_1 = True
     assiette_2 = True
     assiette_3 = True
@@ -199,6 +218,7 @@ async def start_match():
     rose_2 = True
     five_secs_limit = False
     in_zone = False
+    robot_in_zone_done = False
     end_action = None
     cherry_in_dispenser = 6
     cherry_in_gun = 1
@@ -252,6 +272,7 @@ async def start_match():
         print("alt start zone")
         await propulsion.moveToRetry(poses.prise_marron_alt, 1.0)
         assiette_1 = False
+        available_stacks = available_stacks - 1
     else:
         await propulsion.pointTo(poses.prise_marron, 1.0)
         await propulsion.moveToRetry(poses.prise_marron, 0.5)
@@ -340,38 +361,7 @@ async def start_match():
     await actuators.arms_collect()
 
     await asyncio.sleep(0.5)
-    if sensors['sick_niveau4'] is False and sensors['sick_niveau3'] is True and sensors['sick_niveau2'] is True and sensors['baumer_niveau1'] is True:
-        await robot.setScore(robot.score + 10)
-        print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-        print ("$ Score +10 pour 'sick_niveau4..' (gateau1)")
-        print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-    elif sensors['sick_niveau3'] is True and sensors['sick_niveau2'] is True and sensors['baumer_niveau1'] is True:
-        if test == 3:
-            await robot.setScore(robot.score + 6)
-            print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-            print ("$ Score +6 pour 'test == 3' (gateau1)")
-            print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-        else:
-            await robot.setScore(robot.score + 7)
-            print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-            print ("$ Score +7 pour 'test != 3' (gateau1)")
-            print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-    elif sensors['sick_niveau2'] is True and sensors['baumer_niveau1'] is True:
-        if test == 2:
-            await robot.setScore(robot.score + 2)
-            print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-            print ("$ Score +2 pour 'test == 2' (gateau1)")
-            print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-        else:
-            await robot.setScore(robot.score + 4)
-            print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-            print ("$ Score +4 pour 'test != 2' (gateau1)")
-            print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-    elif sensors['baumer_niveau1'] is True:
-        await robot.setScore(robot.score + 1)
-        print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-        print ("$ Score +1 pour 'baumer_niveau1..' (gateau1)")
-        print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+    await check_sensors(test, True, "gateau1")
     test = 0
 
     # Construction gateau 2
@@ -401,38 +391,7 @@ async def start_match():
     await actuators.arms_collect()
 
     await asyncio.sleep(0.5)
-    if sensors['sick_niveau4'] is False and sensors['sick_niveau3'] is True and sensors['sick_niveau2'] is True and sensors['baumer_niveau1'] is True:
-        await robot.setScore(robot.score + 10)
-        print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-        print ("$ Score +10 pour 'sick_niveau4..' (gateau2)")
-        print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-    elif sensors['sick_niveau3'] is True and sensors['sick_niveau2'] is True and sensors['baumer_niveau1'] is True:
-        if test == 3:
-            await robot.setScore(robot.score + 6)
-            print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-            print ("$ Score +6 pour 'test == 3' (gateau2)")
-            print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-        else:
-            await robot.setScore(robot.score + 7)
-            print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-            print ("$ Score +7 pour 'test != 3' (gateau2)")
-            print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-    elif sensors['sick_niveau2'] is True and sensors['baumer_niveau1'] is True:
-        if test == 2:
-            await robot.setScore(robot.score + 2)
-            print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-            print ("$ Score +2 pour 'test == 2' (gateau2)")
-            print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-        else:
-            await robot.setScore(robot.score + 4)
-            print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-            print ("$ Score +4 pour 'test != 2' (gateau2)")
-            print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-    elif sensors['baumer_niveau1'] is True:
-        await robot.setScore(robot.score + 1)
-        print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-        print ("$ Score +1 pour 'baumer_niveau1..' (gateau2)")
-        print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+    await check_sensors(test, True, "gateau2")
     test = 0
 
     # Construction gateau 3
@@ -462,38 +421,7 @@ async def start_match():
     await actuators.arms_collect()
 
     await asyncio.sleep(0.5)
-    if sensors['sick_niveau4'] is False and sensors['sick_niveau3'] is True and sensors['sick_niveau2'] is True and sensors['baumer_niveau1'] is True:
-        await robot.setScore(robot.score + 10)
-        print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-        print ("$ Score +10 pour 'sick_niveau4..' (gateau3)")
-        print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-    elif sensors['sick_niveau3'] is True and sensors['sick_niveau2'] is True and sensors['baumer_niveau1'] is True:
-        if test == 3:
-            await robot.setScore(robot.score + 6)
-            print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-            print ("$ Score +6 pour 'test == 3' (gateau3)")
-            print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-        else:
-            await robot.setScore(robot.score + 7)
-            print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-            print ("$ Score +7 pour 'test != 3' (gateau3)")
-            print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-    elif sensors['sick_niveau2'] is True and sensors['baumer_niveau1'] is True:
-        if test == 2:
-            await robot.setScore(robot.score + 2)
-            print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-            print ("$ Score +2 pour 'test == 2' (gateau3)")
-            print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-        else:
-            await robot.setScore(robot.score + 4)
-            print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-            print ("$ Score +4 pour 'test != 2' (gateau3)")
-            print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-    elif sensors['baumer_niveau1'] is True:
-        await robot.setScore(robot.score + 1)
-        print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-        print ("$ Score +1 pour 'baumer_niveau1..' (gateau3)")
-        print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+    await check_sensors(test, True, "gateau3")
     test = 0
         
     # Recul
@@ -502,14 +430,6 @@ async def start_match():
     print('******************')
     await propulsion.translation(-0.15, 1.0)
     await asyncio.sleep(0.2)
-
-
-    #print('******************')
-    #print('******************')
-    #print(' STOOOOP!!!!      ')
-    #print('******************')
-    #print('******************')
-    #return
 
 
     T1 = time.time()
@@ -544,65 +464,32 @@ async def start_match():
         #taskarms = asyncio.create_task(actuators.arms_open())
         taskarms = asyncio.create_task(actuators.arms_collect())
         await propulsion.moveToRetry(poses.marron_assiette_1, 1.0)
+        available_stacks = available_stacks - 1
         await taskarms
         await actuators.arms_centering()
         await propulsion.pointTo(poses.assiette_1, 5.0)
         await propulsion.moveToRetry(poses.assiette_1, 1.0)
 
-        await propulsion.faceDirection(-90, 2.0)
-        await match_minicake()
-        cherry_in_dispenser = cherry_in_dispenser - 3
-        await robot.setScore(robot.score + 12)
-        print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-        print ("$ Score +12 pour minicake")
-        print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-
-        test = await distrib_cerises.get_layers()
-        #await distrib_cerises.distrib_pose_cerise()
-        #cherry_in_dispenser = cherry_in_dispenser-1
-        ##await actuators.arms_open()
-        #await actuators.arms_collect()
-        #
-        #if sensors['sick_niveau4'] is False and sensors['sick_niveau3'] is True and sensors['sick_niveau2'] is True and sensors['baumer_niveau1'] is True:
-        #    await robot.setScore(robot.score + 6)
-        #    print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-        #    print ("$ Score +6 pour 'sick_niveau4..' (assiette_1)")
-        #    print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-        #elif sensors['sick_niveau3'] is True and sensors['sick_niveau2'] is True and sensors['baumer_niveau1'] is True:
-        #    if test == 3:
-        #        await robot.setScore(robot.score + 3)
-        #        print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-        #        print ("$ Score +3 pour 'test == 3' (assiette_1)")
-        #        print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-        #    else:
-        #        await robot.setScore(robot.score + 5)
-        #        print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-        #        print ("$ Score +5 pour 'test != 3' (assiette_1)")
-        #        print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-        #elif sensors['sick_niveau2'] is True and sensors['baumer_niveau1'] is True:
-        #    if test == 2:
-        #        await robot.setScore(robot.score + 2)
-        #        print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-        #        print ("$ Score +2 pour 'test == 2' (assiette_1)")
-        #        print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-        #    else:
-        #        await robot.setScore(robot.score + 4)
-        #        print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-        #        print ("$ Score +4 pour 'test != 2' (assiette_1)")
-        #        print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-        #elif sensors['baumer_niveau1'] is True:
-        #    await robot.setScore(robot.score + 1)
-        #    print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-        #    print ("$ Score +1 pour 'baumer_niveau1..' (assiette_1)")
-        #    print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-        #try:
-        #    await propulsion.translation(-0.30, 0.5)
-        #except:
-        #    print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
-        #    print("Cannot retreat!!.. (assiette_1)")
-        #    print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
-        #test = 0
-
+        if (available_stacks > 3) or (minicake_done):
+            # Gateau 3 niveaux
+            test = await distrib_cerises.get_layers()
+            await distrib_cerises.distrib_pose_cerise()
+            cherry_in_dispenser = cherry_in_dispenser-1
+            #await actuators.arms_open()
+            await actuators.arms_collect()
+            await check_sensors(test, False, "assiette_1")
+            test = 0
+            await propulsion.translation(-0.200, 0.3)
+        else:
+            # minicake
+            await propulsion.faceDirection(-90, 2.0)
+            await match_minicake()
+            cherry_in_dispenser = cherry_in_dispenser - 3
+            await robot.setScore(robot.score + 12)
+            print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+            print ("$ Score +12 pour minicake")
+            print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+            minicake_done = True
 
     T1 = time.time()
     print ("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
@@ -611,9 +498,9 @@ async def start_match():
 
 
     # FIXME : DEBUG
-    jaune_1 = False
+    #jaune_1 = False
     await distrib_cerises.distrib_haut()
-    if jaune_1 == True and five_secs_limit == False and (cherry_in_dispenser>0):
+    if jaune_1 == True and five_secs_limit == False and (cherry_in_dispenser>0) and (not minicake_done):
         print('******************')
         print('******************')
         print('     jaune_1      ')
@@ -621,6 +508,7 @@ async def start_match():
         print('******************')
         await propulsion.pointTo(poses.prise_j1, 5.0)
         await propulsion.moveToRetry(poses.prise_j1, 1.0)
+        available_stacks = available_stacks - 1
         await actuators.arms_centering()
         await asyncio.sleep(0.2)
         try:
@@ -639,38 +527,7 @@ async def start_match():
         #await actuators.arms_open()
         await actuators.arms_collect()
 
-        if sensors['sick_niveau4'] is False and sensors['sick_niveau3'] is True and sensors['sick_niveau2'] is True and sensors['baumer_niveau1'] is True:
-            await robot.setScore(robot.score + 6)
-            print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-            print ("$ Score +6 pour 'sick_niveau4..' (jaune_1)")
-            print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-        elif sensors['sick_niveau3'] is True and sensors['sick_niveau2'] is True and sensors['baumer_niveau1'] is True:
-            if test == 3:
-                await robot.setScore(robot.score + 3)
-                print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-                print ("$ Score +3 pour 'test == 3' (jaune_1)")
-                print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-            else:
-                await robot.setScore(robot.score + 5)
-                print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-                print ("$ Score +5 pour 'test != 3' (jaune_1)")
-                print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-        elif sensors['sick_niveau2'] is True and sensors['baumer_niveau1'] is True:
-            if test == 2:
-                await robot.setScore(robot.score + 2)
-                print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-                print ("$ Score +2 pour 'test == 2' (jaune_1)")
-                print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-            else:
-                await robot.setScore(robot.score + 4)
-                print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-                print ("$ Score +4 pour 'test != 2' (jaune_1)")
-                print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-        elif sensors['baumer_niveau1'] is True:
-            await robot.setScore(robot.score + 1)
-            print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-            print ("$ Score +1 pour 'baumer_niveau1..' (jaune_1)")
-            print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+        await check_sensors(test, False, "jaune_1")
         test = 0
 
         await propulsion.translation(-0.20, 1.0)
@@ -679,12 +536,6 @@ async def start_match():
         else:
             await propulsion.faceDirection(-90, 5.0)
         await propulsion.translation(-0.20, 1.0)
-        if rose_1 == False:
-            if(robot.side == pos.Side.Blue):
-                await propulsion.faceDirection(-90, 5.0)
-            else:
-                await propulsion.faceDirection(90, 5.0)
-            await propulsion.translation(0.30, 1.0)
 
 
     # FIXME : DEBUG
@@ -700,67 +551,39 @@ async def start_match():
         #taskarms = asyncio.create_task(actuators.arms_open())
         taskarms = asyncio.create_task(actuators.arms_collect())
         await propulsion.moveToRetry(poses.marron_assiette_2, 1.0)
+        available_stacks = available_stacks - 1
         await taskarms
         await actuators.arms_centering()
         await propulsion.pointTo(poses.assiette_2, 5.0)
         await propulsion.moveToRetry(poses.assiette_2, 1.0)
 
-        await propulsion.faceDirection(90, 2.0)
-        await match_minicake()
-        cherry_in_dispenser = cherry_in_dispenser - 3
-        await robot.setScore(robot.score + 12)
-        print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-        print ("$ Score +12 pour minicake")
-        print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-
-        test = await distrib_cerises.get_layers()
-        #
-        #await distrib_cerises.distrib_pose_cerise()
-        #cherry_in_dispenser = cherry_in_dispenser-1
-        ##await actuators.arms_open()
-        #await actuators.arms_collect()
-        #
-        #if sensors['sick_niveau4'] is False and sensors['sick_niveau3'] is True and sensors['sick_niveau2'] is True and sensors['baumer_niveau1'] is True:
-        #    await robot.setScore(robot.score + 6)
-        #    print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-        #    print ("$ Score +6 pour 'sick_niveau4..' (assiette_2)")
-        #    print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-        #elif sensors['sick_niveau3'] is True and sensors['sick_niveau2'] is True and sensors['baumer_niveau1'] is True:
-        #    if test == 3:
-        #        await robot.setScore(robot.score + 3)
-        #        print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-        #        print ("$ Score +3 pour 'test == 3' (assiette_2)")
-        #        print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-        #    else:
-        #        await robot.setScore(robot.score + 5)
-        #        print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-        #        print ("$ Score +5 pour 'test != 3' (assiette_2)")
-        #        print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-        #elif sensors['sick_niveau2'] is True and sensors['baumer_niveau1'] is True:
-        #    if test == 2:
-        #        await robot.setScore(robot.score + 2)
-        #        print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-        #        print ("$ Score +2 pour 'test == 2' (assiette_2)")
-        #        print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-        #    else:
-        #        await robot.setScore(robot.score + 4)
-        #        print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-        #        print ("$ Score +4 pour 'test != 2' (assiette_2)")
-        #        print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-        #elif sensors['baumer_niveau1'] is True:
-        #    await robot.setScore(robot.score + 1)
-        #    print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-        #    print ("$ Score +1 pour 'baumer_niveau1..' (assiette_2)")
-        #    print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-        #test = 0
+        if (available_stacks > 3) or (minicake_done) or (cherry_in_dispenser < 2) or (five_secs_limit==True):
+            # Gateau 3 niveaux
+            test = await distrib_cerises.get_layers()
+            await distrib_cerises.distrib_pose_cerise()
+            cherry_in_dispenser = cherry_in_dispenser-1
+            #await actuators.arms_open()
+            await actuators.arms_collect()
+            await check_sensors(test, False, "assiette_2")
+            test = 0
+            await propulsion.translation(-0.200, 0.3)
+        else:
+            await propulsion.faceDirection(90, 2.0)
+            await match_minicake()
+            minicake_score = 3 + 3*cherry_in_dispenser
+            await robot.setScore(robot.score + minicake_score)
+            print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+            print ("$ Score +{} pour minicake".format(minicake_score))
+            print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+            cherry_in_dispenser = cherry_in_dispenser - 3
 
         await asyncio.sleep(0.2)
         await propulsion.translation(-0.15, 1.0)
 
     # FIXME : DEBUG
-    assiette_3 = False
+    #assiette_3 = False
     await distrib_cerises.distrib_haut()
-    if assiette_3 == True and five_secs_limit == False and (cherry_in_dispenser>0):
+    if assiette_3 == True and five_secs_limit == False and (cherry_in_dispenser>0) and (not minicake_done):
         print('******************')
         print('******************')
         print('    assiette_3    ')
@@ -770,6 +593,7 @@ async def start_match():
         #taskarms = asyncio.create_task(actuators.arms_open())
         taskarms = asyncio.create_task(actuators.arms_collect())
         await propulsion.moveToRetry(poses.marron_assiette_3, 1.0)
+        available_stacks = available_stacks - 1
         await taskarms
         await actuators.arms_centering()
         await propulsion.pointTo(poses.assiette_3, 5.0)
@@ -782,38 +606,7 @@ async def start_match():
         #await actuators.arms_open()
         await actuators.arms_collect()
 
-        if sensors['sick_niveau4'] is False and sensors['sick_niveau3'] is True and sensors['sick_niveau2'] is True and sensors['baumer_niveau1'] is True:
-            await robot.setScore(robot.score + 6)
-            print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-            print ("$ Score +6 pour 'sick_niveau4..' (assiette_3)")
-            print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-        elif sensors['sick_niveau3'] is True and sensors['sick_niveau2'] is True and sensors['baumer_niveau1'] is True:
-            if test == 3:
-                await robot.setScore(robot.score + 3)
-                print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-                print ("$ Score +3 pour 'test == 3' (assiette_3)")
-                print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-            else:
-                await robot.setScore(robot.score + 5)
-                print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-                print ("$ Score +5 pour 'test != 3' (assiette_3)")
-                print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-        elif sensors['sick_niveau2'] is True and sensors['baumer_niveau1'] is True:
-            if test == 2:
-                await robot.setScore(robot.score + 2)
-                print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-                print ("$ Score +2 pour 'test == 2' (assiette_3)")
-                print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-            else:
-                await robot.setScore(robot.score + 4)
-                print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-                print ("$ Score +4 pour 'test != 2' (assiette_3)")
-                print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-        elif sensors['baumer_niveau1'] is True:
-            await robot.setScore(robot.score + 1)
-            print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-            print ("$ Score +1 pour 'baumer_niveau1..' (assiette_3)")
-            print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+        await check_sensors(test, False, "assiette_3")
         test = 0
 
         await asyncio.sleep(0.2)
@@ -928,7 +721,7 @@ async def goto_final_pose():
     if (final_zone == buddy_actual_zone):
         await propulsion.pointTo(poses.zone_fin, 5.0)
         #await propulsion.moveToRetry(poses.zone_fin, 0.2)
-        await moveToRetry(poses.zone_fin, 0.2, -0.01, 10, True)
+        await propulsion.moveToRetry(poses.zone_fin, 0.2, -0.01, 10, True)
         #try :
         #    await propulsion.moveTo(poses.zone_fin, 0.2)
         #except:
@@ -938,7 +731,7 @@ async def goto_final_pose():
     else:
         await propulsion.pointTo(poses.zone_fin_au_fond, 5.0)
         #await propulsion.moveToRetry(poses.zone_fin_au_fond, 0.2)
-        await moveToRetry(poses.zone_fin_au_fond, 0.2, -0.01, 10, True)
+        await propulsion.moveToRetry(poses.zone_fin_au_fond, 0.2, -0.01, 10, True)
         #try :
         #    await propulsion.moveToRetry(poses.zone_fin_au_fond, 0.2)
         #except:
@@ -988,7 +781,14 @@ async def end_match():
 
 @robot.sequence
 async def robot_in_zone():
+    global robot_in_zone_done
+
+    if (robot_in_zone_done):
+        print ("Warning : robot_in_zone() scheduled multiple times!..")
+        return
+    robot_in_zone_done = True
     robot._adversary_detection_enable = False
+
     print('******************')
     print('******************')
     print(' robot_in_zone()  ')
@@ -1036,4 +836,42 @@ async def test_translation_neg():
 async def test_move_to():
     await propulsion.moveTo((0.7,0.5), 0.5)
 
+
+async def check_sensors(_test, _is_perfect, _target_name):
+    if _is_perfect:
+        big_score = 10
+    else:
+        big_score = 6
+    if sensors['sick_niveau4'] is False and sensors['sick_niveau3'] is True and sensors['sick_niveau2'] is True and sensors['baumer_niveau1'] is True:
+        await robot.setScore(robot.score + big_score)
+        print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+        print ("$ Score +{} pour 'sick_niveau4..' ({})".format(big_score, _target_name))
+        print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+    elif sensors['sick_niveau3'] is True and sensors['sick_niveau2'] is True and sensors['baumer_niveau1'] is True:
+        if _test == 3:
+            await robot.setScore(robot.score + 3)
+            print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+            print ("$ Score +3 pour '_test == 3' ({})".format(_target_name))
+            print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+        else:
+            await robot.setScore(robot.score + 5)
+            print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+            print ("$ Score +5 pour '_test != 3' ({})".format(_target_name))
+            print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+    elif sensors['sick_niveau2'] is True and sensors['baumer_niveau1'] is True:
+        if _test == 2:
+            await robot.setScore(robot.score + 2)
+            print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+            print ("$ Score +2 pour '_test == 2' ({})".format(_target_name))
+            print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+        else:
+            await robot.setScore(robot.score + 4)
+            print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+            print ("$ Score +4 pour '_test != 2' ({})".format(_target_name))
+            print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+    elif sensors['baumer_niveau1'] is True:
+        await robot.setScore(robot.score + 1)
+        print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+        print ("$ Score +1 pour 'baumer_niveau1..' ({})".format(_target_name))
+        print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
 

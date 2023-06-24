@@ -227,12 +227,12 @@ bras_gauche_depose_rose = {
 }
 
 bras_d_prep_minicake = {
-    'epaule_d': 1400,
+    'epaule_d': 1500,
     'coude_d': 500
 }
 
 bras_d_take_minicake = {
-    'epaule_d': 1400,
+    'epaule_d': 1500,
     'coude_d': 500
 }
 
@@ -429,10 +429,11 @@ async def construction_gateau_haut_vert():
 
     # depose jaune
     ####await goldo_lift_move(GoldoLift.Right, 800)
-    await goldo_lift_move(GoldoLift.Right, 840)
+    await goldo_lift_move(GoldoLift.Right, 860)
     await asyncio.sleep(0.2)
     await servos.moveMultiple(bras_droit_depose_jaune, 1)
-    await goldo_lift_move(GoldoLift.Right, 400)
+    await asyncio.sleep(0.5)
+    await goldo_lift_move(GoldoLift.Right, 350)
     await asyncio.sleep(0.2)
     await right_pump_off()
     await asyncio.sleep(0.2)
@@ -639,9 +640,11 @@ async def construction_gateau_haut_bleu():
 
     # depose jaune
     #await goldo_lift_move(GoldoLift.Left, 800)
-    await goldo_lift_move(GoldoLift.Left, 820)
+    await goldo_lift_move(GoldoLift.Left, 840)
+    await asyncio.sleep(0.3)
     await servos.moveMultiple(bras_gauche_depose_jaune, 1)
-    await goldo_lift_move(GoldoLift.Left, 600)
+    await asyncio.sleep(0.5)
+    await goldo_lift_move(GoldoLift.Left, 380)
     await asyncio.sleep(0.3)
     await left_pump_off()
     await asyncio.sleep(0.2)
