@@ -74,6 +74,7 @@ async def prematch():
 
     await pneumatic.lcd_off()
     await barillet.reset_valves()
+    await reset_motors()
     await barillet.start_compressor()
     await barillet.barillet_init()
     await asyncio.sleep(2)
