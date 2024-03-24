@@ -80,7 +80,7 @@ class TestActuatorsDialog(QDialog):
             servos.append((s.name, i))
             i += 1
         self._servos = servos
-        self._servo_values = ActuatorValuesWidget(servos)
+        #self._servo_values = ActuatorValuesWidget(servos)
         self._button_go = QPushButton('go')
 
         layout = QGridLayout()
@@ -126,15 +126,27 @@ class TestActuatorsDialog(QDialog):
         self.button_go.clicked.connect(self._go)
 
     def _go(self):
-        servo_id = self.combobox_servo.currentIndex()
+        i = self.combobox_servo.currentIndex()
+        servo_name = self._servos[i][0]
+        servo_id = self._servos[i][1]
+        print(i,servo_name,servo_id)
         position = self.spinbox_value.value()
         speed = self.spinbox_speed.value()
         torque = self.spinbox_torque.value()
         
-        elts = []
-        elts.append(_sym_db.GetSymbol('goldo.nucleo.servos.ServoPosition')(servo_id=servo_id, position=position))
-        msg = _sym_db.GetSymbol('goldo.nucleo.servos.CmdMoveMultiple')(speed=speed, positions=elts)
+        #servo_torques = []
+        #servo_torques.append(_sym_db.GetSymbol('goldo.nucleo.servos.ServoTorque')(servo_id=servo_id, torque=128))
+        #msg = _sym_db.GetSymbol('goldo.nucleo.servos.CmdSetMaxTorques')(torques=servo_torques)
+        #self._client.publishTopic('nucleo/in/servo/set_max_torques', msg)
 
+        servo_enables = []
+        servo_enables.append(_sym_db.GetSymbol('goldo.nucleo.servos.ServoEnable')(servo_id=servo_id, enable=True))
+        msg = _sym_db.GetSymbol('goldo.nucleo.servos.CmdSetEnable')(enables=servo_enables)
+        self._client.publishTopic('nucleo/in/servo/enable/set', msg)
+
+        servo_poses = []
+        servo_poses.append(_sym_db.GetSymbol('goldo.nucleo.servos.ServoPosition')(servo_id=servo_id, position=position))
+        msg = _sym_db.GetSymbol('goldo.nucleo.servos.CmdMoveMultiple')(speed=speed, positions=servo_poses)
         self._client.publishTopic('nucleo/in/servo/move_multiple', msg)
         
     def _on_robot_state(self, msg):
@@ -149,5 +161,5 @@ class TestActuatorsDialog(QDialog):
         
     def set_client(self, client):
         self._client = client
-        self._servo_values._client = client
+        #self._servo_values._client = client
         self._client.registerCallback('gui/in/robot_state', self._on_robot_state)
