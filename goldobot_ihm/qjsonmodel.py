@@ -39,7 +39,8 @@ Changes:
 
 import json
 
-from Qt import QtWidgets, QtCore, __binding__
+#from PyQt5 import QtWidgets, QtCore, __binding__
+from PyQt5 import QtWidgets, QtCore
 
 
 class QJsonTreeItem(object):
@@ -194,10 +195,7 @@ class QJsonModel(QtCore.QAbstractItemModel):
                 item = index.internalPointer()
                 item.value = str(value)
 
-                if __binding__ in ("PySide", "PyQt4"):
-                    self.dataChanged.emit(index, index)
-                else:
-                    self.dataChanged.emit(index, index, [QtCore.Qt.EditRole])
+                self.dataChanged.emit(index, index, [QtCore.Qt.EditRole])
 
                 return True
 
