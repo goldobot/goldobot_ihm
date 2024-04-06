@@ -44,6 +44,7 @@ from .widgets.goldo_1 import Goldo1
 from goldobot import config
 
 import google.protobuf as _pb
+from google.protobuf import symbol_database
 _sym_db = _pb.symbol_database.Default()
 
 import goldobot_ihm.dialogs as _dialogs

@@ -252,7 +252,8 @@ class Goldo1(QWidget):
 
     def _on_timer(self):
         msg = _sym_db.GetSymbol('goldo.nucleo.fpga.AdcRead')(chan = self.adc_chan)
-        self._client.publishTopic('nucleo/in/fpga/adc/read', msg)
+        # FIXME : DEBUG
+        #self._client.publishTopic('nucleo/in/fpga/adc/read', msg)
         if self.adc_chan == 2:
             self.adc_chan = 4
         elif self.adc_chan == 4:

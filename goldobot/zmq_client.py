@@ -4,6 +4,8 @@ import struct
 from PyQt5.QtCore import QObject, QSocketNotifier, pyqtSignal
 from PyQt5.QtGui import QPixmap
 
+from scapy.all import hexdump
+
 from goldobot.messages import NucleoFirmwareVersion
 from goldobot.messages import PropulsionTelemetryEx
 from goldobot.messages import RplidarPlot
@@ -16,6 +18,7 @@ from goldobot import message_types
 import goldobot.pb2 as _goldo_pb2
 
 import google.protobuf as _pb
+from google.protobuf import symbol_database
 _sym_db = _pb.symbol_database.Default()
 
 class ZmqClient(QObject):
@@ -73,6 +76,8 @@ class ZmqClient(QObject):
         self._push_socket.send_multipart([struct.pack('<BBHIi',0,0,message_type,0,0), message_body])
 
     def publishTopic(self, topic, msg = None):
+        # FIXME : DEBUG
+        #print ("publishTopic('{}')".format(topic))
         if msg is None:
             msg = _sym_db.GetSymbol('google.protobuf.Empty')()
         self._socket_main_pub.send_multipart([topic.encode('utf8'),
@@ -89,6 +94,8 @@ class ZmqClient(QObject):
         self._callbacks.append((re.compile(f"^{pattern}$"), callback, full))
 
     def onMessage(self, topic, msg):
+        # FIXME : DEBUG
+        #print ("onMessage('{}')".format(topic))
         callback_matches = ((regexp.match(topic), callback, full) for regexp, callback, full in self._callbacks)
         for match, callback, full in callback_matches:
             if match:
@@ -138,12 +145,22 @@ class ZmqClient(QObject):
         flags = socket.getsockopt(zmq.EVENTS)
         while flags & zmq.POLLIN:
             topic, full_name, payload = socket.recv_multipart()
+            # FIXME : DEBUG
+            #print ("TOPIC")
+            #hexdump (topic)
+            #print ("FULL_NAME")
+            #hexdump (full_name)
+            #print ("PAYLOAD")
+            #hexdump (payload)
             flags = socket.getsockopt(zmq.EVENTS)
             topic = topic.decode('utf8')
             full_name = full_name.decode('utf8')
             try:
                 msg_class = _sym_db.GetSymbol(full_name)
                 if msg_class is not None:
+                    # FIXME : DEBUG
+                    #print (topic)
+                    #print (full_name)
                     msg = msg_class()
                     msg.ParseFromString(payload)
                 else:

@@ -1,7 +1,7 @@
 import math
 import os
 
-from PyQt5.QtCore import QObject, pyqtSignal, QSize, QRectF, QPointF, Qt
+from PyQt5.QtCore import QObject, pyqtSignal, QSize, QRectF, QPointF, Qt, QTimer
 
 from PyQt5.QtWidgets import QLabel
 
@@ -180,10 +180,14 @@ class TableViewWidget(QGraphicsView):
         #self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         #self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         
+        self._timer = QTimer(self)
+        self._timer.timeout.connect(self.on_timer)
+        self._timer.start(1000)
         
         
         self._robots = {}
         self._adversary_detections = {}
+        self._adversary_detections_valid = {}
         self._waypoints = []
         self._sequences_poses = []
         self._colors = {
@@ -415,12 +419,24 @@ class TableViewWidget(QGraphicsView):
                 self._scene.addItem(ad)
             ad = self._adversary_detections[d.id]
             ad.setPos(d.x * 1000, d.y * 1000)
+            self._adversary_detections_valid[d.id] = 3
         zones = msg.rplidar.zones
         self._little_robot._near_front.setBrush(QBrush(QColor('red' if zones.front_near else 'green')))
         self._little_robot._far_front.setBrush(QBrush(QColor('red' if zones.front_far else 'green')))
         self._little_robot._near_back.setBrush(QBrush(QColor('red' if zones.back_near else 'green')))
         self._little_robot._far_back.setBrush(QBrush(QColor('red' if zones.back_far else 'green')))
                 
+    def on_timer(self):
+        to_be_del = []
+        for _id in self._adversary_detections_valid.keys():
+            self._adversary_detections_valid[_id] = self._adversary_detections_valid[_id] - 1
+            if self._adversary_detections_valid[_id] < 1:
+                ad = self._adversary_detections[_id]
+                self._scene.removeItem(ad)
+                del self._adversary_detections[_id]
+                to_be_del.append(_id)
+        for _id in to_be_del:
+            del self._adversary_detections_valid[_id]
             
         
    
