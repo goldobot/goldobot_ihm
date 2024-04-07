@@ -1,3 +1,5 @@
+# Sequences de la Coupe de France 2023 - gardees pour test & debug
+
 # import base modules
 import asyncio
 import numpy as np
