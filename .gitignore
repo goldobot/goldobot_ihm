@@ -4,6 +4,7 @@
 __pycache__/
 sequence_names.txt
 goldo_log.txt
+.vscode
 
 # Environments
 .env
