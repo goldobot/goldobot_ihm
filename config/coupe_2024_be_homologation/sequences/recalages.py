@@ -47,7 +47,7 @@ async def recalage_zone_1():
     print("Recalage axe Y")
     await propulsion.reposition(-1.0, 0.2)
     await asyncio.sleep(0.5)
-    await propulsion.setPose([propulsion.pose.position.x , 1.5 - rc.robot_back_length], 90)
+    await propulsion.setPose([propulsion.pose.position.x , -1.5 + rc.robot_back_length], 90)
     await asyncio.sleep(0.5)
 
     print("go depart")

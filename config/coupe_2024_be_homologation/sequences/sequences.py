@@ -20,15 +20,19 @@ five_secs_limit = False
 in_zone = False
 robot_in_zone_done = False
 end_action = None
+solar_panels = False
+solar_panels_score = 0
 
 #Task pour verifier si un robot prend .. certains objets ..
 async def check_areas():
     global check_areas_b
+    global solar_panels
+    global solar_panels_score
     while check_areas_b:
-        # FIXME : TODO
-        #if lidar.objectInDisk(poses.marron_assiette_1, 0.20):
-        #    assiette_1 = False
-        #    available_stacks = available_stacks - 1
+        if lidar.objectInRectangle([2.0, -0.5], [1.5, 0.5]):
+            print("SOLAR PANELS DETECTION")
+            solar_panels_score = 0
+            solar_panels = False
         await asyncio.sleep(0.2)
 
 
@@ -36,6 +40,8 @@ async def check_areas():
 async def prematch():
 
     global poses
+
+    await robot.setScore(0)
 
     if robot.side == pos.Side.Blue:
         poses = pos.BluePoses
@@ -61,6 +67,36 @@ async def prematch():
     # Placement
     await recalages.recalage()
 
+    if robot.side == pos.Side.Blue:
+        await propulsion.faceDirection(140, 1.5)
+    else:
+        await propulsion.faceDirection(-140, 1.5)
+
+    await propulsion.moveTo(poses.start_pose, 0.2)
+
+    if robot.side == pos.Side.Blue:
+        await propulsion.faceDirection(90, 1.5)
+        await asyncio.sleep(0.5)
+    else:
+        await propulsion.faceDirection(-90, 1.5)
+        await asyncio.sleep(0.5)
+
+    await propulsion.translation(-0.05, 0.5)
+
+    if robot.side == pos.Side.Blue:
+        await propulsion.faceDirection(90, 1.5)
+        await asyncio.sleep(0.5)
+    else:
+        await propulsion.faceDirection(-90, 1.5)
+        await asyncio.sleep(0.5)
+
+    await actuators.lift_right_solar_panel()
+    await actuators.lift_left_solar_panel()
+    await asyncio.sleep(0.5)
+    await actuators.arms_down()
+
+    await robot.gpioSet('keyboard_led', True)
+
     return True
 
 
@@ -78,34 +114,26 @@ async def start_match():
     global in_zone
     global robot_in_zone_done
     global end_action
+    global solar_panels
+    global solar_panels_score
 
     check_areas_b = True
-    available_stacks = 7
-    minicake_done = False
-    assiette_1 = True
-    assiette_2 = True
-    assiette_3 = True
-    jaune_1 = True
-    rose_1 = True
-    jaune_2 = True
-    rose_2 = True
     five_secs_limit = False
     in_zone = False
-    robot_in_zone_done = False
     end_action = None
+    solar_panels_score = 0
 
     await propulsion.setAccelerationLimits(1,1,20,20)
     strategy.addTimerCallback(1, end_match)
-    strategy.addTimerCallback(2, robot_in_zone)
-    strategy.addTimerCallback(15, need_end_match)
+    #strategy.addTimerCallback(15, need_end_match)
 
-    end_action = strategy.create_action('return_home')
-    end_action.opponent_radius = 0.3
-    end_action.sequence_prepare = 'arms_close'
-    end_action.sequence = 'end_match'
-    end_action.enabled = True
-    end_action.priority = 0
-    end_action.begin_pose = poses.zone_fin
+    # end_action = strategy.create_action('return_home')
+    # end_action.opponent_radius = 0.3
+    # end_action.sequence_prepare = 'arms_close'
+    # end_action.sequence = 'end_match'
+    # end_action.enabled = True
+    # end_action.priority = 0
+    # end_action.begin_pose = poses.zone_fin
 
     robot._adversary_detection_enable = True
     try:
@@ -113,45 +141,223 @@ async def start_match():
     except:
         print("Tasklidar failed")
 
-    T1 = time.time()
-    print ("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
-    print ("T match_timer = {}".format(T1-T0))
-    print ("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
-
-    print('*********************')
-    print('Rush initial         ')
-    print('*********************')
-    if robot.start_zone == 1 or robot.start_zone == 6:
-        pass
+    # Premier panneau
+    if robot.side == pos.Side.Blue:
+        await actuators.lift_right_solar_panel()
+        await actuators.prepare_solar_panel_right()
+        await actuators.lift_right_solar_panel()
+        await asyncio.sleep(1.0)
+        await actuators.hit_solar_panel_right()
     else:
-        pass
+        await actuators.lift_left_solar_panel()
+        await actuators.prepare_solar_panel_left()
+        await actuators.lift_left_solar_panel()
+        await asyncio.sleep(1.0)
+        await actuators.hit_solar_panel_left()
+    await robot.setScore(robot.score + 5)
+
+    # 2eme panneau
+    await propulsion.moveToRetry(poses.panneau_2, 0.6)
+    if robot.side == pos.Side.Blue:
+        await propulsion.faceDirection(90, 1.5)
+        
+        await actuators.hit_solar_panel_right()
+    else:
+        await propulsion.faceDirection(-90, 1.5)
+        await actuators.hit_solar_panel_left()
+    await robot.setScore(robot.score + 5)
+
+    # 3eme panneau
+    await propulsion.moveToRetry(poses.panneau_3, 0.6)
+    if robot.side == pos.Side.Blue:
+        await propulsion.faceDirection(90, 1.5)
+        await actuators.hit_solar_panel_right()
+    else:
+        await propulsion.faceDirection(-90, 1.5)
+        await actuators.hit_solar_panel_left()
+    await robot.setScore(robot.score + 5)
+
+    # Check panneaux milieu
+    try:
+        if not lidar.objectInRectangle([2.0, -0.5], [1.5, 0.5]):
+            await propulsion.moveToRetry(poses.panneau_4, 0.6)
+            if robot.side == pos.Side.Blue:
+                await propulsion.faceDirection(90, 3.0)
+                await actuators.hit_solar_panel_right()
+            else:
+                await propulsion.faceDirection(-90, 3.0)
+                await actuators.hit_solar_panel_left()
+            solar_panels_score = solar_panels_score + 5
+        else:
+            raise Exception("apapossib")
+        
+        if not lidar.objectInRectangle([2.0, -0.5], [1.5, 0.5]):
+            await propulsion.moveToRetry(poses.panneau_5, 0.6)
+            if robot.side == pos.Side.Blue:
+                await propulsion.faceDirection(90, 3.0)
+                await actuators.hit_solar_panel_right()
+            else:
+                await propulsion.faceDirection(-90, 3.0)
+                await actuators.hit_solar_panel_left()
+            solar_panels_score = solar_panels_score + 5
+        else:
+            raise Exception("apapossib")
+
+        if not lidar.objectInRectangle([2.0, -0.5], [1.5, 0.5]):
+            await propulsion.moveToRetry(poses.panneau_6, 0.6)
+            if robot.side == pos.Side.Blue:
+                await propulsion.faceDirection(90, 3.0)
+                await actuators.hit_solar_panel_right()
+            else:
+                await propulsion.faceDirection(-90, 3.0)
+                await actuators.hit_solar_panel_left()
+            solar_panels_score = solar_panels_score + 5
+            solar_panels = True
+        else:
+            raise Exception("apapossib")
+    except:
+        print("Problem doing central panels")
+        await propulsion.translation(-0.15, 0.5)
+        await propulsion.pointTo(poses.backup_1, 8.0)
+        await propulsion.moveToRetry(poses.backup_1, 0.6)
+    else:
+        await propulsion.translation(-0.15, 0.5)
+    finally:
+        await actuators.arms_safe()
+
+    await propulsion.pointTo(poses.prise_plantes_1, 8.0)
+    await actuators.arms_down()
+
+    await propulsion.moveToRetry(poses.prise_plantes_1, 0.6)
+    await actuators.arms_collect()
+    await propulsion.pointTo(poses.depose_plantes_1, 8.0)
+    await propulsion.moveToRetry(poses.depose_plantes_1, 0.4)
+    await robot.setScore(robot.score + 6)
+    try:
+        await propulsion.translation(-0.3, 0.4)
+    except:
+        await propulsion.translation(0.15, 0.4)
+        await propulsion.translation(-0.15, 0.4)
+    finally:
+        await actuators.arms_safe()
+
+    await propulsion.pointTo(poses.prise_plantes_2, 8.0)
+    await propulsion.moveToRetry(poses.prise_plantes_2, 0.6)
+    await actuators.arms_collect()
+    await propulsion.pointTo(poses.retour_plantes_3, 8.0)
+    await propulsion.moveToRetry(poses.retour_plantes_3, speed=0.4)
+    await robot.setScore(robot.score + 3)
+    try:
+        await propulsion.translation(-0.3, 0.4)
+    except:
+        await propulsion.translation(0.15, 0.4)
+        await propulsion.translation(-0.15, 0.4)
+    finally:
+        await actuators.arms_safe()
+
+    await asyncio.sleep(0.5)
+
+    if not lidar.objectInRectangle(poses.zone_1, poses.zone_2):
+        if not lidar.objectInDisk(poses.zone_3, 0.3):
+            await propulsion.pointTo(poses.prise_plantes_3, 5.0)
+            await propulsion.moveToRetry(poses.prise_plantes_3, 0.6)
+            if not lidar.objectInRectangle(poses.zone_1, poses.zone_2):
+                if not lidar.objectInDisk(poses.zone_3, 0.2):
+                    await propulsion.pointTo(poses.depose_plantes_3, 5.0)
+                    await actuators.arms_collect()
+                    await propulsion.moveToRetry(poses.depose_plantes_3, 0.4)
+                    await robot.setScore(robot.score + 3)
+                    try:
+                        await propulsion.translation(-0.3, 0.4)
+                    except:
+                        await propulsion.translation(0.15, 0.4)
+                        await propulsion.translation(-0.15, 0.4)
+                    finally:
+                        await actuators.arms_safe()        
+
+    Ttest = time.time()
+    time_val = 70-(Ttest-T0)
+    if time_val > 0:
+        await asyncio.sleep(70-(Ttest-T0))
     
-    await actuators.goldo_lifts_move(520, 80)
+    T1 = time.time()
+    # Retry panneaux
+    try:
+        if not solar_panels:
+            if T1 - T0 < 90:
+                if not lidar.objectInRectangle([2.0, -0.5], [1.5, 0.5]):
+                    await propulsion.translation(-0.3, 0.4)
+                    await asyncio.sleep(0.5)
+                    await propulsion.pointTo(poses.panneau_4, 8.0)
+                    await actuators.arms_safe()
+                    await propulsion.moveToRetry(poses.panneau_4, 1.0)
 
-    check_areas_b = False
+                    if robot.side == pos.Side.Blue:
+                        await propulsion.faceDirection(90, 3.0)
+                        await asyncio.sleep(0.5)
+                    else:
+                        await propulsion.faceDirection(-90, 3.0)
+                        await asyncio.sleep(0.5)
 
-    # retour en zone
+                    if robot.side == pos.Side.Blue:
+                        await actuators.lift_right_solar_panel()
+                        await actuators.prepare_solar_panel_right()
+                        await actuators.lift_right_solar_panel()
+                        await asyncio.sleep(1.0)
+                        await actuators.hit_solar_panel_right()
+                    else:
+                        await actuators.lift_left_solar_panel()
+                        await actuators.prepare_solar_panel_left()
+                        await actuators.lift_left_solar_panel()
+                        await asyncio.sleep(1.0)
+                        await actuators.hit_solar_panel_left()
+                    solar_panels_score = solar_panels_score + 5
+                    solar_panels = True
+
+                    T2 = time.time()
+                    if T2 - T0 < 80:
+                        if not lidar.objectInRectangle([2.0, -0.5], [1.5, 0.5]):
+                            await propulsion.moveToRetry(poses.panneau_5, 0.6)
+                            if robot.side == pos.Side.Blue:
+                                await propulsion.faceDirection(90, 1.5)
+                                await actuators.hit_solar_panel_right()
+                            else:
+                                await propulsion.faceDirection(-90, 1.5)
+                                await actuators.hit_solar_panel_left()
+                        else:
+                            raise Exception("apapossib")
+                    solar_panels_score = solar_panels_score + 5
+
+                    T3 = time.time()
+                    if T3 - T0 < 80:
+                        if not lidar.objectInRectangle([2.0, -0.5], [1.5, 0.5]):
+                            await propulsion.moveToRetry(poses.panneau_6, 0.6)
+                            if robot.side == pos.Side.Blue:
+                                await propulsion.faceDirection(90, 1.5)
+                                await actuators.hit_solar_panel_right()
+                            else:
+                                await propulsion.faceDirection(-90, 1.5)
+                                await actuators.hit_solar_panel_left()
+                        else:
+                            raise Exception("apapossib")
+                    solar_panels_score = solar_panels_score + 5
+    except:
+        await propulsion.translation(-0.15, 0.5)
+    else:
+        await propulsion.translation(-0.15, 0.5)
+    finally:
+        await actuators.arms_safe()
+
+
     await goto_final_pose()
+
+    if solar_panels:
+        print("SOLAR_PANELS_SCORE")
+        print(solar_panels_score)
+        print("SOLAR_PANELS_SCORE")
+        await robot.setScore(robot.score + solar_panels_score)
+
     end_action.enabled = False
-
-def get_point_zone(x,y):
-    my_x = x
-    my_y = y
-
-    if (my_x>1.550)   and (my_x<2.000)   and (my_y>-1.500)   and (my_y<-1.050)   and (robot.side == pos.Side.Blue):
-        return 1
-    if (my_x>0.775)   and (my_x<1.225)   and (my_y>-1.500)   and (my_y<-1.050)   and (robot.side == pos.Side.Yellow):
-        return 2
-    if (my_x>0.000)   and (my_x<0.450)   and (my_y>-1.500)   and (my_y<-1.050)   and (robot.side == pos.Side.Blue):
-        return 3
-    if (my_x>0.000)   and (my_x<0.450)   and (my_y> 1.050)   and (my_y< 1.500)   and (robot.side == pos.Side.Yellow):
-        return 4
-    if (my_x>0.775)   and (my_x<1.225)   and (my_y> 1.050)   and (my_y< 1.500)   and (robot.side == pos.Side.Blue):
-        return 5
-    if (my_x>1.550)   and (my_x<2.000)   and (my_y< 1.050)   and (my_y> 1.500)   and (robot.side == pos.Side.Yellow):
-        return 6
-
-    return 0
 
 def get_robot_actual_zone():
     my_x = propulsion.pose.position.x
@@ -162,34 +368,16 @@ def get_robot_actual_zone():
 @robot.sequence
 async def goto_final_pose():
     global in_zone
+    global check_areas_b
     print('******************')
     print('******************')
     print('  retour en zone  ')
     print('******************')
     print('******************')
-    await propulsion.pointTo(poses.zone_fin, 5.0)
-    #await actuators.arms_close()
-    final_speed = 1.0
-    final_zone = get_point_zone(poses.zone_fin[0],poses.zone_fin[1])
-    print ("final_zone = {}".format(final_zone))
-    for i in range(1,3):
-        try:
-            await propulsion.moveTo(poses.zone_fin, final_speed)
-            break
-        except:
-            print('!!!!!!!!!!!!!!!!!!!!!')
-            print(' EXCEPTION           ')
-            print('!!!!!!!!!!!!!!!!!!!!!')
-            print(" robot_pose = ({}, {})".format(propulsion.pose.position.x, propulsion.pose.position.y))
-            await asyncio.sleep(1.0)
-            print('Clear error')
-            await propulsion.clearError()
-            await propulsion.setMotorsEnable(True)
-            await propulsion.setEnable(True)
-            final_speed = 0.4
-    robot._adversary_detection_enable = False
-    robot_actual_zone = get_robot_actual_zone()
-    print ("robot_actual_zone = {}".format(robot_actual_zone))
+    await propulsion.pointTo(poses.end_pose, 5.0)
+    await propulsion.moveToRetry(poses.end_pose, 0.5)
+    await robot.setScore(robot.score + 10)
+
 
 async def need_end_match():
     global five_secs_limit
@@ -204,12 +392,15 @@ async def the_end():
 async def end_match():
     global in_zone
     global end_action
+    global solar_panels_score
+    global solar_panels
     print('******************')
     print('******************')
     print('end match callback')
     print('******************')
     print('******************')
     end_action.enabled = False
+
 
     pass
 
@@ -255,4 +446,3 @@ async def robot_in_zone():
 
 async def arms_safe():
     await actuators.arms_close()
-
