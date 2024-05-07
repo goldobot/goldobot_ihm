@@ -78,74 +78,83 @@ nucleo:
   servos:
     # Carousel
     - name: carousel
-      id: 86
+      id: 85
       type: DYNAMIXEL_MX28
-      max_speed: 12000
+      max_speed: 0xffff
       max_torque: 0x3ff
-      cw_limit: 148
-      ccw_limit: 4051
+      cw_limit: 0
+      ccw_limit: 28672
     - name: ejecteur_gauche
-      id: 10
+      id: 4
       type: DYNAMIXEL_AX12
       max_speed: 0x3ff
       max_torque: 0x3ff
-      cw_limit: 518
-      ccw_limit: 820
+      cw_limit: 512
+      ccw_limit: 960
     - name: ejecteur_centre
-      id: 10
+      id: 9
       type: DYNAMIXEL_AX12
       max_speed: 0x3ff
       max_torque: 0x3ff
-      cw_limit: 518
-      ccw_limit: 820
+      cw_limit: 370
+      ccw_limit: 512
     - name: ejecteur_droit
       id: 10
       type: DYNAMIXEL_AX12
       max_speed: 0x3ff
       max_torque: 0x3ff
-      cw_limit: 518
-      ccw_limit: 820
+      cw_limit: 70
+      ccw_limit: 495
 
     # Toboggan
     - name: toboggan
-      id: 10
+      id: 2
       type: DYNAMIXEL_AX12
       max_speed: 0x3ff
       max_torque: 0x3ff
       cw_limit: 518
       ccw_limit: 820
 
+    # Tourne panneaux
+    - name: tourne_panneau
+      id: 1
+      type: DYNAMIXEL_AX12
+      max_speed: 0x3ff
+      max_torque: 0x3ff
+      cw_limit: 0
+      ccw_limit: 1023
+
     # Balayeur
     - name: balayeur_gauche
-      id: 11
+      id: 9
       type: STANDARD
       max_speed: 65000
       max_torque: 10
-      cw_limit: 6800
+      cw_limit: 6000
       ccw_limit: 20000
     - name: balayeur_droit
-      id: 11
+      id: 8
       type: STANDARD
       max_speed: 65000
       max_torque: 10
-      cw_limit: 6800
+      cw_limit: 6000
       ccw_limit: 20000
     
     # Portes
     - name: porte_gauche
-      id: 11
+      id: 7
       type: STANDARD
       max_speed: 65000
       max_torque: 10
-      cw_limit: 6800
-      ccw_limit: 20000
+      cw_limit: 7000
+      ccw_limit: 10000
     - name: porte_droite
-      id: 11
+      id: 6
       type: STANDARD
       max_speed: 65000
       max_torque: 10
-      cw_limit: 6800
-      ccw_limit: 20000
+      cw_limit: 9000
+      ccw_limit: 12100
 
     # Demineur
     - name: demineur
@@ -156,7 +165,36 @@ nucleo:
       cw_limit: 6800
       ccw_limit: 20000
 
+    # Turbine
+    - name: turbine_g
+      id: 5
+      type: STANDARD
+      max_speed: 65000
+      max_torque: 10
+      cw_limit: 2000
+      ccw_limit: 40000
+    - name: turbine_d
+      id: 10
+      type: STANDARD
+      max_speed: 65000
+      max_torque: 10
+      cw_limit: 2000
+      ccw_limit: 40000
+
+
   sensors:
+    - name: tirette
+      type: NUCLEO
+      id: 3
+    - name: emergency_stop
+      type: NUCLEO
+      id: 7
+    - name: haut_cheminee_droite
+      type: FPGA
+      id: 16
+    - name: haut_cheminee_gauche
+      type: FPGA
+      id: 17
 
   sequence_files:
     - "sequences/constants.txt"

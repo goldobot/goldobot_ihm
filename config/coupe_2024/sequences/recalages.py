@@ -1,5 +1,5 @@
 import asyncio
-from . import positions as pos
+from .positions import *
 from . import robot_config as rc
 
 
@@ -22,7 +22,7 @@ async def recalage():
 
 
 async def recalage_zone_1():
-    poses = pos.YellowPoses
+    poses = YellowPoses
 
     await propulsion.setMotorsEnable(True)
     await propulsion.setEnable(True)
@@ -47,7 +47,7 @@ async def recalage_zone_1():
     print("Recalage axe Y")
     await propulsion.reposition(-1.0, 0.2)
     await asyncio.sleep(0.5)
-    await propulsion.setPose([propulsion.pose.position.x , 1.5 - rc.robot_back_length], 90)
+    await propulsion.setPose([propulsion.pose.position.x , -1.5 + rc.robot_back_length], 90)
     await asyncio.sleep(0.5)
 
     print("go depart")
@@ -57,7 +57,7 @@ async def recalage_zone_1():
     await asyncio.sleep(0.5)
 
 async def recalage_zone_2():
-    poses = pos.BluePoses
+    poses = BluePoses
 
     await propulsion.setMotorsEnable(True)
     await propulsion.setEnable(True)
@@ -82,7 +82,7 @@ async def recalage_zone_2():
     print("Recalage axe Y")
     await propulsion.reposition(-1.0, 0.2)
     await asyncio.sleep(0.5)
-    await propulsion.setPose([propulsion.pose.position.x , 1.5 - rc.robot_back_length], 90)
+    await propulsion.setPose([propulsion.pose.position.x , -1.5 + rc.robot_back_length], 90)
     await asyncio.sleep(0.5)
 
     print("go depart")
@@ -92,7 +92,7 @@ async def recalage_zone_2():
     await asyncio.sleep(0.5)
 
 async def recalage_zone_3():
-    poses = pos.YellowPoses
+    poses = YellowPoses
 
     await propulsion.setMotorsEnable(True)
     await propulsion.setEnable(True)
@@ -117,7 +117,7 @@ async def recalage_zone_3():
     print("Recalage axe Y")
     await propulsion.reposition(-1.0, 0.2)
     await asyncio.sleep(0.5)
-    await propulsion.setPose([propulsion.pose.position.x , 1.5 - rc.robot_back_length], 90)
+    await propulsion.setPose([propulsion.pose.position.x , -1.5 + rc.robot_back_length], 90)
     await asyncio.sleep(0.5)
 
     print("go depart")
@@ -127,7 +127,7 @@ async def recalage_zone_3():
     await asyncio.sleep(0.5)
 
 async def recalage_zone_4():
-    poses = pos.BluePoses
+    poses = BluePoses
 
     await propulsion.setMotorsEnable(True)
     await propulsion.setEnable(True)
@@ -156,13 +156,13 @@ async def recalage_zone_4():
     await asyncio.sleep(0.5)
 
     print("go depart")
-    await propulsion.moveTo(poses.zone1_start_pose, 0.2)
+    await propulsion.moveTo(poses.zone4_start_pose, 0.2)
     await asyncio.sleep(0.5)
     await propulsion.faceDirection(-90, 1)
     await asyncio.sleep(0.5)
 
 async def recalage_zone_5():
-    poses = pos.YellowPoses
+    poses = YellowPoses
 
     await propulsion.setMotorsEnable(True)
     await propulsion.setEnable(True)
@@ -197,7 +197,7 @@ async def recalage_zone_5():
     await asyncio.sleep(0.5)
 
 async def recalage_zone_6():
-    poses = pos.BluePoses
+    poses = BluePoses
 
     await propulsion.setMotorsEnable(True)
     await propulsion.setEnable(True)
