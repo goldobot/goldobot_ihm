@@ -116,7 +116,7 @@ async def prematch():
     # Init
     await recalage(start_zone)
 
-    await propulsion.faceDirection(-90, 10)
+    await propulsion.faceDirection(-90, 5.0)
 
     # Lidar start
     await lidar.start()
@@ -150,20 +150,20 @@ async def start_match():
 
         await tourne_panneau.tourne_panneau_in()
 
-        await propulsion.pointTo(poses.pose_retour_panneaux, 10.0)
+        await propulsion.pointTo(poses.pose_retour_panneaux, 5.0)
         await propulsion.moveToRetry(poses.pose_retour_panneaux, 1.0)
-        await propulsion.pointTo(poses.pose_retour_panneaux2, 10.0)
+        await propulsion.pointTo(poses.pose_retour_panneaux2, 5.0)
         await propulsion.moveToRetry(poses.pose_retour_panneaux2, 0.6)
         await propulsion.moveToRetry(poses.pose_retour_panneaux3, 0.6)
         await robot.setScore(robot.score + 3)
     else:
         await tourne_panneau.tourne_panneau_in()
-        await propulsion.pointTo(poses.pose_no_panneaux, 10.0)
+        await propulsion.pointTo(poses.pose_no_panneaux, 5.0)
         await propulsion.moveToRetry(poses.pose_no_panneaux, 1.0)
         
 
     await propulsion.moveToRetry(poses.debut_prise_1, 1.0)
-    await propulsion.pointTo(poses.fin_prise_1, 10.0)
+    await propulsion.pointTo(poses.fin_prise_1, 5.0)
 
     await turbine_g_enable()
     await turbine_d_enable()
@@ -208,9 +208,9 @@ async def start_match():
         await propulsion.translation()
     except:
         if robot.side == Side.Blue:
-            await propulsion.faceDirection(90, 10.0)
+            await propulsion.faceDirection(90, 5.0)
         else:
-            await propulsion.faceDirection(-90, 10.0)
+            await propulsion.faceDirection(-90, 5.0)
 
     await slot_to_right(5)
     await slot_to_right(3)
@@ -218,9 +218,9 @@ async def start_match():
 
     await propulsion.moveToRetry(poses.pose_inter_depose1, 1.2)
     if robot.side == Side.Blue:
-        await propulsion.faceDirection(90, 10.0)
+        await propulsion.faceDirection(90, 5.0)
     else:
-        await propulsion.faceDirection(-90, 10.0)
+        await propulsion.faceDirection(-90, 5.0)
 
     await toboggan_ouvre()
     await fourche_bas()
@@ -233,9 +233,9 @@ async def start_match():
     await asyncio.sleep(0.5)
     await toboggan_depose()
 
-    await propulsion.pointTo(poses.depose1, 10.0)
+    await propulsion.pointTo(poses.depose1, 5.0)
     await propulsion.moveToRetry(poses.depose1, 1.2)
-    await propulsion.faceDirection(0, 10)
+    await propulsion.faceDirection(0, 5.0)
     await propulsion.reposition(-0.4, 0.3)
 
     await fourche_depose()
@@ -327,7 +327,7 @@ async def start_match():
     await robot.setScore(robot.score + 15)
 
     if panneau_done == False:
-        await propulsion.pointTo(poses.pose_inter_panneaux, 10.0)
+        await propulsion.pointTo(poses.pose_inter_panneaux, 5.0)
         await propulsion.moveToRetry(poses.pose_inter_panneaux, 1.2)
         await propulsion.faceDirection(-90, 5.0)
         await tourne_panneau.tourne_panneau_out()
@@ -336,6 +336,7 @@ async def start_match():
 
     await propulsion.faceDirection(0, 5.0)
     await propulsion.moveToRetry(poses.depose_fin, 1.0)
+    await propulsion.faceDirection(0, 6.0)
     
     await robot.setScore(robot.score + 10)
 
@@ -344,7 +345,7 @@ async def start_match():
     await asyncio.sleep(1)
     await propulsion.reposition(-0.1, 0.6)
     await slot_to_chd(8)
-    await turbine_d_stop
+    await turbine_d_stop()
 
     await robot.setScore(robot.score + 1)
 
