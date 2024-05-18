@@ -34,6 +34,8 @@ class AdversaryDetection(QGraphicsItemGroup):
         super().__init__()
         circle = QGraphicsEllipseItem(-100, -100, 200, 200, parent=self)
         circle.setPen(QPen(QBrush(QColor('blue')),8))
+        circle1 = QGraphicsEllipseItem(-10, -10, 20, 20, parent=self)
+        circle1.setPen(QPen(QBrush(QColor('black')),8))
         #self.addEllipse(-100, -100, 200, 200, QPen(QBrush(QColor('black')),4), QBrush(QColor('white')))
         #self.addPolygon(little_robot_poly, QPen(), QBrush(QColor('red')))
         
@@ -399,11 +401,10 @@ class TableViewWidget(QGraphicsView):
         self._client.propulsion_telemetry.connect(self.update_telemetry)
         self._client.propulsion_telemetry_ex.connect(self.update_telemetry_ex)
         self._client.rplidar_plot.connect(self.update_plots)
-        self._client.rplidar_robot_detection.connect(self.update_other_robots)        
+        self._client.rplidar_robot_detection.connect(self.update_other_robots)
         self._client.registerCallback('gui/in/robot_state', self.on_msg_robot_state)
-        
-        
-        
+
+
     def set_config(self, config):     
         poses = config.BluePoses.__dict__
         for itm in self._sequences_poses:
