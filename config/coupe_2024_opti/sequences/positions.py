@@ -57,7 +57,7 @@ class YellowPoses:
     pose_inter_fin = (1.6, 0.4, -90)
     pose_alternative_fin = (0.6, 1.1, 0)
     zone_inter_fin = (0.5, 1.0, 90)
-    depose_fin = (0.25, 1.30, 90)
+    depose_fin = (0.25, 1.10, 90)
 
 
 

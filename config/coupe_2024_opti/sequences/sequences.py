@@ -343,7 +343,7 @@ async def start_match():
     await slot_to_chg(7)
     await turbine_g_stop()
     await asyncio.sleep(1)
-    await propulsion.reposition(-0.1, 0.6)
+    await propulsion.reposition(-0.2, 0.6)
     await slot_to_chd(8)
     await turbine_d_stop()
 
