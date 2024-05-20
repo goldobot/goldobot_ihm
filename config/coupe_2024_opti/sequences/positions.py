@@ -59,6 +59,11 @@ class YellowPoses:
     zone_inter_fin = (0.5, 1.0, 90)
     depose_fin = (0.25, 1.10, 90)
 
+    pose_spline_traversee_1 = (0.7, 0.7, 90)
+    pose_spline_traversee_2 = (0.5, 0.15, 90)
+    pose_spline_traversee_3 = (0.7, -0.35, 90)
+    pose_spline_traversee_4 = (1.0, -1.2, 90)
+
 
 
 class BluePoses:
@@ -102,3 +107,8 @@ class BluePoses:
 
     zone_inter_fin = symetrie(YellowPoses.zone_inter_fin)
     depose_fin = symetrie(YellowPoses.depose_fin)
+
+    pose_spline_traversee_1 = symetrie(YellowPoses.pose_spline_traversee_1)
+    pose_spline_traversee_2 = symetrie(YellowPoses.pose_spline_traversee_2)
+    pose_spline_traversee_3 = symetrie(YellowPoses.pose_spline_traversee_3)
+    pose_spline_traversee_4 = symetrie(YellowPoses.pose_spline_traversee_4)

@@ -47,7 +47,7 @@ class Carousel:
     def reset(self):
         self.slots = [Slot.EMPTY for _ in range(10)]
 
-async def carousel_move(pose, torque = 0.7, speed = 1.0, pos_threshold = 25, overload_threshold = 40):
+async def carousel_move(pose, torque = 1.0, speed = 1.0, pos_threshold = 40, overload_threshold = 40):
     old_pos = 0
     overload_count = 0
 
