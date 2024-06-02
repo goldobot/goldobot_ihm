@@ -120,8 +120,7 @@ async def init_carousel():
 
 @robot.sequence
 async def empty_carousel():
-    # FIXME : TODO : positionnement du toboggan et de la fourche dans les bonnes positions pour eviter des crash..
-
+    # FIXME : TODO : pilotage du tobogan et de la fourche pour eviter les merdes..
     # Activation dynamixels
     torque = 0.3
 
