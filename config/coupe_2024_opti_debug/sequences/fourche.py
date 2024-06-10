@@ -3,8 +3,10 @@ from enum import Enum
 
 fourche_z_haut_var = 789
 fourche_z_depose_haut_var = 1376
-fourche_z_depose_rank1_var = 1548
+#fourche_z_depose_rank1_var = 1548
+fourche_z_depose_rank1_var = 1750
 fourche_z_depile_six_var = 1880
+fourche_z_depose_six_var = 1850
 fourche_z_depile_var = 1885
 fourche_z_bas_var = 2494
 fourche_z_depose_bas_var = 2450
@@ -35,22 +37,28 @@ class Fourche:
         self.slots = [SlotFourche.EMPTY for _ in range(10)]
 
 @robot.sequence
-async def fourche_haut():
+async def fourche_z_haut():
     await servos.setMaxTorque(['fourche_z'], 0.80)
     await servos.setEnable(['fourche_z'], True)
     await servos.moveMultiple({'fourche_z': fourche_z_haut_var}, 1)
 
 @robot.sequence
-async def fourche_bas():
+async def fourche_z_bas():
     await servos.setMaxTorque(['fourche_z'], 0.80)
     await servos.setEnable(['fourche_z'], True)
     await servos.moveMultiple({'fourche_z': fourche_z_bas_var}, 1)
 
 @robot.sequence
-async def fourche_depose_bas():
+async def fourche_z_depose_bas():
     await servos.setMaxTorque(['fourche_z'], 0.80)
     await servos.setEnable(['fourche_z'], True)
     await servos.moveMultiple({'fourche_z': fourche_z_depose_bas_var}, 1)
+
+@robot.sequence
+async def fourche_z_depose_haut():
+    await servos.setMaxTorque(['fourche_z'], 0.80)
+    await servos.setEnable(['fourche_z'], True)
+    await servos.moveMultiple({'fourche_z': fourche_z_depose_haut_var}, 1)
 
 @robot.sequence
 async def fourche_z_depose_rank1():
@@ -63,6 +71,12 @@ async def fourche_z_depile_six():
     await servos.setMaxTorque(['fourche_z'], 0.80)
     await servos.setEnable(['fourche_z'], True)
     await servos.moveMultiple({'fourche_z': fourche_z_depile_six_var}, 1)
+
+@robot.sequence
+async def fourche_z_depose_six():
+    await servos.setMaxTorque(['fourche_z'], 0.80)
+    await servos.setEnable(['fourche_z'], True)
+    await servos.moveMultiple({'fourche_z': fourche_z_depose_six_var}, 1)
 
 @robot.sequence
 async def fourche_depile():
@@ -89,7 +103,7 @@ async def fourche_transport():
     await servos.moveMultiple({'fourche_pitch': fourche_pitch_transport_var}, 1)
 
 @robot.sequence
-async def fourche_bordure():
+async def fourche_pitch_dessus_bordure():
     await servos.setMaxTorque(['fourche_pitch'], 0.80)
     await servos.setEnable(['fourche_pitch'], True)
     await servos.moveMultiple({'fourche_pitch': fourche_pitch_dessus_bordure_var}, 1)

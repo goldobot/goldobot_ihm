@@ -61,6 +61,69 @@ async def demo_sponsors():
     await carousel_demo_sponsors()
     await toboggan_rentre()
 
+# debug_prematch():
+@robot.sequence
+async def debug_prematch():
+
+    # Latch start parameters
+    start_zone = robot.start_zone
+    global poses
+    start_side = robot.side
+    if start_side == Side.Blue:
+        poses = BluePoses
+    elif start_side == Side.Yellow:
+        poses = YellowPoses
+    else:
+        raise RuntimeError('Side not set')
+    
+    # Init score
+    await robot.setScore(0)
+    
+    # Detection stop
+    await lidar.stop()
+    robot._adversary_detection_enable = False
+
+    # Propulsion
+    await odrive.clearErrors()
+    await propulsion.clearError()
+    await propulsion.setAccelerationLimits(1,1,20,20)
+    await propulsion.setMotorsEnable(True)
+    await propulsion.setEnable(True)
+
+    await eject_safe()
+    # Init turbines
+    await init_turbines()
+
+    # Init carousel
+    carousel.reset()
+    await init_carousel()
+
+    # Init tourne panneau
+    await tourne_panneau.tourne_panneau_in()
+
+    # Init fourche and toboggan
+    await toboggan_ouvre()
+    await asyncio.sleep(1)
+    await fourche_z_haut()
+    await fourche_verticale()
+    await asyncio.sleep(1)
+
+    # Init balayeur
+    await balayeur.balayeur_init()
+
+    await test_turbines()
+
+    await toboggan_rentre()
+
+    await slot_to_chd(1)
+
+    # Set debug pose
+    await propulsion.setPose([poses.pose_inter_depose1[0],
+                              poses.pose_inter_depose1[1]], -90)
+
+    await robot.gpioSet('keyboard_led', True)
+    return True
+
 @robot.sequence
 async def prematch():
 
@@ -103,7 +166,7 @@ async def prematch():
     # Init fourche and toboggan
     await toboggan_ouvre()
     await asyncio.sleep(1)
-    await fourche_haut()
+    await fourche_z_haut()
     await fourche_verticale()
     await asyncio.sleep(1)
 
@@ -127,7 +190,7 @@ async def prematch():
 
 @robot.sequence
 async def chope_six_pots():
-    timeout_l = 0.5
+    timeout_l = 0.3
 
     # 1) ouvrir toboggan
     await toboggan_ouvre()
@@ -146,7 +209,7 @@ async def chope_six_pots():
     await asyncio.sleep(timeout_l)
 
     # 5) fourche en position haute
-    await fourche_haut()
+    await fourche_z_haut()
     await asyncio.sleep(timeout_l)
 
     # 6) fourche pitch depile
@@ -158,7 +221,7 @@ async def chope_six_pots():
     await asyncio.sleep(timeout_l)
 
     # 8) fourche en position basse
-    await fourche_depose_bas()
+    await fourche_z_depose_bas()
     await asyncio.sleep(timeout_l)
 
     # 9) fourche a l'horiz..
@@ -204,8 +267,12 @@ async def chope_six_pots():
     await slot_to_right(2)
     await slot_to_right(1)
 
-    # 17) fourche pitch fill rank1
-    await fourche_pitch_fill_rank1()
+    ## 17) fourche pitch fill rank1
+    #await fourche_pitch_fill_rank1()
+    #await asyncio.sleep(timeout_l)
+
+    # 17) fourche pitch dessus bordure
+    await fourche_pitch_dessus_bordure()
     await asyncio.sleep(timeout_l)
 
     # 18) ejection de 3 dernieres plantes
@@ -222,6 +289,31 @@ async def chope_six_pots():
         await eject_safe()
     await asyncio.sleep(timeout_l)
 
+    # 19) fourche haut
+    await fourche_z_haut()
+    await asyncio.sleep(timeout_l)
+
+    # 20) reposition pour depose
+    await propulsion.reposition(-0.2, 0.3)
+    await asyncio.sleep(timeout_l)
+
+    # 21) fourche pitch horizontal
+    await fourche_z_depose_six()
+    await fourche_horizontale()
+    await asyncio.sleep(timeout_l)
+
+    # 22) avance 15 cm
+    await propulsion.translation(0.15, 0.3)
+    await asyncio.sleep(timeout_l)
+
+    # 23) range les actionneurs et s'en va..
+    await fourche_verticale()
+    await asyncio.sleep(timeout_l)
+    await fourche_z_haut()
+    await toboggan_rentre()
+    await asyncio.sleep(timeout_l)
+
+
 @robot.sequence
 async def start_match():
     panneau_done = False
@@ -235,8 +327,8 @@ async def start_match():
     await propulsion.setAccelerationLimits(1,1,20,20)
     await asyncio.sleep(0.5)
 
-    await propulsion.moveToRetry(poses.debut_prise_1, 0.5)
-    await propulsion.pointTo(poses.fin_prise_1, 4.0)
+    await propulsion.moveToRetry(poses.debut_prise_1, 0.4)
+    await propulsion.pointTo(poses.fin_prise_1, 2.0)
 
     await turbine_g_enable()
     await turbine_d_enable()
@@ -300,18 +392,19 @@ async def start_match():
     await turbine_g_stop()
     await turbine_d_stop()
 
-    await asyncio.sleep(5000)
+    #await asyncio.sleep(5000)
     print ("STOP EXPERIMENTAL")
+    return
 
 
     await toboggan_ouvre()
-    await fourche_bas()
+    await fourche_z_bas()
     await fourche_horizontale()
     await asyncio.sleep(0.5)
     await propulsion.reposition(-0.1, my_lon_speed)
     await asyncio.sleep(0.2)
     await fourche_depose()
-    await fourche_haut()
+    await fourche_z_haut()
     await asyncio.sleep(0.5)
     await toboggan_depose()
 
@@ -355,7 +448,7 @@ async def start_match():
     await asyncio.sleep(0.5)
 
     await propulsion.translation(0.2, 0.4)
-    await fourche_bas()
+    await fourche_z_bas()
     await fourche_horizontale()
     await toboggan_rentre()
 
@@ -392,7 +485,7 @@ async def start_match():
 
     await asyncio.sleep(0.5)
     await toboggan_ouvre()
-    await fourche_haut()
+    await fourche_z_haut()
     await asyncio.sleep(0.5)
     await propulsion.reposition(-0.4, 0.4)
 
@@ -402,7 +495,7 @@ async def start_match():
     await asyncio.sleep(0.5)
     await propulsion.translation(0.3, 1.0)
     await fourche_verticale()
-    await fourche_haut()
+    await fourche_z_haut()
     await asyncio.sleep(0.5)
     await toboggan_rentre()
 
@@ -543,13 +636,13 @@ async def start_match_old():
         await propulsion.faceDirection(-90, 5.0)
 
     await toboggan_ouvre()
-    await fourche_bas()
+    await fourche_z_bas()
     await fourche_horizontale()
     await asyncio.sleep(0.5)
     await propulsion.reposition(-0.1, my_lon_speed)
     await asyncio.sleep(0.2)
     await fourche_depose()
-    await fourche_haut()
+    await fourche_z_haut()
     await asyncio.sleep(0.5)
     await toboggan_depose()
 
@@ -593,7 +686,7 @@ async def start_match_old():
     await asyncio.sleep(0.5)
 
     await propulsion.translation(0.2, 0.4)
-    await fourche_bas()
+    await fourche_z_bas()
     await fourche_horizontale()
     await toboggan_rentre()
 
@@ -630,7 +723,7 @@ async def start_match_old():
 
     await asyncio.sleep(0.5)
     await toboggan_ouvre()
-    await fourche_haut()
+    await fourche_z_haut()
     await asyncio.sleep(0.5)
     await propulsion.reposition(-0.4, 0.4)
 
@@ -640,7 +733,7 @@ async def start_match_old():
     await asyncio.sleep(0.5)
     await propulsion.translation(0.3, 1.0)
     await fourche_verticale()
-    await fourche_haut()
+    await fourche_z_haut()
     await asyncio.sleep(0.5)
     await toboggan_rentre()
 

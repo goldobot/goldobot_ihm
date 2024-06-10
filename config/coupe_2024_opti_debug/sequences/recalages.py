@@ -33,7 +33,11 @@ async def recalage_zone_1():
                               poses.zone1_start_pose[1]], 180)
 
     print("Recalage axe X")
-    await propulsion.reposition(-1.0, 0.2)
+    try:
+        await propulsion.reposition(-1.0, 0.2)
+    except:
+        print ("Exception: reposition, retry once")
+        await propulsion.reposition(-1.0, 0.2)
     await asyncio.sleep(0.5)
     await propulsion.setPose([2.0 - rc.robot_back_length, propulsion.pose.position.y], 180)
     await asyncio.sleep(0.5)
@@ -45,7 +49,11 @@ async def recalage_zone_1():
     await asyncio.sleep(0.5)
 
     print("Recalage axe Y")
-    await propulsion.reposition(-1.0, 0.2)
+    try:
+        await propulsion.reposition(-1.0, 0.2)
+    except:
+        print ("Exception: reposition, retry once")
+        await propulsion.reposition(-1.0, 0.2)
     await asyncio.sleep(0.5)
     await propulsion.setPose([propulsion.pose.position.x , -1.5 + rc.robot_back_length], 90)
     await asyncio.sleep(0.5)
@@ -68,7 +76,11 @@ async def recalage_zone_2():
                               poses.zone2_start_pose[1]], 180)
 
     print("Recalage axe X")
-    await propulsion.reposition(-1.0, 0.2)
+    try:
+        await propulsion.reposition(-1.0, 0.2)
+    except:
+        print ("Exception: reposition, retry once")
+        await propulsion.reposition(-1.0, 0.2)
     await asyncio.sleep(0.5)
     await propulsion.setPose([2.0 - rc.robot_back_length, propulsion.pose.position.y], 180)
     await asyncio.sleep(0.5)
@@ -80,7 +92,11 @@ async def recalage_zone_2():
     await asyncio.sleep(0.5)
 
     print("Recalage axe Y")
-    await propulsion.reposition(-1.0, 0.2)
+    try:
+        await propulsion.reposition(-1.0, 0.2)
+    except:
+        print ("Exception: reposition, retry once")
+        await propulsion.reposition(-1.0, 0.2)
     await asyncio.sleep(0.5)
     await propulsion.setPose([propulsion.pose.position.x , -1.5 + rc.robot_back_length], 90)
     await asyncio.sleep(0.5)
@@ -103,7 +119,11 @@ async def recalage_zone_3():
                               poses.zone3_start_pose[1]], 0)
 
     print("Recalage axe X")
-    await propulsion.reposition(-1.0, 0.2)
+    try:
+        await propulsion.reposition(-1.0, 0.2)
+    except:
+        print ("Exception: reposition, retry once")
+        await propulsion.reposition(-1.0, 0.2)
     await asyncio.sleep(0.5)
     await propulsion.setPose([rc.robot_back_length, propulsion.pose.position.y], 0)
     await asyncio.sleep(0.5)
@@ -115,7 +135,11 @@ async def recalage_zone_3():
     await asyncio.sleep(0.5)
 
     print("Recalage axe Y")
-    await propulsion.reposition(-1.0, 0.2)
+    try:
+        await propulsion.reposition(-1.0, 0.2)
+    except:
+        print ("Exception: reposition, retry once")
+        await propulsion.reposition(-1.0, 0.2)
     await asyncio.sleep(0.5)
     await propulsion.setPose([propulsion.pose.position.x , -1.5 + rc.robot_back_length], 90)
     await asyncio.sleep(0.5)
@@ -138,7 +162,11 @@ async def recalage_zone_4():
                               poses.zone4_start_pose[1]], 0)
 
     print("Recalage axe X")
-    await propulsion.reposition(-1.0, 0.2)
+    try:
+        await propulsion.reposition(-1.0, 0.2)
+    except:
+        print ("Exception: reposition, retry once")
+        await propulsion.reposition(-1.0, 0.2)
     await asyncio.sleep(0.5)
     await propulsion.setPose([rc.robot_back_length, propulsion.pose.position.y], 0)
     await asyncio.sleep(0.5)
@@ -150,7 +178,11 @@ async def recalage_zone_4():
     await asyncio.sleep(0.5)
 
     print("Recalage axe Y")
-    await propulsion.reposition(-1.0, 0.2)
+    try:
+        await propulsion.reposition(-1.0, 0.2)
+    except:
+        print ("Exception: reposition, retry once")
+        await propulsion.reposition(-1.0, 0.2)
     await asyncio.sleep(0.5)
     await propulsion.setPose([propulsion.pose.position.x , 1.5 - rc.robot_back_length], -90)
     await asyncio.sleep(0.5)
@@ -173,7 +205,11 @@ async def recalage_zone_5():
                               poses.zone5_start_pose[1]], 180)
 
     print("Recalage axe X")
-    await propulsion.reposition(-1.0, 0.2)
+    try:
+        await propulsion.reposition(-1.0, 0.2)
+    except:
+        print ("Exception: reposition, retry once")
+        await propulsion.reposition(-1.0, 0.2)
     await asyncio.sleep(0.5)
     await propulsion.setPose([2.0 - rc.robot_back_length, propulsion.pose.position.y], 180)
     await asyncio.sleep(0.5)
@@ -185,7 +221,11 @@ async def recalage_zone_5():
     await asyncio.sleep(0.5)
 
     print("Recalage axe Y")
-    await propulsion.reposition(-1.0, 0.2)
+    try:
+        await propulsion.reposition(-1.0, 0.2)
+    except:
+        print ("Exception: reposition, retry once")
+        await propulsion.reposition(-1.0, 0.2)
     await asyncio.sleep(0.5)
     await propulsion.setPose([propulsion.pose.position.x , 1.5 - rc.robot_back_length], -90)
     await asyncio.sleep(0.5)
@@ -208,7 +248,11 @@ async def recalage_zone_6():
                               poses.zone6_start_pose[1]], 180)
 
     print("Recalage axe X")
-    await propulsion.reposition(-1.0, 0.2)
+    try:
+        await propulsion.reposition(-1.0, 0.2)
+    except:
+        print ("Exception: reposition, retry once")
+        await propulsion.reposition(-1.0, 0.2)
     await asyncio.sleep(0.5)
     await propulsion.setPose([2.0 - rc.robot_back_length, propulsion.pose.position.y], 180)
     await asyncio.sleep(0.5)
@@ -220,7 +264,11 @@ async def recalage_zone_6():
     await asyncio.sleep(0.5)
 
     print("Recalage axe Y")
-    await propulsion.reposition(-1.0, 0.2)
+    try:
+        await propulsion.reposition(-1.0, 0.2)
+    except:
+        print ("Exception: reposition, retry once")
+        await propulsion.reposition(-1.0, 0.2)
     await asyncio.sleep(0.5)
     await propulsion.setPose([propulsion.pose.position.x , 1.5 - rc.robot_back_length], -90)
     await asyncio.sleep(0.5)

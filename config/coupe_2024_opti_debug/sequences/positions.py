@@ -31,7 +31,9 @@ class YellowPoses:
     pose_retour_panneaux3 = (1.7, 1.2, 90)
     pose_no_panneaux = (1.07, 1.19, 90)
 
-    debut_prise_1 = (1.7, 0.5, 180)
+    # FIXME : DEBUG
+    #debut_prise_1 = (1.7, 0.5, 180)
+    debut_prise_1 = (1.7, 0.505, 180)
     fin_prise_1 = (1.33, 0.5, 180)
     inter_prise_1 = (1.53, 0.5, 180)
     inter2_prise_1 = (1.43, 0.5, 180)
