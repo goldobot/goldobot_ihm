@@ -4,7 +4,8 @@ from enum import Enum
 fourche_z_haut_var = 789
 fourche_z_depose_haut_var = 1376
 #fourche_z_depose_rank1_var = 1548
-fourche_z_depose_rank1_var = 1750
+#fourche_z_depose_rank1_var = 1750
+fourche_z_depose_rank1_var = 1840
 fourche_z_depile_six_var = 1880
 fourche_z_depose_six_var = 1850
 fourche_z_depile_var = 1885
@@ -16,7 +17,7 @@ fourche_pitch_horizontal_var = 434
 fourche_pitch_depile_six_var = 550
 fourche_pitch_dessus_bordure_var = 558
 fourche_pitch_depose_bas_var = 559
-fourche_pitch_fill_rank1_var = 600
+fourche_pitch_fill_rank1_var = 650
 fourche_pitch_depose_haut_var = 701
 fourche_pitch_transport_var = 715
 fourche_pitch_fill_rank2_var = 720
@@ -91,6 +92,12 @@ async def fourche_horizontale():
     await servos.moveMultiple({'fourche_pitch': fourche_pitch_horizontal_var}, 1)
 
 @robot.sequence
+async def fourche_horizontale_slow():
+    await servos.setMaxTorque(['fourche_pitch'], 0.80)
+    await servos.setEnable(['fourche_pitch'], True)
+    await servos.moveMultiple({'fourche_pitch': fourche_pitch_horizontal_var}, 0.3)
+
+@robot.sequence
 async def fourche_verticale():
     await servos.setMaxTorque(['fourche_pitch'], 0.80)
     await servos.setEnable(['fourche_pitch'], True)
@@ -109,6 +116,12 @@ async def fourche_pitch_dessus_bordure():
     await servos.moveMultiple({'fourche_pitch': fourche_pitch_dessus_bordure_var}, 1)
 
 @robot.sequence
+async def fourche_pitch_dessus_bordure_slow():
+    await servos.setMaxTorque(['fourche_pitch'], 0.80)
+    await servos.setEnable(['fourche_pitch'], True)
+    await servos.moveMultiple({'fourche_pitch': fourche_pitch_dessus_bordure_var}, 0.3)
+
+@robot.sequence
 async def fourche_pitch_depile_six():
     await servos.setMaxTorque(['fourche_pitch'], 0.80)
     await servos.setEnable(['fourche_pitch'], True)
@@ -119,6 +132,12 @@ async def fourche_pitch_fill_rank1():
     await servos.setMaxTorque(['fourche_pitch'], 0.80)
     await servos.setEnable(['fourche_pitch'], True)
     await servos.moveMultiple({'fourche_pitch': fourche_pitch_fill_rank1_var}, 1)
+
+@robot.sequence
+async def fourche_pitch_fill_rank1_slow():
+    await servos.setMaxTorque(['fourche_pitch'], 0.80)
+    await servos.setEnable(['fourche_pitch'], True)
+    await servos.moveMultiple({'fourche_pitch': fourche_pitch_fill_rank1_var}, 0.3)
 
 @robot.sequence
 async def fourche_pitch_fill_rank2():

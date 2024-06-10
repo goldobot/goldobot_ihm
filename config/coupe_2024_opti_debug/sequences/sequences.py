@@ -262,20 +262,20 @@ async def chope_six_pots():
     await fourche_z_depose_rank1()
     await asyncio.sleep(timeout_l)
 
-    # 16) prepare les 3 plantes suivantes
+    # 16) fourche pitch fill rank1
+    await fourche_pitch_fill_rank1_slow()
+    await asyncio.sleep(timeout_l)
+
+    # 17) prepare les 3 plantes suivantes
     await slot_to_right(10)
     await slot_to_right(2)
     await slot_to_right(1)
 
-    ## 17) fourche pitch fill rank1
-    #await fourche_pitch_fill_rank1()
-    #await asyncio.sleep(timeout_l)
-
-    # 17) fourche pitch dessus bordure
-    await fourche_pitch_dessus_bordure()
+    # 18) fourche pitch dessus bordure
+    await fourche_pitch_dessus_bordure_slow()
     await asyncio.sleep(timeout_l)
 
-    # 18) ejection de 3 dernieres plantes
+    # 19) ejection de 3 dernieres plantes
     t1 = asyncio.create_task(eject_left())
     t2 = asyncio.create_task(eject_center())
     t3 = asyncio.create_task(eject_right())
@@ -289,24 +289,24 @@ async def chope_six_pots():
         await eject_safe()
     await asyncio.sleep(timeout_l)
 
-    # 19) fourche haut
+    # 20) fourche haut
     await fourche_z_haut()
     await asyncio.sleep(timeout_l)
 
-    # 20) reposition pour depose
+    # 21) reposition pour depose
     await propulsion.reposition(-0.2, 0.3)
     await asyncio.sleep(timeout_l)
 
-    # 21) fourche pitch horizontal
+    # 22) fourche pitch horizontal
     await fourche_z_depose_six()
-    await fourche_horizontale()
+    await fourche_horizontale_slow()
     await asyncio.sleep(timeout_l)
 
-    # 22) avance 15 cm
+    # 23) avance 15 cm
     await propulsion.translation(0.15, 0.3)
     await asyncio.sleep(timeout_l)
 
-    # 23) range les actionneurs et s'en va..
+    # 24) range les actionneurs et s'en va..
     await fourche_verticale()
     await asyncio.sleep(timeout_l)
     await fourche_z_haut()
