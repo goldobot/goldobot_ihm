@@ -13,6 +13,7 @@ from .carousel import *
 from .toboggan import *
 from .fourche import *
 from .cheminees import *
+from .ecarteur import *
 from . import tourne_panneau
 from . import balayeur
 from . import robot_config as rc
@@ -190,18 +191,20 @@ async def prematch():
 
 @robot.sequence
 async def chope_six_pots():
-    timeout_l = 0.3
+    timeout_l = 0.2
 
     # 1) ouvrir toboggan
-    await toboggan_ouvre()
-    await asyncio.sleep(timeout_l)
+    #await toboggan_ouvre()
+    #await asyncio.sleep(timeout_l)
 
     # 2) fourche a l'horiz..
-    await fourche_horizontale()
-    await asyncio.sleep(timeout_l)
+    t1 = asyncio.create_task(fourche_horizontale())
 
     # 3) fourche a hauteur de prise
-    await fourche_z_depile_six()
+    t2 = asyncio.create_task(fourche_z_depile_six())
+
+    await t1
+    await t2
     await asyncio.sleep(timeout_l)
 
     # 4) recul
@@ -213,7 +216,7 @@ async def chope_six_pots():
     await asyncio.sleep(timeout_l)
 
     # 6) fourche pitch depile
-    await fourche_pitch_depile_six()
+    await fourche_pitch_depile_six_slow()
     await asyncio.sleep(timeout_l)
 
     # 7) avance
@@ -258,12 +261,15 @@ async def chope_six_pots():
     await toboggan_ouvre()
     await asyncio.sleep(timeout_l)
 
-    # 15) fourche a hauteur .. corecte (?)
-    await fourche_z_depose_rank1()
+    # 16) fourche a hauteur .. corecte (?)
+    t1 = asyncio.create_task(fourche_z_depose_rank1())
     await asyncio.sleep(timeout_l)
 
-    # 16) fourche pitch fill rank1
-    await fourche_pitch_fill_rank1_slow()
+    # 15) fourche pitch fill rank1
+    t2 = asyncio.create_task(fourche_pitch_fill_rank1_slow())
+
+    await t1
+    await t2
     await asyncio.sleep(timeout_l)
 
     # 17) prepare les 3 plantes suivantes
@@ -273,6 +279,10 @@ async def chope_six_pots():
 
     # 18) fourche pitch dessus bordure
     await fourche_pitch_dessus_bordure_slow()
+    await asyncio.sleep(timeout_l)
+
+    # 20) fourche haut
+    await fourche_z_haut()
     await asyncio.sleep(timeout_l)
 
     # 19) ejection de 3 dernieres plantes
@@ -289,10 +299,6 @@ async def chope_six_pots():
         await eject_safe()
     await asyncio.sleep(timeout_l)
 
-    # 20) fourche haut
-    await fourche_z_haut()
-    await asyncio.sleep(timeout_l)
-
     # 21) reposition pour depose
     await propulsion.reposition(-0.2, 0.3)
     await asyncio.sleep(timeout_l)
@@ -302,8 +308,8 @@ async def chope_six_pots():
     await fourche_horizontale_slow()
     await asyncio.sleep(timeout_l)
 
-    # 23) avance 15 cm
-    await propulsion.translation(0.15, 0.3)
+    # 23) avance 16 cm
+    await propulsion.translation(0.16, 0.3)
     await asyncio.sleep(timeout_l)
 
     # 24) range les actionneurs et s'en va..
@@ -381,11 +387,17 @@ async def start_match():
     await slot_to_right(3)
     await slot_to_right(4)
 
+    # ouvrir toboggan en parallele ..
+    t1 = asyncio.create_task(toboggan_ouvre())
+
+    # .. avec la rotation
     await propulsion.moveToRetry(poses.pose_inter_depose1, 0.5)
     if robot.side == Side.Blue:
         await propulsion.faceDirection(90, 5.0)
     else:
         await propulsion.faceDirection(-90, 5.0)
+
+    await t1
 
     await chope_six_pots()
 

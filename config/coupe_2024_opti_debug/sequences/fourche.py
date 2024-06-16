@@ -128,6 +128,12 @@ async def fourche_pitch_depile_six():
     await servos.moveMultiple({'fourche_pitch': fourche_pitch_depile_six_var}, 1)
 
 @robot.sequence
+async def fourche_pitch_depile_six_slow():
+    await servos.setMaxTorque(['fourche_pitch'], 0.80)
+    await servos.setEnable(['fourche_pitch'], True)
+    await servos.moveMultiple({'fourche_pitch': fourche_pitch_depile_six_var}, 0.5)
+
+@robot.sequence
 async def fourche_pitch_fill_rank1():
     await servos.setMaxTorque(['fourche_pitch'], 0.80)
     await servos.setEnable(['fourche_pitch'], True)
