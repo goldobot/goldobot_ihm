@@ -171,9 +171,13 @@ async def prematch():
     await fourche_verticale()
     await asyncio.sleep(1)
 
+    # Test ecarteur
+    await ecarteur_autotest()
+
     # Init balayeur
     await balayeur.balayeur_init()
 
+    # Test turbines
     await test_turbines()
 
     # Init
@@ -197,6 +201,10 @@ async def chope_six_pots():
     #await toboggan_ouvre()
     #await asyncio.sleep(timeout_l)
 
+    # 1') prepare ecarteur
+    await ecarteur_pointy()
+    await asyncio.sleep(timeout_l)
+
     # 2) fourche a l'horiz..
     t1 = asyncio.create_task(fourche_horizontale())
 
@@ -211,6 +219,9 @@ async def chope_six_pots():
     await propulsion.reposition(-0.105, 0.3)
     await asyncio.sleep(timeout_l)
 
+    # 4') active l'ecarteur
+    t1 = asyncio.create_task(ecarteur_spread())
+
     # 5) fourche en position haute
     await fourche_z_haut()
     await asyncio.sleep(timeout_l)
@@ -219,13 +230,20 @@ async def chope_six_pots():
     await fourche_pitch_depile_six_slow()
     await asyncio.sleep(timeout_l)
 
+    await t1
+
     # 7) avance
     await propulsion.translation(0.18, 0.3)
     await asyncio.sleep(timeout_l)
 
+    # 7') referme l'ecarteur
+    t1 = asyncio.create_task(ecarteur_iddle())
+
     # 8) fourche en position basse
     await fourche_z_depose_bas()
     await asyncio.sleep(timeout_l)
+
+    await t1
 
     # 9) fourche a l'horiz..
     await fourche_horizontale()
