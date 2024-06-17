@@ -32,12 +32,12 @@ class YellowPoses:
     pose_no_panneaux = (1.07, 1.19, 90)
 
     debut_prise_1 = (1.7, 0.5, 180)
-    fin_prise_1 = (1.33, 0.5, 180)
-    inter_prise_1 = (1.53, 0.5, 180)
-    inter2_prise_1 = (1.43, 0.5, 180)
+    fin_prise_1 = (1.36, 0.5, 180)
+    inter_prise_1 = (1.56, 0.5, 180)
+    inter2_prise_1 = (1.46, 0.5, 180)
 
-    debut_prise_2 = (0.86, 0.5, 0)
-    fin_prise_2 = (0.75, 0.5, 0)
+    debut_prise_2 = (0.93, 0.5, 0)
+    fin_prise_2 = (0.83, 0.5, 0)
     inter_prise_2 = (0.65, 0.5, 0)
     inter2_prise_2 = (0.65, 0.5, 0)
 

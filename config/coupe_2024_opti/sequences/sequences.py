@@ -333,30 +333,28 @@ async def start_match():
         await propulsion.moveToRetry(poses.pose_fin_panneaux, 1.2)
         await tourne_panneau.tourne_panneau_in()
 
-    try:
-        traj = [(propulsion.pose.position.x, propulsion.pose.position.y, propulsion.pose.yaw),
-            poses.pose_spline_traversee_1,
-            poses.pose_spline_traversee_2,
-            poses.pose_spline_traversee_3,
-            poses.pose_spline_traversee_4]
-        await propulsion.trajectorySpline(traj, 0.8)
-        await propulsion.translation(-0.2, 0.8)
-        await robot.setScore(robot.score + 3)
-    except:
-        print("Echec critique !")
-
     await propulsion.pointTo(poses.depose_fin, 5.0)
     await propulsion.moveToRetry(poses.depose_fin, 1.2)
     await propulsion.faceDirection(0, 6.0)
     
     await robot.setScore(robot.score + 10)
 
+    T1 = time.time()
+    time_left = 90 - (T1 - T0)
+    time_release = (time_left - 6) / 2
     await slot_to_chg(9)
     await turbine_g_stop()
-    await asyncio.sleep(1)
-    await propulsion.reposition(-0.2, 0.6)
+    if time_release > 0:
+        await asyncio.sleep(time_release)
+    else:
+        await asyncio.sleep(0)
     await slot_to_chd(10)
     await turbine_d_stop()
+    if time_release > 0:
+        await asyncio.sleep(time_release)
+    else:
+        await asyncio.sleep(0)
+    await propulsion.reposition(-0.2, 0.6)
 
     await robot.setScore(robot.score + 1)
 
