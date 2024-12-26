@@ -10,7 +10,6 @@ from PyQt5.QtWidgets import QTabWidget
 
 import struct
 
-from goldobot import message_types
 from goldobot import config
 import goldobot.pb2 as _pb2
 import google.protobuf as _pb

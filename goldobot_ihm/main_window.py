@@ -32,8 +32,6 @@ from dialogs.sequences import SequencesDialog
 from dialogs.score import ScoreDialog
 from dialogs.test_hal import HalTestDialog
 from dialogs.odrive import ODriveDialog
-from .dialogs.console import ConsoleDialog
-from goldobot_ihm.dialogs.rec_player import RecPlayerDialog
 from dialogs.test_rplidar import TestRPLidarDialog
 from .dialogs.camera import CameraDialog
 from goldobot_ihm.scope.scope import ScopeDialog
@@ -46,8 +44,6 @@ from goldobot import config
 import google.protobuf as _pb
 from google.protobuf import symbol_database
 _sym_db = _pb.symbol_database.Default()
-
-import goldobot_ihm.dialogs as _dialogs
 
 dialogs = [
     ("Test Hal", HalTestDialog),
@@ -62,8 +58,6 @@ dialogs = [
     ("Debug FPGA", DebugFpgaDialog),
     ("Debug Lifts", DebugAsservDialog),
     ("Test sequences", SequencesDialog),
-    ("Console", ConsoleDialog),
-    ("RecPlayer", RecPlayerDialog),
     ("Camera", CameraDialog)
  ]
 

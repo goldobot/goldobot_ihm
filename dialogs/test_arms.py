@@ -10,7 +10,6 @@ from PyQt5.QtWidgets import QLineEdit
 from PyQt5.QtWidgets import QTabWidget
 
 import struct
-from goldobot import message_types
 import goldobot.config as cfg
 
 speeds = [100,75,50,25,10]

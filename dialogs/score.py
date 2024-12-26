@@ -6,8 +6,6 @@ from PyQt5.QtWidgets import QComboBox, QLabel
 from PyQt5.QtGui import QFont
 from widgets.properties_editor import PropertiesEditorWidget
 
-from goldobot.messages import OdometryConfig
-from goldobot import message_types
 import config
 import struct
 

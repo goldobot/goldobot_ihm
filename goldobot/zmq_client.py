@@ -6,15 +6,6 @@ from PyQt5.QtGui import QPixmap
 
 from scapy.all import hexdump
 
-from goldobot.messages import NucleoFirmwareVersion
-from goldobot.messages import PropulsionTelemetryEx
-from goldobot.messages import RplidarPlot
-from goldobot.messages import RplidarRobotDetection
-from goldobot.messages import OdometryConfig
-from goldobot.messages import PropulsionControllerConfig
-
-from goldobot import message_types
-
 import goldobot.pb2 as _goldo_pb2
 
 import google.protobuf as _pb

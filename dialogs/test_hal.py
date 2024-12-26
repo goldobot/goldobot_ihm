@@ -10,8 +10,6 @@ from PyQt5.QtCore import  QTimer
 
 from widgets.properties_editor import PropertiesEditorWidget
 
-from goldobot import message_types
-
 import struct
 import math
 

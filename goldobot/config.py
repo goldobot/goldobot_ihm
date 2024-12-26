@@ -1,7 +1,6 @@
 import yaml
 import pathlib
 from collections import OrderedDict
-from goldobot import messages
 import struct
 
 import runpy

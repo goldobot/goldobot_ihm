@@ -10,10 +10,6 @@ from PyQt5.QtCore import  QTimer
 from widgets.properties_editor import PropertiesEditorWidget
 from goldobot_ihm.widgets.table_view import TableViewWidget
 
-from goldobot.messages import PropulsionControllerConfig
-from goldobot.messages import PIDConfig
-from goldobot import message_types
-
 import google.protobuf as _pb
 _sym_db = _pb.symbol_database.Default()
 
