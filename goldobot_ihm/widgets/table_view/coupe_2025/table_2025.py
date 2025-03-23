@@ -21,7 +21,7 @@ import importlib.resources as pkg_resources
 class Table:
     def __init__(self, scene):
         self._scene = scene
-        my_buff=pkg_resources.read_binary(__package__, 'table_2022.png')
+        my_buff=pkg_resources.read_binary(__package__, 'table_2025.png')
         test_img_pixmap2 = QPixmap()
         test_img_pixmap2.loadFromData(my_buff)
 
@@ -30,15 +30,4 @@ class Table:
         self._bg_img.setRotation(-90)
         self._bg_img.setPos(0, -1500)
 
-        redium = QColor.fromCmykF(0,1,1,0.1)
-        greenium = QColor.fromCmykF(0.7,0,0.9,0)
-        blueium = QColor.fromCmykF(0.9,0.4,0,0)
-        goldenium = QColor('white')
-        yellow = QColor.fromCmykF(0,0.25,1,0)
-        purple = QColor.fromCmykF(0.5,0.9,0,0.05)
-        background = QColor(40,40,40)
-        darker = QColor(20,20,20)
-
-        # Scenario 2022
-        # TODO
 

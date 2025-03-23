@@ -32,31 +32,31 @@ async def goldo_lifts_test_initialize():
 
 @robot.sequence
 async def goldo_lifts_test_pos_0():
-    await goldo_lifts_move(0)
+    await goldo_lifts_move(0,25)
 
 @robot.sequence
 async def goldo_lifts_test_pos_65():
-    await goldo_lifts_move(65)
+    await goldo_lifts_move(65,25)
 
 @robot.sequence
 async def goldo_lifts_test_pos_200():
-    await goldo_lifts_move(200)
+    await goldo_lifts_move(200,25)
 
 @robot.sequence
-async def goldo_lifts_test_pos_400():
-    await goldo_lifts_move(400)
+async def goldo_lifts_test_pos_250():
+    await goldo_lifts_move(400,25)
 
 @robot.sequence
 async def goldo_lifts_test_pos_600():
-    await goldo_lifts_move(600)
+    await goldo_lifts_move(600,25)
 
 @robot.sequence
 async def goldo_lifts_test_pos_800():
-    await goldo_lifts_move(800)
+    await goldo_lifts_move(800,25)
 
 @robot.sequence
 async def goldo_lifts_test_pos_1000():
-    await goldo_lifts_move(1000)
+    await goldo_lifts_move(1000,25)
 
 
 #@robot.sequence

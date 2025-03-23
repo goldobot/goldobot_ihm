@@ -16,8 +16,8 @@ from PyQt5.QtWidgets import QGraphicsPathItem
 from PyQt5.QtGui import QPolygonF, QPen, QBrush, QColor, QFont, QTransform
 from PyQt5.QtGui import QImage, QImageReader, QPixmap, QPainterPath
 
-from .table_2023 import Table
-from .robot import Robot
+from .coupe_2025.table_2025 import Table
+from .coupe_2025.robot_2025 import Robot
 
 import numpy as np
 import scipy.interpolate
@@ -34,8 +34,16 @@ class AdversaryDetection(QGraphicsItemGroup):
         super().__init__()
         circle = QGraphicsEllipseItem(-100, -100, 200, 200, parent=self)
         circle.setPen(QPen(QBrush(QColor('blue')),8))
+        circle1 = QGraphicsEllipseItem(-10, -10, 20, 20, parent=self)
+        circle1.setPen(QPen(QBrush(QColor('black')),8))
         #self.addEllipse(-100, -100, 200, 200, QPen(QBrush(QColor('black')),4), QBrush(QColor('white')))
         #self.addPolygon(little_robot_poly, QPen(), QBrush(QColor('red')))
+        
+class GoldoPlot:
+    def __init__(self, circle):
+        self._life_points = 0
+        self._circle = circle
+        pass
         
 class DebugTrajectory:
     def __init__(self, scene):
@@ -47,13 +55,14 @@ class DebugTrajectory:
         self.cur_y = 0
         self._edit_mode = False
         
-        
-        
     def onMousePress(self, x, y):
         """"x, y in mm"""        
         print ("pix:<{},{}>".format(event.x(),event.y()))
-        realY = 2200.0*(event.x()-30.0)/660.0
-        realX = 3200.0*(event.y()-480.0)/960.0
+        # FIXME : TODO : generic code for coordonate system setting
+        #realY = 2200.0*(event.x()-30.0)/660.0  # 2023
+        #realX = 3200.0*(event.y()-480.0)/960.0 # 2023
+        realY = 3200.0*(event.x()-480.0)/960.0
+        realX = 2200.0*(event.y()-30.0)/660.0
         print ("real:<{},{}>".format(realX,realY))
         if self._debug_trajectory._edit_mode:
             self._debug_trajectory.line_to(realX, realY)
@@ -157,13 +166,15 @@ class TableViewWidget(QGraphicsView):
     #g_detect_text = "quality"
     #g_detect_text = "none"
     g_rplidar_remanence = False
-    g_rplidar_plot_life_ms = 1000
+    # FIXME : DEBUG
     g_show_theme = True
+    g_show_theme = False
     g_debug = True
-    g_dbg_plt_sz = 1.2
+    g_max_plots = 5000
+    g_max_plot_life = 1
+    g_dbg_plt_sz = 2
     g_dbg_pen_sz = 0.8
     g_debug_astar = True
-
 
     def __init__(self, parent = None, ihm_type='pc'):
         super(TableViewWidget, self).__init__(parent)
@@ -176,9 +187,14 @@ class TableViewWidget(QGraphicsView):
         else:
             #self.setFixedSize(225,150)
             self.setFixedSize(240,165)
-        self.setSceneRect(QRectF(-500,-1500,4000,3000))
+        # FIXME : TODO : generic code for coordonate system setting
+        #self.setSceneRect(QRectF(-500,-1500,4000,3000)) # 2023
+        #self.setSceneRect(QRectF(-100,-1600,2200,3200))
+        self.setSceneRect(QRectF(-1000,-2500,4000,5000))
         #self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         #self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
+        self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
         
         self._timer = QTimer(self)
         self._timer.timeout.connect(self.on_timer)
@@ -189,7 +205,6 @@ class TableViewWidget(QGraphicsView):
         self._adversary_detections = {}
         self._adversary_detections_valid = {}
         self._waypoints = []
-        self._sequences_poses = []
         self._colors = {
             'green': QColor.fromCmykF(0.7,0,0.9,0),
             'blue': QColor.fromCmykF(0.9,0.4,0,0)
@@ -204,7 +219,10 @@ class TableViewWidget(QGraphicsView):
         background = QColor(40,40,40)
         darker = QColor(20,20,20)
 
-        self._scene = DebugGraphicsScene(QRectF(-100,-1100,3200,2200),self)
+        # FIXME : TODO : generic code for coordonate system setting
+        #self._scene = DebugGraphicsScene(QRectF(-100,-1600,2200,3200),self) # 2023
+        #self._scene = DebugGraphicsScene(QRectF(-100,-1100,3200,2200),self)
+        self._scene = DebugGraphicsScene(QRectF(-1000,-2500,4000,5000),self)
         
         self._layers = {
             'astar': AstarView(self),
@@ -271,7 +289,9 @@ class TableViewWidget(QGraphicsView):
         
         self._debug_trajectory = DebugTrajectory(self._scene)
 
-        self.rotate(0)
+        # FIXME : TODO : generic code for coordonate system setting
+        #self.rotate(0) # 2023
+        self.rotate(90)
         if ihm_type=='pc':
             self.scale(0.3, -0.3)
         elif ihm_type=='pc-mini':
@@ -279,20 +299,27 @@ class TableViewWidget(QGraphicsView):
         else:
             self.scale(0.075, -0.075)
 
-        self._scene.addRect(QRectF(0,-1000,3000,2000))
+        # FIXME : TODO : generic code for coordonate system setting
+        #self._scene.addRect(QRectF(0,-1000,3000,2000)) # 2023
+        self._scene.addRect(QRectF(0,-1500,2000,3000))
         
-
-        self._points = []
 
         self._traj_segm_l = []
 
         self._little_robot_x = 0
         self._little_robot_y = 0
 
-        self.last_plot_ts = 0
-        self.plot_graph_l = []
-        
         self._plot_items = []
+        self._curr_plot = 0
+        dbg_plt_sz = TableViewWidget.g_dbg_plt_sz
+        for i in range(0,TableViewWidget.g_max_plots):
+            #x = -10
+            x = 0
+            y = 0
+            itm = self._scene.addEllipse(x * 1000 - dbg_plt_sz, y * 1000 - dbg_plt_sz, 2*dbg_plt_sz, 2*dbg_plt_sz, QPen(QBrush(QColor('red')),4), QBrush(QColor('red')))
+            plot_item = GoldoPlot(itm)
+            self._plot_items.append(plot_item)
+            self._plot_items[i]._circle.setPos(-5000, 0)
 
         self._dbg_x_mm = 0
         self._dbg_y_mm = 0
@@ -307,77 +334,9 @@ class TableViewWidget(QGraphicsView):
         if TableViewWidget.g_show_theme:
             self._scene.addItem(self._bg_img)
         else:
-            self._scene.removeItem(self._bg_img)
+            if self._bg_img.scene() != None:
+                self._scene.removeItem(self._bg_img)
 
-    def set_strategy(self, strategy):
-        greenium = QColor.fromCmykF(0.7,0,0.9,0)
-        #greenium.setAlphaF(0.2)
-        for id_, pos in strategy['strategy']['map']['waypoints'].items():
-            wp = self._scene.addEllipse(QRectF(pos[0]-10,pos[1]-10,20,20),QPen(), QBrush(greenium))
-            self._waypoints.append(wp)
-        for id_, pose in strategy['strategy']['map']['poses'].items():
-            p = strategy['strategy']['map']['waypoints'][pose[0]]
-            path = QPainterPath()
-            cos_ = math.cos(pose[1] * math.pi / 180)
-            sin_ = math.sin(pose[1] * math.pi / 180)
-            l = 40
-            w = 20
-            path.moveTo(p[0] + l * cos_, p[1] + l * sin_)
-            path.lineTo(p[0] -l * cos_ + w * sin_, p[1] - l * sin_ - w * cos_)
-            path.lineTo(p[0] -l * cos_ - w * sin_, p[1] - l * sin_ + w * cos_)
-            path.closeSubpath()
-            itm = self._scene.addPath(path, QPen(), QBrush(greenium))
-            
-        for id_, area in strategy['strategy']['map']['areas'].items():
-            path = QPainterPath()
-            v = area['vertices'][0]
-            path.moveTo(v[0], v[1])
-            for v in area['vertices'][1:]: 
-                path.lineTo(v[0], v[1])
-            path.closeSubpath()
-            itm = self._scene.addPath(path, QPen(), QBrush(greenium))
-            self._waypoints.append(wp)
-
-
-    def add_points(self, points):
-        for p in points:
-            pt = self._scene.addEllipse(p[0]-10, p[1]-10, 20, 20,  QPen(), QBrush(QColor('grey')))
-            pt.setZValue(1)
-            self._points.append((pt, p))
-            
-    def addPose(self, x, y, yaw, color = 'green'):
-        path = QPainterPath()
-        cos_ = math.cos(yaw * math.pi / 180)
-        sin_ = math.sin(yaw * math.pi / 180)
-        l = 40
-        w = 20
-        path.moveTo(x + l * cos_, y + l * sin_)
-        path.lineTo(x -l * cos_ + w * sin_, y - l * sin_ - w * cos_)
-        path.lineTo(x -l * cos_ - w * sin_, y - l * sin_ + w * cos_)
-        path.closeSubpath()
-        itm = self._scene.addPath(path, QPen(), QBrush(self._colors[color]))
-        itm.setZValue(2)
-        return itm
-        
-    def addPoint(self, x, y, color = 'green'):
-        itm = self._scene.addEllipse(x-10, y-10, 20, 20,  QPen(), QBrush(self._colors[color]))
-        itm.setZValue(2)
-        return itm
-        
-    def addTrajectory(self, points):
-        path = QPainterPath()
-        p = points[0]
-        path.moveTo(p[0] * 1000, p[1] * 1000)
-        for p in points[1:]: 
-            path.lineTo(p[0] * 1000, p[1] * 1000)
-        greenium = QColor.fromCmykF(0.7,0,0.9,0)        
-        itm = self._scene.addPath(path)
-        pen = QPen()
-        pen.setWidth(3)
-        itm.setPen(pen)
-        itm.setZValue(3)
-        return itm
-        
     def sizeHint(self):
         return QSize(600,400)
 
@@ -388,28 +347,10 @@ class TableViewWidget(QGraphicsView):
         self._client.propulsion_telemetry.connect(self.update_telemetry)
         self._client.propulsion_telemetry_ex.connect(self.update_telemetry_ex)
         self._client.rplidar_plot.connect(self.update_plots)
-        self._client.rplidar_robot_detection.connect(self.update_other_robots)        
+        self._client.rplidar_robot_detection.connect(self.update_other_robots)
         self._client.registerCallback('gui/in/robot_state', self.on_msg_robot_state)
-        
-        
-        
-    def set_config(self, config):     
-        poses = config.BluePoses.__dict__
-        for itm in self._sequences_poses:
-            self._scene.removeItem(itm)
-        self._sequences_poses = []
-        for k, v in poses.items():
-            if not k.startswith('_') and isinstance(v, tuple):
-                itm = self.addPose(v[0] * 1000, v[1] * 1000, v[2])
-                self._sequences_poses.append(itm)
-            if not k.startswith('_') and isinstance(v, np.ndarray):
-                itm = self.addPoint(v[0] * 1000, v[1] * 1000, 'blue')
-                self._sequences_poses.append(itm)
-            if not k.startswith('_') and isinstance(v, list):
-                itm = self.addTrajectory(v)
-                self._sequences_poses.append(itm)
-            
-        
+
+
     def on_msg_robot_state(self, msg):
         for d in msg.rplidar.detections:
             if d.id not in self._adversary_detections:
@@ -437,10 +378,15 @@ class TableViewWidget(QGraphicsView):
                 to_be_del.append(_id)
         for _id in to_be_del:
             del self._adversary_detections_valid[_id]
-            
-        
-   
-        
+
+        for i in range(0,TableViewWidget.g_max_plots):
+            if (self._plot_items[i]._life_points>0):
+                self._plot_items[i]._life_points = self._plot_items[i]._life_points - 1
+            else:
+                x = -5
+                y = 0
+                self._plot_items[i]._circle.setPos(x * 1000, y * 1000)
+
     def update_telemetry(self, telemetry):
         self._little_robot.onTelemetry(telemetry)        
         
@@ -490,19 +436,13 @@ class TableViewWidget(QGraphicsView):
         self._dbg_target_l = []
 
     def update_plots(self, my_plot):
-        dbg_plt_sz = 1
-        for i in self._plot_items:
-            self._scene.removeItem(i)
-        self._plot_items = []
-        
         for i in range(my_plot.num_points):
             x, y = _lidar_point_struct.unpack(my_plot.data[i*8:(i+1)*8])
-            itm = self._scene.addEllipse(x * 1000 - dbg_plt_sz, y * 1000 - dbg_plt_sz, 2*dbg_plt_sz, 2*dbg_plt_sz, QPen(QBrush(QColor('red')),4), QBrush(QColor('red')))
-            self._plot_items.append(itm)
-            
-        #self.last_plot_ts = my_plot.timestamp
-        return
-
+            self._plot_items[self._curr_plot]._circle.setPos(x * 1000, y * 1000)
+            self._plot_items[self._curr_plot]._life_points = TableViewWidget.g_max_plot_life
+            self._curr_plot = self._curr_plot + 1
+            if (self._curr_plot>=TableViewWidget.g_max_plots):
+                self._curr_plot = 0
 
     def update_other_robots(self, other_robot):
         dbg_plt_sz = 3
@@ -567,7 +507,9 @@ class TableViewWidget(QGraphicsView):
 
     def zoomDef(self):
         self.resetTransform()
-        self.rotate(0)
+        # FIXME : TODO : generic code for coordonate system setting
+        #self.rotate(0) # 2023
+        self.rotate(90)
         self._my_scale = 0.3
         self.scale(self._my_scale, -self._my_scale)
 
