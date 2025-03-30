@@ -45,8 +45,8 @@ class YellowPoses:
 
     # Action1
     Act1_start         = ZoneDA_start_pose
-    Act1_preprise      = (  1.250, -0.400,   0)
-    Act1_predepose     = (  1.800, -0.300, 180)
+    Act1_preprise      = (  1.300, -0.400,   0)
+    Act1_predepose     = (  1.750, -0.300, 180)
     Act1_traj1_start   = Act1_start
     Act1_traj1_wp1     = (  1.500, -0.350, 180)
     Act1_traj1_finish  = Act1_preprise
@@ -56,15 +56,15 @@ class YellowPoses:
 
     # Action2
     Act2_start         = Act1_predepose
-    Act2_preprise      = (  1.550, -0.725, 180)
-    Act2_predepose     = (  1.800, -0.725, 180)
+    Act2_preprise      = (  1.500, -0.725, 180)
+    Act2_predepose     = (  1.680, -0.725, 180)
     Act2_traj1_start   = Act2_start
-    Act2_traj1_wp1     = (  1.550, -0.300, -90)
+    Act2_traj1_wp1     = (  1.500, -0.300, -90)
     Act2_traj1_finish  = Act2_preprise
 
     # Action3
     Act3_start         = Act2_predepose
-    Act3_preprise      = (  1.600, -1.225,  90)
+    Act3_preprise      = (  1.600, -1.175,  90)
     Act3_predepose     = (  1.600, -0.300, 180)
     Act3_traj1_start   = Act3_start
     Act3_traj1_wp1     = (  1.600, -0.725, -90)

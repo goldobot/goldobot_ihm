@@ -34,8 +34,8 @@ async def recalage_ZoneDA_J():
 
     # Robot is to be put approximately at its "pre-homing" position
     print("Le robot doit etre en position de 'pre-recalage' oriente selon l'axe Y")
-    await propulsion.setPose([poses.ZoneDA_J_start_pose[0],
-                              poses.ZoneDA_J_start_pose[1]], 90)
+    await propulsion.setPose([poses.ZoneDA_start_pose[0],
+                              poses.ZoneDA_start_pose[1]], 90)
 
     print("Recalage axe Y")
     await propulsion.reposition(-1.0, homing_speed)
@@ -43,7 +43,7 @@ async def recalage_ZoneDA_J():
     await asyncio.sleep(0.5)
 
     print("Orientation axe X")
-    await propulsion.moveTo(poses.ZoneDA_J_start_pose, homing_speed)
+    await propulsion.moveTo(poses.ZoneDA_start_pose, homing_speed)
     await propulsion.faceDirection(180, turning_speed)
     await asyncio.sleep(0.5)
 
@@ -53,7 +53,7 @@ async def recalage_ZoneDA_J():
     await asyncio.sleep(0.5)
 
     print("go depart")
-    await propulsion.moveTo(poses.ZoneDA_J_start_pose, homing_speed)
+    await propulsion.moveTo(poses.ZoneDA_start_pose, homing_speed)
     #await propulsion.faceDirection(180, turning_speed)
     await asyncio.sleep(0.5)
 
@@ -73,8 +73,8 @@ async def recalage_ZoneDL_B():
 
     # Robot is to be put approximately at its "pre-homing" position
     print("Le robot doit etre en position de 'pre-recalage' oriente selon l'axe X")
-    await propulsion.setPose([poses.ZoneDL_B_start_pose[0],
-                              poses.ZoneDL_B_start_pose[1]], 180)
+    await propulsion.setPose([poses.ZoneDL_start_pose[0],
+                              poses.ZoneDL_start_pose[1]], 180)
 
     print("Recalage axe X")
     await propulsion.reposition(-1.0, homing_speed)
@@ -82,7 +82,7 @@ async def recalage_ZoneDL_B():
     await asyncio.sleep(0.5)
 
     print("Orientation axe Y")
-    await propulsion.moveTo(poses.ZoneDL_B_start_pose, homing_speed)
+    await propulsion.moveTo(poses.ZoneDL_start_pose, homing_speed)
     await propulsion.faceDirection(90, turning_speed)
     await asyncio.sleep(0.5)
 
@@ -92,7 +92,7 @@ async def recalage_ZoneDL_B():
     await asyncio.sleep(0.5)
 
     print("go depart")
-    await propulsion.moveTo(poses.ZoneDL_B_start_pose, homing_speed)
+    await propulsion.moveTo(poses.ZoneDL_start_pose, homing_speed)
     #await propulsion.faceDirection(90, turning_speed)
     await asyncio.sleep(0.5)
 
@@ -112,8 +112,8 @@ async def recalage_ZoneA_J():
 
     # Robot is to be put approximately at its "pre-homing" position
     print("Le robot doit etre en position de 'pre-recalage' oriente selon l'axe Y")
-    await propulsion.setPose([poses.ZoneA_J_start_pose[0],
-                              poses.ZoneA_J_start_pose[1]], 90)
+    await propulsion.setPose([poses.ZoneA_start_pose[0],
+                              poses.ZoneA_start_pose[1]], 90)
 
     print("Recalage axe Y")
     await propulsion.reposition(-1.0, homing_speed)
@@ -121,7 +121,7 @@ async def recalage_ZoneA_J():
     await asyncio.sleep(0.5)
 
     print("Orientation axe X")
-    await propulsion.moveTo(poses.ZoneA_J_start_pose, homing_speed)
+    await propulsion.moveTo(poses.ZoneA_start_pose, homing_speed)
     await propulsion.faceDirection(0, turning_speed)
     await asyncio.sleep(0.5)
 
@@ -131,7 +131,7 @@ async def recalage_ZoneA_J():
     await asyncio.sleep(0.5)
 
     print("go depart")
-    await propulsion.moveTo(poses.ZoneA_J_start_pose, homing_speed)
+    await propulsion.moveTo(poses.ZoneA_start_pose, homing_speed)
     #await propulsion.faceDirection(0, turning_speed)
     await asyncio.sleep(0.5)
 
@@ -151,8 +151,8 @@ async def recalage_ZoneA_B():
 
     # Robot is to be put approximately at its "pre-homing" position
     print("Le robot doit etre en position de 'pre-recalage' oriente selon l'axe Y")
-    await propulsion.setPose([poses.ZoneA_B_start_pose[0],
-                              poses.ZoneA_B_start_pose[1]], -90)
+    await propulsion.setPose([poses.ZoneA_start_pose[0],
+                              poses.ZoneA_start_pose[1]], -90)
 
     print("Recalage axe Y")
     await propulsion.reposition(-1.0, homing_speed)
@@ -160,7 +160,7 @@ async def recalage_ZoneA_B():
     await asyncio.sleep(0.5)
 
     print("Orientation axe X")
-    await propulsion.moveTo(poses.ZoneA_B_start_pose, homing_speed)
+    await propulsion.moveTo(poses.ZoneA_start_pose, homing_speed)
     await propulsion.faceDirection(0, turning_speed)
     await asyncio.sleep(0.5)
 
@@ -170,7 +170,7 @@ async def recalage_ZoneA_B():
     await asyncio.sleep(0.5)
 
     print("go depart")
-    await propulsion.moveTo(poses.ZoneA_B_start_pose, homing_speed)
+    await propulsion.moveTo(poses.ZoneA_start_pose, homing_speed)
     #await propulsion.faceDirection(0, turning_speed)
     await asyncio.sleep(0.5)
 
@@ -190,8 +190,8 @@ async def recalage_ZoneDL_J():
 
     # Robot is to be put approximately at its "pre-homing" position
     print("Le robot doit etre en position de 'pre-recalage' oriente selon l'axe X")
-    await propulsion.setPose([poses.ZoneDL_J_start_pose[0],
-                              poses.ZoneDL_J_start_pose[1]], 180)
+    await propulsion.setPose([poses.ZoneDL_start_pose[0],
+                              poses.ZoneDL_start_pose[1]], 180)
 
     print("Recalage axe X")
     await propulsion.reposition(-1.0, homing_speed)
@@ -199,7 +199,7 @@ async def recalage_ZoneDL_J():
     await asyncio.sleep(0.5)
 
     print("Orientation axe Y")
-    await propulsion.moveTo(poses.ZoneDL_J_start_pose, homing_speed)
+    await propulsion.moveTo(poses.ZoneDL_start_pose, homing_speed)
     await propulsion.faceDirection(-90, turning_speed)
     await asyncio.sleep(0.5)
 
@@ -209,7 +209,7 @@ async def recalage_ZoneDL_J():
     await asyncio.sleep(0.5)
 
     print("go depart")
-    await propulsion.moveTo(poses.ZoneDL_J_start_pose, homing_speed)
+    await propulsion.moveTo(poses.ZoneDL_start_pose, homing_speed)
     #await propulsion.faceDirection(-90, turning_speed)
     await asyncio.sleep(0.5)
 
@@ -229,8 +229,8 @@ async def recalage_ZoneDA_B():
 
     # Robot is to be put approximately at its "pre-homing" position
     print("Le robot doit etre en position de 'pre-recalage' oriente selon l'axe Y")
-    await propulsion.setPose([poses.ZoneDA_B_start_pose[0],
-                              poses.ZoneDA_B_start_pose[1]], -90)
+    await propulsion.setPose([poses.ZoneDA_start_pose[0],
+                              poses.ZoneDA_start_pose[1]], -90)
 
     print("Recalage axe Y")
     await propulsion.reposition(-1.0, homing_speed)
@@ -238,7 +238,7 @@ async def recalage_ZoneDA_B():
     await asyncio.sleep(0.5)
 
     print("Orientation axe X")
-    await propulsion.moveTo(poses.ZoneDA_B_start_pose, homing_speed)
+    await propulsion.moveTo(poses.ZoneDA_start_pose, homing_speed)
     await propulsion.faceDirection(180, turning_speed)
     await asyncio.sleep(0.5)
 
@@ -248,7 +248,7 @@ async def recalage_ZoneDA_B():
     await asyncio.sleep(0.5)
 
     print("go depart")
-    await propulsion.moveTo(poses.ZoneDA_B_start_pose, homing_speed)
+    await propulsion.moveTo(poses.ZoneDA_start_pose, homing_speed)
     #await propulsion.faceDirection(180, turning_speed)
     await asyncio.sleep(0.5)
 
