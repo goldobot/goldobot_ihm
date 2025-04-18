@@ -9,7 +9,8 @@ import time
 # import modules from sequence directory
 from . import positions as pos
 from . import recalages
-from . import actuators
+from . import actuators_pneuma
+from . import actuators_dyna
 from . import robot_config as rc
 
 # objects included in the _sequences_globals of RobotMain class, defined in robot_main.py of goldo_main, are available as global variables
@@ -34,6 +35,10 @@ async def prematch():
         poses = pos.BluePoses
     else:
         raise RuntimeError('Side not set')
+
+    # Pneuma
+    await actuators_pneuma.reset_valves()
+    await actuators_pneuma.start_compressor()
 
     # Propulsion
     await odrive.clearErrors()
@@ -303,4 +308,5 @@ async def start_match():
     print ("T match_time = {}".format(global_T-global_T0))
     print ("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
 
+    await actuators_pneuma.reset_valves()
 
