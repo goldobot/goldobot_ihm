@@ -16,8 +16,8 @@ from . import robot_config as rc
 # those objects are used to interact with the robot (send commands, read data)
 
 global_long_speed = 0.5
-global_turn_speed = 5.0
-global_debug_action_timeout = 2.0
+global_turn_speed = 3.0
+global_debug_action_timeout = 1.0
 global_debug_timeout = 2.0
 global_T0 = 0.0
 global_T = 0.0
@@ -28,23 +28,12 @@ async def prematch():
 
     global poses
 
-# FIXME : DEBUG : inversion des couleurs : roustine temporaire le temps que Mehdi corrige l'IHM du robot
-# FIXME : DEBUG : !!!!!!!!!!!!! CORRIGER !!!!!!!!!!!!!!
-# FIXME : DEBUG : !!!!!!!!!!!!! CORRIGER !!!!!!!!!!!!!!
-# FIXME : DEBUG : !!!!!!!!!!!!! CORRIGER !!!!!!!!!!!!!!
-# FIXME : DEBUG : !!!!!!!!!!!!! CORRIGER !!!!!!!!!!!!!!
-# FIXME : DEBUG : !!!!!!!!!!!!! CORRIGER !!!!!!!!!!!!!!
     if robot.side == pos.Side.Yellow:
-        poses = pos.BluePoses
-    elif robot.side == pos.Side.Blue:
         poses = pos.YellowPoses
+    elif robot.side == pos.Side.Blue:
+        poses = pos.BluePoses
     else:
         raise RuntimeError('Side not set')
-# FIXME : DEBUG : !!!!!!!!!!!!! CORRIGER !!!!!!!!!!!!!!
-# FIXME : DEBUG : !!!!!!!!!!!!! CORRIGER !!!!!!!!!!!!!!
-# FIXME : DEBUG : !!!!!!!!!!!!! CORRIGER !!!!!!!!!!!!!!
-# FIXME : DEBUG : !!!!!!!!!!!!! CORRIGER !!!!!!!!!!!!!!
-# FIXME : DEBUG : !!!!!!!!!!!!! CORRIGER !!!!!!!!!!!!!!
 
     # Propulsion
     await odrive.clearErrors()
@@ -151,11 +140,17 @@ async def action2():
     ]
 
     # prise2
-    await propulsion.trajectorySpline(action2_traj1, speed=global_long_speed)
+    #await propulsion.trajectorySpline(action2_traj1, speed=global_long_speed)
+    await asyncio.sleep(0.2)
+    await propulsion.moveToRetry(poses.Act2_traj1_wp1, global_long_speed)
+    await asyncio.sleep(0.2)
+    await propulsion.pointTo(poses.Act2_traj1_finish, global_turn_speed)
+    await asyncio.sleep(0.2)
+    await propulsion.moveToRetry(poses.Act2_traj1_finish, global_long_speed)
     await asyncio.sleep(0.2)
     await propulsion.faceDirection(180, global_turn_speed)
     await asyncio.sleep(0.2)
-    await propulsion.translation(-0.1, 0.2)
+    await propulsion.translation(-0.1, 0.1)
     await asyncio.sleep(global_debug_action_timeout)
 
     # depose2
@@ -163,7 +158,7 @@ async def action2():
     await asyncio.sleep(0.2)
     await propulsion.faceDirection(180, global_turn_speed)
     await asyncio.sleep(0.2)
-    await propulsion.reposition(-0.1, 0.2)
+    await propulsion.reposition(-0.1, 0.1)
     await asyncio.sleep(global_debug_action_timeout)
     await propulsion.translation(0.1, 0.2)
     await asyncio.sleep(global_debug_action_timeout)
@@ -190,7 +185,13 @@ async def action3():
     ]
 
     # prise3
-    await propulsion.trajectorySpline(action3_traj1, speed=global_long_speed)
+    #await propulsion.trajectorySpline(action3_traj1, speed=global_long_speed)
+    #await asyncio.sleep(0.2)
+    await propulsion.moveToRetry(poses.Act3_traj1_wp1, global_long_speed)
+    await asyncio.sleep(0.2)
+    await propulsion.pointTo(poses.Act3_traj1_finish, global_turn_speed)
+    await asyncio.sleep(0.2)
+    await propulsion.moveToRetry(poses.Act3_traj1_finish, global_long_speed)
     await asyncio.sleep(0.2)
     await propulsion.faceDirection(90, global_turn_speed)
     await asyncio.sleep(0.2)
@@ -277,13 +278,13 @@ async def start_match():
     print ("= Action1")
     print ("======================================================")
     await action1()
-    await asyncio.sleep(global_debug_timeout)
+    await asyncio.sleep(4.0)
 
     print ("======================================================")
     print ("= Action2")
     print ("======================================================")
     await action2()
-    await asyncio.sleep(10.0)
+    await asyncio.sleep(global_debug_timeout)
 
     print ("======================================================")
     print ("= Action3")

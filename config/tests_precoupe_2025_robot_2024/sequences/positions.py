@@ -74,8 +74,8 @@ class YellowPoses:
     Act4_start         = Act3_predepose
     Act4_traj1_start   = Act4_start
     Act4_traj1_wp1     = (  1.100, -0.300,-135)
-    Act4_traj1_wp2     = (  0.750, -0.800, -90)
-    Act4_traj1_finish  = (  0.750, -1.200, -90)
+    Act4_traj1_wp2     = (  0.800, -0.800, -90)
+    Act4_traj1_finish  = (  0.800, -1.200, -90)
     Act4_final         = (  0.450, -1.200, 180)
 
 class BluePoses:
