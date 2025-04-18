@@ -2,7 +2,7 @@ import asyncio
 from . import positions as pos
 from . import robot_config as rc
 
-longueur_cale = 0.2015
+longueur_cale = 0.1750
 #longueur_cale = 0.0
 
 @robot.sequence
