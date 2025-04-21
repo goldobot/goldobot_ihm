@@ -126,7 +126,7 @@ class MainWindow(QMainWindow):
         self._F6_shortcut.activated.connect(self._dialogs[5].show)
 
         self._main_widget = QWidget()
-        self._table_view = TableViewWidget()
+        self._table_view = TableViewWidget(ihm_type=options.ihm_type)
         #self._table_view.set_strategy(cfg.strategy)
         self._widget_robot_status = RobotStatusWidget()
 

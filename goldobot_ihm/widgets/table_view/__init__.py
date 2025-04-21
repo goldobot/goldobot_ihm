@@ -178,12 +178,15 @@ class TableViewWidget(QGraphicsView):
 
     def __init__(self, parent = None, ihm_type='pc'):
         super(TableViewWidget, self).__init__(parent)
-        if ihm_type=='pc':
-            #self.setFixedSize(900,600)
-            self.setFixedSize(960,660)
-        elif ihm_type=='pc-mini':
+        if ihm_type=='pc-mini':
             #self.setFixedSize(600,400)
             self.setFixedSize(640,440)
+        elif ihm_type=='pc':
+            #self.setFixedSize(900,600)
+            self.setFixedSize(960,660)
+        elif ihm_type=='pc-huge':
+            #self.setFixedSize(1200,800)
+            self.setFixedSize(1280,880)
         else:
             #self.setFixedSize(225,150)
             self.setFixedSize(240,165)
@@ -292,10 +295,12 @@ class TableViewWidget(QGraphicsView):
         # FIXME : TODO : generic code for coordonate system setting
         #self.rotate(0) # 2023
         self.rotate(90)
-        if ihm_type=='pc':
-            self.scale(0.3, -0.3)
-        elif ihm_type=='pc-mini':
+        if ihm_type=='pc-mini':
             self.scale(0.2, -0.2)
+        elif ihm_type=='pc':
+            self.scale(0.3, -0.3)
+        elif ihm_type=='pc-huge':
+            self.scale(0.4, -0.4)
         else:
             self.scale(0.075, -0.075)
 
