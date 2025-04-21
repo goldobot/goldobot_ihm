@@ -11,17 +11,17 @@ valve_purge = 0
 
 @robot.sequence
 async def start_compressor():
-    await pneumatic.set_valves(0, 0, 0, 0)
-    await pneumatic.start_compressor(30)
+    pneumatic.set_valves(0, 0, 0, 0)
+    pneumatic.start_compressor(30)
 
 @robot.sequence
 async def stop_compressor():
-    await pneumatic.stop_compressor()
+    pneumatic.stop_compressor()
 
 @robot.sequence
 async def purge():
-    await pneumatic.purge_compressor()
-    await pneumatic.set_valves(0, 0, 0, 1)
+    pneumatic.purge_compressor()
+    pneumatic.set_valves(0, 0, 0, 1)
 
 @robot.sequence
 async def reset_valves():
@@ -33,7 +33,7 @@ async def reset_valves():
     valve_2 = 0
     valve_3 = 0
     valve_purge = 0
-    await pneumatic.set_valves(0, 0, 0, 0)
+    pneumatic.set_valves(0, 0, 0, 0)
 
 @robot.sequence
 async def ventouses_int_on():
@@ -42,7 +42,7 @@ async def ventouses_int_on():
     global valve_3
     global valve_purge
     valve_2 = 1
-    await pneumatic.set_valves(valve_1, valve_2, valve_3, valve_purge)
+    pneumatic.set_valves(valve_1, valve_2, valve_3, valve_purge)
 
 @robot.sequence
 async def ventouses_int_off():
@@ -51,7 +51,7 @@ async def ventouses_int_off():
     global valve_3
     global valve_purge
     valve_2 = 0
-    await pneumatic.set_valves(valve_1, valve_2, valve_3, valve_purge)
+    pneumatic.set_valves(valve_1, valve_2, valve_3, valve_purge)
 
 @robot.sequence
 async def ventouses_ext_on():
@@ -60,7 +60,7 @@ async def ventouses_ext_on():
     global valve_3
     global valve_purge
     valve_3 = 1
-    await pneumatic.set_valves(valve_1, valve_2, valve_3, valve_purge)
+    pneumatic.set_valves(valve_1, valve_2, valve_3, valve_purge)
 
 @robot.sequence
 async def ventouses_ext_off():
@@ -69,5 +69,22 @@ async def ventouses_ext_off():
     global valve_3
     global valve_purge
     valve_3 = 0
-    await pneumatic.set_valves(valve_1, valve_2, valve_3, valve_purge)
+    pneumatic.set_valves(valve_1, valve_2, valve_3, valve_purge)
 
+@robot.sequence
+async def ecarteur_on():
+    global valve_1
+    global valve_2
+    global valve_3
+    global valve_purge
+    valve_1 = 1
+    pneumatic.set_valves(valve_1, valve_2, valve_3, valve_purge)
+
+@robot.sequence
+async def ecarteur_off():
+    global valve_1
+    global valve_2
+    global valve_3
+    global valve_purge
+    valve_1 = 0
+    pneumatic.set_valves(valve_1, valve_2, valve_3, valve_purge)

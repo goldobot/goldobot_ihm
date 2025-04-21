@@ -64,7 +64,7 @@ async def recalage_ZoneDA_J():
 
 async def recalage_ZoneDL_B():
     poses = pos.BluePoses
-    homing_speed = 0.15
+    homing_speed = 0.25
     turning_speed = 1.00
 
     print("****************************************************************")
@@ -104,7 +104,7 @@ async def recalage_ZoneDL_B():
 async def recalage_ZoneA_J():
     global longueur_cale
     poses = pos.YellowPoses
-    homing_speed = 0.15
+    homing_speed = 0.25
     turning_speed = 1.00
 
     print("****************************************************************")
@@ -144,7 +144,7 @@ async def recalage_ZoneA_J():
 async def recalage_ZoneA_B():
     global longueur_cale
     poses = pos.BluePoses
-    homing_speed = 0.15
+    homing_speed = 0.25
     turning_speed = 1.00
 
     print("****************************************************************")
@@ -162,7 +162,7 @@ async def recalage_ZoneA_B():
 
     print("Recalage axe Y")
     await propulsion.reposition(-1.0, homing_speed)
-    await propulsion.setPose([propulsion.pose.position.x , 1.5-rc.robot_back_length+longueur_cale], -90)
+    await propulsion.setPose([propulsion.pose.position.x , 1.5-rc.robot_back_length-longueur_cale], -90)
     await asyncio.sleep(0.5)
 
     print("Orientation axe X")
@@ -183,7 +183,7 @@ async def recalage_ZoneA_B():
 
 async def recalage_ZoneDL_J():
     poses = pos.YellowPoses
-    homing_speed = 0.15
+    homing_speed = 0.25
     turning_speed = 1.00
 
     print("****************************************************************")
@@ -223,7 +223,7 @@ async def recalage_ZoneDL_J():
 async def recalage_ZoneDA_B():
     global longueur_cale
     poses = pos.BluePoses
-    homing_speed = 0.15
+    homing_speed = 0.25
     turning_speed = 1.00
 
     print("****************************************************************")
@@ -241,7 +241,7 @@ async def recalage_ZoneDA_B():
 
     print("Recalage axe Y")
     await propulsion.reposition(-1.0, homing_speed)
-    await propulsion.setPose([propulsion.pose.position.x , 1.5-rc.robot_back_length+longueur_cale], -90)
+    await propulsion.setPose([propulsion.pose.position.x , 1.5-rc.robot_back_length-longueur_cale], -90)
     await asyncio.sleep(0.5)
 
     print("Orientation axe X")

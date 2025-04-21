@@ -76,7 +76,7 @@ nucleo:
     reposition_torque_limit: 0.06
 
   servos:
-    # Test MX28
+    # Test dynas banc
     - name: test_mx28_82
       id: 82
       type: DYNAMIXEL_MX28
@@ -105,6 +105,28 @@ nucleo:
       max_torque: 0x3ff
       cw_limit: 70
       ccw_limit: 495
+    # True dynas robot
+    - name: ascenseur
+      id: 89
+      type: DYNAMIXEL_MX28
+      max_speed: 0xffff
+      max_torque: 0x3ff
+      cw_limit: 0
+      ccw_limit: 28000
+    - name: bras
+      id: 4
+      type: DYNAMIXEL_AX12
+      max_speed: 0x3ff
+      max_torque: 0x3ff
+      cw_limit: 0
+      ccw_limit: 1000
+    - name: soulageur
+      id: 10
+      type: DYNAMIXEL_AX12
+      max_speed: 0x3ff
+      max_torque: 0x3ff
+      cw_limit: 0
+      ccw_limit: 1000
 
 
   sensors:
