@@ -106,21 +106,21 @@ nucleo:
       cw_limit: 70
       ccw_limit: 495
     # True dynas robot
-    - name: ascenseur
+    - name: ascenseur_arr_mx28
       id: 89
       type: DYNAMIXEL_MX28
       max_speed: 0xffff
       max_torque: 0x3ff
       cw_limit: 0
       ccw_limit: 28000
-    - name: bras
+    - name: planche_sup_arr_ax12
       id: 4
       type: DYNAMIXEL_AX12
       max_speed: 0x3ff
       max_torque: 0x3ff
       cw_limit: 0
       ccw_limit: 1000
-    - name: soulageur
+    - name: planche_inf_arr_ax12
       id: 10
       type: DYNAMIXEL_AX12
       max_speed: 0x3ff
