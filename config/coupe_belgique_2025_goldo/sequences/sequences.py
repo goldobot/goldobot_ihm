@@ -336,12 +336,9 @@ async def action4():
     await robot.setScore(robot.score + 10)
     await asyncio.sleep(0.2)
 
+
 @robot.sequence
-async def start_match():
-    """
-    Sequence called at the start of the match, before trying any action.
-    This will typically be used to setup actuators and get out of the starting area.
-    """
+async def match_start_ZoneDA():
     global poses
     global test_speed_g
     global global_turn_speed
@@ -349,16 +346,6 @@ async def start_match():
     global global_debug_timeout
     global global_T0
     global global_T
-
-    global_T0 = time.time()
-
-    await propulsion.setAccelerationLimits(1,1,20,20)
-    robot._adversary_detection_enable = True
-
-    global_T = time.time()
-    print ("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
-    print ("T match_time = {}".format(global_T-global_T0))
-    print ("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
 
     print ("======================================================")
     print ("= Action1")
@@ -404,16 +391,25 @@ async def start_match():
     await action4()
     await asyncio.sleep(global_debug_timeout)
 
-    global_T = time.time()
-    print ("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
-    print ("T match_time = {}".format(global_T-global_T0))
-    print ("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
-    await lidar.stop()
-    #await actuators_pneuma.reset_valves()
 
 @robot.sequence
-async def construction():
-    
+async def match_start_ZoneDL():
+    # FIXME : TODO
+    pass
+
+
+@robot.sequence
+async def match_start_ZoneA():
+    # FIXME : TODO
+    pass
+
+
+@robot.sequence
+async def start_match():
+    """
+    Sequence called at the start of the match, before trying any action.
+    This will typically be used to setup actuators and get out of the starting area.
+    """
     global poses
     global test_speed_g
     global global_turn_speed
@@ -422,28 +418,52 @@ async def construction():
     global global_T0
     global global_T
 
-    await actuators_dyna.soulageur_up()
-    await actuators_dyna.bras_prise()
-    #TODO : Pompe
+    global_T0 = time.time()
 
-    await actuators_pneuma.ecarteur_on()
-    await asyncio.sleep(0.4)
-    await actuators_pneuma.ventouses_int_lache()
+    await propulsion.setAccelerationLimits(1,1,20,20)
+    robot._adversary_detection_enable = True
 
-    await propulsion.translation(0.05, global_long_speed)
-    await actuators_pneuma.ecarteur_off()
-    await actuators_pneuma.ventouses_int_attrape()
+    global_T = time.time()
+    print ("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
+    print ("T match_time = {}".format(global_T-global_T0))
+    print ("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
+
+    if (robot.start_zone == 1) or (robot.start_zone == 6):
+        await match_start_ZoneDA()
+    elif (robot.start_zone == 2) or (robot.start_zone == 5):
+        await match_start_ZoneDL()
+    elif (robot.start_zone == 3) or (robot.start_zone == 4):
+        await match_start_ZoneA()
+
+    global_T = time.time()
+    print ("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
+    print ("T match_time = {}".format(global_T-global_T0))
+    print ("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
+    await lidar.stop()
+    #await actuators_pneuma.reset_valves()
+
+
+@robot.sequence
+async def prep_construction_goldo():
+    # Pneuma
+    await actuators_pneuma.reset_valves()
+    await actuators_pneuma.start_compressor()
+    await asyncio.sleep(1)
+
+    # Propulsion
+    await odrive.clearErrors()
+    await propulsion.clearError()
+    await propulsion.setAccelerationLimits(1,1,2,2)
+    await propulsion.setMotorsEnable(True)
+    await propulsion.setEnable(True)
+    await asyncio.sleep(1)
+    
+    # Actionneurs
+    await actuators_dyna.ascenseur_down()
+    await asyncio.sleep(1)
+    await actuators_dyna.bras_up()
     await actuators_dyna.soulageur_down()
-    await asyncio.sleep(0.2)
 
-    await propulsion.translation(-0.05, global_long_speed)
-    await actuators_dyna.ascenseur_stage2()
-    await actuators_pneuma.ventouses_ext_attrape()
-    #TODO : Pompe release
-
-    await propulsion.translation(0.1, global_long_speed)
-    await actuators_dyna.bras_standby()
-    await actuators_dyna.ascenseur_standby()
 
 @robot.sequence
 async def construction_goldo():
@@ -466,61 +486,78 @@ async def construction_goldo():
     await asyncio.sleep(0.2)
     await actuators_dyna.bras_standby()
     await asyncio.sleep(0.2)
-    await propulsion.translation(-0.1, 0.15)
+    await propulsion.translation(-0.10, 0.15)
     await asyncio.sleep(0.2)
-    await asyncio.sleep(4.0)
+    await asyncio.sleep(1.0)
 
     print ("======================================================")
-    print ("= Manip planches")
+    print ("= Prise planches")
     print ("======================================================")
+    await actuators_dyna.ascenseur_soulage()
+    await asyncio.sleep(0.2)
     await actuators_dyna.soulageur_up()
     await asyncio.sleep(0.2)
     await actuators_dyna.bras_prise_hard()
     await asyncio.sleep(0.2)
     await actuators_dyna.pump_on()
-    await asyncio.sleep(1.0)
+    await asyncio.sleep(0.4)
     await actuators_dyna.bras_up()
     await asyncio.sleep(0.2)
-    await asyncio.sleep(4.0)
+    await asyncio.sleep(1.0)
     
     print ("======================================================")
-    print ("= Ecarteur")
+    print ("= Construction niveau 1")
     print ("======================================================")
     await actuators_pneuma.ecarteur_on()
     await asyncio.sleep(0.4)
     await actuators_pneuma.ventouses_int_lache()
-    await asyncio.sleep(10.0)
+    await asyncio.sleep(0.2)
+    await actuators_pneuma.ventouses_int_attrape()
+    await asyncio.sleep(0.2)
+    await actuators_pneuma.ventouses_int_lache()
+    await asyncio.sleep(0.2)
+    await actuators_pneuma.ventouses_int_attrape()
+    await asyncio.sleep(0.2)
+    await actuators_pneuma.ventouses_int_lache()
+    await asyncio.sleep(0.2)
+    await actuators_pneuma.ventouses_int_lache()
+    await asyncio.sleep(0.2)
+    await actuators_dyna.ascenseur_down()
+    await asyncio.sleep(0.2)
+    await actuators_dyna.soulageur_down()
+    await asyncio.sleep(0.2)
+    await asyncio.sleep(2.0)
 
     print ("======================================================")
     print ("= Translation")
     print ("======================================================")
-    await propulsion.translation(0.05, 0.15)
+    await propulsion.translation(0.08, 0.15)
     await asyncio.sleep(0.2)
     await actuators_pneuma.ecarteur_off()
     await asyncio.sleep(0.2)
-    await actuators_dyna.soulageur_down()
-    await asyncio.sleep(0.2)
-    await asyncio.sleep(4.0)
+    await asyncio.sleep(1.0)
 
     print ("======================================================")
-    print ("= Pose niveau 2")
+    print ("= Construction niveau 2")
     print ("======================================================")
     await actuators_dyna.ascenseur_stage2_high()
-    await asyncio.sleep(1.0)
-    await propulsion.translation(-0.05, 0.15)
-    await asyncio.sleep(1.0)
+    await asyncio.sleep(0.5)
+    await propulsion.translation(-0.08, 0.15)
+    await asyncio.sleep(0.5)
     await actuators_dyna.bras_prise()
+    await asyncio.sleep(0.2)
+    await actuators_dyna.ascenseur_stage2_depose()
     await asyncio.sleep(0.2)
     await actuators_dyna.pump_off()
     await asyncio.sleep(0.2)
     await actuators_pneuma.ventouses_ext_lache()
     await asyncio.sleep(0.2)
-    await asyncio.sleep(4.0)
+    await asyncio.sleep(1.0)
 
     print ("======================================================")
     print ("= Fin")
     print ("======================================================")
-    await propulsion.translation(0.1, 0.15)
+    await propulsion.translation(0.12, 0.15)
     await asyncio.sleep(0.2)
     await actuators_dyna.bras_standby()
     await asyncio.sleep(0.2)

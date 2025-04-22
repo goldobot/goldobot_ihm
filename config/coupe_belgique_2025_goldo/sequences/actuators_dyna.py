@@ -2,6 +2,7 @@ pose_asc_down = 2400
 pose_asc_soulage = 2510
 pose_asc_standby = 2800
 pose_asc_stage2_high = 3666
+pose_asc_stage2_depose = 3580
 pose_asc_stage2_low = 3504
 pose_asc_up = 3720
 pose_asc_up_high = 3750
@@ -63,6 +64,10 @@ async def ascenseur_standby():
 @robot.sequence
 async def ascenseur_stage2_high():
     await ascenseur_move(pose_asc_stage2_high)
+
+@robot.sequence
+async def ascenseur_stage2_depose():
+    await ascenseur_move(pose_asc_stage2_depose)
 
 @robot.sequence
 async def ascenseur_stage2_low():
