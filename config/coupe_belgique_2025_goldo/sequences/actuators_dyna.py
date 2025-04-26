@@ -1,4 +1,4 @@
-pose_asc_down = 2400
+pose_asc_down = 2380
 pose_asc_soulage = 2510
 pose_asc_standby = 2800
 pose_asc_stage2_high = 3666
@@ -12,7 +12,7 @@ pose_soulageur_up = 530
 
 pose_bras_up = 750
 pose_bras_prise = 520
-pose_bras_prise_hard = 500
+pose_bras_prise_hard = 495
 pose_bras_standby = 600
 
 @robot.sequence

@@ -52,7 +52,7 @@ async def prematch():
     
     # Lidar
     robot._adversary_detection_enable = False
-    #await lidar.start()
+    await lidar.start()
 
     # Actionneurs
     await asyncio.sleep(1)

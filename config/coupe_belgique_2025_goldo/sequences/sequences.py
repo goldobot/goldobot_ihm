@@ -113,14 +113,21 @@ async def action1():
     await asyncio.sleep(0.2)
     await propulsion.faceDirection(0, global_turn_speed)
     await asyncio.sleep(0.2)
-    await propulsion.translation(-0.11, 0.2)
+    await actuators_pneuma.ventouses_ext_attrape()
+    await asyncio.sleep(0.2)
+    await actuators_pneuma.ventouses_int_attrape()
+    await asyncio.sleep(0.2)
+    await propulsion.translation(-0.12, 0.2)
+    await asyncio.sleep(0.2)
+    await actuators_dyna.ascenseur_soulage()
+    await asyncio.sleep(0.2)
     await asyncio.sleep(global_debug_action_timeout)
 
     # verrouillage planches
     await actuators_dyna.soulageur_up()
-    await actuators_dyna.bras_prise()
+    await actuators_dyna.bras_prise_hard()
     await asyncio.sleep(0.2)
-    await propulsion.translation(0.1, 0.2)
+    await propulsion.translation(0.12, 0.2)
     await asyncio.sleep(global_debug_action_timeout)
 
     p0_x = propulsion.pose.position.x
@@ -133,26 +140,25 @@ async def action1():
         poses.Act1_traj2_finish
     ]
 
-    # depose1
+    # prep construction
     await propulsion.trajectorySpline(action1_traj2, speed=global_long_speed)
     await asyncio.sleep(0.2)
     await propulsion.faceDirection(180, global_turn_speed_slow)
     await asyncio.sleep(0.2)
+    await propulsion.translation(-0.10, 0.15)
+    await asyncio.sleep(0.2)
     await asyncio.sleep(global_debug_action_timeout)
     
-    # relacher
-    await actuators_dyna.ascenseur_soulage()
-    await actuators_dyna.bras_standby()
-    await actuators_dyna.soulageur_down()
-    await actuators_pneuma.ventouses_ext_lache()
-    await actuators_pneuma.ventouses_int_lache()
-    await propulsion.translation(0.1, 0.2)
+    # construction
+    await construction_goldo()
     await robot.setScore(robot.score + 4)
-    await asyncio.sleep(global_debug_action_timeout)
-    await actuators_pneuma.ventouses_ext_attrape()
-    await actuators_pneuma.ventouses_int_attrape()
-    await actuators_dyna.ascenseur_down()
+    await robot.setScore(robot.score + 8)
     
+    await propulsion.translation(0.10, 0.15)
+    await asyncio.sleep(0.2)
+
+    await asyncio.sleep(global_debug_action_timeout)
+
 @robot.sequence
 async def action2():
     global poses
@@ -175,7 +181,13 @@ async def action2():
     ]
 
     # prise2
+    await actuators_pneuma.ventouses_ext_attrape()
+    await asyncio.sleep(0.2)
+    await actuators_pneuma.ventouses_int_attrape()
+    await asyncio.sleep(0.2)
     #await propulsion.trajectorySpline(action2_traj1, speed=global_long_speed)
+    #await asyncio.sleep(0.2)
+    await propulsion.pointTo(poses.Act2_traj1_wp1, global_turn_speed)
     await asyncio.sleep(0.2)
     await propulsion.moveToRetry(poses.Act2_traj1_wp1, global_long_speed)
     await asyncio.sleep(0.2)
@@ -183,37 +195,29 @@ async def action2():
     await asyncio.sleep(0.2)
     await propulsion.moveToRetry(poses.Act2_traj1_finish, global_long_speed)
     await asyncio.sleep(0.2)
+
+    # prep construction
     await propulsion.faceDirection(180, global_turn_speed)
     await asyncio.sleep(0.2)
     await actuators_dyna.ascenseur_down()
     await propulsion.translation(-0.1, 0.1)
-    await asyncio.sleep(global_debug_action_timeout)
-    await actuators_dyna.bras_prise()
+    await asyncio.sleep(0.2)
+    await actuators_dyna.bras_prise_hard()
+    await asyncio.sleep(0.2)
     await actuators_dyna.soulageur_up()
+    await asyncio.sleep(0.2)
+    await propulsion.translation(-0.20, 0.15)
+    await asyncio.sleep(0.2)
     
-
-    # depose2
-    await propulsion.faceDirection(180, global_turn_speed_slow)
-    await asyncio.sleep(0.2)
-    await propulsion.moveToRetry(poses.Act2_predepose, global_long_speed)
-    await asyncio.sleep(global_debug_action_timeout)
-    await actuators_dyna.ascenseur_soulage()
-    await asyncio.sleep(0.2)
-    await actuators_pneuma.ventouses_ext_lache()
-    await actuators_pneuma.ventouses_int_lache()
-    await actuators_dyna.bras_standby()
-    await actuators_dyna.soulageur_down()
-
-    await propulsion.translation(0.1, 0.2)
-
-    await actuators_pneuma.ventouses_ext_attrape()
-    await actuators_pneuma.ventouses_int_attrape()
-    await actuators_dyna.ascenseur_down()
-
+    # construction
+    await construction_goldo()
     await robot.setScore(robot.score + 4)
-
+    await robot.setScore(robot.score + 8)
+    
+    await propulsion.translation(0.20, 0.15)
+    await asyncio.sleep(0.2)
+    
     await asyncio.sleep(global_debug_action_timeout)
-
 
 @robot.sequence
 async def action3():
@@ -237,10 +241,16 @@ async def action3():
     ]
 
     # prise3
+    await actuators_pneuma.ventouses_ext_attrape()
+    await asyncio.sleep(0.2)
+    await actuators_pneuma.ventouses_int_attrape()
+    await asyncio.sleep(0.2)
     #await propulsion.trajectorySpline(action3_traj1, speed=global_long_speed)
     #await asyncio.sleep(0.2)
-    await propulsion.moveToRetry(poses.Act3_traj1_wp1, global_long_speed)
-    await asyncio.sleep(0.2)
+    #await propulsion.pointTo(poses.Act3_traj1_wp1, global_turn_speed)
+    #await asyncio.sleep(0.2)
+    #await propulsion.moveToRetry(poses.Act3_traj1_wp1, global_long_speed)
+    #await asyncio.sleep(0.2)
     await propulsion.pointTo(poses.Act3_traj1_finish, global_turn_speed)
     await asyncio.sleep(0.2)
     await propulsion.moveToRetry(poses.Act3_traj1_finish, global_long_speed)
@@ -258,34 +268,33 @@ async def action3():
     await propulsion.reposition(-0.115, 0.2)
     await asyncio.sleep(global_debug_action_timeout)
     await actuators_dyna.ascenseur_down()
-    await actuators_dyna.bras_prise()
+    await asyncio.sleep(0.2)
+    await actuators_dyna.bras_prise_hard()
+    await asyncio.sleep(0.2)
+    await actuators_dyna.pump_on()
+    await asyncio.sleep(0.2)
     await actuators_dyna.soulageur_up()
     await asyncio.sleep(0.2)
-    await actuators_dyna.ascenseur_up_high()
+    await actuators_dyna.ascenseur_soulage()
+    await asyncio.sleep(0.2)
 
-    # depose3
+    # deplacement vers la zone de construction3
     await propulsion.moveToRetry(poses.Act3_predepose, global_long_speed)
-    await actuators_dyna.ascenseur_down()
-    await asyncio.sleep(1)
-    await actuators_dyna.ascenseur_up()
-    await asyncio.sleep(2)
-    await propulsion.faceDirection(180, 0.8)
-    await actuators_dyna.ascenseur_up()
     await asyncio.sleep(0.2)
-    await propulsion.reposition(-0.08, 0.2)
-    await asyncio.sleep(global_debug_action_timeout)
+    await propulsion.faceDirection(180, global_turn_speed)
     await asyncio.sleep(0.2)
-    await actuators_pneuma.ventouses_ext_lache()
-    await actuators_pneuma.ventouses_int_lache()
-    await actuators_dyna.bras_standby()
-    await actuators_dyna.soulageur_down()
 
-    await propulsion.translation(0.1, 0.2)
-    await asyncio.sleep(global_debug_action_timeout)
-
-    await actuators_pneuma.ventouses_ext_attrape()
-    await actuators_pneuma.ventouses_int_attrape()
+    # construction
+    await propulsion.translation(-0.10, 0.15)
+    await asyncio.sleep(0.2)
+    await construction_goldo()
+    await robot.setScore(robot.score + 4)
     await robot.setScore(robot.score + 8)
+    
+    await propulsion.translation(0.20, 0.15)
+    await asyncio.sleep(0.2)
+    
+    await asyncio.sleep(global_debug_action_timeout)
 
 @robot.sequence
 async def action4():
@@ -307,20 +316,27 @@ async def action4():
         poses.Act4_traj1_finish
     ]
 
-    # deplacement vers la zone d'attente finale
-    try:
-        await propulsion.trajectorySpline(action4_traj1, speed=global_long_speed)
-        await asyncio.sleep(0.2)
-    except:
-        await propulsion.pointTo(poses.Act4_traj1_finish, global_turn_speed)
-        await propulsion.moveToRetry(poses.Act4_traj1_finish, global_long_speed)
-
-    await propulsion.faceDirection(180, global_turn_speed)
-    await asyncio.sleep(0.2)
+    await actuators_dyna.pump_off()
+    await actuators_pneuma.reset_valves()
+    await actuators_pneuma.purge()
 
     await actuators_dyna.ascenseur_down()
     await asyncio.sleep(1.5)
     await actuators_dyna.ascenseur_disable()
+
+    # deplacement vers la zone d'attente finale
+    # FIXME : DEBUG : no spline yet..
+    #try:
+    #    await propulsion.trajectorySpline(action4_traj1, speed=global_long_speed)
+    #    await asyncio.sleep(0.2)
+    #except:
+    #    await propulsion.pointTo(poses.Act4_traj1_finish, global_turn_speed)
+    #    await propulsion.moveToRetry(poses.Act4_traj1_finish, global_long_speed)
+    await propulsion.pointTo(poses.Act4_traj1_finish, global_turn_speed)
+    await propulsion.moveToRetry(poses.Act4_traj1_finish, global_long_speed)
+
+    await propulsion.faceDirection(180, global_turn_speed)
+    await asyncio.sleep(0.2)
 
     print ("******************************************************")
     print ("* Attente finale")
@@ -347,47 +363,73 @@ async def match_start_ZoneDA():
     global global_T0
     global global_T
 
-    print ("======================================================")
-    print ("= Action1")
-    print ("======================================================")
-    try:
-        await action1()
-    except:
-        await actuators_dyna.ascenseur_soulage()
-        await actuators_pneuma.ventouses_ext_lache()
-        await actuators_pneuma.ventouses_int_lache()
-        await propulsion.pointTo(poses.Act1_traj2_finish, global_turn_speed)
-        await propulsion.moveToRetry(poses.Act1_traj2_finish, global_long_speed)
-        await actuators_pneuma.ventouses_ext_attrape()
-        await actuators_pneuma.ventouses_int_attrape()
-        await actuators_dyna.ascenseur_down()
-    await asyncio.sleep(0.5)
-    
-    print ("======================================================")
-    print ("= Action2")
-    print ("======================================================")
-    try:
-        await action2()
+    stop_actions = False
 
+    if not stop_actions:
+        print ("======================================================")
+        print ("= Action1")
+        print ("======================================================")
+        try:
+            await action1()
+        except:
+            print ("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+            print ("! Action1 FAILED")
+            print ("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+            await actuators_dyna.ascenseur_soulage()
+            await actuators_pneuma.ventouses_ext_lache()
+            await actuators_pneuma.ventouses_int_lache()
+            stop_actions = True
+        await asyncio.sleep(0.5)
+    else:
+        print ("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+        print ("! Action1 disabled")
+        print ("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+
+    if not stop_actions:
+        print ("======================================================")
+        print ("= Action2")
+        print ("======================================================")
+        try:
+            await action2()
+        except:
+            print ("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+            print ("! Action2 FAILED")
+            print ("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+            await actuators_dyna.ascenseur_soulage()
+            await actuators_pneuma.ventouses_ext_lache()
+            await actuators_pneuma.ventouses_int_lache()
+            stop_actions = True
+        await asyncio.sleep(0.5)
+    else:
+        print ("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+        print ("! Action2 disabled")
+        print ("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+
+    #stop_actions = True
+
+    if not stop_actions:
         print ("======================================================")
         print ("= Action3")
         print ("======================================================")
-        await action3()
-    except:
-        await actuators_dyna.ascenseur_soulage()
-        await actuators_pneuma.ventouses_ext_lache()
-        await actuators_pneuma.ventouses_int_lache()
-        await propulsion.pointTo(poses.Act3_predepose, global_turn_speed)
-        await propulsion.moveToRetry(poses.Act3_predepose, global_long_speed)
-        await actuators_pneuma.ventouses_ext_attrape()
-        await actuators_pneuma.ventouses_int_attrape()
-        await actuators_dyna.ascenseur_down()
-    await asyncio.sleep(global_debug_timeout)
+        try:
+            await action3()
+        except:
+            print ("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+            print ("! Action3 FAILED")
+            print ("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+            await actuators_dyna.ascenseur_soulage()
+            await actuators_pneuma.ventouses_ext_lache()
+            await actuators_pneuma.ventouses_int_lache()
+            stop_actions = True
+        await asyncio.sleep(0.5)
+    else:
+        print ("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+        print ("! Action3 disabled")
+        print ("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
 
     print ("======================================================")
     print ("= Action4")
     print ("======================================================")
-    
     await action4()
     await asyncio.sleep(global_debug_timeout)
 
@@ -466,6 +508,42 @@ async def prep_construction_goldo():
 
 
 @robot.sequence
+async def test_construction_goldo():
+    await preprise_construction_goldo()
+    await construction_goldo()
+
+@robot.sequence
+async def preprise_construction_goldo():
+    global poses
+    global test_speed_g
+    global global_turn_speed
+    global global_debug_action_timeout
+    global global_debug_timeout
+    global global_T0
+    global global_T
+
+    short_timeout = 0.2
+    long_timeout = 0.5
+
+    await actuators_dyna.ascenseur_down()
+    await asyncio.sleep(short_timeout)
+    await actuators_dyna.bras_up()
+    await actuators_dyna.soulageur_down()
+
+    print ("Pre-prise")
+    await actuators_dyna.ascenseur_down()
+    await asyncio.sleep(long_timeout)
+    await actuators_pneuma.ventouses_ext_attrape()
+    await asyncio.sleep(short_timeout)
+    await actuators_pneuma.ventouses_int_attrape()
+    await asyncio.sleep(short_timeout)
+    await actuators_dyna.bras_standby()
+    await asyncio.sleep(short_timeout)
+    await propulsion.translation(-0.20, 0.15)
+    await asyncio.sleep(short_timeout)
+    await asyncio.sleep(long_timeout)
+
+@robot.sequence
 async def construction_goldo():
     global poses
     global test_speed_g
@@ -475,93 +553,70 @@ async def construction_goldo():
     global global_T0
     global global_T
 
-    print ("======================================================")
-    print ("= Pre-prise")
-    print ("======================================================")
-    await actuators_dyna.ascenseur_down()
-    await asyncio.sleep(1)
-    await actuators_pneuma.ventouses_ext_attrape()
-    await asyncio.sleep(0.2)
-    await actuators_pneuma.ventouses_int_attrape()
-    await asyncio.sleep(0.2)
-    await actuators_dyna.bras_standby()
-    await asyncio.sleep(0.2)
-    await propulsion.translation(-0.10, 0.15)
-    await asyncio.sleep(0.2)
-    await asyncio.sleep(1.0)
+    short_timeout = 0.2
+    long_timeout = 0.5
 
-    print ("======================================================")
-    print ("= Prise planches")
-    print ("======================================================")
+    print ("Prise planches")
     await actuators_dyna.ascenseur_soulage()
-    await asyncio.sleep(0.2)
+    await asyncio.sleep(short_timeout)
     await actuators_dyna.soulageur_up()
-    await asyncio.sleep(0.2)
-    await actuators_dyna.bras_prise_hard()
-    await asyncio.sleep(0.2)
+    await asyncio.sleep(short_timeout)
     await actuators_dyna.pump_on()
-    await asyncio.sleep(0.4)
+    await asyncio.sleep(short_timeout)
+    await actuators_dyna.bras_prise_hard()
+    await asyncio.sleep(long_timeout)
     await actuators_dyna.bras_up()
-    await asyncio.sleep(0.2)
-    await asyncio.sleep(1.0)
+    await asyncio.sleep(short_timeout)
+    await asyncio.sleep(long_timeout)
     
-    print ("======================================================")
-    print ("= Construction niveau 1")
-    print ("======================================================")
+    print ("Construction niveau 1")
     await actuators_pneuma.ecarteur_on()
-    await asyncio.sleep(0.4)
+    await asyncio.sleep(short_timeout)
     await actuators_pneuma.ventouses_int_lache()
-    await asyncio.sleep(0.2)
+    await asyncio.sleep(short_timeout)
     await actuators_pneuma.ventouses_int_attrape()
-    await asyncio.sleep(0.2)
+    await asyncio.sleep(short_timeout)
     await actuators_pneuma.ventouses_int_lache()
-    await asyncio.sleep(0.2)
+    await asyncio.sleep(short_timeout)
     await actuators_pneuma.ventouses_int_attrape()
-    await asyncio.sleep(0.2)
+    await asyncio.sleep(short_timeout)
     await actuators_pneuma.ventouses_int_lache()
-    await asyncio.sleep(0.2)
+    await asyncio.sleep(short_timeout)
     await actuators_pneuma.ventouses_int_lache()
-    await asyncio.sleep(0.2)
+    await asyncio.sleep(short_timeout)
     await actuators_dyna.ascenseur_down()
-    await asyncio.sleep(0.2)
+    await asyncio.sleep(short_timeout)
     await actuators_dyna.soulageur_down()
-    await asyncio.sleep(0.2)
-    await asyncio.sleep(2.0)
+    await asyncio.sleep(short_timeout)
+    await asyncio.sleep(long_timeout)
 
-    print ("======================================================")
-    print ("= Translation")
-    print ("======================================================")
+    print ("Translation")
     await propulsion.translation(0.08, 0.15)
-    await asyncio.sleep(0.2)
+    await asyncio.sleep(short_timeout)
     await actuators_pneuma.ecarteur_off()
-    await asyncio.sleep(0.2)
-    await asyncio.sleep(1.0)
+    await asyncio.sleep(short_timeout)
+    await asyncio.sleep(long_timeout)
 
-    print ("======================================================")
-    print ("= Construction niveau 2")
-    print ("======================================================")
+    print ("Construction niveau 2")
     await actuators_dyna.ascenseur_stage2_high()
-    await asyncio.sleep(0.5)
-    await propulsion.translation(-0.08, 0.15)
-    await asyncio.sleep(0.5)
+    await asyncio.sleep(long_timeout)
+    await propulsion.translation(-0.10, 0.15)
+    await asyncio.sleep(short_timeout)
     await actuators_dyna.bras_prise()
-    await asyncio.sleep(0.2)
+    await asyncio.sleep(short_timeout)
     await actuators_dyna.ascenseur_stage2_depose()
-    await asyncio.sleep(0.2)
+    await asyncio.sleep(short_timeout)
     await actuators_dyna.pump_off()
-    await asyncio.sleep(0.2)
+    await asyncio.sleep(short_timeout)
     await actuators_pneuma.ventouses_ext_lache()
-    await asyncio.sleep(0.2)
-    await asyncio.sleep(1.0)
+    await asyncio.sleep(short_timeout)
+    await asyncio.sleep(long_timeout)
 
-    print ("======================================================")
-    print ("= Fin")
-    print ("======================================================")
-    await propulsion.translation(0.12, 0.15)
-    await asyncio.sleep(0.2)
+    print ("Fin")
+    await propulsion.translation(0.22, 0.15)
+    await asyncio.sleep(short_timeout)
     await actuators_dyna.bras_standby()
-    await asyncio.sleep(0.2)
+    await asyncio.sleep(short_timeout)
     await actuators_dyna.ascenseur_standby()
-    await asyncio.sleep(0.2)
-    await asyncio.sleep(2.0)
+    await asyncio.sleep(short_timeout)
 

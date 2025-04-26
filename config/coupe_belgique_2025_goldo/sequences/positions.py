@@ -65,8 +65,8 @@ class YellowPoses:
     # Action3
     Act3_start         = Act2_predepose
     Act3_preprise      = (  1.600, -1.175,  90)
-    Act3_depose        = (  1.680, -0.725, 180)
-    Act3_predepose     = (  1.640, -0.725, 180)
+    Act3_depose        = (  1.600, -0.250, 180)
+    Act3_predepose     = (  1.500, -0.250, 180)
     Act3_traj1_start   = Act3_start
     Act3_traj1_wp1     = (  1.600, -0.725, -90)
     Act3_traj1_finish  = Act3_preprise
@@ -103,7 +103,7 @@ class BluePoses:
     Act1_traj1_finish  = symetrie(YellowPoses.Act1_traj1_finish)
     Act1_traj2_start   = symetrie(YellowPoses.Act1_traj2_start)
     Act1_traj2_wp1     = symetrie(YellowPoses.Act1_traj2_wp1)
-    Act1_traj2_finish    = symetrie(YellowPoses.Act1_traj2_finish)
+    Act1_traj2_finish  = symetrie(YellowPoses.Act1_traj2_finish)
 
     # Action2
     Act2_start         = symetrie(YellowPoses.Act2_start)
