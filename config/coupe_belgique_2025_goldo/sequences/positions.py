@@ -71,8 +71,6 @@ class YellowPoses:
     Act3_traj1_wp1     = (  1.600, -0.725, -90)
     Act3_traj1_finish  = Act3_preprise
 
-
-
     # Action4
     Act4_start         = Act3_predepose
     Act4_traj1_start   = Act4_start
@@ -81,6 +79,26 @@ class YellowPoses:
     Act4_traj1_wp3     = (  0.800, -0.850, -90)
     Act4_traj1_finish  = (  0.800, -1.200, -90)
     Act4_final         = (  0.450, -1.200, 180)
+
+
+    # Action1_ZoneDL
+    Act1_ZoneDL_start         = ZoneDL_start_pose
+    Act1_ZoneDL_preprise      = (  1.300,  0.400,   0)
+    Act1_ZoneDL_predepose     = (  1.125,  1.150, 180)
+    Act1_ZoneDL_traj1_start   = Act1_ZoneDL_start
+    Act1_ZoneDL_traj1_wp1     = (  1.300,  0.800, 180)
+    Act1_ZoneDL_traj1_finish  = Act1_ZoneDL_preprise
+    Act1_ZoneDL_traj2_start   = Act1_ZoneDL_preprise
+    Act1_ZoneDL_traj2_wp1     = (  1.300,  0.800,   0)
+    Act1_ZoneDL_traj2_finish  = Act1_ZoneDL_predepose
+
+    # Action4
+    Act4_ZoneDL_start         = Act1_ZoneDL_predepose
+    Act4_ZoneDL_traj1_start   = Act4_ZoneDL_start
+    Act4_ZoneDL_traj1_wp1     = (  0.800,  0.400, -135)
+    Act4_ZoneDL_traj1_finish  = (  0.800, -1.200, -90)
+    Act4_ZoneDL_final         = (  0.450, -1.200, 180)
+
 
 class BluePoses:
     # Reperes

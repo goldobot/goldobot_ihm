@@ -9,8 +9,10 @@ pose_asc_up_high = 3750
 
 pose_soulageur_down = 206
 pose_soulageur_up = 530
+pose_soulageur_transport = 560
 
 pose_bras_up = 750
+pose_bras_transport = 540
 pose_bras_prise = 520
 pose_bras_prise_hard = 495
 pose_bras_standby = 600
@@ -90,6 +92,10 @@ async def soulageur_up():
     await soulageur_move(pose_soulageur_up)
 
 @robot.sequence
+async def soulageur_transport():
+    await soulageur_move(pose_soulageur_transport)
+
+@robot.sequence
 async def soulageur_down():
     await soulageur_move(pose_soulageur_down)
 
@@ -121,3 +127,8 @@ async def bras_standby():
 @robot.sequence
 async def bras_up():
     await bras_move(pose_bras_up)
+
+@robot.sequence
+async def bras_transport():
+    await bras_move(pose_bras_transport)
+

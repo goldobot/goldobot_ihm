@@ -127,6 +127,12 @@ async def action1():
     await actuators_dyna.soulageur_up()
     await actuators_dyna.bras_prise_hard()
     await asyncio.sleep(0.2)
+    await actuators_dyna.pump_on()
+    await asyncio.sleep(0.2)
+    await actuators_dyna.bras_transport()
+    await asyncio.sleep(0.2)
+    await actuators_dyna.soulageur_transport()
+    await asyncio.sleep(0.2)
     await propulsion.translation(0.12, 0.2)
     await asyncio.sleep(global_debug_action_timeout)
 
@@ -187,10 +193,10 @@ async def action2():
     await asyncio.sleep(0.2)
     #await propulsion.trajectorySpline(action2_traj1, speed=global_long_speed)
     #await asyncio.sleep(0.2)
-    await propulsion.pointTo(poses.Act2_traj1_wp1, global_turn_speed)
-    await asyncio.sleep(0.2)
-    await propulsion.moveToRetry(poses.Act2_traj1_wp1, global_long_speed)
-    await asyncio.sleep(0.2)
+    #await propulsion.pointTo(poses.Act2_traj1_wp1, global_turn_speed)
+    #await asyncio.sleep(0.2)
+    #await propulsion.moveToRetry(poses.Act2_traj1_wp1, global_long_speed)
+    #await asyncio.sleep(0.2)
     await propulsion.pointTo(poses.Act2_traj1_finish, global_turn_speed)
     await asyncio.sleep(0.2)
     await propulsion.moveToRetry(poses.Act2_traj1_finish, global_long_speed)
@@ -204,7 +210,11 @@ async def action2():
     await asyncio.sleep(0.2)
     await actuators_dyna.bras_prise_hard()
     await asyncio.sleep(0.2)
-    await actuators_dyna.soulageur_up()
+    await actuators_dyna.pump_on()
+    await asyncio.sleep(0.2)
+    await actuators_dyna.bras_transport()
+    await asyncio.sleep(0.2)
+    await actuators_dyna.soulageur_transport()
     await asyncio.sleep(0.2)
     await propulsion.translation(-0.20, 0.15)
     await asyncio.sleep(0.2)
@@ -264,6 +274,7 @@ async def action3():
     await asyncio.sleep(0.2)
     await actuators_dyna.ascenseur_down()
     await asyncio.sleep(0.2)
+    await asyncio.sleep(1.0)
     #await propulsion.translation(-0.1, 0.2)
     await propulsion.reposition(-0.115, 0.2)
     await asyncio.sleep(global_debug_action_timeout)
@@ -273,8 +284,29 @@ async def action3():
     await asyncio.sleep(0.2)
     await actuators_dyna.pump_on()
     await asyncio.sleep(0.2)
-    await actuators_dyna.soulageur_up()
+    await actuators_dyna.bras_transport()
     await asyncio.sleep(0.2)
+    await actuators_dyna.soulageur_transport()
+    await asyncio.sleep(0.2)
+    await asyncio.sleep(4.0)
+
+    # wooble..
+    if robot.side == pos.Side.Yellow:
+        await propulsion.faceDirection(95, global_turn_speed)
+        await asyncio.sleep(0.2)
+        await propulsion.faceDirection(85, global_turn_speed)
+        await asyncio.sleep(0.2)
+        await propulsion.faceDirection(90, global_turn_speed)
+        await asyncio.sleep(0.2)
+    elif robot.side == pos.Side.Blue:
+        await propulsion.faceDirection(-95, global_turn_speed)
+        await asyncio.sleep(0.2)
+        await propulsion.faceDirection(-85, global_turn_speed)
+        await asyncio.sleep(0.2)
+        await propulsion.faceDirection(-90, global_turn_speed)
+        await asyncio.sleep(0.2)
+
+    # soulage..
     await actuators_dyna.ascenseur_soulage()
     await asyncio.sleep(0.2)
 
@@ -316,10 +348,6 @@ async def action4():
         poses.Act4_traj1_finish
     ]
 
-    await actuators_dyna.pump_off()
-    await actuators_pneuma.reset_valves()
-    await actuators_pneuma.purge()
-
     await actuators_dyna.ascenseur_down()
     await asyncio.sleep(1.5)
     await actuators_dyna.ascenseur_disable()
@@ -335,6 +363,10 @@ async def action4():
     await propulsion.pointTo(poses.Act4_traj1_finish, global_turn_speed)
     await propulsion.moveToRetry(poses.Act4_traj1_finish, global_long_speed)
 
+    await actuators_dyna.pump_off()
+    await actuators_pneuma.reset_valves()
+    await actuators_pneuma.purge()
+
     await propulsion.faceDirection(180, global_turn_speed)
     await asyncio.sleep(0.2)
 
@@ -349,6 +381,160 @@ async def action4():
 
     # deplacement final
     await propulsion.moveToRetry(poses.Act4_final, global_long_speed)
+    await robot.setScore(robot.score + 10)
+    await asyncio.sleep(0.2)
+
+
+@robot.sequence
+async def action1_ZoneDL():
+    global poses
+    global global_long_speed
+    global global_turn_speed
+    global global_turn_speed_slow
+    global global_debug_action_timeout
+    global global_debug_timeout
+    global global_T0
+    global global_T
+
+    # depose baniere
+    # FIXME : TODO
+
+    p0_x = propulsion.pose.position.x
+    p0_y = propulsion.pose.position.y
+
+    action1_traj1 = [
+        (p0_x, p0_y, 0),
+        poses.Act1_ZoneDL_traj1_start,
+        poses.Act1_ZoneDL_traj1_wp1,
+        poses.Act1_ZoneDL_traj1_finish
+    ]
+
+    # prise1
+    try:
+        await propulsion.trajectorySpline(action1_traj1, speed=global_long_speed)
+    except:
+        await propulsion.pointTo(poses.Act1_ZoneDL_traj1_finish, global_turn_speed)
+        await propulsion.moveToRetry(poses.Act1_ZoneDL_traj1_finish, global_long_speed)
+    await actuators_dyna.bras_standby()
+    await asyncio.sleep(0.2)
+    await propulsion.faceDirection(0, global_turn_speed)
+    await asyncio.sleep(0.2)
+    await actuators_pneuma.ventouses_ext_attrape()
+    await asyncio.sleep(0.2)
+    await actuators_pneuma.ventouses_int_attrape()
+    await asyncio.sleep(0.2)
+    await propulsion.translation(-0.12, 0.2)
+    await asyncio.sleep(0.2)
+    await actuators_dyna.ascenseur_soulage()
+    await asyncio.sleep(0.2)
+    await asyncio.sleep(global_debug_action_timeout)
+
+    # verrouillage planches
+    await actuators_dyna.soulageur_up()
+    await actuators_dyna.bras_prise_hard()
+    await asyncio.sleep(0.2)
+    await actuators_dyna.pump_on()
+    await asyncio.sleep(0.2)
+    await actuators_dyna.bras_transport()
+    await asyncio.sleep(0.2)
+    await actuators_dyna.soulageur_transport()
+    await asyncio.sleep(0.2)
+    await propulsion.translation(0.12, 0.2)
+    await asyncio.sleep(global_debug_action_timeout)
+
+    p0_x = propulsion.pose.position.x
+    p0_y = propulsion.pose.position.y
+
+    action1_traj2 = [
+        (p0_x, p0_y, 0),
+        poses.Act1_ZoneDL_traj2_start,
+        poses.Act1_ZoneDL_traj2_wp1,
+        poses.Act1_ZoneDL_traj2_finish
+    ]
+
+    # prep construction
+    if robot.side == pos.Side.Yellow:
+        await propulsion.faceDirection(90, global_turn_speed)
+    elif robot.side == pos.Side.Blue:
+        await propulsion.faceDirection(-90, global_turn_speed)
+    await asyncio.sleep(0.2)
+    await propulsion.trajectorySpline(action1_traj2, speed=global_long_speed)
+    await asyncio.sleep(0.2)
+    if robot.side == pos.Side.Yellow:
+        await propulsion.faceDirection(-90, global_turn_speed)
+    elif robot.side == pos.Side.Blue:
+        await propulsion.faceDirection(90, global_turn_speed)
+    await asyncio.sleep(0.2)
+    await propulsion.translation(-0.10, 0.15)
+    await asyncio.sleep(0.2)
+    await asyncio.sleep(global_debug_action_timeout)
+    
+    # construction
+    await construction_goldo()
+    await robot.setScore(robot.score + 4)
+    await robot.setScore(robot.score + 8)
+    
+    await propulsion.translation(0.10, 0.15)
+    await asyncio.sleep(0.2)
+
+    await asyncio.sleep(global_debug_action_timeout)
+
+
+@robot.sequence
+async def action4_ZoneDL():
+    global poses
+    global global_long_speed
+    global global_turn_speed
+    global global_debug_action_timeout
+    global global_debug_timeout
+    global global_T0
+    global global_T
+
+    p0_x = propulsion.pose.position.x
+    p0_y = propulsion.pose.position.y
+
+    #action4_traj1 = [
+    #    (p0_x, p0_y, 0),
+    #    poses.Act4_ZoneDL_traj1_start,
+    #    poses.Act4_ZoneDL_traj1_wp1,
+    #    poses.Act4_ZoneDL_traj1_finish
+    #]
+
+    await actuators_dyna.ascenseur_down()
+    await asyncio.sleep(1.5)
+    await actuators_dyna.ascenseur_disable()
+
+    # deplacement vers la zone d'attente finale
+    # FIXME : DEBUG : no spline yet..
+    #try:
+    #    await propulsion.trajectorySpline(action4_traj1, speed=global_long_speed)
+    #    await asyncio.sleep(0.2)
+    #except:
+    #    await propulsion.pointTo(poses.Act4_ZoneDL_traj1_finish, global_turn_speed)
+    #    await propulsion.moveToRetry(poses.Act4_ZoneDL_traj1_finish, global_long_speed)
+    await propulsion.pointTo(poses.Act4_ZoneDL_traj1_wp1, global_turn_speed)
+    await propulsion.moveToRetry(poses.Act4_ZoneDL_traj1_wp1, global_long_speed)
+    await propulsion.pointTo(poses.Act4_ZoneDL_traj1_finish, global_turn_speed)
+    await propulsion.moveToRetry(poses.Act4_ZoneDL_traj1_finish, global_long_speed)
+
+    await actuators_dyna.pump_off()
+    await actuators_pneuma.reset_valves()
+    await actuators_pneuma.purge()
+
+    await propulsion.faceDirection(180, global_turn_speed)
+    await asyncio.sleep(0.2)
+
+    print ("******************************************************")
+    print ("* Attente finale")
+    print ("******************************************************")
+    # attente finale
+    global_T = time.time()
+    while (global_T-global_T0)<92.0:
+        await asyncio.sleep(1.0)
+        global_T = time.time()
+
+    # deplacement final
+    await propulsion.moveToRetry(poses.Act4_ZoneDL_final, global_long_speed)
     await robot.setScore(robot.score + 10)
     await asyncio.sleep(0.2)
 
@@ -436,8 +622,43 @@ async def match_start_ZoneDA():
 
 @robot.sequence
 async def match_start_ZoneDL():
-    # FIXME : TODO
-    pass
+    global poses
+    global test_speed_g
+    global global_turn_speed
+    global global_debug_action_timeout
+    global global_debug_timeout
+    global global_T0
+    global global_T
+
+    stop_actions = False
+
+    if not stop_actions:
+        print ("======================================================")
+        print ("= Action1 ZoneDL")
+        print ("======================================================")
+        try:
+            await action1_ZoneDL()
+        except:
+            print ("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+            print ("! Action1 ZoneDL FAILED")
+            print ("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+            await actuators_dyna.ascenseur_soulage()
+            await actuators_pneuma.ventouses_ext_lache()
+            await actuators_pneuma.ventouses_int_lache()
+            stop_actions = True
+        await asyncio.sleep(0.5)
+    else:
+        print ("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+        print ("! Action1 ZoneDL disabled")
+        print ("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+
+    #stop_actions = True
+
+    print ("======================================================")
+    print ("= Action4 ZoneDL")
+    print ("======================================================")
+    await action4_ZoneDL()
+    await asyncio.sleep(global_debug_timeout)
 
 
 @robot.sequence
@@ -571,6 +792,8 @@ async def construction_goldo():
     
     print ("Construction niveau 1")
     await actuators_pneuma.ecarteur_on()
+    await asyncio.sleep(short_timeout)
+    await actuators_dyna.bras_standby()
     await asyncio.sleep(short_timeout)
     await actuators_pneuma.ventouses_int_lache()
     await asyncio.sleep(short_timeout)
