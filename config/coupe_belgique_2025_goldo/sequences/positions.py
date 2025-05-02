@@ -84,20 +84,42 @@ class YellowPoses:
     # Action1_ZoneDL
     Act1_ZoneDL_start         = ZoneDL_start_pose
     Act1_ZoneDL_preprise      = (  1.300,  0.400,   0)
-    Act1_ZoneDL_predepose     = (  1.125,  1.150, 180)
+    Act1_ZoneDL_predepose     = (  1.125,  1.150, -90)
     Act1_ZoneDL_traj1_start   = Act1_ZoneDL_start
-    Act1_ZoneDL_traj1_wp1     = (  1.300,  0.800, 180)
+    Act1_ZoneDL_traj1_wp1     = (  1.300,  0.800, -90)
     Act1_ZoneDL_traj1_finish  = Act1_ZoneDL_preprise
     Act1_ZoneDL_traj2_start   = Act1_ZoneDL_preprise
     Act1_ZoneDL_traj2_wp1     = (  1.300,  0.800,   0)
     Act1_ZoneDL_traj2_finish  = Act1_ZoneDL_predepose
 
-    # Action4
-    Act4_ZoneDL_start         = Act1_ZoneDL_predepose
+    # Action2_ZoneDL
+    Act2_ZoneDL_start         = Act1_ZoneDL_predepose
+    Act2_ZoneDL_preprise      = (  1.500,  0.725, -90)
+    Act2_ZoneDL_predepose     = (  1.125,  1.000, -90)
+
+    # Action3_ZoneDL
+    Act3_ZoneDL_start         = Act2_ZoneDL_predepose
+    Act3_ZoneDL_preprise      = (  1.600,  1.175, -90)
+    Act3_ZoneDL_predepose     = (  1.720,  1.250, 180)
+
+    # Action4_ZoneDL
+    Act4_ZoneDL_start         = Act3_ZoneDL_predepose
     Act4_ZoneDL_traj1_start   = Act4_ZoneDL_start
     Act4_ZoneDL_traj1_wp1     = (  0.800,  0.400, -135)
     Act4_ZoneDL_traj1_finish  = (  0.800, -1.200, -90)
     Act4_ZoneDL_final         = (  0.450, -1.200, 180)
+
+
+    # Action1_ZoneA
+    Act1_ZoneA_start         = ZoneA_start_pose
+    Act1_ZoneA_preprise      = (  0.800, -0.400,   0)
+    Act1_ZoneA_predepose     = (  1.650, -0.200, 180)
+    Act1_ZoneA_traj1_start   = Act1_ZoneA_start
+    Act1_ZoneA_traj1_wp1     = (  0.700, -1.100,   0)
+    Act1_ZoneA_traj1_finish  = Act1_ZoneA_preprise
+    Act1_ZoneA_traj2_start   = Act1_ZoneA_preprise
+    Act1_ZoneA_traj2_wp1     = (  1.500, -0.300,   0)
+    Act1_ZoneA_traj2_finish  = Act1_ZoneDL_predepose
 
 
 class BluePoses:
@@ -148,6 +170,47 @@ class BluePoses:
     Act4_traj1_wp3     = symetrie(YellowPoses.Act4_traj1_wp3)
     Act4_traj1_finish  = symetrie(YellowPoses.Act4_traj1_finish)
     Act4_final         = symetrie(YellowPoses.Act4_final)
+
+
+    # Action1_ZoneDL
+    Act1_ZoneDL_start         = symetrie(YellowPoses.Act1_ZoneDL_start)
+    Act1_ZoneDL_preprise      = symetrie(YellowPoses.Act1_ZoneDL_preprise)
+    Act1_ZoneDL_predepose     = symetrie(YellowPoses.Act1_ZoneDL_predepose)
+    Act1_ZoneDL_traj1_start   = symetrie(YellowPoses.Act1_ZoneDL_traj1_start)
+    Act1_ZoneDL_traj1_wp1     = symetrie(YellowPoses.Act1_ZoneDL_traj1_wp1)
+    Act1_ZoneDL_traj1_finish  = symetrie(YellowPoses.Act1_ZoneDL_traj1_finish)
+    Act1_ZoneDL_traj2_start   = symetrie(YellowPoses.Act1_ZoneDL_traj2_start)
+    Act1_ZoneDL_traj2_wp1     = symetrie(YellowPoses.Act1_ZoneDL_traj2_wp1)
+    Act1_ZoneDL_traj2_finish  = symetrie(YellowPoses.Act1_ZoneDL_traj2_finish)
+
+    # Action2_ZoneDL
+    Act2_ZoneDL_start         = symetrie(YellowPoses.Act2_ZoneDL_start)
+    Act2_ZoneDL_preprise      = symetrie(YellowPoses.Act2_ZoneDL_preprise)
+    Act2_ZoneDL_predepose     = symetrie(YellowPoses.Act2_ZoneDL_predepose)
+
+    # Action3_ZoneDL
+    Act3_ZoneDL_start         = symetrie(YellowPoses.Act3_ZoneDL_start)
+    Act3_ZoneDL_preprise      = symetrie(YellowPoses.Act3_ZoneDL_preprise)
+    Act3_ZoneDL_predepose     = symetrie(YellowPoses.Act3_ZoneDL_predepose)
+
+    # Action4_ZoneDL
+    Act4_ZoneDL_start         = symetrie(YellowPoses.Act4_ZoneDL_start)
+    Act4_ZoneDL_traj1_start   = symetrie(YellowPoses.Act4_ZoneDL_traj1_start)
+    Act4_ZoneDL_traj1_wp1     = symetrie(YellowPoses.Act4_ZoneDL_traj1_wp1)
+    Act4_ZoneDL_traj1_finish  = symetrie(YellowPoses.Act4_ZoneDL_traj1_finish)
+    Act4_ZoneDL_final         = symetrie(YellowPoses.Act4_ZoneDL_final)
+
+
+    # Action1_ZoneA
+    Act1_ZoneA_start         = symetrie(YellowPoses.Act1_ZoneA_start)
+    Act1_ZoneA_preprise      = symetrie(YellowPoses.Act1_ZoneA_preprise)
+    Act1_ZoneA_predepose     = symetrie(YellowPoses.Act1_ZoneA_predepose)
+    Act1_ZoneA_traj1_start   = symetrie(YellowPoses.Act1_ZoneA_traj1_start)
+    Act1_ZoneA_traj1_wp1     = symetrie(YellowPoses.Act1_ZoneA_traj1_wp1)
+    Act1_ZoneA_traj1_finish  = symetrie(YellowPoses.Act1_ZoneA_traj1_finish)
+    Act1_ZoneA_traj2_start   = symetrie(YellowPoses.Act1_ZoneA_traj2_start)
+    Act1_ZoneA_traj2_wp1     = symetrie(YellowPoses.Act1_ZoneA_traj2_wp1)
+    Act1_ZoneA_traj2_finish  = symetrie(YellowPoses.Act1_ZoneA_traj2_finish)
 
 
 @robot.sequence
