@@ -117,7 +117,7 @@ async def action1():
     await asyncio.sleep(0.2)
     await actuators_pneuma.ventouses_int_attrape()
     await asyncio.sleep(0.2)
-    await propulsion.translation(-0.12, 0.2)
+    await propulsion.translation(-0.13, 0.2)
     await asyncio.sleep(0.2)
     await actuators_dyna.ascenseur_soulage()
     await asyncio.sleep(0.2)
@@ -133,7 +133,7 @@ async def action1():
     await asyncio.sleep(0.2)
     await actuators_dyna.soulageur_transport()
     await asyncio.sleep(0.2)
-    await propulsion.translation(0.12, 0.2)
+    await propulsion.translation(0.13, 0.2)
     await asyncio.sleep(global_debug_action_timeout)
 
     p0_x = propulsion.pose.position.x
