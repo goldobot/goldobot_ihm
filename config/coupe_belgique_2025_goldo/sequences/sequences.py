@@ -1,5 +1,3 @@
-# Sequences de la Coupe de France 2023 - gardees pour test & debug
-
 # import base modules
 import asyncio
 import numpy as np
@@ -12,6 +10,7 @@ from . import recalages
 from . import actuators_pneuma
 from . import actuators_dyna
 from . import robot_config as rc
+from . import dynamic as dyn
 
 # objects included in the _sequences_globals of RobotMain class, defined in robot_main.py of goldo_main, are available as global variables
 # those objects are used to interact with the robot (send commands, read data)
@@ -1095,12 +1094,15 @@ async def start_match():
     print ("T match_time = {}".format(global_T-global_T0))
     print ("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
 
-    if (robot.start_zone == 1) or (robot.start_zone == 6):
-        await match_start_ZoneDA()
-    elif (robot.start_zone == 2) or (robot.start_zone == 5):
-        await match_start_ZoneDL()
-    elif (robot.start_zone == 3) or (robot.start_zone == 4):
-        await match_start_ZoneA()
+    #if (robot.start_zone == 1) or (robot.start_zone == 6):
+    #    await match_start_ZoneDA()
+    #elif (robot.start_zone == 2) or (robot.start_zone == 5):
+    #    await match_start_ZoneDL()
+    #elif (robot.start_zone == 3) or (robot.start_zone == 4):
+    #    await match_start_ZoneA()
+    await dyn.dyn_strat()
+    await asyncio.sleep(1.0)
+    await action4()
 
     global_T = time.time()
     print ("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
