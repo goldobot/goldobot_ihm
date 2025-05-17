@@ -1,7 +1,7 @@
 # import base modules
 import asyncio
 import numpy as np
-
+import copy
 import time
 
 # import modules from sequence directory
@@ -26,6 +26,23 @@ global_dyn_prise_k = [-50]
 global_dyn_depose_k = [130]
 
 global_goldo_dijkstra = None
+
+def compute_dist(p0, p1):
+    delta_x = p1[1] - p0[1]
+    delta_y = p1[2] - p0[2]
+    return np.sqrt(delta_x*delta_x + delta_y*delta_y)
+
+def compute_angle(p0, p1, p2):
+    delta_x0 = p1[1] - p0[1]
+    delta_y0 = p1[2] - p0[2]
+    delta_x1 = p1[1] - p2[1]
+    delta_y1 = p1[2] - p2[2]
+
+    dot_prod = delta_x0*delta_x1 + delta_y0*delta_y1
+    mod_v0   = np.sqrt(delta_x0*delta_x0 + delta_y0*delta_y0)
+    mod_v1   = np.sqrt(delta_x1*delta_x1 + delta_y1*delta_y1)
+
+    return 180.0*(np.arccos(dot_prod/(mod_v0*mod_v1))/np.pi)
 
 class WPNode:
     def __init__(self,_wp):
@@ -96,12 +113,12 @@ class GoldoDijkstra:
             print ("DEBUG : (dst not in self.keys)")
             return []
         wpn_k = dst
-        print ("DEBUG : wpn_k = {}".format(wpn_k))
+        #print ("DEBUG : wpn_k = {}".format(wpn_k))
         wpn = self.wp_graph[wpn_k]
         my_path = [(wpn_k,wpn.x,wpn.y)]
         for cout in range(len(self.keys)):
             wpn_k = self.prev[wpn_k]
-            print ("DEBUG : wpn_k = {}".format(wpn_k))
+            #print ("DEBUG : wpn_k = {}".format(wpn_k))
             if (wpn_k==None):
                 # "src" was found in the previous iteration..
                 # FIXME : TODO : check that the "src" node is indeed present in the path!..
@@ -134,6 +151,9 @@ def dyn_choix_prise():
         return global_dyn_prise_k.pop()
 
 async def dyn_goto(my_pos):
+    print ("******************************************************")
+    print ("* dyn_goto({})".format(my_pos))
+    print ("******************************************************")
     global global_goldo_dijkstra
     global global_turn_speed
     global global_long_speed
@@ -150,16 +170,112 @@ async def dyn_goto(my_pos):
         print (" k={} : dist[k]={} ; prev[k]={}".format(k,dj_dist[k],dj_prev[k]))
     print()
     print ("dijkstra_path({} -> {}):".format(dj_src, dj_dst))
-    first = True
-    for it in dj_path:
+
+    robot_pose = (0, propulsion.pose.position.x, propulsion.pose.position.y)
+    robot_dist = compute_dist(robot_pose, dj_path[0])
+    print ("robot_dist = {}".format(robot_dist))
+    if (robot_dist<0.1):
+        dj_path[0] = robot_pose
+    else:
+        dj_path.insert(0,robot_pose)
+
+    print ("First iteration:")
+    dj_path_1 = []
+    path_len = len (dj_path)
+    for i in range(0,path_len):
+        it = dj_path[i]
         print (" ({} : ({} , {}))".format(it[0], it[1], it[2]))
-        if not first:
+        if (i!=0) and (i!=(path_len-1)):
+            prev_it = dj_path[i-1]
+            next_it = dj_path[i+1]
+            angle = compute_angle(prev_it, it, next_it)
+            print ("  angle = {}".format(angle))
+            if (angle<179.0):
+                dj_path_1.append(it)
+        else:
+            dj_path_1.append(it)
+
+    print ("Second iteration:")
+    dj_supra_path = []
+    path_len_1 = len (dj_path_1)
+    dj_sub_path = []
+    for i in range(0,path_len_1):
+        it = dj_path_1[i]
+        print (" ({} : ({} , {}))".format(it[0], it[1], it[2]))
+        if (i!=0) and (i!=(path_len_1-1)):
+            prev_it = dj_path_1[i-1]
+            next_it = dj_path_1[i+1]
+            angle = compute_angle(prev_it, it, next_it)
+            print ("  angle = {}".format(angle))
+            if (angle>110.0):
+                dj_sub_path.append(it)
+            else:
+                new_subpath = copy.deepcopy(dj_sub_path)
+                dj_supra_path.append(new_subpath)
+                dj_sub_path = [it]
+        else:
+            dj_sub_path.append(it)
+    new_subpath = copy.deepcopy(dj_sub_path)
+    dj_supra_path.append(new_subpath)
+    dj_sub_path = []
+
+    if (len(dj_supra_path)>1) and (len(dj_supra_path[0])==1) and (compute_dist(robot_pose, dj_supra_path[0][0])<0.1):
+        del(dj_supra_path[0])
+
+    print ("dj_supra_path = {}".format(dj_supra_path))
+
+    for path in dj_supra_path:
+        if (len(path)==0):
+            print ("WTF!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+        elif (len(path)==1):
+            it = path[0]
             await propulsion.pointTo((it[1], it[2]), global_turn_speed)
             await asyncio.sleep(0.5)
             await propulsion.moveToRetry((it[1], it[2]), global_long_speed)
             await asyncio.sleep(0.5)
         else:
-            first = False
+            it = path[0]
+            robot_pose = (0, propulsion.pose.position.x, propulsion.pose.position.y)
+            robot_dist = compute_dist(robot_pose, it)
+            if (robot_dist>0.1):
+                path.insert(0,robot_pose)
+            else:
+                path[0] = robot_pose
+
+            # FIXME : DEBUG
+            action_traj = []
+            for it in path:
+                action_traj.append((it[1], it[2], 0))
+
+            action_traj_1 = [action_traj[0]]
+            traj_len = len (action_traj)
+            for i in range(1,traj_len):
+                x0 = action_traj[i-1][0]
+                y0 = action_traj[i-1][1]
+                x1 = action_traj[i][0]
+                y1 = action_traj[i][1]
+                delta_x = x1 - x0
+                delta_y = y1 - y0
+                dist = np.sqrt(delta_x*delta_x + delta_y*delta_y)
+                if (dist>0.2):
+                    ix0 = x0 + (x1-x0)*0.1/dist
+                    iy0 = y0 + (y1-y0)*0.1/dist
+                    action_traj_1.append((ix0,iy0,0))
+                    ix1 = x0 + (x1-x0)*(dist-0.1)/dist
+                    iy1 = y0 + (y1-y0)*(dist-0.1)/dist
+                    action_traj_1.append((ix1,iy1,0))
+                action_traj_1.append((x1, y1, 0))
+            await propulsion.pointTo((action_traj_1[1][0], action_traj_1[1][1]), global_turn_speed)
+            await asyncio.sleep(0.5)
+            await propulsion.trajectorySpline(action_traj_1, speed=global_long_speed)
+            await asyncio.sleep(0.5)
+
+            # FIXME : DEBUG
+            #for it in path[1:]:
+            #    await propulsion.pointTo((it[1], it[2]), global_turn_speed)
+            #    await asyncio.sleep(0.5)
+            #    await propulsion.moveToRetry((it[1], it[2]), global_long_speed)
+            #    await asyncio.sleep(0.5)
 
 async def dyn_preprise(preprise_pos):
     global global_turn_speed
@@ -283,6 +399,49 @@ async def dyn_construction_goldo(predepose_pos):
     await asyncio.sleep(short_timeout)
     await actuators_dyna.ascenseur_standby()
     await asyncio.sleep(short_timeout)
+
+
+@robot.sequence
+async def dyn_action4():
+    global global_goldo_dijkstra
+    global global_turn_speed
+    global global_debug_action_timeout
+    global global_debug_timeout
+    global global_T0
+    global global_T
+
+    await actuators_dyna.ascenseur_down()
+    await asyncio.sleep(0.5)
+    await actuators_dyna.ascenseur_disable()
+
+    # deplacement vers la zone d'attente finale
+    await dyn_goto(-50)
+
+    await actuators_dyna.pump_off()
+    await actuators_pneuma.reset_valves()
+    await actuators_pneuma.purge()
+
+    await propulsion.faceDirection(180, global_turn_speed)
+    await asyncio.sleep(0.2)
+
+    print ("******************************************************")
+    print ("* Attente finale")
+    print ("******************************************************")
+    # attente finale
+    global_T = time.time()
+    while (global_T-global_T0)<92.0:
+        await asyncio.sleep(1.0)
+        global_T = time.time()
+
+    # deplacement final
+    if robot.side == pos.Side.Yellow:
+        poses = pos.YellowPoses
+    elif robot.side == pos.Side.Blue:
+        poses = pos.BluePoses
+
+    await propulsion.moveToRetry(poses.Act4_final, global_long_speed)
+    await robot.setScore(robot.score + 10)
+    await asyncio.sleep(0.2)
 
 
 @robot.sequence

@@ -1102,7 +1102,7 @@ async def start_match():
     #    await match_start_ZoneA()
     await dyn.dyn_strat()
     await asyncio.sleep(1.0)
-    await action4()
+    await dyn.dyn_action4()
 
     global_T = time.time()
     print ("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
