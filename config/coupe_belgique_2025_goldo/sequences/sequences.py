@@ -51,7 +51,7 @@ async def prematch():
     
     # Lidar
     robot._adversary_detection_enable = False
-    #await lidar.start()
+    await lidar.start()
 
     # Actionneurs
     await asyncio.sleep(1)
@@ -1248,4 +1248,11 @@ async def construction_goldo():
     await asyncio.sleep(short_timeout)
     await actuators_dyna.ascenseur_standby()
     await asyncio.sleep(short_timeout)
+
+@robot.sequence
+async def get_detections():
+    detections = lidar.getDetections()
+    print ("Lidar Detections:")
+    for d in detections:
+        print (d)
 

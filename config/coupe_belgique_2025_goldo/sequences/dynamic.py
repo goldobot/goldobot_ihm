@@ -14,10 +14,10 @@ from . import robot_config as rc
 # objects included in the _sequences_globals of RobotMain class, defined in robot_main.py of goldo_main, are available as global variables
 # those objects are used to interact with the robot (send commands, read data)
 
-global_long_speed = 0.6
-global_turn_speed = 3.0
+global_long_speed = 0.65
+global_turn_speed = 3.2
 global_turn_speed_slow = 1.5
-global_debug_action_timeout = 0.5
+global_debug_action_timeout = 0.2
 global_debug_timeout = 2.0
 global_T0 = 0.0
 global_T = 0.0
@@ -26,6 +26,10 @@ global_dyn_prise_k = [-50]
 global_dyn_depose_k = [130]
 
 global_goldo_dijkstra = None
+
+global_danger_threshold = 0.5
+global_danger_factor    = 10.0
+
 
 def compute_dist(p0, p1):
     delta_x = p1[1] - p0[1]
@@ -50,8 +54,14 @@ class WPNode:
         self.y = _wp[1]
         self.ngb_dist = {}
         self.enabled = True
+        self.extra_cost = 0
+        self.preprise = False
+        self.prise_faite = False
+        self.predepose = False
+        self.depose_faite = False
+        self.preempt_depose_k = None
     def __str__(self):
-        return "x={} y={} ngb_dist={}".format(self.x, self.y, self.ngb_dist)
+        return "x={} y={} preprise={} predepose={} preempt_depose_k={} ngb_dist={}".format(self.x, self.y, self.preprise, self.predepose, self.preempt_depose_k, self.ngb_dist)
 
 
 class GoldoDijkstra:
@@ -98,7 +108,9 @@ class GoldoDijkstra:
             self.sptSet[u] = True
             for v in self.wp_graph[u].ngb_dist.keys():
                 dist_uv = self.wp_graph[u].ngb_dist[v]
-                if not self.wp_graph[v].enabled: dist_uv = 1e7
+                # FIXME : DEBUG : EXPERIMENTAL
+                #if not self.wp_graph[v].enabled: dist_uv = 1e7
+                dist_uv = dist_uv + self.wp_graph[v].extra_cost
                 if (self.sptSet[v]==False) and (self.dist[v] > self.dist[u] + dist_uv):
                     self.dist[v] = self.dist[u] + dist_uv
                     self.prev[v] = u
@@ -157,11 +169,50 @@ async def dyn_goto(my_pos):
     global global_goldo_dijkstra
     global global_turn_speed
     global global_long_speed
+    global global_danger_threshold
+    global global_danger_factor
+
     x = propulsion.pose.position.x
     y = propulsion.pose.position.y
     dj_src = global_goldo_dijkstra.get_nearest_dijkstra(x, y)
     dj_dst = my_pos
-    (dj_dist, dj_prev) = global_goldo_dijkstra.do_dijkstra(dj_src)
+
+    # FIXME : DEBUG : EXPERIMENTAL
+    detections = lidar.getDetections()
+    if (len(detections)>0):
+        first_det = detections[0]
+        print ("Lidar detections : ")
+        print (first_det)
+        for k in global_goldo_dijkstra.keys:
+            p0 = (-1, first_det.x, first_det.y)
+            p1 = (k, global_goldo_dijkstra.wp_graph[k].x, global_goldo_dijkstra.wp_graph[k].y)
+            dist = compute_dist(p0, p1)
+            if (dist<global_danger_threshold):
+                extra_cost = global_danger_factor*(global_danger_threshold-dist)
+            else:
+                extra_cost = 0.0
+            print (" k={} dist={} extra_cost={}".format(k,dist,extra_cost))
+            global_goldo_dijkstra.wp_graph[k].extra_cost = extra_cost
+    else:
+        print ("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+        print ("! No detections!")
+        print ("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+ 
+    # FIXME : DEBUG : EXPERIMENTAL
+    global_goldo_dijkstra.wp_graph[-220].extra_cost = 20.0
+    global_goldo_dijkstra.wp_graph[-210].extra_cost = 20.0
+    global_goldo_dijkstra.wp_graph[-200].extra_cost = 20.0
+    global_goldo_dijkstra.wp_graph[ 220].extra_cost = 20.0
+    global_goldo_dijkstra.wp_graph[ 210].extra_cost = 20.0
+    global_goldo_dijkstra.wp_graph[ 200].extra_cost = 20.0
+    global_goldo_dijkstra.wp_graph[-21].extra_cost = 10.0
+    global_goldo_dijkstra.wp_graph[-20].extra_cost = 10.0
+    global_goldo_dijkstra.wp_graph[ 20].extra_cost = 10.0
+    global_goldo_dijkstra.wp_graph[-21].extra_cost = 10.0
+    global_goldo_dijkstra.wp_graph[1].extra_cost = 0.5
+    global_goldo_dijkstra.wp_graph[2].extra_cost = 0.5
+    global_goldo_dijkstra.wp_graph[3].extra_cost = 0.5
+
     (dj_dist, dj_prev) = global_goldo_dijkstra.do_dijkstra(dj_src)
     dj_path = global_goldo_dijkstra.get_path(dj_dst)
     print()
@@ -224,15 +275,18 @@ async def dyn_goto(my_pos):
 
     print ("dj_supra_path = {}".format(dj_supra_path))
 
+    # FIXME : DEBUG
+    #await asyncio.sleep(10.0)
+
     for path in dj_supra_path:
         if (len(path)==0):
             print ("WTF!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
         elif (len(path)==1):
             it = path[0]
             await propulsion.pointTo((it[1], it[2]), global_turn_speed)
-            await asyncio.sleep(0.5)
+            await asyncio.sleep(global_debug_action_timeout)
             await propulsion.moveToRetry((it[1], it[2]), global_long_speed)
-            await asyncio.sleep(0.5)
+            await asyncio.sleep(global_debug_action_timeout)
         else:
             it = path[0]
             robot_pose = (0, propulsion.pose.position.x, propulsion.pose.position.y)
@@ -266,16 +320,16 @@ async def dyn_goto(my_pos):
                     action_traj_1.append((ix1,iy1,0))
                 action_traj_1.append((x1, y1, 0))
             await propulsion.pointTo((action_traj_1[1][0], action_traj_1[1][1]), global_turn_speed)
-            await asyncio.sleep(0.5)
+            await asyncio.sleep(global_debug_action_timeout)
             await propulsion.trajectorySpline(action_traj_1, speed=global_long_speed)
-            await asyncio.sleep(0.5)
+            await asyncio.sleep(global_debug_action_timeout)
 
             # FIXME : DEBUG
             #for it in path[1:]:
             #    await propulsion.pointTo((it[1], it[2]), global_turn_speed)
-            #    await asyncio.sleep(0.5)
+            #    await asyncio.sleep(global_debug_action_timeout)
             #    await propulsion.moveToRetry((it[1], it[2]), global_long_speed)
-            #    await asyncio.sleep(0.5)
+            #    await asyncio.sleep(global_debug_action_timeout)
 
 async def dyn_preprise(preprise_pos):
     global global_turn_speed
@@ -284,8 +338,15 @@ async def dyn_preprise(preprise_pos):
     # recul
     await actuators_dyna.bras_standby()
     await asyncio.sleep(0.2)
-    # FIXME : TODO : get direction from 'preprise_pos'
-    await propulsion.faceDirection(90, global_turn_speed)
+    # FIXME : TODO : get direction from 'preprise_pos' object..
+    if preprise_pos in [-50,-40]:
+        await propulsion.faceDirection(90, global_turn_speed)
+    elif preprise_pos in [40,50]:
+        await propulsion.faceDirection(-90, global_turn_speed)
+    elif preprise_pos in [-21,21]:
+        await propulsion.faceDirection(0, global_turn_speed)
+    elif preprise_pos in [-20,20]:
+        await propulsion.faceDirection(180, global_turn_speed)
     await asyncio.sleep(0.2)
     await actuators_pneuma.ventouses_ext_attrape()
     await asyncio.sleep(0.2)
@@ -296,6 +357,24 @@ async def dyn_preprise(preprise_pos):
     await actuators_dyna.ascenseur_soulage()
     await asyncio.sleep(0.2)
     await asyncio.sleep(1.0)
+
+    # wooble..
+    # FIXME : TODO : get behaviour from 'preprise_pos' object..
+    if preprise_pos in [-50,-40,40,50]:
+        if robot.side == pos.Side.Yellow:
+            await propulsion.faceDirection(95, 1.0)
+            await asyncio.sleep(0.2)
+            await propulsion.faceDirection(85, 1.0)
+            await asyncio.sleep(0.2)
+            await propulsion.faceDirection(90, 1.0)
+            await asyncio.sleep(0.2)
+        elif robot.side == pos.Side.Blue:
+            await propulsion.faceDirection(-95, 1.0)
+            await asyncio.sleep(0.2)
+            await propulsion.faceDirection(-85, 1.0)
+            await asyncio.sleep(0.2)
+            await propulsion.faceDirection(-90, 1.0)
+            await asyncio.sleep(0.2)
 
     # verrouillage planches
     await actuators_dyna.soulageur_up()
@@ -328,24 +407,43 @@ async def dyn_construction_goldo(predepose_pos):
     long_timeout = 0.3
 
     # FIXME : TODO : get direction from 'predepose_pos'
-    await propulsion.faceDirection(-90, global_turn_speed)
+    if predepose_pos in [-140,-130]:
+        await propulsion.faceDirection( 90, global_turn_speed)
+    elif predepose_pos in [140,130]:
+        await propulsion.faceDirection(-90, global_turn_speed)
+    elif preprise_pos in [-100,-110,-120,-150,150,120,110,100]:
+        await propulsion.faceDirection(180, global_turn_speed)
     await asyncio.sleep(0.2)
 
     print ("Prise planches")
     await actuators_dyna.ascenseur_soulage()
     await asyncio.sleep(short_timeout)
+    #await actuators_dyna.soulageur_up()
+    #await asyncio.sleep(short_timeout)
+    await actuators_dyna.pump_off()
+    await asyncio.sleep(short_timeout)
+    await actuators_dyna.bras_up()
+    await asyncio.sleep(short_timeout)
+    await actuators_dyna.soulageur_transport()
+    await asyncio.sleep(short_timeout)
     await actuators_dyna.soulageur_up()
     await asyncio.sleep(short_timeout)
+    await actuators_dyna.soulageur_transport()
+    await asyncio.sleep(short_timeout)
+    await actuators_dyna.pump_on()
     await actuators_dyna.pump_on()
     await asyncio.sleep(short_timeout)
     await actuators_dyna.bras_prise_hard()
-    await asyncio.sleep(long_timeout)
+    await asyncio.sleep(short_timeout)
+    await actuators_dyna.soulageur_up()
+    await asyncio.sleep(short_timeout)
     #await actuators_dyna.bras_up()
     #await asyncio.sleep(short_timeout)
     await asyncio.sleep(long_timeout)
     
     print ("Approche initiale du site de construction")
     await propulsion.translation(-0.15, 0.15)
+    await asyncio.sleep(long_timeout)
 
     print ("Construction niveau 1")
     await actuators_pneuma.ecarteur_on()
@@ -411,11 +509,14 @@ async def dyn_action4():
     global global_T
 
     await actuators_dyna.ascenseur_down()
-    await asyncio.sleep(0.5)
+    await asyncio.sleep(global_debug_action_timeout)
     await actuators_dyna.ascenseur_disable()
 
     # deplacement vers la zone d'attente finale
-    await dyn_goto(-50)
+    if robot.side == pos.Side.Yellow:
+        await dyn_goto(-50)
+    elif robot.side == pos.Side.Blue:
+        await dyn_goto(50)
 
     await actuators_dyna.pump_off()
     await actuators_pneuma.reset_valves()
