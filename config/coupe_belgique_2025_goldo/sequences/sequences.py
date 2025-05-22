@@ -50,7 +50,8 @@ async def prematch():
     await propulsion.setEnable(True)
     
     # Lidar
-    robot._adversary_detection_enable = False
+    #robot._adversary_detection_enable = False
+    propulsion.adversary_detection_enable = False
     await lidar.start()
 
     # Actionneurs
@@ -1087,7 +1088,8 @@ async def start_match():
     global_T0 = time.time()
 
     await propulsion.setAccelerationLimits(1,1,20,20)
-    robot._adversary_detection_enable = True
+    #robot._adversary_detection_enable = True
+    propulsion.adversary_detection_enable = True
 
     global_T = time.time()
     print ("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")

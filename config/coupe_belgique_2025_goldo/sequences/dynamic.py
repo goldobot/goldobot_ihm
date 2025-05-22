@@ -22,8 +22,8 @@ global_debug_timeout = 2.0
 global_T0 = 0.0
 global_T = 0.0
 
-global_dyn_prise_k = [-50]
-global_dyn_depose_k = [130]
+global_dyn_prise_k = [-50,30]
+global_dyn_depose_k = [130,110,-100]
 
 global_goldo_dijkstra = None
 
@@ -160,7 +160,8 @@ def dyn_choix_prise():
     if len(global_dyn_prise_k) == 0:
         return None
     else:
-        return global_dyn_prise_k.pop()
+        return global_dyn_prise_k.pop(0)
+
 
 async def dyn_goto(my_pos):
     print ("******************************************************")
@@ -231,6 +232,7 @@ async def dyn_goto(my_pos):
         dj_path.insert(0,robot_pose)
 
     print ("First iteration:")
+    # Get rid of unnecessary way points
     dj_path_1 = []
     path_len = len (dj_path)
     for i in range(0,path_len):
@@ -247,6 +249,7 @@ async def dyn_goto(my_pos):
             dj_path_1.append(it)
 
     print ("Second iteration:")
+    # Split the global path into 'dynamically feasible sub-paths'
     dj_supra_path = []
     path_len_1 = len (dj_path_1)
     dj_sub_path = []
@@ -261,6 +264,7 @@ async def dyn_goto(my_pos):
             if (angle>110.0):
                 dj_sub_path.append(it)
             else:
+                dj_sub_path.append(it)
                 new_subpath = copy.deepcopy(dj_sub_path)
                 dj_supra_path.append(new_subpath)
                 dj_sub_path = [it]
@@ -282,12 +286,15 @@ async def dyn_goto(my_pos):
         if (len(path)==0):
             print ("WTF!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
         elif (len(path)==1):
+            # Only one segment in path : point to the destination & execute a straight line..
             it = path[0]
             await propulsion.pointTo((it[1], it[2]), global_turn_speed)
             await asyncio.sleep(global_debug_action_timeout)
             await propulsion.moveToRetry((it[1], it[2]), global_long_speed)
             await asyncio.sleep(global_debug_action_timeout)
         else:
+            # Multiple segments : try to execute a "spline"..
+            # First thing to do : ensure that the trajectory starts with the current robot pose!
             it = path[0]
             robot_pose = (0, propulsion.pose.position.x, propulsion.pose.position.y)
             robot_dist = compute_dist(robot_pose, it)
@@ -296,11 +303,11 @@ async def dyn_goto(my_pos):
             else:
                 path[0] = robot_pose
 
-            # FIXME : DEBUG
             action_traj = []
             for it in path:
                 action_traj.append((it[1], it[2], 0))
 
+            # Add intermediate way points to "force" the spline closer to the original "Dijkstra segments"
             action_traj_1 = [action_traj[0]]
             traj_len = len (action_traj)
             for i in range(1,traj_len):
@@ -319,17 +326,86 @@ async def dyn_goto(my_pos):
                     iy1 = y0 + (y1-y0)*(dist-0.1)/dist
                     action_traj_1.append((ix1,iy1,0))
                 action_traj_1.append((x1, y1, 0))
+
+            # Do the moving..
             await propulsion.pointTo((action_traj_1[1][0], action_traj_1[1][1]), global_turn_speed)
             await asyncio.sleep(global_debug_action_timeout)
-            await propulsion.trajectorySpline(action_traj_1, speed=global_long_speed)
-            await asyncio.sleep(global_debug_action_timeout)
+            try:
+                await propulsion.trajectorySpline(action_traj_1, speed=global_long_speed)
+            except Exception as e:
+                print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+                print("    propulsion.trajectorySpline() EXCEPTION !")
+                print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+                print("  DISABLE DETECTION")
+                await asyncio.sleep(0.2)
+                propulsion.adversary_detection_enable = False
+                #print("  WAIT 10s..")
+                #await asyncio.sleep(10.0)
+                print("  RESTART..")
+                print("  PROPULSION DISABLE/ENABLE (to clear error)")
+                await propulsion.setEnable(False)
+                await asyncio.sleep(0.2)
+                await propulsion.setEnable(True)
+                await asyncio.sleep(0.2)
+                await propulsion.setMotorsEnable(True)
+                await asyncio.sleep(0.2)
+                print("  re-clear error")
+                await propulsion.clearError()
+                await asyncio.sleep(0.2)
+                #await asyncio.sleep(10.0)
+                print("  TEST TRANSLATION..")
+                await propulsion.translation(-0.05, 0.15)
+                await asyncio.sleep(1.0)
+                #await asyncio.sleep(3600.0)
+                print(" DYN_GOTO FAIL !")
+                return False
+            #await asyncio.sleep(global_debug_action_timeout)
+            await asyncio.sleep(1.0)
 
             # FIXME : DEBUG
-            #for it in path[1:]:
-            #    await propulsion.pointTo((it[1], it[2]), global_turn_speed)
+            # "fragmentary" execution ..
+            #for it in action_traj_1[1:]:
+            #    await propulsion.pointTo((it[0], it[1]), global_turn_speed)
             #    await asyncio.sleep(global_debug_action_timeout)
-            #    await propulsion.moveToRetry((it[1], it[2]), global_long_speed)
+            #    try:
+            #        await propulsion.moveTo((it[0], it[1]), global_long_speed)
+            #    except Exception as e:
+            #        print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+            #        print("    propulsion.moveTo() EXCEPTION !")
+            #        print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+            #        print("  DISABLE DETECTION")
+            #        await asyncio.sleep(0.2)
+            #        #robot._adversary_detection_enable = False
+            #        propulsion.adversary_detection_enable = False
+            #        #await propulsion.setMotorsEnable(False)
+            #        #await asyncio.sleep(0.2)
+            #        print("  WAIT 10s..")
+            #        await asyncio.sleep(10.0)
+            #        print("  RESTART..")
+            #        print("  PROPULSION DISABLE/ENABLE (to clear error)")
+            #        await propulsion.setEnable(False)
+            #        await asyncio.sleep(0.2)
+            #        await propulsion.setEnable(True)
+            #        await asyncio.sleep(0.2)
+            #        await propulsion.setMotorsEnable(True)
+            #        await asyncio.sleep(0.2)
+            #        await asyncio.sleep(1.0)
+            #        print("  re-clear error")
+            #        #await odrive.clearErrors()
+            #        await propulsion.clearError()
+            #        await asyncio.sleep(10.0)
+            #        print("  TEST TRANSLATION..")
+            #        await propulsion.translation(-0.05, 0.15)
+            #        await asyncio.sleep(1.0)
+            #        #await asyncio.sleep(3600.0)
+            #        return False
             #    await asyncio.sleep(global_debug_action_timeout)
+            #await asyncio.sleep(global_debug_action_timeout)
+            #await asyncio.sleep(1.0)
+
+    print(" DYN_GOTO OK !")
+    return True
+
 
 async def dyn_preprise(preprise_pos):
     global global_turn_speed
@@ -343,9 +419,9 @@ async def dyn_preprise(preprise_pos):
         await propulsion.faceDirection(90, global_turn_speed)
     elif preprise_pos in [40,50]:
         await propulsion.faceDirection(-90, global_turn_speed)
-    elif preprise_pos in [-21,21]:
+    elif preprise_pos in [-30,-21,21,30]:
         await propulsion.faceDirection(0, global_turn_speed)
-    elif preprise_pos in [-20,20]:
+    elif preprise_pos in [-20,-10,10,20]:
         await propulsion.faceDirection(180, global_turn_speed)
     await asyncio.sleep(0.2)
     await actuators_pneuma.ventouses_ext_attrape()
@@ -389,12 +465,16 @@ async def dyn_preprise(preprise_pos):
     await propulsion.translation(0.10, 0.2)
     await asyncio.sleep(1.0)
 
+    return True
+
+
 def dyn_choix_depose():
     global global_dyn_depose_k
     if len(global_dyn_depose_k) == 0:
         return None
     else:
-        return global_dyn_depose_k.pop()
+        return global_dyn_depose_k.pop(0)
+
 
 async def dyn_construction_goldo(predepose_pos):
     global global_turn_speed
@@ -498,6 +578,8 @@ async def dyn_construction_goldo(predepose_pos):
     await actuators_dyna.ascenseur_standby()
     await asyncio.sleep(short_timeout)
 
+    return True
+
 
 @robot.sequence
 async def dyn_action4():
@@ -563,11 +645,17 @@ async def dyn_strat():
     for k in global_goldo_dijkstra.keys:
         print (" k={}".format(k))
 
+    action_ok = True
     while (global_T-global_T0)<85.0:
         preprise_pos = dyn_choix_prise()
         if (preprise_pos == None): break
 
-        await dyn_goto(preprise_pos)
+        action_ok = await dyn_goto(preprise_pos)
+        if not action_ok:
+            print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+            print("    dyn_goto(preprise_pos) FAIL !")
+            print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+            continue
         global_T = time.time()
         if (global_T-global_T0)>85.0: break
 
@@ -578,7 +666,12 @@ async def dyn_strat():
         predepose_pos = dyn_choix_depose()
         if (predepose_pos == None): break
 
-        await dyn_goto(predepose_pos)
+        action_ok = await dyn_goto(predepose_pos)
+        if not action_ok:
+            print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+            print("    dyn_goto(predepose_pos) FAIL !")
+            print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+            continue
         global_T = time.time()
         if (global_T-global_T0)>85.0: break
 
