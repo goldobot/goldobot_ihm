@@ -25,6 +25,12 @@ global_T = 0.0
 
 
 @robot.sequence
+async def print_sensors():
+    print("SENSORS:")
+    for k in sensors:
+        print("  {} : {}".format(k,sensors[k]))
+
+@robot.sequence
 async def prematch():
 
     global poses

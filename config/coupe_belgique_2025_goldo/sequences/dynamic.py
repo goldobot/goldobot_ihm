@@ -14,7 +14,7 @@ from . import robot_config as rc
 # objects included in the _sequences_globals of RobotMain class, defined in robot_main.py of goldo_main, are available as global variables
 # those objects are used to interact with the robot (send commands, read data)
 
-global_long_speed = 0.65
+global_long_speed = 0.60
 global_turn_speed = 3.2
 global_turn_speed_slow = 1.5
 global_debug_action_timeout = 0.2
@@ -29,6 +29,9 @@ global_goldo_dijkstra = None
 
 global_danger_threshold = 0.5
 global_danger_factor    = 10.0
+
+global_segmentation_threshold_angle_deg = 110.0
+#global_segmentation_threshold_angle_deg = 80.0
 
 
 def compute_dist(p0, p1):
@@ -155,6 +158,25 @@ class GoldoDijkstra:
         return min_k
 
 
+def dyn_init_prise():
+    global global_dyn_prise_k
+    global_dyn_prise_k = []
+    global_dyn_prise_k.append(-21)
+    global_dyn_prise_k.append(-20)
+    global_dyn_prise_k.append(-30)
+    global_dyn_prise_k.append(-40)
+    global_dyn_prise_k.append(-50)
+    global_dyn_prise_k.append( 21)
+    global_dyn_prise_k.append( 20)
+    global_dyn_prise_k.append( 30)
+    global_dyn_prise_k.append( 40)
+    global_dyn_prise_k.append( 50)
+    if robot.side == pos.Side.Yellow:
+        global_dyn_prise_k.append(-10)
+    elif robot.side == pos.Side.Blue:
+        global_dyn_prise_k.append( 10)
+
+
 def dyn_choix_prise():
     global global_dyn_prise_k
     if len(global_dyn_prise_k) == 0:
@@ -163,20 +185,56 @@ def dyn_choix_prise():
         return global_dyn_prise_k.pop(0)
 
 
-async def dyn_goto(my_pos):
+def dyn_init_depose():
+    global global_dyn_depose_k
+    global_dyn_depose_k = []
+    if robot.side == pos.Side.Yellow:
+        global_dyn_depose_k.append(-100)
+        global_dyn_depose_k.append(-110)
+        global_dyn_depose_k.append(-120)
+        global_dyn_depose_k.append( 130)
+        global_dyn_depose_k.append( 140)
+        global_dyn_depose_k.append( 150)
+    elif robot.side == pos.Side.Blue:
+        global_dyn_depose_k.append( 100)
+        global_dyn_depose_k.append( 110)
+        global_dyn_depose_k.append( 120)
+        global_dyn_depose_k.append(-130)
+        global_dyn_depose_k.append(-140)
+        global_dyn_depose_k.append(-150)
+
+
+def dyn_choix_depose():
+    global global_dyn_depose_k
+    if len(global_dyn_depose_k) == 0:
+        return None
+    else:
+        return global_dyn_depose_k.pop(0)
+
+
+async def dyn_goto(dst_pos):
     print ("******************************************************")
-    print ("* dyn_goto({})".format(my_pos))
+    print ("* dyn_goto({})".format(dst_pos))
     print ("******************************************************")
     global global_goldo_dijkstra
     global global_turn_speed
     global global_long_speed
     global global_danger_threshold
     global global_danger_factor
+    global global_segmentation_threshold_angle_deg
 
     x = propulsion.pose.position.x
     y = propulsion.pose.position.y
     dj_src = global_goldo_dijkstra.get_nearest_dijkstra(x, y)
-    dj_dst = my_pos
+    dj_dst = dst_pos
+
+    # FIXME : DEBUG : EXPERIMENTAL
+    go_backwards = False
+    p0 = (0, x, y)
+    p1 = (dst_pos, global_goldo_dijkstra.wp_graph[dst_pos].x, global_goldo_dijkstra.wp_graph[dst_pos].y)
+    target_dist = compute_dist(p0, p1)
+    if (target_dist<0.250):
+        go_backwards = True
 
     # FIXME : DEBUG : EXPERIMENTAL
     detections = lidar.getDetections()
@@ -243,7 +301,7 @@ async def dyn_goto(my_pos):
             next_it = dj_path[i+1]
             angle = compute_angle(prev_it, it, next_it)
             print ("  angle = {}".format(angle))
-            if (angle<179.0):
+            if (angle>10.0) and (angle<179.0):
                 dj_path_1.append(it)
         else:
             dj_path_1.append(it)
@@ -261,7 +319,7 @@ async def dyn_goto(my_pos):
             next_it = dj_path_1[i+1]
             angle = compute_angle(prev_it, it, next_it)
             print ("  angle = {}".format(angle))
-            if (angle>110.0):
+            if (angle>global_segmentation_threshold_angle_deg):
                 dj_sub_path.append(it)
             else:
                 dj_sub_path.append(it)
@@ -286,13 +344,27 @@ async def dyn_goto(my_pos):
         if (len(path)==0):
             print ("WTF!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
         elif (len(path)==1):
+            print("********************************************")
+            print("  dyn_goto() : One segment : moveToRetry()")
+            print("********************************************")
             # Only one segment in path : point to the destination & execute a straight line..
             it = path[0]
-            await propulsion.pointTo((it[1], it[2]), global_turn_speed)
+            # FIXME : DEBUG : EXPERIMENTAL
+            x = propulsion.pose.position.x
+            y = propulsion.pose.position.y
+            dest_x = it[1]
+            dest_y = it[2]
+            if go_backwards:
+                await propulsion.pointTo((x-(dest_x-x), y-(dest_y-y)), global_turn_speed)
+            else:
+                await propulsion.pointTo((dest_x, dest_y), global_turn_speed)
             await asyncio.sleep(global_debug_action_timeout)
             await propulsion.moveToRetry((it[1], it[2]), global_long_speed)
             await asyncio.sleep(global_debug_action_timeout)
         else:
+            print("********************************************")
+            print("  dyn_goto() : Multiple segments : try a spline")
+            print("********************************************")
             # Multiple segments : try to execute a "spline"..
             # First thing to do : ensure that the trajectory starts with the current robot pose!
             it = path[0]
@@ -328,7 +400,15 @@ async def dyn_goto(my_pos):
                 action_traj_1.append((x1, y1, 0))
 
             # Do the moving..
-            await propulsion.pointTo((action_traj_1[1][0], action_traj_1[1][1]), global_turn_speed)
+            # FIXME : DEBUG : EXPERIMENTAL
+            x = propulsion.pose.position.x
+            y = propulsion.pose.position.y
+            dest_x = action_traj_1[1][0]
+            dest_y = action_traj_1[1][1]
+            if go_backwards:
+                await propulsion.pointTo((x-(dest_x-x), y-(dest_y-y)), global_turn_speed)
+            else:
+                await propulsion.pointTo((dest_x, dest_y), global_turn_speed)
             await asyncio.sleep(global_debug_action_timeout)
             try:
                 await propulsion.trajectorySpline(action_traj_1, speed=global_long_speed)
@@ -411,69 +491,68 @@ async def dyn_preprise(preprise_pos):
     global global_turn_speed
     global global_long_speed
 
+    short_timeout = 0.1
+    long_timeout = 0.3
+
     # recul
     await actuators_dyna.bras_standby()
-    await asyncio.sleep(0.2)
+    await asyncio.sleep(short_timeout)
     # FIXME : TODO : get direction from 'preprise_pos' object..
     if preprise_pos in [-50,-40]:
         await propulsion.faceDirection(90, global_turn_speed)
     elif preprise_pos in [40,50]:
         await propulsion.faceDirection(-90, global_turn_speed)
-    elif preprise_pos in [-30,-21,21,30]:
+    elif preprise_pos in [-10,-21,21,10]:
         await propulsion.faceDirection(0, global_turn_speed)
-    elif preprise_pos in [-20,-10,10,20]:
+    elif preprise_pos in [-20,-30,30,20]:
         await propulsion.faceDirection(180, global_turn_speed)
-    await asyncio.sleep(0.2)
+    await asyncio.sleep(short_timeout)
     await actuators_pneuma.ventouses_ext_attrape()
-    await asyncio.sleep(0.2)
+    await asyncio.sleep(short_timeout)
     await actuators_pneuma.ventouses_int_attrape()
-    await asyncio.sleep(0.2)
+    await asyncio.sleep(short_timeout)
+    await actuators_dyna.ascenseur_down()
+    await asyncio.sleep(short_timeout)
     await propulsion.translation(-0.10, 0.2)
-    await asyncio.sleep(0.2)
-    await actuators_dyna.ascenseur_soulage()
-    await asyncio.sleep(0.2)
-    await asyncio.sleep(1.0)
-
-    # wooble..
-    # FIXME : TODO : get behaviour from 'preprise_pos' object..
-    if preprise_pos in [-50,-40,40,50]:
-        if robot.side == pos.Side.Yellow:
-            await propulsion.faceDirection(95, 1.0)
-            await asyncio.sleep(0.2)
-            await propulsion.faceDirection(85, 1.0)
-            await asyncio.sleep(0.2)
-            await propulsion.faceDirection(90, 1.0)
-            await asyncio.sleep(0.2)
-        elif robot.side == pos.Side.Blue:
-            await propulsion.faceDirection(-95, 1.0)
-            await asyncio.sleep(0.2)
-            await propulsion.faceDirection(-85, 1.0)
-            await asyncio.sleep(0.2)
-            await propulsion.faceDirection(-90, 1.0)
-            await asyncio.sleep(0.2)
+    await asyncio.sleep(short_timeout)
+    await asyncio.sleep(long_timeout)
 
     # verrouillage planches
     await actuators_dyna.soulageur_up()
     await actuators_dyna.bras_prise_hard()
-    await asyncio.sleep(0.2)
+    await asyncio.sleep(short_timeout)
     await actuators_dyna.pump_on()
-    await asyncio.sleep(0.2)
+    await asyncio.sleep(short_timeout)
     await actuators_dyna.bras_transport()
-    await asyncio.sleep(0.2)
-    await actuators_dyna.soulageur_transport()
-    await asyncio.sleep(0.2)
+    await asyncio.sleep(short_timeout)
+
+    # wooble..
+    await actuators_dyna.ascenseur_soulage()
+    await asyncio.sleep(short_timeout)
+    # FIXME : TODO : get behaviour from 'preprise_pos' object..
+    if preprise_pos in [-50,-40,40,50]:
+        if robot.side == pos.Side.Yellow:
+            await propulsion.faceDirection(95, 1.0)
+            await asyncio.sleep(short_timeout)
+            await propulsion.faceDirection(85, 1.0)
+            await asyncio.sleep(short_timeout)
+            await propulsion.faceDirection(90, 1.0)
+            await asyncio.sleep(short_timeout)
+        elif robot.side == pos.Side.Blue:
+            await propulsion.faceDirection(-95, 1.0)
+            await asyncio.sleep(short_timeout)
+            await propulsion.faceDirection(-85, 1.0)
+            await asyncio.sleep(short_timeout)
+            await propulsion.faceDirection(-90, 1.0)
+            await asyncio.sleep(short_timeout)
+
+    # eloignement
+    await actuators_dyna.ascenseur_transport()
+    await asyncio.sleep(short_timeout)
     await propulsion.translation(0.10, 0.2)
-    await asyncio.sleep(1.0)
+    await asyncio.sleep(long_timeout)
 
     return True
-
-
-def dyn_choix_depose():
-    global global_dyn_depose_k
-    if len(global_dyn_depose_k) == 0:
-        return None
-    else:
-        return global_dyn_depose_k.pop(0)
 
 
 async def dyn_construction_goldo(predepose_pos):
@@ -491,7 +570,7 @@ async def dyn_construction_goldo(predepose_pos):
         await propulsion.faceDirection( 90, global_turn_speed)
     elif predepose_pos in [140,130]:
         await propulsion.faceDirection(-90, global_turn_speed)
-    elif preprise_pos in [-100,-110,-120,-150,150,120,110,100]:
+    elif predepose_pos in [-100,-110,-120,-150,150,120,110,100]:
         await propulsion.faceDirection(180, global_turn_speed)
     await asyncio.sleep(0.2)
 
@@ -500,14 +579,14 @@ async def dyn_construction_goldo(predepose_pos):
     await asyncio.sleep(short_timeout)
     #await actuators_dyna.soulageur_up()
     #await asyncio.sleep(short_timeout)
-    await actuators_dyna.pump_off()
-    await asyncio.sleep(short_timeout)
-    await actuators_dyna.bras_up()
-    await asyncio.sleep(short_timeout)
-    await actuators_dyna.soulageur_transport()
-    await asyncio.sleep(short_timeout)
-    await actuators_dyna.soulageur_up()
-    await asyncio.sleep(short_timeout)
+    #await actuators_dyna.pump_off()
+    #await asyncio.sleep(short_timeout)
+    #await actuators_dyna.bras_up()
+    #await asyncio.sleep(short_timeout)
+    #await actuators_dyna.soulageur_transport()
+    #await asyncio.sleep(short_timeout)
+    #await actuators_dyna.soulageur_up()
+    #await asyncio.sleep(short_timeout)
     await actuators_dyna.soulageur_transport()
     await asyncio.sleep(short_timeout)
     await actuators_dyna.pump_on()
@@ -542,9 +621,13 @@ async def dyn_construction_goldo(predepose_pos):
     await asyncio.sleep(short_timeout)
     await actuators_pneuma.ventouses_int_lache()
     await asyncio.sleep(short_timeout)
+    await actuators_dyna.soulageur_down()
+    await asyncio.sleep(short_timeout)
     await actuators_dyna.ascenseur_down()
     await asyncio.sleep(short_timeout)
-    await actuators_dyna.soulageur_down()
+    await actuators_dyna.ascenseur_transport()
+    await asyncio.sleep(short_timeout)
+    await actuators_dyna.ascenseur_down()
     await asyncio.sleep(short_timeout)
     await asyncio.sleep(long_timeout)
 
@@ -590,15 +673,30 @@ async def dyn_action4():
     global global_T0
     global global_T
 
+    global_T = time.time()
+
     await actuators_dyna.ascenseur_down()
     await asyncio.sleep(global_debug_action_timeout)
     await actuators_dyna.ascenseur_disable()
 
     # deplacement vers la zone d'attente finale
     if robot.side == pos.Side.Yellow:
-        await dyn_goto(-50)
+        prefinal_pos = -50
     elif robot.side == pos.Side.Blue:
-        await dyn_goto(50)
+        prefinal_pos = 50
+    while (global_T-global_T0)<100.0:
+        global_T = time.time()
+        action_ok = await dyn_goto(prefinal_pos)
+        if not action_ok:
+            print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+            print("    dyn_goto(prefinal_pos) FAIL !")
+            print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+            await asyncio.sleep(2.0)
+            propulsion.adversary_detection_enable = True
+            continue
+        else:
+            break
+        propulsion.adversary_detection_enable = True
 
     await actuators_dyna.pump_off()
     await actuators_pneuma.reset_valves()
@@ -656,6 +754,7 @@ async def dyn_strat():
             print("    dyn_goto(preprise_pos) FAIL !")
             print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
             continue
+        propulsion.adversary_detection_enable = True
         global_T = time.time()
         if (global_T-global_T0)>85.0: break
 
@@ -672,6 +771,7 @@ async def dyn_strat():
             print("    dyn_goto(predepose_pos) FAIL !")
             print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
             continue
+        propulsion.adversary_detection_enable = True
         global_T = time.time()
         if (global_T-global_T0)>85.0: break
 

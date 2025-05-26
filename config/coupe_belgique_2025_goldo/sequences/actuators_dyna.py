@@ -1,5 +1,6 @@
 pose_asc_down = 2380
 pose_asc_soulage = 2510
+pose_asc_transport = 2600
 pose_asc_standby = 2800
 pose_asc_stage2_high = 3666
 pose_asc_stage2_depose = 3580
@@ -78,6 +79,10 @@ async def ascenseur_stage2_low():
 @robot.sequence
 async def ascenseur_soulage():
     await ascenseur_move(pose_asc_soulage)
+
+@robot.sequence
+async def ascenseur_transport():
+    await ascenseur_move(pose_asc_transport)
 
 async def soulageur_move(pose, torque = 1.0, speed = 1.0):
     # Enable Dynamixel
