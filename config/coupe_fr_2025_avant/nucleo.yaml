@@ -1,0 +1,246 @@
+---
+nucleo:
+  enabled_tasks:
+    - propulsion
+    - odrive_comm
+    - dynamixels_comm
+    - fpga
+    - servos
+  propulsion_task:
+    motor_controller: ODriveUART
+    update_period_ms: 1
+    telemetry_period_ms: 30
+    telemetry_ex_period_ms: 200
+    pose_period_ms: 100
+    odrive_telemetry_period_ms: 500
+
+  robot_simulator:
+    speed_coeff: 2.0e-2
+    wheels_spacing: 0.205
+    encoders_spacing: 0.235
+    encoders_counts_per_m: 0.5e+5
+    encoders_period: 8192
+
+  odometry:
+    dist_per_count_left: 1.5345e-05
+    dist_per_count_right: 1.5355e-05
+    wheel_distance_left: 233.6e-3
+    wheel_distance_right: 0
+    speed_filter_frequency: 500
+    accel_filter_frequency: 50
+
+  propulsion:
+    low_level_config:
+      wheels_distance: 0.205
+      motors_speed_factor: 50.5
+    pid_configs:
+    - longi:
+        kp: 2e1
+        ki: 0
+        kd: 0
+        lim_i: 0.2
+        lim_d: 0
+        out_min: -10
+        out_max: 10
+      speed:
+        kp: 0.0
+        ki: 0.0
+        kd: 0.0
+        lim_i: 0.2
+        lim_d: 0.0
+        out_min: -1.0
+        out_max: 1.0
+      yaw:
+        kp: 2e1
+        ki: 0
+        kd: 0
+        lim_i: 0.2
+        lim_d: 0
+        out_min: -10
+        out_max: 10
+      yaw_rate:
+        kp: 0.0
+        ki: 0
+        kd: 0
+        lim_i: 0.2
+        lim_d: 0
+        out_min: -1
+        out_max: 1
+    lookahead_time: 0.2
+    lookahead_distance: 0.05
+    static_motor_speed_limit: 100
+    cruise_motor_speed_limit: 100
+    reposition_motor_speed_limit: 10
+    static_torque_limit: 0.8
+    cruise_torque_limit: 0.8
+    reposition_torque_limit: 0.06
+
+  servos:
+    # Test dynas banc
+    - name: test_mx28_82
+      id: 82
+      type: DYNAMIXEL_MX28
+      max_speed: 0xffff
+      max_torque: 0x3ff
+      cw_limit: 0
+      ccw_limit: 28672
+    - name: test_ax12_1
+      id: 1
+      type: DYNAMIXEL_AX12
+      max_speed: 0x3ff
+      max_torque: 0x3ff
+      cw_limit: 512
+      ccw_limit: 960
+    - name: test_ax12_2
+      id: 2
+      type: DYNAMIXEL_AX12
+      max_speed: 0x3ff
+      max_torque: 0x3ff
+      cw_limit: 370
+      ccw_limit: 512
+    - name: test_ax12_8
+      id: 8
+      type: DYNAMIXEL_AX12
+      max_speed: 0x3ff
+      max_torque: 0x3ff
+      cw_limit: 70
+      ccw_limit: 495
+    # True dynas robot
+    - name: ascenseur
+      id: 89
+      type: DYNAMIXEL_MX28
+      max_speed: 0xffff
+      max_torque: 0x3ff
+      cw_limit: 0
+      ccw_limit: 28000
+    - name: bras
+      id: 4
+      type: DYNAMIXEL_AX12
+      max_speed: 0x3ff
+      max_torque: 0x3ff
+      cw_limit: 0
+      ccw_limit: 1000
+    - name: soulageur
+      id: 10
+      type: DYNAMIXEL_AX12
+      max_speed: 0x3ff
+      max_torque: 0x3ff
+      cw_limit: 0
+      ccw_limit: 1000
+
+
+  sensors:
+    - name: tirette
+      type: NUCLEO
+      id: 3
+    - name: emergency_stop
+      type: NUCLEO
+      id: 7
+
+    - name: fpga_sw_3
+      type: FPGA
+      id: 0
+    - name: fpga_sw_2
+      type: FPGA
+      id: 1
+    - name: fpga_sw_1
+      type: FPGA
+      id: 2
+    - name: fpga_sw_tirette
+      type: FPGA
+      id: 3
+
+    - name: fpga_ext_io_10
+      type: FPGA
+      id: 4
+    - name: fpga_ext_io_9
+      type: FPGA
+      id: 5
+    - name: fpga_ext_io_8
+      type: FPGA
+      id: 6
+    - name: fpga_ext_io_7
+      type: FPGA
+      id: 7
+
+    - name: fpga_ext_io_6
+      type: FPGA
+      id: 8
+    - name: fpga_ext_io_5
+      type: FPGA
+      id: 9
+    - name: fpga_captor_12
+      type: FPGA
+      id: 10
+    - name: fpga_captor_11
+      type: FPGA
+      id: 11
+
+    - name: fpga_captor_10
+      type: FPGA
+      id: 12
+    - name: fpga_captor_9
+      type: FPGA
+      id: 13
+    - name: fpga_captor_8
+      type: FPGA
+      id: 14
+    - name: fpga_captor_7
+      type: FPGA
+      id: 15
+
+    - name: fpga_captor_6
+      type: FPGA
+      id: 16
+    - name: fpga_captor_5
+      type: FPGA
+      id: 17
+    - name: fpga_captor_4
+      type: FPGA
+      id: 18
+    - name: fpga_captor_3
+      type: FPGA
+      id: 19
+
+    - name: fpga_captor_2
+      type: FPGA
+      id: 20
+    - name: fpga_captor_1
+      type: FPGA
+      id: 21
+    - name: fpga_ssi_m1_clk2
+      type: FPGA
+      id: 22
+    - name: fpga_ssi_m1_clk1
+      type: FPGA
+      id: 23
+
+    - name: fpga_ssi_m2_clk2
+      type: FPGA
+      id: 24
+    - name: fpga_ssi_m2_clk1
+      type: FPGA
+      id: 25
+    - name: fpga_tof_ds_2
+      type: FPGA
+      id: 26
+    - name: fpga_tof_ds_4
+      type: FPGA
+      id: 27
+
+    - name: fpga_tof_ds_1
+      type: FPGA
+      id: 28
+    - name: fpga_tof_ds_3
+      type: FPGA
+      id: 29
+    - name: fpga_i2c1_scl
+      type: FPGA
+      id: 30
+    - name: fpga_i2c1_sda
+      type: FPGA
+      id: 31
+
+
+  sequence_files:
+    - "sequences/constants.txt"
