@@ -8,6 +8,8 @@ import time
 from . import positions as pos
 from . import recalages
 from . import actuators_pneuma
+from . import actuators_lift
+from . import actuators_front
 from . import actuators_dyna
 from . import robot_config as rc
 from . import dynamic as dyn
@@ -395,7 +397,7 @@ async def action4():
     print ("******************************************************")
     # attente finale
     global_T = time.time()
-    while (global_T-global_T0)<95.0:
+    while (global_T-global_T0)<92.0:
         await asyncio.sleep(1.0)
         global_T = time.time()
 
@@ -1266,6 +1268,20 @@ async def construction_goldo():
     await asyncio.sleep(short_timeout)
     await actuators_dyna.ascenseur_standby()
     await asyncio.sleep(short_timeout)
+
+@robot.sequence
+async def construction_2_av():
+    await actuators_front.bras_av_standby()
+    await actuators_front.ecarteur_av_on()
+    await asyncio.sleep(0.5)
+    await actuators_front.ecarteur_int_av_on()
+    await actuators_front.ascenseur_av_stage2_high()
+    await asyncio.sleep(0.5)
+    await actuators_front.ecarteur_av_off()
+    await asyncio.sleep(0.5)
+    await actuators_front.pump_av_off()
+    await actuators_front.bras_av_up()
+    await asyncio.sleep(0.3)
 
 @robot.sequence
 async def get_detections():
