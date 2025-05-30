@@ -9,6 +9,7 @@ from . import positions as pos
 from . import recalages
 from . import actuators_pneuma
 from . import actuators_dyna
+from . import actuators_lift
 from . import robot_config as rc
 from . import dynamic as dyn
 
