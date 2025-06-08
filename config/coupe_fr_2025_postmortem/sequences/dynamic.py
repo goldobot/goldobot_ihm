@@ -8,7 +8,7 @@ import time
 from . import positions as pos
 from . import recalages
 from . import actuators_pneuma
-from . import actuators_dyna
+from . import actuators_back
 from . import robot_config as rc
 
 # objects included in the _sequences_globals of RobotMain class, defined in robot_main.py of goldo_main, are available as global variables
@@ -495,7 +495,7 @@ async def dyn_preprise(preprise_pos):
     long_timeout = 0.3
 
     # recul
-    await actuators_dyna.bras_standby()
+    await actuators_back.bras_arr_standby()
     await asyncio.sleep(short_timeout)
     # FIXME : TODO : get direction from 'preprise_pos' object..
     if preprise_pos in [-50,-40]:
@@ -507,27 +507,27 @@ async def dyn_preprise(preprise_pos):
     elif preprise_pos in [-20,-30,30,20]:
         await propulsion.faceDirection(180, global_turn_speed)
     await asyncio.sleep(short_timeout)
-    await actuators_pneuma.ventouses_ext_attrape()
+    await actuators_back.ventouses_arr_ext_attrape()
     await asyncio.sleep(short_timeout)
-    await actuators_pneuma.ventouses_int_attrape()
+    await actuators_back.ventouses_arr_int_attrape()
     await asyncio.sleep(short_timeout)
-    await actuators_dyna.ascenseur_down()
+    await actuators_back.ascenseur_arr_down()
     await asyncio.sleep(short_timeout)
     await propulsion.translation(-0.10, 0.2)
     await asyncio.sleep(short_timeout)
     await asyncio.sleep(long_timeout)
 
     # verrouillage planches
-    await actuators_dyna.soulageur_up()
-    await actuators_dyna.bras_prise_hard()
+    await actuators_back.soulageur_arr_up()
+    await actuators_back.bras_arr_prise_hard()
     await asyncio.sleep(short_timeout)
-    await actuators_dyna.pump_on()
+    await actuators_back.pump_arr_on()
     await asyncio.sleep(short_timeout)
-    await actuators_dyna.bras_transport()
+    await actuators_back.bras_arr_transport()
     await asyncio.sleep(short_timeout)
 
     # wooble..
-    await actuators_dyna.ascenseur_soulage()
+    await actuators_back.ascenseur_arr_soulage()
     await asyncio.sleep(short_timeout)
     # FIXME : TODO : get behaviour from 'preprise_pos' object..
     if preprise_pos in [-50,-40,40,50]:
@@ -547,7 +547,7 @@ async def dyn_preprise(preprise_pos):
             await asyncio.sleep(short_timeout)
 
     # eloignement
-    await actuators_dyna.ascenseur_transport()
+    await actuators_back.ascenseur_arr_transport()
     await asyncio.sleep(short_timeout)
     await propulsion.translation(0.10, 0.2)
     await asyncio.sleep(long_timeout)
@@ -575,28 +575,27 @@ async def dyn_construction_goldo(predepose_pos):
     await asyncio.sleep(0.2)
 
     print ("Prise planches")
-    await actuators_dyna.ascenseur_soulage()
+    await actuators_back.ascenseur_arr_soulage()
     await asyncio.sleep(short_timeout)
-    #await actuators_dyna.soulageur_up()
+    #await actuators_back.soulageur_arr_up()
     #await asyncio.sleep(short_timeout)
-    #await actuators_dyna.pump_off()
+    #await actuators_back.pump_arr_off()
     #await asyncio.sleep(short_timeout)
-    #await actuators_dyna.bras_up()
+    #await actuators_back.bras_arr_up()
     #await asyncio.sleep(short_timeout)
-    #await actuators_dyna.soulageur_transport()
+    #await actuators_back.soulageur_arr_transport()
     #await asyncio.sleep(short_timeout)
-    #await actuators_dyna.soulageur_up()
+    #await actuators_back.soulageur_arr_up()
     #await asyncio.sleep(short_timeout)
-    await actuators_dyna.soulageur_transport()
+    await actuators_back.soulageur_arr_transport()
     await asyncio.sleep(short_timeout)
-    await actuators_dyna.pump_on()
-    await actuators_dyna.pump_on()
+    await actuators_back.pump_arr_on()
     await asyncio.sleep(short_timeout)
-    await actuators_dyna.bras_prise_hard()
+    await actuators_back.bras_arr_prise_hard()
     await asyncio.sleep(short_timeout)
-    await actuators_dyna.soulageur_up()
+    await actuators_back.soulageur_arr_up()
     await asyncio.sleep(short_timeout)
-    #await actuators_dyna.bras_up()
+    #await actuators_back.bras_arr_up()
     #await asyncio.sleep(short_timeout)
     await asyncio.sleep(long_timeout)
     
@@ -605,60 +604,60 @@ async def dyn_construction_goldo(predepose_pos):
     await asyncio.sleep(long_timeout)
 
     print ("Construction niveau 1")
-    await actuators_pneuma.ecarteur_on()
+    await actuators_back.ecarteur_arr_on()
     await asyncio.sleep(short_timeout)
-    await actuators_dyna.bras_standby()
+    await actuators_back.bras_arr_standby()
     await asyncio.sleep(short_timeout)
-    await actuators_pneuma.ventouses_int_lache()
+    await actuators_back.ventouses_arr_int_lache()
     await asyncio.sleep(short_timeout)
-    await actuators_pneuma.ventouses_int_attrape()
+    await actuators_back.ventouses_arr_int_attrape()
     await asyncio.sleep(short_timeout)
-    await actuators_pneuma.ventouses_int_lache()
+    await actuators_back.ventouses_arr_int_lache()
     await asyncio.sleep(short_timeout)
-    await actuators_pneuma.ventouses_int_attrape()
+    await actuators_back.ventouses_arr_int_attrape()
     await asyncio.sleep(short_timeout)
-    await actuators_pneuma.ventouses_int_lache()
+    await actuators_back.ventouses_arr_int_lache()
     await asyncio.sleep(short_timeout)
-    await actuators_pneuma.ventouses_int_lache()
+    await actuators_back.ventouses_arr_int_lache()
     await asyncio.sleep(short_timeout)
-    await actuators_dyna.soulageur_down()
+    await actuators_back.soulageur_arr_down()
     await asyncio.sleep(short_timeout)
-    await actuators_dyna.ascenseur_down()
+    await actuators_back.ascenseur_arr_down()
     await asyncio.sleep(short_timeout)
-    await actuators_dyna.ascenseur_transport()
+    await actuators_back.ascenseur_arr_transport()
     await asyncio.sleep(short_timeout)
-    await actuators_dyna.ascenseur_down()
+    await actuators_back.ascenseur_arr_down()
     await asyncio.sleep(short_timeout)
     await asyncio.sleep(long_timeout)
 
     print ("Translation")
     await propulsion.translation(0.08, 0.15)
     await asyncio.sleep(short_timeout)
-    await actuators_pneuma.ecarteur_off()
+    await actuators_back.ecarteur_arr_off()
     await asyncio.sleep(short_timeout)
     await asyncio.sleep(long_timeout)
 
     print ("Construction niveau 2")
-    await actuators_dyna.ascenseur_stage2_high()
+    await actuators_back.ascenseur_arr_stage2_high()
     await asyncio.sleep(long_timeout)
     await propulsion.translation(-0.10, 0.15)
     await asyncio.sleep(short_timeout)
-    await actuators_dyna.bras_prise()
+    await actuators_back.bras_arr_prise()
     await asyncio.sleep(short_timeout)
-    await actuators_dyna.ascenseur_stage2_depose()
+    await actuators_back.ascenseur_arr_stage2_depose()
     await asyncio.sleep(short_timeout)
-    await actuators_dyna.pump_off()
+    await actuators_back.pump_arr_off()
     await asyncio.sleep(short_timeout)
-    await actuators_pneuma.ventouses_ext_lache()
+    await actuators_back.ventouses_arr_ext_lache()
     await asyncio.sleep(short_timeout)
     await asyncio.sleep(long_timeout)
 
     print ("Fin")
     await propulsion.translation(0.17, 0.15)
     await asyncio.sleep(short_timeout)
-    await actuators_dyna.bras_standby()
+    await actuators_back.bras_arr_standby()
     await asyncio.sleep(short_timeout)
-    await actuators_dyna.ascenseur_standby()
+    await actuators_back.ascenseur_arr_standby()
     await asyncio.sleep(short_timeout)
 
     return True
@@ -675,9 +674,9 @@ async def dyn_action4():
 
     global_T = time.time()
 
-    await actuators_dyna.ascenseur_down()
+    await actuators_back.ascenseur_arr_down()
     await asyncio.sleep(global_debug_action_timeout)
-    await actuators_dyna.ascenseur_disable()
+    await actuators_back.ascenseur_arr_disable()
 
     # deplacement vers la zone d'attente finale
     if robot.side == pos.Side.Yellow:
@@ -698,7 +697,7 @@ async def dyn_action4():
             break
         propulsion.adversary_detection_enable = True
 
-    await actuators_dyna.pump_off()
+    await actuators_back.pump_arr_off()
     await actuators_pneuma.reset_valves()
     await actuators_pneuma.purge()
 

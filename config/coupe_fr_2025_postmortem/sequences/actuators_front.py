@@ -1,10 +1,6 @@
-# FIXME : DEBUG
-# import modules from sequence directory
-from . import actuators_pneuma
-from . import actuators_dyna
+import asyncio
 
 from . import actuators_lift
-import asyncio
 
 pose_asc_av_down = 0
 pose_asc_av_soulage = 3800
@@ -41,32 +37,12 @@ pose_ecarteur_int_g_rentre = 567
 
 
 @robot.sequence
-async def actuators_front_prepare_test():
-
-    # Pneuma
-    await actuators_pneuma.reset_valves()
-    await actuators_pneuma.start_compressor()
-
-    # Propulsion
-    await odrive.clearErrors()
-    await asyncio.sleep(0.5)
-    await propulsion.clearError()
-    await asyncio.sleep(0.5)
-    await propulsion.setAccelerationLimits(1,1,10,10)
-    await asyncio.sleep(0.5)
-    await propulsion.setMotorsEnable(True)
-    await asyncio.sleep(0.5)
-    await propulsion.setEnable(True)
-    await asyncio.sleep(1)
-    
-    # Actionneurs
-    await ascenseur_av_homing()
-    await asyncio.sleep(1)
-    await ascenseur_av_down()
-    await asyncio.sleep(1)
-
-@robot.sequence
 async def prise_av():
+    # FIXME : DEBUG
+    print ("DEBUG TIMEOUT")
+    await asyncio.sleep(2.0)
+    print ("GO!")
+
     await ascenseur_av_down()
     await ecarteur_int_av_off()
     await ecarteur_av_off()
@@ -92,6 +68,11 @@ async def prise_av():
 
 @robot.sequence
 async def construction_2_etages_av():
+    # FIXME : DEBUG
+    print ("DEBUG TIMEOUT")
+    await asyncio.sleep(2.0)
+    print ("GO!")
+
     delay = 2
     await ecarteur_av_on()
     await asyncio.sleep(delay)
@@ -107,6 +88,11 @@ async def construction_2_etages_av():
 
 @robot.sequence
 async def depose_3_etages_av():
+    # FIXME : DEBUG
+    print ("DEBUG TIMEOUT")
+    await asyncio.sleep(2.0)
+    print ("GO!")
+
     await bras_av_up()
     await ascenseur_av_stage3_predepose()
     await asyncio.sleep(2)
@@ -187,8 +173,10 @@ async def ecarteur_av_disable():
     # Enable Dynamixel
     await servos.setMaxTorque(['ecarteur_g', 'ecarteur_d'], 0)
     await servos.setEnable(['ecarteur_g', 'ecarteur_d'], False)
+
+
 ####################################################
-##############         PUMPS          ##############
+##############         POMPE          ##############
 ####################################################
 
 @robot.sequence
@@ -201,6 +189,10 @@ async def pump_av_on():
     await robot.gpioSet('pompe_d', True)
     await robot.gpioSet('pompe_d', True)
 
+
+####################################################
+##############       ASCENSEUR        ##############
+####################################################
 @robot.sequence
 async def ascenseur_av_homing():
     await bras_av_prise()
@@ -254,6 +246,8 @@ async def ascenseur_av_stage2_tassage():
 
 @robot.sequence
 async def ascenseur_av_stage3_predepose():
+    await ascenseur_av_move(pose_asc_av_stage3_predepose-4000)
+    await asyncio.sleep(4)
     await ascenseur_av_move(pose_asc_av_stage3_predepose)
 
 @robot.sequence
@@ -271,6 +265,7 @@ async def ascenseur_av_soulage():
 @robot.sequence
 async def ascenseur_av_transport():
     await ascenseur_av_move(pose_asc_av_transport)
+
 
 ####################################################
 ##############      SOULAGEUR AR      ##############
@@ -307,7 +302,6 @@ async def soulageur_av_disable():
 ####################################################
 ##############        BRAS AR        ###############
 ####################################################
-
 async def bras_av_move(pose, torque = 1.0, speed = 1.0):
     # Enable Dynamixel
     await servos.setMaxTorque(['bras_av'], torque)
@@ -340,6 +334,7 @@ async def bras_av_up():
 @robot.sequence
 async def bras_av_transport():
     await bras_av_move(pose_bras_av_transport)
+
 
 ####################################################
 ##############        PNEUMA        ###############

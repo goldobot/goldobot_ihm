@@ -17,30 +17,6 @@ async def purge():
 async def reset_valves():
     await pneumatic.multiple_valves_off(1,2,3,4,5,6,7,8,9,10,11,12)
 
-@robot.sequence
-async def ventouses_int_lache():
-    await pneumatic.multiple_valves_on(4,7)
-
-@robot.sequence
-async def ventouses_int_attrape():
-    await pneumatic.multiple_valves_off(4,7)
-
-@robot.sequence
-async def ventouses_ext_lache():
-    await pneumatic.multiple_valves_on(2, 8)
-
-@robot.sequence
-async def ventouses_ext_attrape():
-    await pneumatic.multiple_valves_off(2, 8)
-
-@robot.sequence
-async def ecarteur_on():
-    await pneumatic.valve_on(5)
-
-@robot.sequence
-async def ecarteur_off():
-    await pneumatic.valve_off(5)
-
 
 ###########################################################
 ################## TEST VALVES SEQUENCES ##################
