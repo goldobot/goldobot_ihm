@@ -20,6 +20,8 @@ import logging
 
 LOGGER = logging.getLogger(__name__)
 
+poses = None
+
 @robot.sequence
 async def debug_test_exception():
     MIAU
@@ -183,4 +185,164 @@ async def debug_stop_lidar():
 async def debug_start_lidar():
     await lidar.start()
 
+
+@robot.sequence
+async def debug_prep_test_prise_double():
+    global poses
+    poses = pos.YellowPoses
+
+    short_timeout = 0.2
+    long_timeout = 0.5
+
+    # Pneuma
+    await actuators_pneuma.reset_valves()
+    await actuators_pneuma.start_compressor()
+    await asyncio.sleep(1)
+
+    # Propulsion
+    await odrive.clearErrors()
+    await propulsion.clearError()
+    await propulsion.setAccelerationLimits(1,1,20,20)
+    await propulsion.setMotorsEnable(True)
+    await propulsion.setEnable(True)
+    await asyncio.sleep(short_timeout)
+    await propulsion.setPose([poses.ZoneDA_start_pose[0], poses.ZoneDA_start_pose[1]], 180)
+    await asyncio.sleep(short_timeout)
+    
+    # Actionneurs ARR
+    await actuators_back.ascenseur_arr_down()
+    await asyncio.sleep(short_timeout)
+    await actuators_back.bras_arr_up()
+    await actuators_back.soulageur_arr_down()
+    await asyncio.sleep(short_timeout)
+
+    # Actionneurs AV
+    await actuators_front.ascenseur_av_homing()
+    await asyncio.sleep(short_timeout)
+    await actuators_front.ascenseur_av_down()
+    await asyncio.sleep(short_timeout)
+
+@robot.sequence
+async def debug_test_prise_double():
+    global poses
+    poses = pos.YellowPoses
+
+    short_timeout = 0.2
+    long_timeout = 0.5
+
+    long_speed = 0.5
+    turn_speed = 10.0
+
+    ## prise1 AV
+    p0_x = propulsion.pose.position.x
+    p0_y = propulsion.pose.position.y
+    action1_traj1 = [
+        (p0_x, p0_y, 0),
+        poses.Act1_traj1_start,
+        poses.Act1_traj1_wp1,
+        poses.Act1_traj1_finish
+    ]
+    try:
+        await propulsion.trajectorySpline(action1_traj1, speed=long_speed)
+    except:
+        await trajectory_spline_exception()
+        await propulsion.pointTo(poses.Act1_traj1_finish, turn_speed)
+        await propulsion.moveToRetry(poses.Act1_traj1_finish, long_speed)
+    await asyncio.sleep(short_timeout)
+    await propulsion.faceDirection(180, turn_speed)
+    await asyncio.sleep(short_timeout)
+    await actuators_front.prise_av()
+    await asyncio.sleep(long_timeout)
+
+    ## prise2 ARR
+    # preparation
+    await actuators_back.ascenseur_arr_down()
+    await actuators_back.ventouses_arr_ext_attrape()
+    await actuators_back.ventouses_arr_int_attrape()
+    await actuators_back.bras_arr_up()
+    await asyncio.sleep(short_timeout)
+    # approche
+    await propulsion.pointTo(poses.Act2_traj1_finish, turn_speed, back=True)
+    await asyncio.sleep(short_timeout)
+    await propulsion.moveToRetry(poses.Act2_traj1_finish, long_speed)
+    await asyncio.sleep(short_timeout)
+    await propulsion.faceDirection(180, turn_speed)
+    await asyncio.sleep(short_timeout)
+    await actuators_back.bras_arr_standby()
+    await asyncio.sleep(short_timeout)
+    await propulsion.translation(-0.20, 0.15)
+    await asyncio.sleep(short_timeout)
+    # verrouillage planches
+    await actuators_back.soulageur_arr_up()
+    await actuators_back.bras_arr_prise_hard()
+    await asyncio.sleep(short_timeout)
+    await actuators_back.pump_arr_on()
+    await asyncio.sleep(short_timeout)
+    await actuators_back.bras_arr_transport()
+    await asyncio.sleep(short_timeout)
+    await actuators_back.soulageur_arr_transport()
+    await asyncio.sleep(short_timeout)
+    await actuators_back.ascenseur_arr_transport()
+    await asyncio.sleep(short_timeout)
+    # eloignement
+    #await propulsion.translation(0.20, 0.15)
+    await asyncio.sleep(short_timeout)
+    await asyncio.sleep(long_timeout)
+
+
+@robot.sequence
+async def debug_prep_test_construction_niv3():
+    global poses
+    poses = pos.YellowPoses
+
+    short_timeout = 0.2
+    long_timeout = 0.5
+
+    long_speed = 0.6
+    turn_speed = 20.0
+
+    await propulsion.faceDirection(-90, turn_speed)
+    await asyncio.sleep(short_timeout)
+    await propulsion.translation(-0.30, long_speed)
+    await asyncio.sleep(short_timeout)
+
+@robot.sequence
+async def debug_test_construction_niv3():
+    global poses
+    poses = pos.YellowPoses
+
+    short_timeout = 0.2
+    long_timeout = 0.5
+
+    long_speed = 0.5
+    turn_speed = 5.0
+
+    await actuators_back.construction_1_etage_arr()
+    await asyncio.sleep(long_timeout)
+
+    await propulsion.faceDirection(90, turn_speed)
+    await asyncio.sleep(short_timeout)
+    await propulsion.translation(0.03, long_speed)
+    await asyncio.sleep(long_timeout)
+
+    await actuators_front.construction_2_etages_av()
+    await asyncio.sleep(long_timeout)
+    await actuators_front.depose_3_etages_av()
+    await asyncio.sleep(long_timeout)
+
+@robot.sequence
+async def debug_test_niv3_la_totale():
+    print ("DEBUG TIMEOUT")
+    await asyncio.sleep(10.0)
+    print ("GO!")
+
+    await debug_prep_test_prise_double()
+    await asyncio.sleep(1.0)
+    await debug_test_prise_double()
+    await asyncio.sleep(1.0)
+    await debug_prep_test_construction_niv3()
+    await asyncio.sleep(1.0)
+    await debug_test_construction_niv3()
+    await asyncio.sleep(1.0)
+    await actuators_back.pump_arr_off()
 

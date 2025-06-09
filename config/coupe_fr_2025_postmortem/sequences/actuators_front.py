@@ -12,7 +12,8 @@ pose_asc_av_stage2_depose = 0x8400
 #pose_asc_av_stage2_tassage = 0x7C80
 pose_asc_av_stage2_tassage = 0x6E00
 pose_asc_av_stage3_predepose = 0xF980
-pose_asc_av_stage3_depose = 0xEE80
+#pose_asc_av_stage3_depose = 0xEE80
+pose_asc_av_stage3_depose = 0xEC80
 pose_asc_av_stage2_low = 622
 pose_asc_av_up = 0xF980
 
@@ -40,7 +41,7 @@ pose_ecarteur_int_g_rentre = 567
 async def prise_av():
     # FIXME : DEBUG
     print ("DEBUG TIMEOUT")
-    await asyncio.sleep(2.0)
+    await asyncio.sleep(1.0)
     print ("GO!")
 
     await ascenseur_av_down()
@@ -48,7 +49,7 @@ async def prise_av():
     await ecarteur_av_off()
     await soulageur_av_mid()
     await bras_av_transport()
-    await asyncio.sleep(0.5)
+    await asyncio.sleep(0.2)
     
     print ("MOVE !!!!")
     #await asyncio.sleep(10)
@@ -70,32 +71,32 @@ async def prise_av():
 async def construction_2_etages_av():
     # FIXME : DEBUG
     print ("DEBUG TIMEOUT")
-    await asyncio.sleep(2.0)
+    await asyncio.sleep(1.0)
     print ("GO!")
 
-    delay = 2
     await ecarteur_av_on()
-    await asyncio.sleep(delay)
+    await asyncio.sleep(0.2)
     await ecarteur_int_av_on()
-    await asyncio.sleep(delay)
+    await asyncio.sleep(0.2)
     await soulageur_av_mid()
     await ascenseur_av_stage2_depose()
-    await asyncio.sleep(delay)
+    await asyncio.sleep(0.5)
     await ecarteur_av_off()
-    await asyncio.sleep(delay)
+    await asyncio.sleep(0.2)
     await ascenseur_av_stage2_tassage()
+    await asyncio.sleep(0.5)
     await pump_av_off()
 
 @robot.sequence
 async def depose_3_etages_av():
     # FIXME : DEBUG
     print ("DEBUG TIMEOUT")
-    await asyncio.sleep(2.0)
+    await asyncio.sleep(1.0)
     print ("GO!")
 
     await bras_av_up()
     await ascenseur_av_stage3_predepose()
-    await asyncio.sleep(2)
+    await asyncio.sleep(0.5)
     print ("MOVE !!!!")
     #await asyncio.sleep(10)
     try:
@@ -104,18 +105,18 @@ async def depose_3_etages_av():
         await propulsion.reposition(0.2, 0.2)
 
     await soulageur_av_mid()
-    await asyncio.sleep(1)
+    await asyncio.sleep(0.2)
     
     await ascenseur_av_stage3_depose()
-    await asyncio.sleep(2)
+    await asyncio.sleep(0.5)
 
     await ventouses_av_ext_lache()
     await ventouses_av_int_lache()
-    await asyncio.sleep(1)
+    await asyncio.sleep(0.2)
     await soulageur_av_down()
 
     print ("MOVE !!!!")
-    await asyncio.sleep(10)
+    #await asyncio.sleep(10)
     try:
         await propulsion.reposition(-0.2, 0.2)
     except:
@@ -197,28 +198,35 @@ async def pump_av_on():
 async def ascenseur_av_homing():
     await bras_av_prise()
     await ecarteur_av_on()
-    await asyncio.sleep(2)
+    await asyncio.sleep(0.5)
     await bras_av_disable()
     await actuators_lift.lift_homing()
     await asyncio.sleep(15)
     await ecarteur_av_off()
-    await asyncio.sleep(1)
+    await asyncio.sleep(0.5)
     await ecarteur_int_av_off()
-    await asyncio.sleep(1)
+    await asyncio.sleep(0.5)
     await ecarteur_av_disable()
     #await ascenseur_av_down()
 
 @robot.sequence
 async def ascenseur_av_move(pose, speed = 0x200):
+    # FIXME : TODO : check the position of the "ecarteur axt avant" dyna and implement a failsafe mechanism to avoid destroying the top of the robot..
     p=int(str(pose),0)
     s=int(str(speed),0)
-    if (p<0xe000):
-        await actuators_lift.lift_move_sync(p, s)
-    else:
+    if (p>0xe000):
         lift_pos = await robot.fpgaRegRead(0x80008508)
         if (lift_pos<0xe000):
             await actuators_lift.lift_move_sync(0xe000, s)
         if (s>0x80): s=0x80
+        await actuators_lift.lift_move_sync(p, s)
+    elif (p<0x1000):
+        lift_pos = await robot.fpgaRegRead(0x80008508)
+        if (lift_pos>0x1000):
+            await actuators_lift.lift_move_sync(0x1000, s)
+        if (s>0x80): s=0x80
+        await actuators_lift.lift_move_sync(p, s)
+    else:
         await actuators_lift.lift_move_sync(p, s)
 
 @robot.sequence
@@ -227,10 +235,6 @@ async def ascenseur_av_disable():
 
 @robot.sequence
 async def ascenseur_av_down():
-    await ascenseur_av_move(pose_asc_av_down+6000)
-    await asyncio.sleep(2)
-    await ascenseur_av_move(pose_asc_av_down+3000)
-    await asyncio.sleep(2)
     await ascenseur_av_move(pose_asc_av_down)
 
 @robot.sequence
@@ -277,7 +281,7 @@ async def ascenseur_av_transport():
 
 
 ####################################################
-##############      SOULAGEUR AR      ##############
+##############      SOULAGEUR AV      ##############
 ####################################################
 async def soulageur_av_move(pose, torque = 1.0, speed = 1.0):
     # Enable Dynamixel
@@ -309,7 +313,7 @@ async def soulageur_av_disable():
     await servos.setEnable(['soulageur_av'], False)
 
 ####################################################
-##############        BRAS AR        ###############
+##############        BRAS AV        ###############
 ####################################################
 async def bras_av_move(pose, torque = 1.0, speed = 1.0):
     # Enable Dynamixel
@@ -319,6 +323,7 @@ async def bras_av_move(pose, torque = 1.0, speed = 1.0):
     # Move Dynamixel
     await servos.moveMultiple({'bras_av': pose}, speed)
 
+@robot.sequence
 async def bras_av_disable():
     # Enable Dynamixel
     await servos.setMaxTorque(['bras_av'], 0)

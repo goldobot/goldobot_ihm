@@ -4,6 +4,7 @@ from . import actuators_pneuma
 
 pose_asc_down = 4095
 pose_asc_soulage = 3800
+#pose_asc_soulage = 3700
 pose_asc_transport = 3504
 pose_asc_standby = 2800
 pose_asc_stage2_high = 450
