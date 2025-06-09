@@ -208,9 +208,18 @@ async def ascenseur_av_homing():
     await ecarteur_av_disable()
     #await ascenseur_av_down()
 
+@robot.sequence
 async def ascenseur_av_move(pose, speed = 0x200):
-    # Enable Dynamixel
-    await actuators_lift.lift_move(pose, speed)
+    p=int(str(pose),0)
+    s=int(str(speed),0)
+    if (p<0xe000):
+        await actuators_lift.lift_move_sync(p, s)
+    else:
+        lift_pos = await robot.fpgaRegRead(0x80008508)
+        if (lift_pos<0xe000):
+            await actuators_lift.lift_move_sync(0xe000, s)
+        if (s>0x80): s=0x80
+        await actuators_lift.lift_move_sync(p, s)
 
 @robot.sequence
 async def ascenseur_av_disable():

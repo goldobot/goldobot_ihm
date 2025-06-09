@@ -1,3 +1,5 @@
+import asyncio
+
 @robot.sequence
 async def lift_homing():
     await robot.fpgaRegWrite(0x80008500, 0x50000000)
@@ -12,16 +14,26 @@ async def lift_asserv_enable():
 
 @robot.sequence
 async def lift_move(target_pos,speed,block_trig=0x80):
-    t=int(target_pos)
-    s=int(speed)
-    blt=int(block_trig)
+    t=int(str(target_pos),0)
+    s=int(str(speed),0)
+    blt=int(str(block_trig),0)
     print ("t={}, s={}, blt={}".format(t,s,blt))
     new_val = 0x90000000 | (0x0fff0000 & (blt<<16)) | (0x0000ffff & s)
     await robot.fpgaRegWrite(0x80008500, new_val)
-    await robot.fpgaRegWrite(0x80008500, new_val)
+    await asyncio.sleep(0.1)
     new_val = 0x70000000 | (0x0fffffff & t)
     await robot.fpgaRegWrite(0x80008500, new_val)
-    await robot.fpgaRegWrite(0x80008500, new_val)
+    await asyncio.sleep(0.1)
+
+@robot.sequence
+async def lift_move_sync(target_pos,speed,block_trig=0x80):
+    t=int(str(target_pos),0)
+    await lift_move(target_pos,speed,block_trig)
+    for i in range(1,40):
+        lift_pos = await robot.fpgaRegRead(0x80008508)
+        if abs(lift_pos-t)<10:
+            break
+        await asyncio.sleep(0.1)
 
 #@robot.sequence
 #async def lift_move2(*args):
@@ -49,6 +61,8 @@ async def lift_move2(*args):
     new_val = 0x90800000 | (0x0000ffff & speed)
     print ("new_val={:x}".format(new_val))
     await robot.fpgaRegWrite(0x80008500, new_val)
+    await asyncio.sleep(0.1)
     new_val = 0x70000000 | (0x0fffffff & target)
     print ("new_val={:x}".format(new_val))
     await robot.fpgaRegWrite(0x80008500, new_val)
+    await asyncio.sleep(0.1)
