@@ -56,12 +56,14 @@ async def prise_arr():
     await asyncio.sleep(long_timeout)
 
     # verrouillage planches
-    await soulageur_arr_up()
+    #await soulageur_arr_up()
+    await soulageur_arr_transport()
     await bras_arr_prise_hard()
     await asyncio.sleep(short_timeout)
     await pump_arr_on()
     await asyncio.sleep(short_timeout)
-    await bras_arr_transport()
+    #await bras_arr_transport()
+    await bras_arr_prise()
     await asyncio.sleep(short_timeout)
 
     # wooble..
@@ -203,6 +205,46 @@ async def construction_1_etage_arr():
     await soulageur_arr_down()
     await asyncio.sleep(short_timeout)
     await ascenseur_arr_down()
+    await asyncio.sleep(short_timeout)
+    await asyncio.sleep(1.0)
+
+    print ("Fin")
+    await propulsion.translation(0.20, 0.15)
+    await asyncio.sleep(short_timeout)
+    await bras_arr_standby()
+    await asyncio.sleep(short_timeout)
+    await ecarteur_arr_off()
+    await asyncio.sleep(short_timeout)
+    await ascenseur_arr_standby()
+    await asyncio.sleep(short_timeout)
+
+
+@robot.sequence
+async def construction_1_etage_bis_arr():
+    global global_turn_speed
+
+    # FIXME : DEBUG
+    print ("DEBUG TIMEOUT")
+    await asyncio.sleep(2.0)
+    print ("GO!")
+
+    short_timeout = 0.1
+    long_timeout = 0.3
+
+    print ("Approche initiale du site de construction")
+    await propulsion.translation(-0.20, 0.15)
+    await asyncio.sleep(long_timeout)
+
+    print ("Construction niveau 1")
+    await soulageur_arr_down()
+    await asyncio.sleep(short_timeout)
+    await ascenseur_arr_down()
+    await asyncio.sleep(short_timeout)
+    await bras_arr_standby()
+    await asyncio.sleep(short_timeout)
+    await pump_arr_off()
+    await asyncio.sleep(short_timeout)
+    await ventouses_arr_ext_lache()
     await asyncio.sleep(short_timeout)
     await asyncio.sleep(1.0)
 

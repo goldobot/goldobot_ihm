@@ -40,19 +40,26 @@ pose_ecarteur_int_g_rentre = 567
 @robot.sequence
 async def prise_av():
     # FIXME : DEBUG
-    print ("DEBUG TIMEOUT")
-    await asyncio.sleep(1.0)
-    print ("GO!")
+    #print ("DEBUG TIMEOUT")
+    #await asyncio.sleep(1.0)
+    #print ("GO!")
 
-    await ascenseur_av_down()
+    await ventouses_av_ext_attrape()
+    await ventouses_av_int_attrape()
+    await asyncio.sleep(0.2)
     await ecarteur_int_av_off()
+    await asyncio.sleep(0.2)
     await ecarteur_av_off()
+    await asyncio.sleep(0.2)
+    await ascenseur_av_down()
+    await asyncio.sleep(0.2)
     await soulageur_av_mid()
-    await bras_av_transport()
+    await asyncio.sleep(0.2)
+    await bras_av_up()
+    #await bras_av_transport()
     await asyncio.sleep(0.2)
     
     print ("MOVE !!!!")
-    #await asyncio.sleep(10)
     try:
         await propulsion.reposition(0.2, 0.2)
     except:
@@ -63,16 +70,16 @@ async def prise_av():
     await soulageur_av_up()
     await bras_av_prise()
     await soulageur_av_transport()
-    await bras_av_transport()
+    #await bras_av_transport()
     await ascenseur_av_transport()
     await asyncio.sleep(0.2)
 
 @robot.sequence
 async def construction_2_etages_av():
     # FIXME : DEBUG
-    print ("DEBUG TIMEOUT")
-    await asyncio.sleep(1.0)
-    print ("GO!")
+    #print ("DEBUG TIMEOUT")
+    #await asyncio.sleep(1.0)
+    #print ("GO!")
 
     await ecarteur_av_on()
     await asyncio.sleep(0.2)
@@ -80,23 +87,23 @@ async def construction_2_etages_av():
     await asyncio.sleep(0.2)
     await soulageur_av_mid()
     await ascenseur_av_stage2_depose()
-    await asyncio.sleep(0.5)
+    await asyncio.sleep(0.3)
     await ecarteur_av_off()
     await asyncio.sleep(0.2)
     await ascenseur_av_stage2_tassage()
-    await asyncio.sleep(0.5)
+    await asyncio.sleep(0.3)
     await pump_av_off()
 
 @robot.sequence
 async def depose_3_etages_av():
     # FIXME : DEBUG
-    print ("DEBUG TIMEOUT")
-    await asyncio.sleep(1.0)
-    print ("GO!")
+    #print ("DEBUG TIMEOUT")
+    #await asyncio.sleep(1.0)
+    #print ("GO!")
 
     await bras_av_up()
     await ascenseur_av_stage3_predepose()
-    await asyncio.sleep(0.5)
+    await asyncio.sleep(0.3)
     print ("MOVE !!!!")
     #await asyncio.sleep(10)
     try:
@@ -108,7 +115,7 @@ async def depose_3_etages_av():
     await asyncio.sleep(0.2)
     
     await ascenseur_av_stage3_depose()
-    await asyncio.sleep(0.5)
+    await asyncio.sleep(0.3)
 
     await ventouses_av_ext_lache()
     await ventouses_av_int_lache()
@@ -198,14 +205,17 @@ async def pump_av_on():
 async def ascenseur_av_homing():
     await bras_av_prise()
     await ecarteur_av_on()
-    await asyncio.sleep(0.5)
+    await asyncio.sleep(0.3)
     await bras_av_disable()
     await actuators_lift.lift_homing()
-    await asyncio.sleep(15)
+    for i in range(0,15):
+        lift_flags = await robot.fpgaRegRead(0x80008504)
+        if ((i>3) and ((lift_flags&1)==1)): break
+        await asyncio.sleep(1)
     await ecarteur_av_off()
-    await asyncio.sleep(0.5)
+    await asyncio.sleep(0.3)
     await ecarteur_int_av_off()
-    await asyncio.sleep(0.5)
+    await asyncio.sleep(0.3)
     await ecarteur_av_disable()
     #await ascenseur_av_down()
 
@@ -235,6 +245,9 @@ async def ascenseur_av_disable():
 
 @robot.sequence
 async def ascenseur_av_down():
+    # securite!
+    await ecarteur_int_av_off()
+    await asyncio.sleep(0.2)
     await ascenseur_av_move(pose_asc_av_down)
 
 @robot.sequence
@@ -259,8 +272,6 @@ async def ascenseur_av_stage2_tassage():
 
 @robot.sequence
 async def ascenseur_av_stage3_predepose():
-    await ascenseur_av_move(pose_asc_av_stage3_predepose-4000)
-    await asyncio.sleep(4)
     await ascenseur_av_move(pose_asc_av_stage3_predepose)
 
 @robot.sequence
@@ -332,10 +343,6 @@ async def bras_av_disable():
 @robot.sequence
 async def bras_av_prise():
     await bras_av_move(pose_bras_av_prise)
-
-@robot.sequence
-async def bras_av_prise_hard():
-    await bras_av_move(pose_bras_av_prise_hard)
 
 @robot.sequence
 async def bras_av_standby():
