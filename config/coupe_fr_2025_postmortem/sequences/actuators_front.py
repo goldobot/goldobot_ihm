@@ -2,6 +2,10 @@ import asyncio
 
 from . import actuators_lift
 
+# ASCENSEUR : conversion inc<>mm
+#  0x1000 inc := 15mmm
+#       1 inc := 0.0036621 mmm
+#     273 inc := 1 mmm
 pose_asc_av_down = 0
 pose_asc_av_soulage = 3800
 pose_asc_av_transport = 3504
@@ -11,8 +15,8 @@ pose_asc_av_stage2_high = 450
 pose_asc_av_stage2_depose = 0x8400
 #pose_asc_av_stage2_tassage = 0x7C80
 pose_asc_av_stage2_tassage = 0x6E00
-pose_asc_av_stage3_predepose = 0xF980
-#pose_asc_av_stage3_depose = 0xEE80
+#pose_asc_av_stage3_predepose = 0xF980 # CRACK!!
+pose_asc_av_stage3_predepose = 0xF8C0
 pose_asc_av_stage3_depose = 0xEC80
 pose_asc_av_stage2_low = 622
 pose_asc_av_up = 0xF980
@@ -220,8 +224,8 @@ async def ascenseur_av_homing():
     #await ascenseur_av_down()
 
 @robot.sequence
-async def ascenseur_av_move(pose, speed = 0x200):
-    # FIXME : TODO : check the position of the "ecarteur axt avant" dyna and implement a failsafe mechanism to avoid destroying the top of the robot..
+async def ascenseur_av_move_safe(pose, speed = 0x200):
+    # FIXME : TODO : check the position of the "ecarteur ext avant" dyna and implement a failsafe mechanism to avoid destroying the top of the robot..
     p=int(str(pose),0)
     s=int(str(speed),0)
     if (p>0xe000):
@@ -238,6 +242,12 @@ async def ascenseur_av_move(pose, speed = 0x200):
         await actuators_lift.lift_move_sync(p, s)
     else:
         await actuators_lift.lift_move_sync(p, s)
+
+@robot.sequence
+async def ascenseur_av_move(pose, speed = 0x200):
+    p=int(str(pose),0)
+    s=int(str(speed),0)
+    await actuators_lift.lift_move_sync(p, s)
 
 @robot.sequence
 async def ascenseur_av_disable():
