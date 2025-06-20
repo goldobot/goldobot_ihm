@@ -28,6 +28,8 @@ global_long_speed = 0.60
 global_turn_speed = 3.2
 global_turn_speed_slow = 1.5
 
+global_pneuma_timeout = 1.6
+
 
 ####################
 # MACRO-SEQUENCES  #
@@ -41,29 +43,26 @@ async def prise_arr():
     short_timeout = 0.1
     long_timeout = 0.3
 
-    # recul
+    # approche
     await bras_arr_standby()
-    await asyncio.sleep(short_timeout)
-    await asyncio.sleep(short_timeout)
     await ventouses_arr_ext_attrape()
-    await asyncio.sleep(short_timeout)
     await ventouses_arr_int_attrape()
     await asyncio.sleep(short_timeout)
     await ascenseur_arr_down()
     await asyncio.sleep(short_timeout)
-    await propulsion.translation(-0.10, 0.2)
+    await propulsion.translation(-0.15, 0.2)
     await asyncio.sleep(short_timeout)
-    await asyncio.sleep(long_timeout)
 
     # verrouillage planches
-    #await soulageur_arr_up()
-    await soulageur_arr_transport()
+    await soulageur_arr_up()
+    await asyncio.sleep(short_timeout)
     await bras_arr_prise_hard()
     await asyncio.sleep(short_timeout)
     await pump_arr_on()
     await asyncio.sleep(short_timeout)
-    #await bras_arr_transport()
-    await bras_arr_prise()
+    await bras_arr_transport()
+    await asyncio.sleep(short_timeout)
+    await soulageur_arr_transport()
     await asyncio.sleep(short_timeout)
 
     # wooble..
@@ -90,12 +89,13 @@ async def prise_arr():
     # eloignement
     await ascenseur_arr_transport()
     await asyncio.sleep(short_timeout)
-    await propulsion.translation(0.10, 0.2)
+    await propulsion.translation(0.15, 0.2)
     await asyncio.sleep(long_timeout)
 
 @robot.sequence
 async def construction_2_etages_arr():
     global global_turn_speed
+    global global_pneuma_timeout
 
     short_timeout = 0.1
     long_timeout = 0.3
@@ -113,7 +113,6 @@ async def construction_2_etages_arr():
     await asyncio.sleep(short_timeout)
     await soulageur_arr_transport()
     await asyncio.sleep(short_timeout)
-    await asyncio.sleep(long_timeout)
     
     print ("Approche initiale du site de construction")
     await propulsion.translation(-0.15, 0.15)
@@ -126,19 +125,17 @@ async def construction_2_etages_arr():
     await asyncio.sleep(short_timeout)
     await ventouses_arr_int_lache()
     await asyncio.sleep(short_timeout)
-    await asyncio.sleep(1.0)
+    await asyncio.sleep(global_pneuma_timeout)
     await soulageur_arr_down()
     await asyncio.sleep(short_timeout)
     await ascenseur_arr_down()
     await asyncio.sleep(short_timeout)
-    await asyncio.sleep(1.0)
 
     print ("Translation")
     await propulsion.translation(0.10, 0.15)
-    await asyncio.sleep(short_timeout)
+    await asyncio.sleep(long_timeout)
     await ecarteur_arr_off()
     await asyncio.sleep(short_timeout)
-    await asyncio.sleep(long_timeout)
 
     print ("Construction niveau 2")
     await ascenseur_arr_stage2_high()
@@ -153,7 +150,6 @@ async def construction_2_etages_arr():
     await asyncio.sleep(short_timeout)
     await ventouses_arr_ext_lache()
     await asyncio.sleep(short_timeout)
-    await asyncio.sleep(long_timeout)
 
     print ("Fin")
     await propulsion.translation(0.17, 0.15)
@@ -161,16 +157,17 @@ async def construction_2_etages_arr():
     await bras_arr_standby()
     await asyncio.sleep(short_timeout)
     await ascenseur_arr_standby()
-    await asyncio.sleep(short_timeout)
+    await asyncio.sleep(long_timeout)
 
 @robot.sequence
 async def construction_1_etage_arr():
     global global_turn_speed
+    global global_pneuma_timeout
 
     # FIXME : DEBUG
-    print ("DEBUG TIMEOUT")
-    await asyncio.sleep(2.0)
-    print ("GO!")
+    #print ("DEBUG TIMEOUT")
+    #await asyncio.sleep(2.0)
+    #print ("GO!")
 
     short_timeout = 0.1
     long_timeout = 0.3
@@ -188,7 +185,6 @@ async def construction_1_etage_arr():
     await asyncio.sleep(short_timeout)
     await soulageur_arr_transport()
     await asyncio.sleep(short_timeout)
-    await asyncio.sleep(long_timeout)
     
     print ("Approche initiale du site de construction")
     await propulsion.translation(-0.20, 0.15)
@@ -197,19 +193,22 @@ async def construction_1_etage_arr():
     print ("Construction niveau 1")
     await ecarteur_arr_on()
     await asyncio.sleep(short_timeout)
-    await bras_arr_standby()
-    await asyncio.sleep(short_timeout)
+    await bras_arr_up()
+    await asyncio.sleep(long_timeout)
     await ventouses_arr_int_lache()
+    await propulsion.translation(-0.01, 0.15)
     await asyncio.sleep(short_timeout)
-    await asyncio.sleep(1.0)
     await soulageur_arr_down()
     await asyncio.sleep(short_timeout)
-    await ascenseur_arr_down()
+    await ascenseur_arr_transport()
     await asyncio.sleep(short_timeout)
-    await asyncio.sleep(1.0)
+    await asyncio.sleep(global_pneuma_timeout)
+    await ascenseur_arr_soulage()
+    await asyncio.sleep(short_timeout)
+    await asyncio.sleep(long_timeout)
 
     print ("Fin")
-    await propulsion.translation(0.20, 0.15)
+    await propulsion.translation(0.21, 0.15)
     await asyncio.sleep(short_timeout)
     await bras_arr_standby()
     await asyncio.sleep(short_timeout)
@@ -222,11 +221,12 @@ async def construction_1_etage_arr():
 @robot.sequence
 async def construction_1_etage_bis_arr():
     global global_turn_speed
+    global global_pneuma_timeout
 
     # FIXME : DEBUG
-    print ("DEBUG TIMEOUT")
-    await asyncio.sleep(2.0)
-    print ("GO!")
+    #print ("DEBUG TIMEOUT")
+    #await asyncio.sleep(2.0)
+    #print ("GO!")
 
     short_timeout = 0.1
     long_timeout = 0.3
@@ -240,13 +240,15 @@ async def construction_1_etage_bis_arr():
     await asyncio.sleep(short_timeout)
     await ascenseur_arr_down()
     await asyncio.sleep(short_timeout)
-    await bras_arr_standby()
+    await bras_arr_prise()
     await asyncio.sleep(short_timeout)
     await pump_arr_off()
     await asyncio.sleep(short_timeout)
     await ventouses_arr_ext_lache()
     await asyncio.sleep(short_timeout)
-    await asyncio.sleep(1.0)
+    await ascenseur_arr_transport()
+    await asyncio.sleep(short_timeout)
+    await asyncio.sleep(global_pneuma_timeout)
 
     print ("Fin")
     await propulsion.translation(0.20, 0.15)

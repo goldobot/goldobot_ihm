@@ -43,95 +43,149 @@ pose_ecarteur_int_g_rentre = 567
 
 @robot.sequence
 async def prise_av():
-    # FIXME : DEBUG
-    #print ("DEBUG TIMEOUT")
-    #await asyncio.sleep(1.0)
-    #print ("GO!")
+    short_timeout = 0.1
 
     await ventouses_av_ext_attrape()
     await ventouses_av_int_attrape()
-    await asyncio.sleep(0.2)
+    await asyncio.sleep(short_timeout)
     await ecarteur_int_av_off()
-    await asyncio.sleep(0.2)
+    await asyncio.sleep(short_timeout)
     await ecarteur_av_off()
-    await asyncio.sleep(0.2)
+    await asyncio.sleep(short_timeout)
     await ascenseur_av_down()
-    await asyncio.sleep(0.2)
+    await asyncio.sleep(short_timeout)
     await soulageur_av_mid()
-    await asyncio.sleep(0.2)
+    await asyncio.sleep(short_timeout)
     await bras_av_up()
     #await bras_av_transport()
-    await asyncio.sleep(0.2)
+    await asyncio.sleep(short_timeout)
     
-    print ("MOVE !!!!")
     try:
         await propulsion.reposition(0.2, 0.2)
     except:
         await propulsion.reposition(0.2, 0.2)
 
     await pump_av_on()
-    await asyncio.sleep(0.2)
+    await asyncio.sleep(short_timeout)
     await soulageur_av_up()
     await bras_av_prise()
     await soulageur_av_transport()
     #await bras_av_transport()
     await ascenseur_av_transport()
-    await asyncio.sleep(0.2)
+    await asyncio.sleep(short_timeout)
 
 @robot.sequence
 async def construction_2_etages_av():
-    # FIXME : DEBUG
-    #print ("DEBUG TIMEOUT")
-    #await asyncio.sleep(1.0)
-    #print ("GO!")
+    short_timeout = 0.1
 
     await ecarteur_av_on()
-    await asyncio.sleep(0.2)
+    await asyncio.sleep(short_timeout)
     await ecarteur_int_av_on()
-    await asyncio.sleep(0.2)
+    await asyncio.sleep(short_timeout)
     await soulageur_av_mid()
     await ascenseur_av_stage2_depose()
-    await asyncio.sleep(0.3)
+    await asyncio.sleep(short_timeout)
     await ecarteur_av_off()
-    await asyncio.sleep(0.2)
+    await asyncio.sleep(short_timeout)
     await ascenseur_av_stage2_tassage()
-    await asyncio.sleep(0.3)
+    await asyncio.sleep(short_timeout)
+    await soulageur_av_up()
     await pump_av_off()
+    await asyncio.sleep(short_timeout)
 
 @robot.sequence
 async def depose_3_etages_av():
-    # FIXME : DEBUG
-    #print ("DEBUG TIMEOUT")
-    #await asyncio.sleep(1.0)
-    #print ("GO!")
+    short_timeout = 0.1
 
-    await bras_av_up()
-    await ascenseur_av_stage3_predepose()
-    await asyncio.sleep(0.3)
-    print ("MOVE !!!!")
-    #await asyncio.sleep(10)
+    # depose
     try:
         await propulsion.reposition(0.2, 0.2)
     except:
         await propulsion.reposition(0.2, 0.2)
 
     await soulageur_av_mid()
-    await asyncio.sleep(0.2)
+    await asyncio.sleep(short_timeout)
     
     await ascenseur_av_stage3_depose()
-    await asyncio.sleep(0.3)
+    await asyncio.sleep(short_timeout)
 
     await ventouses_av_ext_lache()
     await ventouses_av_int_lache()
-    await asyncio.sleep(0.2)
+    await asyncio.sleep(short_timeout)
     await soulageur_av_down()
 
-    print ("MOVE !!!!")
-    #await asyncio.sleep(10)
+    # recul
     try:
         await propulsion.reposition(-0.2, 0.2)
     except:
         await propulsion.reposition(-0.2, 0.2)
+
+    # securite!
+    await ecarteur_int_av_off()
+    await asyncio.sleep(short_timeout)
+
+@robot.sequence
+async def depose_3_etages_av_avec_predepose():
+    short_timeout = 0.1
+
+    # predepose
+    await bras_av_up()
+    await asyncio.sleep(short_timeout)
+    await ascenseur_av_stage3_predepose()
+    await asyncio.sleep(short_timeout)
+
+    # depose
+    try:
+        await propulsion.reposition(0.2, 0.2)
+    except:
+        await propulsion.reposition(0.2, 0.2)
+
+    await soulageur_av_mid()
+    await asyncio.sleep(short_timeout)
+    
+    await ascenseur_av_stage3_depose()
+    await asyncio.sleep(short_timeout)
+
+    await ventouses_av_ext_lache()
+    await ventouses_av_int_lache()
+    await asyncio.sleep(short_timeout)
+    await soulageur_av_down()
+
+    # recul
+    try:
+        await propulsion.reposition(-0.2, 0.2)
+    except:
+        await propulsion.reposition(-0.2, 0.2)
+
+    # securite!
+    await ecarteur_int_av_off()
+    await asyncio.sleep(short_timeout)
+
+@robot.sequence
+async def construction_2_etages_av_avec_predepose():
+    short_timeout = 0.1
+
+    # construction
+    await ecarteur_av_on()
+    await asyncio.sleep(short_timeout)
+    await ecarteur_int_av_on()
+    await asyncio.sleep(short_timeout)
+    await soulageur_av_mid()
+    await ascenseur_av_stage2_depose()
+    await asyncio.sleep(short_timeout)
+    await ecarteur_av_off()
+    await asyncio.sleep(short_timeout)
+    await ascenseur_av_stage2_tassage()
+    await asyncio.sleep(short_timeout)
+    await soulageur_av_up()
+    await pump_av_off()
+    await asyncio.sleep(short_timeout)
+
+    # predepose
+    await bras_av_up()
+    await asyncio.sleep(short_timeout)
+    await ascenseur_av_stage3_predepose()
+    await asyncio.sleep(short_timeout)
 
 
 @robot.sequence
