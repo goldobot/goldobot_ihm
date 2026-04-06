@@ -25,7 +25,7 @@ async def goldo_lifts_test_initialize():
     # initialisation ascenseurs    
     await servos.liftDoHoming(0)
     await servos.liftDoHoming(1)
-    await asyncio.sleep(3)
+    await asyncio.sleep(6)
     await servos.liftsRaw(65, 60, 65, 60)
     await asyncio.sleep(3)
 
@@ -335,7 +335,7 @@ async def arms_initialize():
     # initialisation ascenseurs    
     await servos.liftDoHoming(0)
     await servos.liftDoHoming(1)
-    await asyncio.sleep(3)
+    await asyncio.sleep(6)
     
     await servos.liftsRaw(65, 60, 65, 60)
     await asyncio.sleep(1)
