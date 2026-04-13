@@ -18,7 +18,8 @@ class Side:
 # TODO : BLUE : ZONE 1
 class BluePoses:
     # Poses de depart
-    Start_pose = (  0.082,  1.325,   0)
+    #Start_pose = (  0.082,  1.325,   0)
+    Start_pose = (  0.300,  1.325,   0)
 
     # TEST
     TEST_wp1   = (  0.510,  1.325,   0)
