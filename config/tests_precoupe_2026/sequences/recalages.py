@@ -28,10 +28,8 @@ async def recalage_zone_1():
     await propulsion.setPose([propulsion.pose.position.x , 1.5 - rc.robot_back_length], -90)
     await asyncio.sleep(0.5)
 
-    print("Orientation axe X")    
-    await propulsion.moveTo(poses.Start_pose, 0.3)
-    await asyncio.sleep(0.5)
-    await propulsion.moveTo(poses.Start_pose, 0.2)
+    print("Orientation axe X")
+    await propulsion.moveTo([propulsion.pose.position.x , poses.Start_pose[1]], 0.2)
     await asyncio.sleep(0.5)
     await propulsion.faceDirection(0, 1)
     await asyncio.sleep(0.5)
@@ -66,9 +64,7 @@ async def recalage_zone_2():
     await asyncio.sleep(0.5)
 
     print("Orientation axe X")    
-    await propulsion.moveTo(poses.Start_pose, 0.3)
-    await asyncio.sleep(0.5)
-    await propulsion.moveTo(poses.Start_pose, 0.2)
+    await propulsion.moveTo([propulsion.pose.position.x , poses.Start_pose[1]], 0.2)
     await asyncio.sleep(0.5)
     await propulsion.faceDirection(0, 1)
     await asyncio.sleep(0.5)

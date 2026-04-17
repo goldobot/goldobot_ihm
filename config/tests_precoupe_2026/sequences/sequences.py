@@ -45,17 +45,21 @@ async def prematch():
     
     # Lidar
     robot._adversary_detection_enable = False
-# FIXME : DEBUG
-    #await lidar.start()
+    await lidar.start()
 
     # Actionneurs
     await actuators.arms_initialize()
+    await asyncio.sleep(1.0)
 
-    await asyncio.sleep(5.0)
+    await actuators.arms_close()
+    await asyncio.sleep(0.5)
 
     # Placement
-# FIXME : DEBUG
     await recalages.recalage()
+    await asyncio.sleep(1.0)
+
+    await actuators.position_defensive_laterale()
+    await asyncio.sleep(0.5)
 
     # Dummy score
     await robot.setScore(42)
@@ -85,50 +89,29 @@ async def start_match():
     print ("T match_timer = {}".format(T1-T0))
     print ("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
 
-    # FIXME : TODO
-    await propulsion.moveTo(poses.TEST_wp1, global_long_speed)
-    await asyncio.sleep(4.0)
-    await propulsion.moveTo(poses.TEST_wp2, global_long_speed)
-    await asyncio.sleep(4.0)
-    await propulsion.moveTo(poses.TEST_wp3, global_long_speed)
-    await asyncio.sleep(4.0)
-    await propulsion.moveTo(poses.TEST_wp4, global_long_speed)
-    await asyncio.sleep(4.0)
+    robot._adversary_detection_enable = True
 
-    await propulsion.moveTo(poses.TEST_wp5, global_long_speed)
-    await asyncio.sleep(1.0)
-    await propulsion.moveTo(poses.TEST_wp6, global_long_speed)
-    await asyncio.sleep(1.0)
+    try:
+        await strat_0()
+    except:
+        print ("EXCEPTION!")
 
-    await propulsion.pointTo(poses.TEST_wp7, global_turn_speed)
+    await actuators.pumps_off()
+    await asyncio.sleep(0.5)
+    await actuators.arms_close()
+    await asyncio.sleep(0.5)
+
+    await propulsion.pointTo(poses.Final_escape_wp, global_turn_speed)
     await asyncio.sleep(1.0)
-    await propulsion.moveTo(poses.TEST_wp7, global_long_speed)
+    await propulsion.moveToRetry(poses.Final_escape_wp, global_long_speed)
     await asyncio.sleep(1.0)
 
-    await propulsion.pointTo(poses.TEST_wp8, global_turn_speed)
+    await propulsion.pointTo(poses.Final_pose_wp, global_turn_speed)
     await asyncio.sleep(1.0)
-    await propulsion.moveTo(poses.TEST_wp8, global_long_speed)
-    await asyncio.sleep(1.0)
-
-    await propulsion.pointTo(poses.TEST_wp9, global_turn_speed)
-    await asyncio.sleep(1.0)
-    await propulsion.moveTo(poses.TEST_wp9, global_long_speed)
+    await propulsion.moveToRetry(poses.Final_pose_wp, global_long_speed)
     await asyncio.sleep(1.0)
 
-    await propulsion.pointTo(poses.TEST_wp10_N, global_turn_speed)
-    await asyncio.sleep(1.0)
-    await propulsion.moveTo(poses.TEST_wp10, global_long_speed)
-    await asyncio.sleep(10.0)
-
-    await propulsion.pointTo(poses.TEST_wp11, global_turn_speed)
-    await asyncio.sleep(1.0)
-    await propulsion.moveTo(poses.TEST_wp11, global_long_speed)
-    await asyncio.sleep(1.0)
-
-    await propulsion.pointTo(poses.TEST_wp12, global_turn_speed)
-    await asyncio.sleep(1.0)
-    await propulsion.moveTo(poses.TEST_wp12, global_long_speed)
-    await asyncio.sleep(1.0)
+    await lidar.stop()
 
     T1 = time.time()
     print ("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
@@ -178,7 +161,6 @@ async def aruco_start_detection():
     elif (robot.start_zone==2): # YELLOW (Y-,id=47)
         print("my_color = YELLOW (id=47)")
         my_color = 47
-        pass
     else:
         print("No start zone!")
         return
@@ -189,4 +171,222 @@ async def aruco_start_detection():
             aruco_start_configuration = aruco_start_configuration[:i] + '1' + aruco_start_configuration[i+1:]
 
     print("aruco_start_configuration = {}".format(aruco_start_configuration))
+
+
+async def do_push_0000():
+    await propulsion.moveTo(poses.First_push, global_long_speed)
+    await asyncio.sleep(1.0)
+    await propulsion.moveTo(poses.First_grab_wp2, global_long_speed)
+    await asyncio.sleep(1.0)
+
+async def do_grab_and_push_0011():
+    await propulsion.moveTo(poses.First_grab_wp1, global_long_speed)
+    await asyncio.sleep(1.0)
+    await actuators.test_grab_right()
+    await asyncio.sleep(0.5)
+    await propulsion.moveTo(poses.First_grab_wp2, global_long_speed)
+    await asyncio.sleep(1.0)
+    await actuators.test_grab_left()
+    await asyncio.sleep(0.5)
+    await propulsion.moveTo(poses.First_push_out, global_long_speed)
+    await asyncio.sleep(1.0)
+    await propulsion.pointTo(pt=poses.First_return_wp, yaw_rate=global_turn_speed, back=True)
+    await asyncio.sleep(1.0)
+    await propulsion.moveTo(poses.First_return_wp, global_long_speed)
+    await asyncio.sleep(1.0)
+    await actuators.pumps_off()
+    await asyncio.sleep(0.5)
+
+
+async def do_grab_and_push_0101():
+    await propulsion.moveTo(poses.First_grab_wp1, global_long_speed)
+    await asyncio.sleep(1.0)
+    await actuators.test_grab_right()
+    await asyncio.sleep(0.5)
+    await propulsion.moveTo(poses.First_grab_wp3, global_long_speed)
+    await asyncio.sleep(1.0)
+    await actuators.test_grab_left()
+    await asyncio.sleep(0.5)
+    await propulsion.moveTo(poses.First_push_out, global_long_speed)
+    await asyncio.sleep(1.0)
+    await propulsion.pointTo(pt=poses.First_return_wp, yaw_rate=global_turn_speed, back=True)
+    await asyncio.sleep(1.0)
+    await propulsion.moveTo(poses.First_return_wp, global_long_speed)
+    await asyncio.sleep(1.0)
+    await actuators.pumps_off()
+    await asyncio.sleep(0.5)
+
+async def do_grab_and_push_0110():
+    await propulsion.moveTo(poses.First_grab_wp1, global_long_speed)
+    await asyncio.sleep(1.0)
+    await actuators.test_grab_right()
+    await asyncio.sleep(0.5)
+    await propulsion.moveTo(poses.First_push_out, global_long_speed)
+    await asyncio.sleep(1.0)
+    await propulsion.pointTo(pt=poses.First_return_wp, yaw_rate=global_turn_speed, back=True)
+    await asyncio.sleep(1.0)
+    await propulsion.moveTo(poses.First_return_wp, global_long_speed)
+    await asyncio.sleep(1.0)
+    await actuators.pumps_off()
+    await asyncio.sleep(0.5)
+
+async def do_grab_and_push_1001():
+    await propulsion.moveTo(poses.First_grab_wp2, global_long_speed)
+    await asyncio.sleep(1.0)
+    await actuators.test_grab_right()
+    await asyncio.sleep(0.5)
+    await propulsion.moveTo(poses.First_grab_wp3, global_long_speed)
+    await asyncio.sleep(1.0)
+    await actuators.test_grab_left()
+    await asyncio.sleep(0.5)
+    await propulsion.moveTo(poses.First_push_out, global_long_speed)
+    await asyncio.sleep(1.0)
+    await propulsion.pointTo(pt=poses.First_return_wp, yaw_rate=global_turn_speed, back=True)
+    await asyncio.sleep(1.0)
+    await propulsion.moveTo(poses.First_return_wp, global_long_speed)
+    await asyncio.sleep(1.0)
+    await actuators.pumps_off()
+    await asyncio.sleep(0.5)
+
+async def do_grab_and_push_1010():
+    await propulsion.moveTo(poses.First_grab_wp2, global_long_speed)
+    await asyncio.sleep(1.0)
+    await actuators.test_grab_right()
+    await asyncio.sleep(0.5)
+    await propulsion.moveTo(poses.First_push_out, global_long_speed)
+    await asyncio.sleep(1.0)
+    await propulsion.pointTo(pt=poses.First_return_wp, yaw_rate=global_turn_speed, back=True)
+    await asyncio.sleep(1.0)
+    await propulsion.moveTo(poses.First_return_wp, global_long_speed)
+    await asyncio.sleep(1.0)
+    await actuators.pumps_off()
+    await asyncio.sleep(0.5)
+
+async def do_grab_and_push_1100():
+    await propulsion.moveTo(poses.First_push_out, global_long_speed)
+    await asyncio.sleep(1.0)
+    await propulsion.moveTo(poses.First_grab_wp2, global_long_speed)
+    await asyncio.sleep(1.0)
+
+
+grab_and_push_funcs = {
+    "0011":do_grab_and_push_0011,
+    "0101":do_grab_and_push_0101,
+    "0110":do_grab_and_push_0110,
+    "1001":do_grab_and_push_1001,
+    "1010":do_grab_and_push_1010,
+    "1100":do_grab_and_push_1100,
+}
+
+@robot.sequence
+async def strat_0():
+    global aruco_start_configuration
+
+    await aruco_start_detection()
+
+    if (aruco_start_configuration not in grab_and_push_funcs.keys()):
+        await do_push_0000()
+    else:
+        await grab_and_push_funcs[aruco_start_configuration]()
+
+    await propulsion.pointTo(poses.Inter_wp1, global_turn_speed)
+    await asyncio.sleep(1.0)
+    await propulsion.moveTo(poses.Inter_wp1, global_long_speed)
+    await asyncio.sleep(1.0)
+
+    await propulsion.pointTo(poses.Inter_wp2, global_turn_speed)
+    await asyncio.sleep(1.0)
+    await propulsion.moveTo(poses.Inter_wp2, global_long_speed)
+    await asyncio.sleep(1.0)
+
+    await actuators.arms_close()
+    await asyncio.sleep(0.5)
+
+    await actuators.lifts_high()
+    await asyncio.sleep(0.5)
+
+    await propulsion.pointTo(poses.Corner_wp, global_turn_speed)
+    await asyncio.sleep(1.0)
+    await propulsion.moveTo(poses.Corner_wp, global_long_speed)
+    await asyncio.sleep(1.0)
+    await propulsion.pointTo(pt=poses.Border_wp1, yaw_rate=global_turn_speed, back=True)
+    await asyncio.sleep(1.0)
+
+    print("CORNER!")
+
+    if (robot.start_zone==1):   # BLUE   (Y+)
+        await actuators.arm_right_push_thermo()
+        await asyncio.sleep(0.5)
+    elif (robot.start_zone==2): # YELLOW (Y-)
+        await actuators.arm_left_push_thermo()
+        await asyncio.sleep(0.5)
+    else:
+        print("No start zone!")
+
+    await asyncio.sleep(2.0)
+
+    await propulsion.moveTo(poses.Border_wp1, global_long_speed)
+    await asyncio.sleep(1.0)
+
+    await actuators.arms_close()
+    await asyncio.sleep(0.5)
+
+    #await propulsion.pointTo(poses.Final_escape_wp, global_turn_speed)
+    #await asyncio.sleep(1.0)
+    #await propulsion.moveTo(poses.Final_escape_wp, global_long_speed)
+    #await asyncio.sleep(1.0)
+    #await propulsion.pointTo(poses.Final_pose_wp, global_turn_speed)
+    #await asyncio.sleep(1.0)
+    #await propulsion.moveTo(poses.Final_pose_wp, global_long_speed)
+    #await asyncio.sleep(1.0)
+
+
+@robot.sequence
+async def test_dry_run():
+    await propulsion.moveTo(poses.TEST_wp1, global_long_speed)
+    await asyncio.sleep(0.5)
+    await propulsion.moveTo(poses.TEST_wp2, global_long_speed)
+    await asyncio.sleep(0.5)
+    await propulsion.moveTo(poses.TEST_wp3, global_long_speed)
+    await asyncio.sleep(0.5)
+    await propulsion.moveTo(poses.TEST_wp4, global_long_speed)
+    await asyncio.sleep(0.5)
+
+    await propulsion.moveTo(poses.TEST_wp5, global_long_speed)
+    await asyncio.sleep(1.0)
+    await propulsion.moveTo(poses.TEST_wp6, global_long_speed)
+    await asyncio.sleep(1.0)
+
+    await propulsion.pointTo(poses.TEST_wp7, global_turn_speed)
+    await asyncio.sleep(1.0)
+    await propulsion.moveTo(poses.TEST_wp7, global_long_speed)
+    await asyncio.sleep(1.0)
+
+    await actuators.arms_close()
+    await asyncio.sleep(0.5)
+
+    await propulsion.pointTo(poses.TEST_wp8, global_turn_speed)
+    await asyncio.sleep(1.0)
+    await propulsion.moveTo(poses.TEST_wp8, global_long_speed)
+    await asyncio.sleep(1.0)
+
+    await propulsion.pointTo(poses.TEST_wp9, global_turn_speed)
+    await asyncio.sleep(1.0)
+    await propulsion.moveTo(poses.TEST_wp9, global_long_speed)
+    await asyncio.sleep(1.0)
+
+    await propulsion.pointTo(poses.TEST_wp10_N, global_turn_speed)
+    await asyncio.sleep(1.0)
+    await propulsion.moveTo(poses.TEST_wp10, global_long_speed)
+    await asyncio.sleep(10.0)
+
+    await propulsion.pointTo(poses.TEST_wp11, global_turn_speed)
+    await asyncio.sleep(1.0)
+    await propulsion.moveTo(poses.TEST_wp11, global_long_speed)
+    await asyncio.sleep(1.0)
+
+    await propulsion.pointTo(poses.TEST_wp12, global_turn_speed)
+    await asyncio.sleep(1.0)
+    await propulsion.moveTo(poses.TEST_wp12, global_long_speed)
+    await asyncio.sleep(1.0)
 

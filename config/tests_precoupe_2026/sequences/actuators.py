@@ -129,6 +129,11 @@ async def arms_disable():
     await asyncio.sleep(0.2)
     
 
+@robot.sequence
+async def lifts_high():
+    await goldo_lifts_move(pos = 950, speed = 80)
+    await asyncio.sleep(0.4)
+
 
 arms_open_epaules_ouvertes = {
     'epaule_g': 1609,
@@ -281,6 +286,31 @@ async def arm_left_take():
     await goldo_lift_move(GoldoLift.Left,60)
     await asyncio.sleep(0.4)
 
+
+bras_g_push_thermo = {
+    'epaule_g': 2090,
+    'coude_g': 490,
+}
+
+@robot.sequence
+async def arm_left_push_thermo():
+    await goldo_lift_move(GoldoLift.Left,950)
+    await asyncio.sleep(0.4)
+    await servos.moveMultiple(bras_g_push_thermo, speed=0.5)
+    await asyncio.sleep(0.2)
+
+
+bras_d_push_thermo = {
+    'epaule_d': 2090,
+    'coude_d': 490,
+}
+
+@robot.sequence
+async def arm_right_push_thermo():
+    await goldo_lift_move(GoldoLift.Right,950)
+    await asyncio.sleep(0.4)
+    await servos.moveMultiple(bras_d_push_thermo, speed=0.5)
+    await asyncio.sleep(0.2)
 
 
 
