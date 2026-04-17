@@ -42,6 +42,7 @@ from .widgets.goldo_1 import Goldo1
 
 
 from goldobot import config
+from goldobot import message_types
 
 import google.protobuf as _pb
 from google.protobuf import symbol_database
@@ -118,6 +119,9 @@ class MainWindow(QMainWindow):
         tools_menu.addAction(self._action_prematch)
         tools_menu.addAction(self._action_start_match)
 
+        self._F1_shortcut = QShortcut(QKeySequence(Qt.Key_F1), self)
+        self._F1_shortcut.activated.connect(self._get_nucleo_firmware_version)
+
         self._F5_shortcut = QShortcut(QKeySequence(Qt.Key_F5), self)
         self._F5_shortcut.activated.connect(self._upload_config)
 
@@ -160,6 +164,7 @@ class MainWindow(QMainWindow):
         self._action_simulation.toggled.connect(self._set_simulation)
 
         self._client.robot_end_load_config_status.connect(self._upload_status)
+        self._client.nucleo_firmware_version.connect(self._display_nucleo_firmware_version)
 
  
         for d in self._dialogs:
@@ -257,4 +262,14 @@ class MainWindow(QMainWindow):
         print ("Test A*")
         msg = _sym_db.GetSymbol('google.protobuf.Empty')()
         self._client.publishTopic('robot/test_astar', msg)
+
+    def _get_nucleo_firmware_version(self):
+        print ("get_nucleo_firmware_version")
+        msg = _sym_db.GetSymbol('google.protobuf.Empty')()
+        self._client.publishTopic('nucleo/in/get_nucleo_firmware_version', msg)
+
+    def _display_nucleo_firmware_version(self, firm_ver):
+        # FIXME : TODO
+        #self._nucleo_firmware_version.setText(self.nucleo_ver_prefix_s + firm_ver)
+        pass
 
