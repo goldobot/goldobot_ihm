@@ -16,8 +16,8 @@ from PyQt5.QtWidgets import QGraphicsPathItem
 from PyQt5.QtGui import QPolygonF, QPen, QBrush, QColor, QFont, QTransform
 from PyQt5.QtGui import QImage, QImageReader, QPixmap, QPainterPath
 
-from .coupe_2025.table_2025 import Table
-from .coupe_2025.robot_2025 import Robot
+from .coupe_2026.table_2026 import Table
+from .coupe_2026.robot_2026 import Robot
 
 import numpy as np
 import scipy.interpolate
