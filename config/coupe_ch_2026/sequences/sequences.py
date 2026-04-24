@@ -19,8 +19,11 @@ from . import robot_config as rc
 # objects included in the _sequences_globals of RobotMain class, defined in robot_main.py of goldo_main, are available as global variables
 # those objects are used to interact with the robot (send commands, read data)
 
-global_long_speed = 0.4
+global_long_speed = 0.45
 global_turn_speed = 2.0
+
+global_short_sleep = 0.3
+global_long_sleep  = 2.0
 
 aruco_start_configuration = "0000"
 
@@ -53,6 +56,9 @@ async def prematch():
 
     await actuators.arms_close()
     await asyncio.sleep(0.5)
+
+    await actuators.arms_close()
+    await asyncio.sleep(2.0)
 
     # Placement
     await recalages.recalage()
@@ -98,19 +104,19 @@ async def start_match():
         print ("EXCEPTION!")
 
     await actuators.pumps_off()
-    await asyncio.sleep(0.5)
+    await asyncio.sleep(global_short_sleep)
     await actuators.arms_close()
-    await asyncio.sleep(0.5)
+    await asyncio.sleep(global_short_sleep)
 
     await propulsion.pointTo(poses.Final_escape_wp, global_turn_speed)
-    await asyncio.sleep(1.0)
+    await asyncio.sleep(global_short_sleep)
     await propulsion.moveToRetry(poses.Final_escape_wp, global_long_speed)
-    await asyncio.sleep(1.0)
+    await asyncio.sleep(global_short_sleep)
 
     await propulsion.pointTo(poses.Final_pose_wp, global_turn_speed)
-    await asyncio.sleep(1.0)
+    await asyncio.sleep(global_short_sleep)
     await propulsion.moveToRetry(poses.Final_pose_wp, global_long_speed)
-    await asyncio.sleep(1.0)
+    await asyncio.sleep(global_short_sleep)
 
     await lidar.stop()
 
@@ -225,98 +231,98 @@ async def aruco_start_detection():
 
 async def do_push_0000():
     await propulsion.moveTo(poses.First_push, global_long_speed)
-    await asyncio.sleep(1.0)
+    await asyncio.sleep(global_short_sleep)
     await propulsion.moveTo(poses.First_grab_wp2, global_long_speed)
-    await asyncio.sleep(1.0)
+    await asyncio.sleep(global_short_sleep)
 
 async def do_grab_and_push_0011():
     #await propulsion.moveTo(poses.First_grab_wp1, global_long_speed)
-    await asyncio.sleep(1.0)
+    await asyncio.sleep(global_short_sleep)
     await actuators.test_grab_right()
-    await asyncio.sleep(0.5)
+    await asyncio.sleep(global_short_sleep)
     await propulsion.moveTo(poses.First_grab_wp2, global_long_speed)
-    await asyncio.sleep(1.0)
+    await asyncio.sleep(global_short_sleep)
     await actuators.test_grab_left()
-    await asyncio.sleep(0.5)
+    await asyncio.sleep(global_short_sleep)
     await propulsion.moveTo(poses.First_push_out, global_long_speed)
-    await asyncio.sleep(1.0)
+    await asyncio.sleep(global_short_sleep)
     await propulsion.pointTo(pt=poses.First_return_wp, yaw_rate=global_turn_speed, back=True)
-    await asyncio.sleep(1.0)
+    await asyncio.sleep(global_short_sleep)
     await propulsion.moveTo(poses.First_return_wp, global_long_speed)
-    await asyncio.sleep(1.0)
+    await asyncio.sleep(global_short_sleep)
     await actuators.pumps_off()
-    await asyncio.sleep(0.5)
+    await asyncio.sleep(global_short_sleep)
 
 
 async def do_grab_and_push_0101():
     #await propulsion.moveTo(poses.First_grab_wp1, global_long_speed)
-    await asyncio.sleep(1.0)
+    await asyncio.sleep(global_short_sleep)
     await actuators.test_grab_right()
-    await asyncio.sleep(0.5)
+    await asyncio.sleep(global_short_sleep)
     await propulsion.moveTo(poses.First_grab_wp3, global_long_speed)
-    await asyncio.sleep(1.0)
+    await asyncio.sleep(global_short_sleep)
     await actuators.test_grab_left()
-    await asyncio.sleep(0.5)
+    await asyncio.sleep(global_short_sleep)
     await propulsion.moveTo(poses.First_push_out, global_long_speed)
-    await asyncio.sleep(1.0)
+    await asyncio.sleep(global_short_sleep)
     await propulsion.pointTo(pt=poses.First_return_wp, yaw_rate=global_turn_speed, back=True)
-    await asyncio.sleep(1.0)
+    await asyncio.sleep(global_short_sleep)
     await propulsion.moveTo(poses.First_return_wp, global_long_speed)
-    await asyncio.sleep(1.0)
+    await asyncio.sleep(global_short_sleep)
     await actuators.pumps_off()
-    await asyncio.sleep(0.5)
+    await asyncio.sleep(global_short_sleep)
 
 async def do_grab_and_push_0110():
     #await propulsion.moveTo(poses.First_grab_wp1, global_long_speed)
-    await asyncio.sleep(1.0)
+    await asyncio.sleep(global_short_sleep)
     await actuators.test_grab_right()
-    await asyncio.sleep(0.5)
+    await asyncio.sleep(global_short_sleep)
     await propulsion.moveTo(poses.First_push_out, global_long_speed)
-    await asyncio.sleep(1.0)
+    await asyncio.sleep(global_short_sleep)
     await propulsion.pointTo(pt=poses.First_return_wp, yaw_rate=global_turn_speed, back=True)
-    await asyncio.sleep(1.0)
+    await asyncio.sleep(global_short_sleep)
     await propulsion.moveTo(poses.First_return_wp, global_long_speed)
-    await asyncio.sleep(1.0)
+    await asyncio.sleep(global_short_sleep)
     await actuators.pumps_off()
-    await asyncio.sleep(0.5)
+    await asyncio.sleep(global_short_sleep)
 
 async def do_grab_and_push_1001():
     await propulsion.moveTo(poses.First_grab_wp2, global_long_speed)
-    await asyncio.sleep(1.0)
+    await asyncio.sleep(global_short_sleep)
     await actuators.test_grab_right()
-    await asyncio.sleep(0.5)
+    await asyncio.sleep(global_short_sleep)
     await propulsion.moveTo(poses.First_grab_wp3, global_long_speed)
-    await asyncio.sleep(1.0)
+    await asyncio.sleep(global_short_sleep)
     await actuators.test_grab_left()
-    await asyncio.sleep(0.5)
+    await asyncio.sleep(global_short_sleep)
     await propulsion.moveTo(poses.First_push_out, global_long_speed)
-    await asyncio.sleep(1.0)
+    await asyncio.sleep(global_short_sleep)
     await propulsion.pointTo(pt=poses.First_return_wp, yaw_rate=global_turn_speed, back=True)
-    await asyncio.sleep(1.0)
+    await asyncio.sleep(global_short_sleep)
     await propulsion.moveTo(poses.First_return_wp, global_long_speed)
-    await asyncio.sleep(1.0)
+    await asyncio.sleep(global_short_sleep)
     await actuators.pumps_off()
-    await asyncio.sleep(0.5)
+    await asyncio.sleep(global_short_sleep)
 
 async def do_grab_and_push_1010():
     await propulsion.moveTo(poses.First_grab_wp2, global_long_speed)
-    await asyncio.sleep(1.0)
+    await asyncio.sleep(global_short_sleep)
     await actuators.test_grab_right()
-    await asyncio.sleep(0.5)
+    await asyncio.sleep(global_short_sleep)
     await propulsion.moveTo(poses.First_push_out, global_long_speed)
-    await asyncio.sleep(1.0)
+    await asyncio.sleep(global_short_sleep)
     await propulsion.pointTo(pt=poses.First_return_wp, yaw_rate=global_turn_speed, back=True)
-    await asyncio.sleep(1.0)
+    await asyncio.sleep(global_short_sleep)
     await propulsion.moveTo(poses.First_return_wp, global_long_speed)
-    await asyncio.sleep(1.0)
+    await asyncio.sleep(global_short_sleep)
     await actuators.pumps_off()
-    await asyncio.sleep(0.5)
+    await asyncio.sleep(global_short_sleep)
 
 async def do_grab_and_push_1100():
     await propulsion.moveTo(poses.First_push_out, global_long_speed)
-    await asyncio.sleep(1.0)
+    await asyncio.sleep(global_short_sleep)
     await propulsion.moveTo(poses.First_grab_wp2, global_long_speed)
-    await asyncio.sleep(1.0)
+    await asyncio.sleep(global_short_sleep)
 
 
 grab_and_push_funcs = {
@@ -333,7 +339,7 @@ async def strat_0():
     global aruco_start_configuration
 
     await propulsion.moveTo(poses.First_grab_wp1, global_long_speed)
-    await asyncio.sleep(1.0)
+    await asyncio.sleep(global_long_sleep)
 
     for i in range(0,5):
         print()
@@ -361,55 +367,56 @@ async def strat_0():
     robot._adversary_detection_enable = True
 
     await propulsion.pointTo(poses.Inter_wp1, global_turn_speed)
-    await asyncio.sleep(1.0)
+    await asyncio.sleep(global_short_sleep)
     await propulsion.moveTo(poses.Inter_wp1, global_long_speed)
-    await asyncio.sleep(1.0)
+    await asyncio.sleep(global_short_sleep)
 
     await propulsion.pointTo(poses.Inter_wp2, global_turn_speed)
-    await asyncio.sleep(1.0)
+    await asyncio.sleep(global_short_sleep)
     await propulsion.moveTo(poses.Inter_wp2, global_long_speed)
-    await asyncio.sleep(1.0)
+    await asyncio.sleep(global_short_sleep)
 
     await actuators.arms_close()
-    await asyncio.sleep(0.5)
+    await asyncio.sleep(global_short_sleep)
 
     await actuators.lifts_high()
-    await asyncio.sleep(0.5)
+    await asyncio.sleep(global_short_sleep)
 
     await propulsion.pointTo(poses.Corner_wp, global_turn_speed)
-    await asyncio.sleep(1.0)
+    await asyncio.sleep(global_short_sleep)
     await propulsion.moveTo(poses.Corner_wp, global_long_speed)
-    await asyncio.sleep(1.0)
+    await asyncio.sleep(global_short_sleep)
     await propulsion.pointTo(pt=poses.Border_wp1, yaw_rate=global_turn_speed, back=True)
-    await asyncio.sleep(1.0)
+    await asyncio.sleep(global_short_sleep)
 
     print("CORNER!")
 
     if (robot.start_zone==1):   # BLUE   (Y+)
         await actuators.arm_right_push_thermo()
-        await asyncio.sleep(0.5)
+        await asyncio.sleep(global_short_sleep)
     elif (robot.start_zone==2): # YELLOW (Y-)
         await actuators.arm_left_push_thermo()
-        await asyncio.sleep(0.5)
+        await asyncio.sleep(global_short_sleep)
     else:
         print("No start zone!")
 
-    await asyncio.sleep(2.0)
+    #await asyncio.sleep(global_long_sleep)
+    await asyncio.sleep(global_short_sleep)
 
     await propulsion.moveTo(poses.Border_wp1, global_long_speed)
-    await asyncio.sleep(1.0)
+    await asyncio.sleep(global_short_sleep)
 
     await actuators.arms_close()
-    await asyncio.sleep(0.5)
+    await asyncio.sleep(global_short_sleep)
 
     #await propulsion.pointTo(poses.Final_escape_wp, global_turn_speed)
-    #await asyncio.sleep(1.0)
+    #await asyncio.sleep(global_short_sleep)
     #await propulsion.moveTo(poses.Final_escape_wp, global_long_speed)
-    #await asyncio.sleep(1.0)
+    #await asyncio.sleep(global_short_sleep)
     #await propulsion.pointTo(poses.Final_pose_wp, global_turn_speed)
-    #await asyncio.sleep(1.0)
+    #await asyncio.sleep(global_short_sleep)
     #await propulsion.moveTo(poses.Final_pose_wp, global_long_speed)
-    #await asyncio.sleep(1.0)
+    #await asyncio.sleep(global_short_sleep)
 
 
 @robot.sequence
