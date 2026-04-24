@@ -52,7 +52,7 @@ class BluePoses:
 
     Corner_wp       = (  1.850,  1.200, -60)
 
-    Border_wp1      = (  1.850,  0.620, -90)
+    Border_wp1      = (  1.850,  0.630, -90)
     Border_wp1_N    = (  1.850,  1.500, -90)
 
     Final_escape_wp = (  0.700,  1.300,-180)
@@ -95,7 +95,8 @@ class YellowPoses:
 
     Corner_wp       = symetrie(BluePoses.Corner_wp)
 
-    Border_wp1      = symetrie(BluePoses.Border_wp1)
+    #Border_wp1      = symetrie(BluePoses.Border_wp1)
+    Border_wp1      = (  1.850, -0.640, -90)
     Border_wp1_N    = symetrie(BluePoses.Border_wp1_N)
 
     Final_escape_wp = symetrie(BluePoses.Final_escape_wp)

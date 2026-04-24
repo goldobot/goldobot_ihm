@@ -144,9 +144,12 @@ async def aruco_start_detection():
         print("No start zone!")
         return
 
+    #detections_file = "/tmp/detections.txt"
+    detections_file = "/tmp/last_good_detections.txt"
+
     detections = []
     try:
-        with open("/tmp/detections.txt") as f:
+        with open(detections_file) as f:
             for line in f:
                 print ("DETECTIONS FILE: {}".format(line)) 
                 line = line.strip()
@@ -160,7 +163,7 @@ async def aruco_start_detection():
                 y_real = float(y_str)/1000.0
                 detections.append((ts,my_id,x_real,y_real))
     except:
-        print ("Cannot read (and parse) /tmp/detections.txt")
+        print ("Cannot read (and parse) {}".format(detections_file))
         return
 
     detections.sort(key=lambda d: d[2])
@@ -181,6 +184,7 @@ async def aruco_start_detection():
     print("Present: {}".format(pres_idx))
 
     if (len(detections)<3 or len(detections)>4):
+        print("len(detectionss)={}".format(len(detections)))
         print("Cannot detect aruco_start_configuration!")
         return
 
@@ -226,7 +230,7 @@ async def do_push_0000():
     await asyncio.sleep(1.0)
 
 async def do_grab_and_push_0011():
-    await propulsion.moveTo(poses.First_grab_wp1, global_long_speed)
+    #await propulsion.moveTo(poses.First_grab_wp1, global_long_speed)
     await asyncio.sleep(1.0)
     await actuators.test_grab_right()
     await asyncio.sleep(0.5)
@@ -245,7 +249,7 @@ async def do_grab_and_push_0011():
 
 
 async def do_grab_and_push_0101():
-    await propulsion.moveTo(poses.First_grab_wp1, global_long_speed)
+    #await propulsion.moveTo(poses.First_grab_wp1, global_long_speed)
     await asyncio.sleep(1.0)
     await actuators.test_grab_right()
     await asyncio.sleep(0.5)
@@ -263,7 +267,7 @@ async def do_grab_and_push_0101():
     await asyncio.sleep(0.5)
 
 async def do_grab_and_push_0110():
-    await propulsion.moveTo(poses.First_grab_wp1, global_long_speed)
+    #await propulsion.moveTo(poses.First_grab_wp1, global_long_speed)
     await asyncio.sleep(1.0)
     await actuators.test_grab_right()
     await asyncio.sleep(0.5)
@@ -328,11 +332,26 @@ grab_and_push_funcs = {
 async def strat_0():
     global aruco_start_configuration
 
-    try:
-        await aruco_start_detection()
-    except:
-        print ("aruco_start_detection() failed")
-        aruco_start_configuration = "0000"
+    await propulsion.moveTo(poses.First_grab_wp1, global_long_speed)
+    await asyncio.sleep(1.0)
+
+    for i in range(0,5):
+        print()
+        print("================")
+        print ("ARUCO TRY {}".format(i))
+        print("----------------")
+        try:
+            await aruco_start_detection()
+        except:
+            print ("aruco_start_detection() failed")
+            aruco_start_configuration = "0000"
+        if (aruco_start_configuration!="0000"):
+            print("VVVVVVVVVVVVVVVV")
+            print()
+            break
+        print("----------------")
+        print()
+        await asyncio.sleep(1.0)
 
     if (aruco_start_configuration not in grab_and_push_funcs.keys()):
         await do_push_0000()

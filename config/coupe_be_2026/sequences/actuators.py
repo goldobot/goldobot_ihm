@@ -305,6 +305,7 @@ bras_d_push_thermo = {
 #    'epaule_d': 2090,
     'epaule_d': 2150,
     'coude_d': 490,
+    'coude_d': 530,
 }
 
 @robot.sequence
