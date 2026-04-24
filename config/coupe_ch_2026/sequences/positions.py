@@ -15,26 +15,11 @@ class Side:
 
 # robot offset : 82 mm
 
-# TODO : BLUE : ZONE 1
+# BLUE : ZONE 1
 class BluePoses:
     # Poses de depart
     #Start_pose = (  0.082,  1.325,   0)
     Start_pose = (  0.320,  1.325,   0)
-
-    # TEST
-    TEST_wp1   = (  0.510,  1.325,   0)
-    TEST_wp2   = (  0.560,  1.325,   0)
-    TEST_wp3   = (  0.610,  1.325,   0)
-    TEST_wp4   = (  0.660,  1.325,   0)
-    TEST_wp5   = (  0.980,  1.325,   0)
-    TEST_wp6   = (  0.830,  1.325,   0)
-    TEST_wp7   = (  1.000,  1.075,  45)
-    TEST_wp8   = (  1.700,  1.075,   0)
-    TEST_wp9   = (  1.850,  1.200, -60)
-    TEST_wp10  = (  1.850,  0.600, -90)
-    TEST_wp10_N= (  1.850,  1.500, -90)
-    TEST_wp11  = (  0.700,  1.300,-180)
-    TEST_wp12  = (  0.300,  1.300,-180)
 
     # REAL
     First_grab_wp1  = (  0.510,  1.325,   0)
@@ -59,25 +44,10 @@ class BluePoses:
     Final_pose_wp   = (  0.300,  1.300,-180)
 
 
-# TODO : YELLOW : ZONE 2
+# YELLOW : ZONE 2
 class YellowPoses:
     # Poses de depart
     Start_pose = symetrie(BluePoses.Start_pose)
-
-    # TEST
-    TEST_wp1   = symetrie(BluePoses.TEST_wp1)
-    TEST_wp2   = symetrie(BluePoses.TEST_wp2)
-    TEST_wp3   = symetrie(BluePoses.TEST_wp3)
-    TEST_wp4   = symetrie(BluePoses.TEST_wp4)
-    TEST_wp5   = symetrie(BluePoses.TEST_wp5)
-    TEST_wp6   = symetrie(BluePoses.TEST_wp6)
-    TEST_wp7   = symetrie(BluePoses.TEST_wp7)
-    TEST_wp8   = symetrie(BluePoses.TEST_wp8)
-    TEST_wp9   = symetrie(BluePoses.TEST_wp9)
-    TEST_wp10  = symetrie(BluePoses.TEST_wp10)
-    TEST_wp10_N= symetrie(BluePoses.TEST_wp10_N)
-    TEST_wp11  = symetrie(BluePoses.TEST_wp11)
-    TEST_wp12  = symetrie(BluePoses.TEST_wp12)
 
     # REAL
     First_grab_wp1  = symetrie(BluePoses.First_grab_wp1)

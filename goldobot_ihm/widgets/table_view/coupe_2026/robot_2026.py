@@ -23,6 +23,22 @@ little_robot_poly = QPolygonF([
             QPointF(  65,-115),
             ])
 
+near_poly = QPolygonF([
+            QPointF(  10, 10),
+            QPointF(  10, -10),
+            QPointF(  30, -30),
+            QPointF(  30, 30),
+            QPointF(  10, 10),            
+            ])
+            
+far_poly = QPolygonF([
+            QPointF(  30, 30),
+            QPointF(  30, -30),
+            QPointF(  50, -50),
+            QPointF(  50, 50),
+            QPointF(  30, 30),            
+            ])
+
 little_square = QPolygonF([
             QPointF(  10,  10),
             QPointF( -10,  10),
@@ -60,6 +76,32 @@ class Robot(QGraphicsItemGroup):
         outline.setPen(QPen())
         outline.setBrush(QBrush(QColor('red')))
 
+        path = QPainterPath()
+        path.addPolygon(near_poly)
+        self._near_front = QGraphicsPathItem(path, self)
+        self._near_front.setPen(QPen())
+        self._near_front.setBrush(QBrush(QColor('green')))
+        
+        path = QPainterPath()
+        path.addPolygon(far_poly)
+        self._far_front = QGraphicsPathItem(path, self)
+        self._far_front.setPen(QPen())
+        self._far_front.setBrush(QBrush(QColor('green')))
+        
+        path = QPainterPath()
+        path.addPolygon(near_poly)
+        self._near_back = QGraphicsPathItem(path, self)
+        self._near_back.setPen(QPen())
+        self._near_back.setBrush(QBrush(QColor('green')))
+        self._near_back.setRotation(180)
+        
+        path = QPainterPath()
+        path.addPolygon(far_poly)
+        self._far_back = QGraphicsPathItem(path, self)
+        self._far_back.setPen(QPen())
+        self._far_back.setBrush(QBrush(QColor('green')))
+        self._far_back.setRotation(180)
+        
         path = QPainterPath()
         path.addPolygon(little_square)
         self._little_square = QGraphicsPathItem(path, self)

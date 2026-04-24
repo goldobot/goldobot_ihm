@@ -420,56 +420,6 @@ async def strat_0():
 
 
 @robot.sequence
-async def test_dry_run():
-    await propulsion.moveTo(poses.TEST_wp1, global_long_speed)
-    await asyncio.sleep(0.5)
-    await propulsion.moveTo(poses.TEST_wp2, global_long_speed)
-    await asyncio.sleep(0.5)
-    await propulsion.moveTo(poses.TEST_wp3, global_long_speed)
-    await asyncio.sleep(0.5)
-    await propulsion.moveTo(poses.TEST_wp4, global_long_speed)
-    await asyncio.sleep(0.5)
-
-    await propulsion.moveTo(poses.TEST_wp5, global_long_speed)
-    await asyncio.sleep(1.0)
-    await propulsion.moveTo(poses.TEST_wp6, global_long_speed)
-    await asyncio.sleep(1.0)
-
-    await propulsion.pointTo(poses.TEST_wp7, global_turn_speed)
-    await asyncio.sleep(1.0)
-    await propulsion.moveTo(poses.TEST_wp7, global_long_speed)
-    await asyncio.sleep(1.0)
-
-    await actuators.arms_close()
-    await asyncio.sleep(0.5)
-
-    await propulsion.pointTo(poses.TEST_wp8, global_turn_speed)
-    await asyncio.sleep(1.0)
-    await propulsion.moveTo(poses.TEST_wp8, global_long_speed)
-    await asyncio.sleep(1.0)
-
-    await propulsion.pointTo(poses.TEST_wp9, global_turn_speed)
-    await asyncio.sleep(1.0)
-    await propulsion.moveTo(poses.TEST_wp9, global_long_speed)
-    await asyncio.sleep(1.0)
-
-    await propulsion.pointTo(poses.TEST_wp10_N, global_turn_speed)
-    await asyncio.sleep(1.0)
-    await propulsion.moveTo(poses.TEST_wp10, global_long_speed)
-    await asyncio.sleep(10.0)
-
-    await propulsion.pointTo(poses.TEST_wp11, global_turn_speed)
-    await asyncio.sleep(1.0)
-    await propulsion.moveTo(poses.TEST_wp11, global_long_speed)
-    await asyncio.sleep(1.0)
-
-    await propulsion.pointTo(poses.TEST_wp12, global_turn_speed)
-    await asyncio.sleep(1.0)
-    await propulsion.moveTo(poses.TEST_wp12, global_long_speed)
-    await asyncio.sleep(1.0)
-
-
-@robot.sequence
 async def test_start_adversary_detection():
     robot._adversary_detection_enable = False
     await lidar.start()
