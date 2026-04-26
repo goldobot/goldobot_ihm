@@ -1,4 +1,4 @@
-# Sequences de la Coupe de France 2023 - gardees pour test & debug
+# Sequences principales 2026
 
 # import base modules
 import asyncio
@@ -14,24 +14,30 @@ import time
 from . import positions as pos
 from . import recalages
 from . import actuators
+from . import vision as cam
 from . import robot_config as rc
 
 # objects included in the _sequences_globals of RobotMain class, defined in robot_main.py of goldo_main, are available as global variables
 # those objects are used to interact with the robot (send commands, read data)
 
+poses = None
+
+start_long_speed = 0.30
+start_turn_speed = 2.0
+
 global_long_speed = 0.45
-global_turn_speed = 3.0
+global_turn_speed = 2.5
 
 global_short_sleep = 0.3
 global_long_sleep  = 2.0
 
-aruco_x_configuration = "0000"
-aruco_y_configuration = "0000"
-
 @robot.sequence
 async def prematch():
-
     global poses
+    global start_long_speed
+    global start_turn_speed
+    global global_long_speed
+    global global_turn_speed
 
     if robot.side == 1: # YELLOW
         poses = pos.YellowPoses
@@ -87,7 +93,11 @@ async def start_match():
     This will typically be used to setup actuators and get out of the starting area.
     """
 
-    global aruco_x_configuration
+    global poses
+    global start_long_speed
+    global start_turn_speed
+    global global_long_speed
+    global global_turn_speed
 
     T0 = time.time()
 
@@ -102,52 +112,74 @@ async def start_match():
     #await lidar.start()
 
     try:
-        await strat_0()
+        await action_0()
         await asyncio.sleep(1.0)
     except:
         print ("EXCEPTION!")
         await asyncio.sleep(4.0)
+
+    T1 = time.time()
+    print ("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
+    print ("T match_timer = {}".format(T1-T0))
+    print ("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
 
     try:
-        await strat_1()
-        await asyncio.sleep(1.0)
+        await action_1()
+        await asyncio.sleep(0.1)
     except:
         print ("EXCEPTION!")
         await asyncio.sleep(4.0)
+
+    T1 = time.time()
+    print ("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
+    print ("T match_timer = {}".format(T1-T0))
+    print ("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
 
     try:
-        await strat_2()
-        await asyncio.sleep(1.0)
+        await action_2()
+        await asyncio.sleep(0.1)
     except:
         print ("EXCEPTION!")
         await asyncio.sleep(4.0)
+
+    T1 = time.time()
+    print ("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
+    print ("T match_timer = {}".format(T1-T0))
+    print ("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
 
     try:
-        await strat_3()
-        await asyncio.sleep(1.0)
-
-        await propulsion.pointTo(poses.Inter_test_wp, global_turn_speed)
-        await asyncio.sleep(global_short_sleep)
-        await propulsion.moveToRetry(poses.Inter_test_wp, global_long_speed)
-        await asyncio.sleep(global_short_sleep)
+        await action_3()
+        await asyncio.sleep(0.1)
     except:
         print ("EXCEPTION!")
         await asyncio.sleep(4.0)
 
-    await actuators.pumps_off()
-    await asyncio.sleep(global_short_sleep)
-    await actuators.arms_close()
-    await asyncio.sleep(global_short_sleep)
+    T1 = time.time()
+    print ("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
+    print ("T match_timer = {}".format(T1-T0))
+    print ("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
 
-    await propulsion.pointTo(poses.Final_escape_wp, global_turn_speed)
-    await asyncio.sleep(global_short_sleep)
-    await propulsion.moveToRetry(poses.Final_escape_wp, global_long_speed)
-    await asyncio.sleep(global_short_sleep)
+    print()
+    print("=======")
+    print("GO HOME")
+    print("=======")
+    print()
 
-    await propulsion.pointTo(poses.Final_pose_wp, global_turn_speed)
+    t1 = asyncio.create_task(actuators.arms_final_state())
+
+    await propulsion.pointTo(poses.Final_escape_wp0, global_turn_speed)
     await asyncio.sleep(global_short_sleep)
-    await propulsion.moveToRetry(poses.Final_pose_wp, global_long_speed)
-    await asyncio.sleep(global_short_sleep)
+    p0_x = propulsion.pose.position.x
+    p0_y = propulsion.pose.position.y
+    final_excape = [
+        (p0_x, p0_y, 0),
+        poses.Final_escape_wp0,
+        poses.Final_escape_wp1,
+        poses.Final_pose_wp
+    ]
+    await propulsion.trajectorySpline(final_excape, speed=global_long_speed)
+
+    await t1
 
     await lidar.stop()
 
@@ -158,17 +190,23 @@ async def start_match():
 
 
 @robot.sequence
-async def strat_0():
-    global aruco_x_configuration
+async def action_0():
+    global poses
+    global start_long_speed
+    global start_turn_speed
+    global global_long_speed
+    global global_turn_speed
 
     print()
-    print("======")
-    print("STRAT0")
-    print("======")
+    print("=======")
+    print("ACTION0")
+    print("=======")
     print()
 
-    await propulsion.moveTo(poses.First_grab_wp1, global_long_speed)
-    await asyncio.sleep(global_long_sleep)
+    aruco_x_configuration = "0000"
+
+    await propulsion.moveTo(poses.First_grab_wp1, 0.3)
+    await asyncio.sleep(global_short_sleep)
 
     for i in range(0,5):
         print()
@@ -176,7 +214,7 @@ async def strat_0():
         print ("ARUCO TRY {}".format(i))
         print("----------------")
         try:
-            await aruco_x_detection()
+            aruco_x_configuration = cam.aruco_x_detection()
         except:
             print ("aruco_x_detection() failed")
             aruco_x_configuration = "0000"
@@ -186,7 +224,7 @@ async def strat_0():
             break
         print("----------------")
         print()
-        await asyncio.sleep(1.0)
+        await asyncio.sleep(0.3)
 
     if (aruco_x_configuration not in grab_and_push_x_funcs.keys()):
         await do_push_0000()
@@ -200,15 +238,11 @@ async def strat_0():
     await propulsion.moveTo(poses.Inter_wp1, global_long_speed)
     await asyncio.sleep(global_short_sleep)
 
+    t1 = asyncio.create_task(actuators.arms_prep_thermo())
+
     await propulsion.pointTo(poses.Inter_wp2, global_turn_speed)
     await asyncio.sleep(global_short_sleep)
     await propulsion.moveTo(poses.Inter_wp2, global_long_speed)
-    await asyncio.sleep(global_short_sleep)
-
-    await actuators.arms_close()
-    await asyncio.sleep(global_short_sleep)
-
-    await actuators.lifts_high()
     await asyncio.sleep(global_short_sleep)
 
     await propulsion.pointTo(poses.Corner_wp, global_turn_speed)
@@ -217,6 +251,8 @@ async def strat_0():
     await asyncio.sleep(global_short_sleep)
     await propulsion.pointTo(pt=poses.Border_wp1, yaw_rate=global_turn_speed, back=True)
     await asyncio.sleep(global_short_sleep)
+
+    await t1
 
     print("CORNER!")
 
@@ -240,384 +276,224 @@ async def strat_0():
 
 
 @robot.sequence
-async def strat_1():
-    global aruco_y_configuration
+async def action_1():
+    global poses
+    global start_long_speed
+    global start_turn_speed
+    global global_long_speed
+    global global_turn_speed
 
     print()
-    print("======")
-    print("STRAT1")
-    print("======")
+    print("=======")
+    print("ACTION1")
+    print("=======")
     print()
-
-    await propulsion.pointTo(pt=poses.Strat1_grab_wp1, yaw_rate=global_turn_speed, back=False)
-    await asyncio.sleep(global_short_sleep)
-    await propulsion.moveTo(poses.Strat1_grab_wp1, global_long_speed)
-    await asyncio.sleep(global_short_sleep)
-    await propulsion.faceDirection(poses.Strat1_grab_wp1[2], 1.5)
-    await asyncio.sleep(global_short_sleep)
-
-    await actuators.position_defensive_laterale()
-    await asyncio.sleep(global_short_sleep)
-
-    await asyncio.sleep(2.0)
-    for i in range(0,5):
-        print()
-        print("================")
-        print ("ARUCO TRY {}".format(i))
-        print("----------------")
-        try:
-            await aruco_y_detection()
-        except:
-            print ("aruco_y_detection() failed")
-            aruco_y_configuration = "0000"
-        if (aruco_y_configuration!="0000"):
-            print("VVVVVVVVVVVVVVVV")
-            print()
-            break
-        print("----------------")
-        print()
-        await asyncio.sleep(1.0)
-
-    if (aruco_y_configuration not in grab_y_funcs.keys()):
-        print("Cannot do Strat1!")
-        await asyncio.sleep(60.0)
-        return
-    else:
-        await grab_y_funcs[aruco_y_configuration]()
-
-    await propulsion.pointTo(pt=poses.Strat1_drop_wp1, yaw_rate=global_turn_speed, back=True)
-    await asyncio.sleep(global_short_sleep)
-    await propulsion.moveTo(poses.Strat1_drop_wp1, global_long_speed)
-    await asyncio.sleep(global_short_sleep)
-    await propulsion.faceDirection(poses.Strat1_drop_wp1[2], 1.5)
-    await asyncio.sleep(global_short_sleep)
-
-    await do_drop_y_1001()
-
-
-@robot.sequence
-async def strat_2():
-    global aruco_y_configuration
-
-    print()
-    print("======")
-    print("STRAT2")
-    print("======")
-    print()
-
-    await propulsion.pointTo(pt=poses.Strat2_grab_wp1, yaw_rate=global_turn_speed, back=False)
-    await asyncio.sleep(global_short_sleep)
-    await propulsion.moveTo(poses.Strat2_grab_wp1, global_long_speed)
-    await asyncio.sleep(global_short_sleep)
-    await propulsion.faceDirection(poses.Strat2_grab_wp1[2], 1.5)
-    await asyncio.sleep(global_short_sleep)
-
-    await actuators.position_defensive_laterale()
-    await asyncio.sleep(global_short_sleep)
-
-    await asyncio.sleep(2.0)
-    for i in range(0,5):
-        print()
-        print("================")
-        print ("ARUCO TRY {}".format(i))
-        print("----------------")
-        try:
-            await aruco_y_detection()
-        except:
-            print ("aruco_y_detection() failed")
-            aruco_y_configuration = "0000"
-        if (aruco_y_configuration!="0000"):
-            print("VVVVVVVVVVVVVVVV")
-            print()
-            break
-        print("----------------")
-        print()
-        await asyncio.sleep(1.0)
-
-    if (aruco_y_configuration not in grab_y_funcs.keys()):
-        print("Cannot do Strat2!")
-        await asyncio.sleep(60.0)
-        return
-    else:
-        await grab_y_funcs[aruco_y_configuration]()
-
-    await propulsion.pointTo(pt=poses.Strat2_drop_wp1, yaw_rate=global_turn_speed, back=True)
-    await asyncio.sleep(global_short_sleep)
-    await propulsion.moveTo(poses.Strat2_drop_wp1, global_long_speed)
-    await asyncio.sleep(global_short_sleep)
-    await propulsion.faceDirection(poses.Strat2_drop_wp1[2], 1.5)
-    await asyncio.sleep(global_short_sleep)
-
-    await do_drop_y_1001()
-
-
-@robot.sequence
-async def strat_3():
-    global aruco_y_configuration
-
-    print()
-    print("======")
-    print("STRAT3")
-    print("======")
-    print()
-
-    await propulsion.pointTo(pt=poses.Strat3_grab_wp1, yaw_rate=global_turn_speed, back=False)
-    await asyncio.sleep(global_short_sleep)
-    await propulsion.moveTo(poses.Strat3_grab_wp1, global_long_speed)
-    await asyncio.sleep(global_short_sleep)
-    await propulsion.faceDirection(poses.Strat3_grab_wp1[2], 1.5)
-    await asyncio.sleep(global_short_sleep)
-
-    await actuators.position_defensive_laterale()
-    await asyncio.sleep(global_short_sleep)
-
-    await asyncio.sleep(2.0)
-    for i in range(0,5):
-        print()
-        print("================")
-        print ("ARUCO TRY {}".format(i))
-        print("----------------")
-        try:
-            await aruco_y_detection()
-        except:
-            print ("aruco_y_detection() failed")
-            aruco_y_configuration = "0000"
-        if (aruco_y_configuration!="0000"):
-            print("VVVVVVVVVVVVVVVV")
-            print()
-            break
-        print("----------------")
-        print()
-        await asyncio.sleep(1.0)
-
-    if (aruco_y_configuration not in grab_y_funcs.keys()):
-        print("Cannot do Strat3!")
-        await asyncio.sleep(60.0)
-        return
-    else:
-        await grab_y_funcs[aruco_y_configuration]()
-
-    await propulsion.pointTo(pt=poses.Strat3_drop_wp1, yaw_rate=global_turn_speed, back=True)
-    await asyncio.sleep(global_short_sleep)
-    await propulsion.moveTo(poses.Strat3_drop_wp1, global_long_speed)
-    await asyncio.sleep(global_short_sleep)
-    await propulsion.faceDirection(poses.Strat3_drop_wp1[2], 1.5)
-    await asyncio.sleep(global_short_sleep)
-
-    await do_drop_y_1001()
-
-
-#reference x values:
-# 303 -> ref_x1 = 0.303
-# 358 -> ref_x2 = 0.358
-# 409 -> ref_x3 = 0.409
-# 466 -> ref_x4 = 0.466
-@robot.sequence
-async def aruco_x_detection():
-    global aruco_x_configuration
-
-    aruco_x_configuration = "0000"
-
-    ref_x = [0.303, 0.358, 0.409, 0.466]
-    segm_ref_x = [0.330, 0.383, 0.438]
-
-    if (robot.start_zone==1):   # BLUE   (Y+,id=36)
-        print("my_color = BLUE (id=36)")
-        my_color = 36
-    elif (robot.start_zone==2): # YELLOW (Y-,id=47)
-        print("my_color = YELLOW (id=47)")
-        my_color = 47
-    else:
-        print("No start zone!")
-        return
-
-    #detections_file = "/tmp/detections.txt"
-    detections_file = "/tmp/last_good_detections.txt"
-
-    detections = []
-    try:
-        with open(detections_file) as f:
-            for line in f:
-                print ("DETECTIONS FILE: {}".format(line)) 
-                line = line.strip()
-                parts = line.split()
-                if len(parts) != 4:
-                    continue
-                ts_str, my_id_str, x_str, y_str = parts
-                ts = float(ts_str)
-                my_id = int(my_id_str)
-                x_real = float(x_str)/1000.0
-                y_real = float(y_str)/1000.0
-                detections.append((ts,my_id,x_real,y_real))
-    except:
-        print ("Cannot read (and parse) {}".format(detections_file))
-        return
-
-    detections.sort(key=lambda d: d[2])
-
-    pres_idx = []
-
-    for i in range(len(detections)):
-        ts, my_id, x_real, y_real = detections[i]
-        print ("ts={:.2f} id={:d} x={:6.3f} y={:6.3f}".format(ts, my_id, x_real, y_real))
-        if (x_real<segm_ref_x[0]):
-            pres_idx.append(0)
-        elif (x_real<segm_ref_x[1]):
-            pres_idx.append(1)
-        elif (x_real<segm_ref_x[2]):
-            pres_idx.append(2)
-        else:
-            pres_idx.append(3)
-    print("Present: {}".format(pres_idx))
-
-    if (len(detections)<3 or len(detections)>4):
-        print("len(detections)={}".format(len(detections)))
-        print("Cannot detect aruco_x_configuration!")
-        return
-
-    if (len(detections)==3):
-        miss_idx = None
-        miss_color_code = None
-        my_color_cnt = 0
-        adv_color_cnt = 0
-        for i in range(0,4):
-            if (i not in pres_idx):
-                miss_idx = i
-        for i in range(0,3):
-            if (detections[i][1]==my_color):
-                my_color_cnt = my_color_cnt + 1
-            else:
-                adv_color_cnt = adv_color_cnt + 1
-        print ("miss_idx={}".format(miss_idx))
-        print ("my_color_cnt={}".format(my_color_cnt))
-        print ("adv_color_cnt={}".format(adv_color_cnt))
-        if (my_color_cnt>adv_color_cnt):
-            miss_color_code = '0'
-        else:
-            miss_color_code = '1'
-        print ("miss_color_code={}".format(miss_color_code))
-        for i in range(0,3):
-            if (detections[i][1]==my_color):
-                aruco_x_configuration = aruco_x_configuration[:pres_idx[i]] + '1' + aruco_x_configuration[pres_idx[i]+1:]
-            print("  STEP {} : {}".format(i,aruco_x_configuration))
-        aruco_x_configuration = aruco_x_configuration[:miss_idx] + miss_color_code + aruco_x_configuration[miss_idx+1:]
-
-    elif (len(detections)==4):
-        for i in range(0,4):
-            if (detections[i][1]==my_color):
-                aruco_x_configuration = aruco_x_configuration[:i] + '1' + aruco_x_configuration[i+1:]
-
-    print("aruco_x_configuration = {}".format(aruco_x_configuration))
-
-
-#reference x values: REF_X = 0.330
-# -81 -> ref_y1 = -0.081
-# -30 -> ref_y2 = -0.030
-#  31 -> ref_y3 =  0.030
-#  82 -> ref_y4 =  0.081
-@robot.sequence
-async def aruco_y_detection():
-    global aruco_y_configuration
 
     aruco_y_configuration = "0000"
 
-    ref_y = [-0.081, -0.030, 0.030, 0.081]
-    segm_ref_y = [-0.055, 0.000, 0.055]
+    await propulsion.pointTo(pt=poses.Action1_grab_wp1, yaw_rate=global_turn_speed, back=False)
+    await asyncio.sleep(global_short_sleep)
+    await propulsion.moveTo(poses.Action1_grab_wp1, global_long_speed)
+    await asyncio.sleep(global_short_sleep)
+    await propulsion.faceDirection(poses.Action1_grab_wp1[2], 1.5)
+    await asyncio.sleep(global_short_sleep)
 
-    if (robot.start_zone==1):   # BLUE   (Y+,id=36)
-        print("my_color = BLUE (id=36)")
-        my_color = 36
-    elif (robot.start_zone==2): # YELLOW (Y-,id=47)
-        print("my_color = YELLOW (id=47)")
-        my_color = 47
+    await actuators.position_defensive_laterale()
+    await asyncio.sleep(global_short_sleep)
+
+    await asyncio.sleep(0.1)
+    for i in range(0,5):
+        print()
+        print("================")
+        print ("ARUCO TRY {}".format(i))
+        print("----------------")
+        try:
+            aruco_y_configuration = cam.aruco_y_detection()
+        except:
+            print ("aruco_y_detection() failed")
+            aruco_y_configuration = "0000"
+        if (aruco_y_configuration!="0000"):
+            print("VVVVVVVVVVVVVVVV")
+            print()
+            break
+        print("----------------")
+        print()
+        await asyncio.sleep(0.5)
+
+    if (aruco_y_configuration not in grab_y_funcs.keys()):
+        print("Cannot do Action1!")
+        await asyncio.sleep(60.0)
+        return
     else:
-        print("No start zone!")
+        await grab_y_funcs[aruco_y_configuration]()
+
+    t1 = asyncio.create_task(actuators.arm_right_left_prep_take())
+
+    await propulsion.pointTo(pt=poses.Action1_drop_wp1, yaw_rate=global_turn_speed, back=True)
+    await asyncio.sleep(global_short_sleep)
+    await propulsion.moveTo(poses.Action1_drop_wp1, global_long_speed)
+    await asyncio.sleep(global_short_sleep)
+    await propulsion.faceDirection(poses.Action1_drop_wp1[2], 1.5)
+    await asyncio.sleep(global_short_sleep)
+
+    await t1
+
+    await do_drop_y_1001()
+
+
+@robot.sequence
+async def action_2():
+    global poses
+    global start_long_speed
+    global start_turn_speed
+    global global_long_speed
+    global global_turn_speed
+
+    print()
+    print("=======")
+    print("ACTION2")
+    print("=======")
+    print()
+
+    await propulsion.pointTo(pt=poses.Action2_grab_wp0, yaw_rate=global_turn_speed, back=False)
+    await asyncio.sleep(global_short_sleep)
+    await propulsion.moveTo(poses.Action2_grab_wp0, global_long_speed)
+    await asyncio.sleep(global_short_sleep)
+    await propulsion.faceDirection(poses.Action2_grab_wp1[2], 1.5)
+    await asyncio.sleep(global_short_sleep)
+    await propulsion.moveTo(poses.Action2_grab_wp1, global_long_speed)
+    await asyncio.sleep(global_short_sleep)
+
+    await actuators.position_defensive_laterale()
+    await asyncio.sleep(global_short_sleep)
+
+    await asyncio.sleep(0.1)
+    for i in range(0,5):
+        print()
+        print("================")
+        print ("ARUCO TRY {}".format(i))
+        print("----------------")
+        try:
+            aruco_y_configuration = cam.aruco_y_detection()
+        except:
+            print ("aruco_y_detection() failed")
+            aruco_y_configuration = "0000"
+        if (aruco_y_configuration!="0000"):
+            print("VVVVVVVVVVVVVVVV")
+            print()
+            break
+        print("----------------")
+        print()
+        await asyncio.sleep(0.5)
+
+    if (aruco_y_configuration not in grab_y_funcs.keys()):
+        print("Cannot do Action2!")
+        await asyncio.sleep(60.0)
         return
+    else:
+        await grab_y_funcs[aruco_y_configuration]()
 
-    #detections_file = "/tmp/detections.txt"
-    detections_file = "/tmp/last_good_detections.txt"
+    t1 = asyncio.create_task(actuators.arm_right_left_prep_take())
 
-    detections = []
-    try:
-        with open(detections_file) as f:
-            for line in f:
-                print ("DETECTIONS FILE: {}".format(line)) 
-                line = line.strip()
-                parts = line.split()
-                if len(parts) != 4:
-                    continue
-                ts_str, my_id_str, x_str, y_str = parts
-                ts = float(ts_str)
-                my_id = int(my_id_str)
-                x_real = float(x_str)/1000.0
-                y_real = float(y_str)/1000.0
-                detections.append((ts,my_id,x_real,y_real))
-    except:
-        print ("Cannot read (and parse) {}".format(detections_file))
+    await propulsion.pointTo(pt=poses.Action2_drop_wp1, yaw_rate=global_turn_speed, back=True)
+    await asyncio.sleep(global_short_sleep)
+    await propulsion.moveTo(poses.Action2_drop_wp1, global_long_speed)
+    await asyncio.sleep(global_short_sleep)
+    await propulsion.faceDirection(poses.Action2_drop_wp1[2], 1.5)
+    await asyncio.sleep(global_short_sleep)
+
+    await t1
+
+    await do_drop_y_1001()
+
+
+@robot.sequence
+async def action_3():
+    global poses
+    global start_long_speed
+    global start_turn_speed
+    global global_long_speed
+    global global_turn_speed
+
+    print()
+    print("=======")
+    print("ACTION3")
+    print("=======")
+    print()
+
+    await propulsion.pointTo(pt=poses.Action3_grab_wp0, yaw_rate=global_turn_speed, back=False)
+    await asyncio.sleep(global_short_sleep)
+    await propulsion.moveTo(poses.Action3_grab_wp0, global_long_speed)
+    await asyncio.sleep(global_short_sleep)
+    await propulsion.faceDirection(poses.Action3_grab_wp1[2], 1.5)
+    await asyncio.sleep(global_short_sleep)
+    await propulsion.moveTo(poses.Action3_grab_wp1, global_long_speed)
+    await asyncio.sleep(global_short_sleep)
+
+    await actuators.position_defensive_laterale()
+    await asyncio.sleep(global_short_sleep)
+
+    await asyncio.sleep(0.1)
+    for i in range(0,5):
+        print()
+        print("================")
+        print ("ARUCO TRY {}".format(i))
+        print("----------------")
+        try:
+            aruco_y_configuration = cam.aruco_y_detection()
+        except:
+            print ("aruco_y_detection() failed")
+            aruco_y_configuration = "0000"
+        if (aruco_y_configuration!="0000"):
+            print("VVVVVVVVVVVVVVVV")
+            print()
+            break
+        print("----------------")
+        print()
+        await asyncio.sleep(0.5)
+
+    if (aruco_y_configuration not in grab_y_funcs.keys()):
+        print("Cannot do Action3!")
+        await asyncio.sleep(60.0)
         return
+    else:
+        await grab_y_funcs[aruco_y_configuration]()
 
-    detections.sort(key=lambda d: d[3])
+    t1 = asyncio.create_task(actuators.arm_right_left_prep_take())
 
-    pres_idx = []
+    await propulsion.pointTo(pt=poses.Action3_drop_wp1, yaw_rate=global_turn_speed, back=True)
+    await asyncio.sleep(global_short_sleep)
+    await propulsion.moveTo(poses.Action3_drop_wp1, global_long_speed)
+    await asyncio.sleep(global_short_sleep)
+    await propulsion.faceDirection(poses.Action3_drop_wp1[2], 1.5)
+    await asyncio.sleep(global_short_sleep)
 
-    for i in range(len(detections)):
-        ts, my_id, x_real, y_real = detections[i]
-        print ("ts={:.2f} id={:d} x={:6.3f} y={:6.3f}".format(ts, my_id, x_real, y_real))
-        if (y_real<segm_ref_y[0]):
-            pres_idx.append(0)
-        elif (y_real<segm_ref_y[1]):
-            pres_idx.append(1)
-        elif (y_real<segm_ref_y[2]):
-            pres_idx.append(2)
-        else:
-            pres_idx.append(3)
-    print("Present: {}".format(pres_idx))
+    await t1
 
-    if (len(detections)<3 or len(detections)>4):
-        print("len(detections)={}".format(len(detections)))
-        print("Cannot detect aruco_y_configuration!")
-        return
+    await do_drop_y_1001()
 
-    if (len(detections)==3):
-        miss_idx = None
-        miss_color_code = None
-        my_color_cnt = 0
-        adv_color_cnt = 0
-        for i in range(0,4):
-            if (i not in pres_idx):
-                miss_idx = i
-        for i in range(0,3):
-            if (detections[i][1]==my_color):
-                my_color_cnt = my_color_cnt + 1
-            else:
-                adv_color_cnt = adv_color_cnt + 1
-        print ("miss_idx={}".format(miss_idx))
-        print ("my_color_cnt={}".format(my_color_cnt))
-        print ("adv_color_cnt={}".format(adv_color_cnt))
-        if (my_color_cnt>adv_color_cnt):
-            miss_color_code = '0'
-        else:
-            miss_color_code = '1'
-        print ("miss_color_code={}".format(miss_color_code))
-        for i in range(0,3):
-            if (detections[i][1]==my_color):
-                aruco_y_configuration = aruco_y_configuration[:pres_idx[i]] + '1' + aruco_y_configuration[pres_idx[i]+1:]
-            print("  STEP {} : {}".format(i,aruco_y_configuration))
-        aruco_y_configuration = aruco_y_configuration[:miss_idx] + miss_color_code + aruco_y_configuration[miss_idx+1:]
 
-    elif (len(detections)==4):
-        for i in range(0,4):
-            if (detections[i][1]==my_color):
-                aruco_y_configuration = aruco_y_configuration[:i] + '1' + aruco_y_configuration[i+1:]
-
-    print("aruco_y_configuration = {}".format(aruco_y_configuration))
-
+########################################################################################
+### GRAB & PUSH X
+########################################################################################
 
 async def do_push_0000():
     await propulsion.moveTo(poses.First_push, global_long_speed)
     await asyncio.sleep(global_short_sleep)
     await propulsion.moveTo(poses.First_grab_wp2, global_long_speed)
     await asyncio.sleep(global_short_sleep)
+
+async def do_first_drop():
+    #await propulsion.pointTo(pt=poses.First_return_wp, yaw_rate=global_turn_speed, back=True)
+    #await asyncio.sleep(global_short_sleep)
+    await propulsion.moveTo(poses.First_return_wp, global_long_speed)
+    await asyncio.sleep(global_short_sleep)
+    t1 = asyncio.create_task(actuators.arm_right_left_prep_take())
+    await propulsion.faceDirection(-180, global_turn_speed)
+    await asyncio.sleep(global_short_sleep)
+    await t1
+    await actuators.pumps_off()
+    await asyncio.sleep(0.5)
 
 async def do_grab_and_push_x_0011():
     #await propulsion.moveTo(poses.First_grab_wp1, global_long_speed)
@@ -630,12 +506,8 @@ async def do_grab_and_push_x_0011():
     await asyncio.sleep(global_short_sleep)
     await propulsion.moveTo(poses.First_push_out, global_long_speed)
     await asyncio.sleep(global_short_sleep)
-    await propulsion.pointTo(pt=poses.First_return_wp, yaw_rate=global_turn_speed, back=True)
-    await asyncio.sleep(global_short_sleep)
-    await propulsion.moveTo(poses.First_return_wp, global_long_speed)
-    await asyncio.sleep(global_short_sleep)
-    await actuators.pumps_off()
-    await asyncio.sleep(global_short_sleep)
+
+    await do_first_drop()
 
 async def do_grab_and_push_x_0101():
     #await propulsion.moveTo(poses.First_grab_wp1, global_long_speed)
@@ -648,12 +520,8 @@ async def do_grab_and_push_x_0101():
     await asyncio.sleep(global_short_sleep)
     await propulsion.moveTo(poses.First_push_out, global_long_speed)
     await asyncio.sleep(global_short_sleep)
-    await propulsion.pointTo(pt=poses.First_return_wp, yaw_rate=global_turn_speed, back=True)
-    await asyncio.sleep(global_short_sleep)
-    await propulsion.moveTo(poses.First_return_wp, global_long_speed)
-    await asyncio.sleep(global_short_sleep)
-    await actuators.pumps_off()
-    await asyncio.sleep(global_short_sleep)
+
+    await do_first_drop()
 
 async def do_grab_and_push_x_0110():
     #await propulsion.moveTo(poses.First_grab_wp1, global_long_speed)
@@ -662,12 +530,30 @@ async def do_grab_and_push_x_0110():
     await asyncio.sleep(global_short_sleep)
     await propulsion.moveTo(poses.First_push_out, global_long_speed)
     await asyncio.sleep(global_short_sleep)
-    await propulsion.pointTo(pt=poses.First_return_wp, yaw_rate=global_turn_speed, back=True)
     await asyncio.sleep(global_short_sleep)
-    await propulsion.moveTo(poses.First_return_wp, global_long_speed)
+
+    #await do_first_drop()
+
+    await propulsion.translation(-0.150, global_long_speed)
     await asyncio.sleep(global_short_sleep)
-    await actuators.pumps_off()
+
+    await actuators.arms_close_extreme()
     await asyncio.sleep(global_short_sleep)
+    await actuators.left_pump_on()
+    await asyncio.sleep(global_short_sleep)
+    await actuators.right_pump_off()
+    await asyncio.sleep(global_short_sleep)
+    await actuators.position_defensive_laterale_d()
+    await asyncio.sleep(global_short_sleep)
+    await actuators.arm_left_take()
+    await asyncio.sleep(global_short_sleep)
+    await actuators.left_pump_off()
+    await asyncio.sleep(global_short_sleep)
+    await actuators.position_defensive_laterale_g()
+    await asyncio.sleep(global_short_sleep)
+
+    await propulsion.translation(-0.150, global_long_speed)
+    await asyncio.sleep(0.1)
 
 async def do_grab_and_push_x_1001():
     await propulsion.moveTo(poses.First_grab_wp2, global_long_speed)
@@ -680,12 +566,8 @@ async def do_grab_and_push_x_1001():
     await asyncio.sleep(global_short_sleep)
     await propulsion.moveTo(poses.First_push_out, global_long_speed)
     await asyncio.sleep(global_short_sleep)
-    await propulsion.pointTo(pt=poses.First_return_wp, yaw_rate=global_turn_speed, back=True)
-    await asyncio.sleep(global_short_sleep)
-    await propulsion.moveTo(poses.First_return_wp, global_long_speed)
-    await asyncio.sleep(global_short_sleep)
-    await actuators.pumps_off()
-    await asyncio.sleep(global_short_sleep)
+
+    await do_first_drop()
 
 async def do_grab_and_push_x_1010():
     await propulsion.moveTo(poses.First_grab_wp2, global_long_speed)
@@ -694,19 +576,14 @@ async def do_grab_and_push_x_1010():
     await asyncio.sleep(global_short_sleep)
     await propulsion.moveTo(poses.First_push_out, global_long_speed)
     await asyncio.sleep(global_short_sleep)
-    await propulsion.pointTo(pt=poses.First_return_wp, yaw_rate=global_turn_speed, back=True)
-    await asyncio.sleep(global_short_sleep)
-    await propulsion.moveTo(poses.First_return_wp, global_long_speed)
-    await asyncio.sleep(global_short_sleep)
-    await actuators.pumps_off()
-    await asyncio.sleep(global_short_sleep)
+
+    await do_first_drop()
 
 async def do_grab_and_push_x_1100():
     await propulsion.moveTo(poses.First_push_out, global_long_speed)
     await asyncio.sleep(global_short_sleep)
     await propulsion.moveTo(poses.First_grab_wp2, global_long_speed)
     await asyncio.sleep(global_short_sleep)
-
 
 grab_and_push_x_funcs = {
     "0011":do_grab_and_push_x_0011,
@@ -718,10 +595,14 @@ grab_and_push_x_funcs = {
 }
 
 
+########################################################################################
+### GRAB Y
+########################################################################################
+
 @robot.sequence
 async def do_grab_y_0011():
-    await actuators.arm_left_prep_take()
-    await asyncio.sleep(0.1)
+    #await actuators.arm_left_prep_take()
+    #await asyncio.sleep(0.1)
     await actuators.left_pump_on()
     await asyncio.sleep(0.1)
     await actuators.arm_left_take_y_0()
@@ -732,8 +613,8 @@ async def do_grab_y_0011():
     await propulsion.translation(0.030, 0.2)
     await asyncio.sleep(0.1)
 
-    await actuators.arm_right_prep_take()
-    await asyncio.sleep(0.1)
+    #await actuators.arm_right_prep_take()
+    #await asyncio.sleep(0.1)
     await actuators.right_pump_on()
     await asyncio.sleep(0.1)
     await actuators.arm_right_take_y_2()
@@ -743,88 +624,52 @@ async def do_grab_y_0011():
 
 @robot.sequence
 async def do_grab_y_0101():
-    await actuators.arm_left_prep_take()
+    #await actuators.arm_right_left_prep_take()
+    #await asyncio.sleep(0.1)
+    await actuators.pumps_on()
     await asyncio.sleep(0.1)
-    await actuators.left_pump_on()
+    await actuators.arm_right_left_take_y_1_0()
     await asyncio.sleep(0.1)
-    await actuators.arm_left_take_y_0()
-    await asyncio.sleep(0.1)
-    await actuators.position_defensive_laterale_g()
-    await asyncio.sleep(0.1)
-
-    await actuators.arm_right_prep_take()
-    await asyncio.sleep(0.1)
-    await actuators.right_pump_on()
-    await asyncio.sleep(0.1)
-    await actuators.arm_right_take_y_1()
-    await asyncio.sleep(0.1)
-    await actuators.position_defensive_laterale_d()
+    await actuators.position_defensive_laterale()
     await asyncio.sleep(0.1)
 
 @robot.sequence
 async def do_grab_y_0110():
-    await actuators.arm_left_prep_take()
+    #await actuators.arm_right_left_prep_take()
+    #await asyncio.sleep(0.1)
+    await actuators.pumps_on()
     await asyncio.sleep(0.1)
-    await actuators.left_pump_on()
+    await actuators.arm_right_left_take_y_1_1()
     await asyncio.sleep(0.1)
-    await actuators.arm_left_take_y_1()
-    await asyncio.sleep(0.1)
-    await actuators.position_defensive_laterale_g()
-    await asyncio.sleep(0.1)
-
-    await actuators.arm_right_prep_take()
-    await asyncio.sleep(0.1)
-    await actuators.right_pump_on()
-    await asyncio.sleep(0.1)
-    await actuators.arm_right_take_y_1()
-    await asyncio.sleep(0.1)
-    await actuators.position_defensive_laterale_d()
+    await actuators.position_defensive_laterale()
     await asyncio.sleep(0.1)
 
 @robot.sequence
 async def do_grab_y_1001():
-    await actuators.arm_right_prep_take()
+    #await actuators.arm_right_left_prep_take()
+    #await asyncio.sleep(0.1)
+    await actuators.pumps_on()
     await asyncio.sleep(0.1)
-    await actuators.right_pump_on()
+    await actuators.arm_right_left_take_y_0_0()
     await asyncio.sleep(0.1)
-    await actuators.arm_right_take_y_0()
-    await asyncio.sleep(0.1)
-    await actuators.position_defensive_laterale_d()
-    await asyncio.sleep(0.1)
-
-    await actuators.arm_left_prep_take()
-    await asyncio.sleep(0.1)
-    await actuators.left_pump_on()
-    await asyncio.sleep(0.1)
-    await actuators.arm_left_take_y_0()
-    await asyncio.sleep(0.1)
-    await actuators.position_defensive_laterale_g()
+    await actuators.position_defensive_laterale()
     await asyncio.sleep(0.1)
 
 @robot.sequence
 async def do_grab_y_1010():
-    await actuators.arm_right_prep_take()
+    #await actuators.arm_right_left_prep_take()
+    #await asyncio.sleep(0.1)
+    await actuators.pumps_on()
     await asyncio.sleep(0.1)
-    await actuators.right_pump_on()
+    await actuators.arm_right_left_take_y_0_1()
     await asyncio.sleep(0.1)
-    await actuators.arm_right_take_y_0()
-    await asyncio.sleep(0.1)
-    await actuators.position_defensive_laterale_d()
-    await asyncio.sleep(0.1)
-
-    await actuators.arm_left_prep_take()
-    await asyncio.sleep(0.1)
-    await actuators.left_pump_on()
-    await asyncio.sleep(0.1)
-    await actuators.arm_left_take_y_1()
-    await asyncio.sleep(0.1)
-    await actuators.position_defensive_laterale_g()
+    await actuators.position_defensive_laterale()
     await asyncio.sleep(0.1)
 
 @robot.sequence
 async def do_grab_y_1100():
-    await actuators.arm_right_prep_take()
-    await asyncio.sleep(0.1)
+    #await actuators.arm_right_prep_take()
+    #await asyncio.sleep(0.1)
     await actuators.right_pump_on()
     await asyncio.sleep(0.1)
     await actuators.arm_right_take_y_0()
@@ -835,15 +680,14 @@ async def do_grab_y_1100():
     await propulsion.translation(0.030, 0.2)
     await asyncio.sleep(0.1)
 
-    await actuators.arm_left_prep_take()
-    await asyncio.sleep(0.1)
+    #await actuators.arm_left_prep_take()
+    #await asyncio.sleep(0.1)
     await actuators.left_pump_on()
     await asyncio.sleep(0.1)
     await actuators.arm_left_take_y_2()
     await asyncio.sleep(0.1)
     await actuators.position_defensive_laterale_g()
     await asyncio.sleep(0.1)
-
 
 grab_y_funcs = {
     "0011":do_grab_y_0011,
@@ -855,28 +699,27 @@ grab_y_funcs = {
 }
 
 
+########################################################################################
+### DROP Y
+########################################################################################
+
 @robot.sequence
 async def do_drop_y_1001():
-    await actuators.arm_right_prep_take()
+    #await actuators.arm_right_left_prep_take()
+    #await asyncio.sleep(0.1)
+    await actuators.arm_right_left_take_y_0_0()
     await asyncio.sleep(0.1)
-    await actuators.arm_right_take_y_0()
+    await actuators.pumps_off()
     await asyncio.sleep(0.1)
-    await actuators.right_pump_off()
-    await asyncio.sleep(0.1)
-    await actuators.position_defensive_laterale_d()
-    await asyncio.sleep(0.1)
-
-    await actuators.arm_left_prep_take()
-    await asyncio.sleep(0.1)
-    await actuators.arm_left_take_y_0()
-    await asyncio.sleep(0.1)
-    await actuators.left_pump_off()
-    await asyncio.sleep(0.1)
-    await actuators.position_defensive_laterale_g()
+    await actuators.position_defensive_laterale()
     await asyncio.sleep(0.1)
 
 
-### TEST & EXPERIMENTAL ###
+
+
+########################################################################################
+### TEST & EXPERIMENTAL 
+########################################################################################
 
 @robot.sequence
 async def test_goto_first_grab_wp1():
@@ -899,51 +742,60 @@ async def test_goto_inter_test_wp():
     await asyncio.sleep(global_short_sleep)
 
 @robot.sequence
-async def test_goto_strat1_grab_wp1():
-    await propulsion.pointTo(poses.Strat1_grab_wp1, global_turn_speed)
+async def test_goto_action1_grab_wp1():
+    await propulsion.pointTo(poses.Action1_grab_wp1, global_turn_speed)
     await asyncio.sleep(global_short_sleep)
-    await propulsion.moveTo(poses.Strat1_grab_wp1, global_long_speed)
+    await propulsion.moveTo(poses.Action1_grab_wp1, global_long_speed)
     await asyncio.sleep(global_short_sleep)
-    await propulsion.faceDirection(poses.Strat1_grab_wp1[2], 1.5)
+    await propulsion.faceDirection(poses.Action1_grab_wp1[2], 1.5)
 
 @robot.sequence
-async def test_goto_strat1_drop_wp1():
-    await propulsion.pointTo(pt=poses.Strat1_drop_wp1, yaw_rate=global_turn_speed, back=True)
+async def test_goto_action1_drop_wp1():
+    await propulsion.pointTo(pt=poses.Action1_drop_wp1, yaw_rate=global_turn_speed, back=True)
     await asyncio.sleep(global_short_sleep)
-    await propulsion.moveTo(poses.Strat1_drop_wp1, global_long_speed)
+    await propulsion.moveTo(poses.Action1_drop_wp1, global_long_speed)
     await asyncio.sleep(global_short_sleep)
-    await propulsion.faceDirection(poses.Strat1_drop_wp1[2], 1.5)
+    await propulsion.faceDirection(poses.Action1_drop_wp1[2], 1.5)
 
 @robot.sequence
-async def test_goto_strat2_grab_wp1():
-    await propulsion.pointTo(poses.Strat2_grab_wp1, global_turn_speed)
+async def test_goto_action2_grab_wp1():
+    await propulsion.pointTo(poses.Action2_grab_wp1, global_turn_speed)
     await asyncio.sleep(global_short_sleep)
-    await propulsion.moveTo(poses.Strat2_grab_wp1, global_long_speed)
+    await propulsion.moveTo(poses.Action2_grab_wp1, global_long_speed)
     await asyncio.sleep(global_short_sleep)
-    await propulsion.faceDirection(poses.Strat2_grab_wp1[2], 1.5)
+    await propulsion.faceDirection(poses.Action2_grab_wp1[2], 1.5)
 
 @robot.sequence
-async def test_goto_strat2_drop_wp1():
-    await propulsion.pointTo(pt=poses.Strat2_drop_wp1, yaw_rate=global_turn_speed, back=False)
+async def test_goto_action2_drop_wp1():
+    await propulsion.pointTo(pt=poses.Action2_drop_wp1, yaw_rate=global_turn_speed, back=False)
     await asyncio.sleep(global_short_sleep)
-    await propulsion.moveTo(poses.Strat2_drop_wp1, global_long_speed)
+    await propulsion.moveTo(poses.Action2_drop_wp1, global_long_speed)
     await asyncio.sleep(global_short_sleep)
-    await propulsion.faceDirection(poses.Strat2_drop_wp1[2], 1.5)
+    await propulsion.faceDirection(poses.Action2_drop_wp1[2], 1.5)
 
 @robot.sequence
-async def test_goto_strat3_grab_wp1():
-    await propulsion.pointTo(poses.Strat3_grab_wp1, global_turn_speed)
+async def test_goto_action3_grab_wp1():
+    await propulsion.pointTo(poses.Action3_grab_wp1, global_turn_speed)
     await asyncio.sleep(global_short_sleep)
-    await propulsion.moveTo(poses.Strat3_grab_wp1, global_long_speed)
+    await propulsion.moveTo(poses.Action3_grab_wp1, global_long_speed)
     await asyncio.sleep(global_short_sleep)
-    await propulsion.faceDirection(poses.Strat3_grab_wp1[2], 1.5)
+    await propulsion.faceDirection(poses.Action3_grab_wp1[2], 1.5)
 
 @robot.sequence
-async def test_goto_strat3_drop_wp1():
-    await propulsion.pointTo(pt=poses.Strat3_drop_wp1, yaw_rate=global_turn_speed, back=False)
+async def test_goto_action3_drop_wp1():
+    await propulsion.pointTo(pt=poses.Action3_drop_wp1, yaw_rate=global_turn_speed, back=False)
     await asyncio.sleep(global_short_sleep)
-    await propulsion.moveTo(poses.Strat3_drop_wp1, global_long_speed)
+    await propulsion.moveTo(poses.Action3_drop_wp1, global_long_speed)
     await asyncio.sleep(global_short_sleep)
-    await propulsion.faceDirection(poses.Strat3_drop_wp1[2], 1.5)
+    await propulsion.faceDirection(poses.Action3_drop_wp1[2], 1.5)
 
+
+@robot.sequence
+async def aruco_x_detection_async():
+    print ("aruco_x_detection_async()")
+    cam.aruco_x_detection()
+
+@robot.sequence
+async def aruco_y_detection_async():
+    cam.aruco_y_detection()
 

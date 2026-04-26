@@ -130,9 +130,17 @@ async def arms_disable():
     
 
 @robot.sequence
+async def arms_final_state():
+    await pumps_off()
+    await asyncio.sleep(0.1)
+    await arms_close()
+    await asyncio.sleep(0.1)
+
+
+@robot.sequence
 async def lifts_high():
     await goldo_lifts_move(pos = 950, speed = 80)
-    await asyncio.sleep(0.4)
+    await asyncio.sleep(0.3)
 
 
 arms_open_epaules_ouvertes = {
@@ -188,6 +196,18 @@ async def arms_close():
     await servos.moveMultiple(arms_close_coudes_leves, speed=1)
     await asyncio.sleep(0.1)
 
+arms_close_epaules_rentrees_extreme = {
+    'epaule_g': 3050,
+    'epaule_d': 1030
+}
+
+@robot.sequence
+async def arms_close_extreme():
+    await servos.moveMultiple(arms_close_coudes_leves, speed=1)
+    await asyncio.sleep(0.1)
+    await servos.moveMultiple(arms_close_epaules_rentrees_extreme, speed=1)
+    await asyncio.sleep(0.1)
+
 
 position_defensive_laterale_epaules_ouvertes = {
     'epaule_g': 1090,
@@ -202,11 +222,11 @@ position_defensive_laterale_coudes_leves = {
 @robot.sequence
 async def position_defensive_laterale():
     await goldo_lifts_move(pos = 800, speed = 80)
-    await asyncio.sleep(0.4)
+    await asyncio.sleep(0.3)
     await servos.moveMultiple(position_defensive_laterale_epaules_ouvertes, speed=1)
-    await asyncio.sleep(0.4)
+    await asyncio.sleep(0.1)
     await servos.moveMultiple(position_defensive_laterale_coudes_leves, speed=1)
-    await asyncio.sleep(0.4)
+    await asyncio.sleep(0.1)
 
 
 position_defensive_laterale_servos_d = {
@@ -217,9 +237,9 @@ position_defensive_laterale_servos_d = {
 @robot.sequence
 async def position_defensive_laterale_d():
     await goldo_lift_move(GoldoLift.Right,800)
-    await asyncio.sleep(0.4)
+    await asyncio.sleep(0.3)
     await servos.moveMultiple(position_defensive_laterale_servos_d, speed=1)
-    await asyncio.sleep(0.4)
+    await asyncio.sleep(0.1)
 
 
 position_defensive_laterale_servos_g = {
@@ -230,12 +250,12 @@ position_defensive_laterale_servos_g = {
 @robot.sequence
 async def position_defensive_laterale_g():
     await goldo_lift_move(GoldoLift.Left,800)
-    await asyncio.sleep(0.4)
+    await asyncio.sleep(0.3)
     await servos.moveMultiple(position_defensive_laterale_servos_g, speed=1)
-    await asyncio.sleep(0.4)
+    await asyncio.sleep(0.1)
 
 
-### GRAB X ("SOUTH->NORTH" ALIGNEMENT) ###
+### PREP TAKE ###
 
 bras_d_prep_take = {
     'epaule_d': 1400,
@@ -245,22 +265,9 @@ bras_d_prep_take = {
 @robot.sequence
 async def arm_right_prep_take():
     await goldo_lift_move(GoldoLift.Right,340)
-    await asyncio.sleep(0.4)
+    await asyncio.sleep(0.3)
     await servos.moveMultiple(bras_d_prep_take, speed=1)
-    await asyncio.sleep(0.2)
-
-
-bras_d_take = {
-    'epaule_d': 1400,
-    'coude_d': 530,
-}
-
-@robot.sequence
-async def arm_right_take():
-    await servos.moveMultiple(bras_d_take, speed=1)
-    await asyncio.sleep(0.2)
-    await goldo_lift_move(GoldoLift.Right,60)
-    await asyncio.sleep(0.4)
+    await asyncio.sleep(0.1)
 
 
 bras_g_prep_take = {
@@ -271,9 +278,38 @@ bras_g_prep_take = {
 @robot.sequence
 async def arm_left_prep_take():
     await goldo_lift_move(GoldoLift.Left,340)
-    await asyncio.sleep(0.4)
+    await asyncio.sleep(0.3)
     await servos.moveMultiple(bras_g_prep_take, speed=1)
-    await asyncio.sleep(0.2)
+    await asyncio.sleep(0.1)
+
+bras_d_g_prep_take = {
+    'epaule_d': 1400,
+    'coude_d': 204,
+    'epaule_g': 2740,
+    'coude_g': 824,
+}
+
+@robot.sequence
+async def arm_right_left_prep_take():
+    await goldo_lifts_move(pos = 380, speed = 80)
+    await asyncio.sleep(0.3)
+    await servos.moveMultiple(bras_d_g_prep_take, speed=1)
+    await asyncio.sleep(0.1)
+
+
+### GRAB X ("SOUTH->NORTH" ALIGNEMENT) ###
+
+bras_d_take = {
+    'epaule_d': 1400,
+    'coude_d': 530,
+}
+
+@robot.sequence
+async def arm_right_take():
+    await servos.moveMultiple(bras_d_take, speed=1)
+    await asyncio.sleep(0.1)
+    await goldo_lift_move(GoldoLift.Right,60)
+    await asyncio.sleep(0.3)
 
 
 bras_g_take = {
@@ -284,9 +320,9 @@ bras_g_take = {
 @robot.sequence
 async def arm_left_take():
     await servos.moveMultiple(bras_g_take, speed=1)
-    await asyncio.sleep(0.2)
+    await asyncio.sleep(0.1)
     await goldo_lift_move(GoldoLift.Left,60)
-    await asyncio.sleep(0.4)
+    await asyncio.sleep(0.3)
 
 
 ### GRAB Y ("EAST->WEST" ALIGNEMENT) ###
@@ -298,9 +334,9 @@ bras_d_take_y_0 = {
 @robot.sequence
 async def arm_right_take_y_0():
     await servos.moveMultiple(bras_d_take_y_0, speed=1)
-    await asyncio.sleep(0.2)
+    await asyncio.sleep(0.1)
     await goldo_lift_move(GoldoLift.Right,60)
-    await asyncio.sleep(0.4)
+    await asyncio.sleep(0.3)
 
 bras_d_take_y_1 = {
     'epaule_d': 1500,
@@ -309,9 +345,9 @@ bras_d_take_y_1 = {
 @robot.sequence
 async def arm_right_take_y_1():
     await servos.moveMultiple(bras_d_take_y_1, speed=1)
-    await asyncio.sleep(0.2)
+    await asyncio.sleep(0.1)
     await goldo_lift_move(GoldoLift.Right,60)
-    await asyncio.sleep(0.4)
+    await asyncio.sleep(0.3)
 
 bras_d_take_y_2 = {
     'epaule_d': 1230,
@@ -320,9 +356,9 @@ bras_d_take_y_2 = {
 @robot.sequence
 async def arm_right_take_y_2():
     await servos.moveMultiple(bras_d_take_y_2, speed=1)
-    await asyncio.sleep(0.2)
+    await asyncio.sleep(0.1)
     await goldo_lift_move(GoldoLift.Right,60)
-    await asyncio.sleep(0.4)
+    await asyncio.sleep(0.3)
 
 
 bras_g_take_y_0 = {
@@ -332,9 +368,9 @@ bras_g_take_y_0 = {
 @robot.sequence
 async def arm_left_take_y_0():
     await servos.moveMultiple(bras_g_take_y_0, speed=1)
-    await asyncio.sleep(0.2)
+    await asyncio.sleep(0.1)
     await goldo_lift_move(GoldoLift.Left,60)
-    await asyncio.sleep(0.4)
+    await asyncio.sleep(0.3)
 
 bras_g_take_y_1 = {
     'epaule_g': 2610,
@@ -343,9 +379,9 @@ bras_g_take_y_1 = {
 @robot.sequence
 async def arm_left_take_y_1():
     await servos.moveMultiple(bras_g_take_y_1, speed=1)
-    await asyncio.sleep(0.2)
+    await asyncio.sleep(0.1)
     await goldo_lift_move(GoldoLift.Left,60)
-    await asyncio.sleep(0.4)
+    await asyncio.sleep(0.3)
 
 bras_g_take_y_2 = {
     'epaule_g': 2890,
@@ -354,13 +390,74 @@ bras_g_take_y_2 = {
 @robot.sequence
 async def arm_left_take_y_2():
     await servos.moveMultiple(bras_g_take_y_2, speed=1)
-    await asyncio.sleep(0.2)
+    await asyncio.sleep(0.1)
     await goldo_lift_move(GoldoLift.Left,60)
-    await asyncio.sleep(0.4)
+    await asyncio.sleep(0.3)
 
+
+bras_d_g_take_y_0_0 = {
+    'epaule_d': 1720,
+    'coude_d': 530,
+    'epaule_g': 2400,
+    'coude_g': 497,
+}
+@robot.sequence
+async def arm_right_left_take_y_0_0():
+    await servos.moveMultiple(bras_d_g_take_y_0_0, speed=1)
+    await asyncio.sleep(0.1)
+    await goldo_lifts_move(pos = 60, speed = 60)
+    await asyncio.sleep(0.3)
+
+
+bras_d_g_take_y_0_1 = {
+    'epaule_d': 1720,
+    'coude_d': 530,
+    'epaule_g': 2610,
+    'coude_g': 497,
+}
+@robot.sequence
+async def arm_right_left_take_y_0_1():
+    await servos.moveMultiple(bras_d_g_take_y_0_1, speed=1)
+    await asyncio.sleep(0.1)
+    await goldo_lifts_move(pos = 60, speed = 60)
+    await asyncio.sleep(0.3)
+
+bras_d_g_take_y_1_0 = {
+    'epaule_d': 1500,
+    'coude_d': 530,
+    'epaule_g': 2400,
+    'coude_g': 497,
+}
+@robot.sequence
+async def arm_right_left_take_y_1_0():
+    await servos.moveMultiple(bras_d_g_take_y_1_0, speed=1)
+    await asyncio.sleep(0.1)
+    await goldo_lifts_move(pos = 60, speed = 60)
+    await asyncio.sleep(0.3)
+
+bras_d_g_take_y_1_1 = {
+    'epaule_d': 1500,
+    'coude_d': 530,
+    'epaule_g': 2610,
+    'coude_g': 497,
+}
+@robot.sequence
+async def arm_right_left_take_y_1_1():
+    await servos.moveMultiple(bras_d_g_take_y_1_1, speed=1)
+    await asyncio.sleep(0.1)
+    await goldo_lifts_move(pos = 60, speed = 60)
+    await asyncio.sleep(0.3)
 
 
 ### THERMO ###
+
+@robot.sequence
+async def arms_prep_thermo():
+    await arms_close()
+    await asyncio.sleep(0.1)
+    await lifts_high()
+    await asyncio.sleep(0.3)
+
 
 bras_g_push_thermo = {
 #    'epaule_g': 2090,
@@ -371,9 +468,9 @@ bras_g_push_thermo = {
 @robot.sequence
 async def arm_left_push_thermo():
     await goldo_lift_move(GoldoLift.Left,950)
-    await asyncio.sleep(0.4)
+    await asyncio.sleep(0.3)
     await servos.moveMultiple(bras_g_push_thermo, speed=0.5)
-    await asyncio.sleep(0.2)
+    await asyncio.sleep(0.1)
 
 
 bras_d_push_thermo = {
@@ -386,9 +483,9 @@ bras_d_push_thermo = {
 @robot.sequence
 async def arm_right_push_thermo():
     await goldo_lift_move(GoldoLift.Right,950)
-    await asyncio.sleep(0.4)
+    await asyncio.sleep(0.3)
     await servos.moveMultiple(bras_d_push_thermo, speed=0.5)
-    await asyncio.sleep(0.2)
+    await asyncio.sleep(0.1)
 
 
 
@@ -396,26 +493,26 @@ async def arm_right_push_thermo():
 
 @robot.sequence
 async def test_grab_right():
-    await arm_right_prep_take()
-    await asyncio.sleep(0.5)
+    #await arm_right_prep_take()
+    #await asyncio.sleep(0.1)
     await right_pump_on()
     await asyncio.sleep(0.1)
     await arm_right_take()
-    await asyncio.sleep(0.5)
+    await asyncio.sleep(0.1)
     await position_defensive_laterale_d()
-    await asyncio.sleep(0.5)
+    await asyncio.sleep(0.1)
 
 
 @robot.sequence
 async def test_grab_left():
-    await arm_left_prep_take()
-    await asyncio.sleep(0.5)
+    #await arm_left_prep_take()
+    #await asyncio.sleep(0.1)
     await left_pump_on()
     await asyncio.sleep(0.1)
     await arm_left_take()
-    await asyncio.sleep(0.5)
+    await asyncio.sleep(0.1)
     await position_defensive_laterale_g()
-    await asyncio.sleep(0.5)
+    await asyncio.sleep(0.1)
 
 
 @robot.sequence
