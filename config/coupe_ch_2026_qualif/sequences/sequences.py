@@ -111,7 +111,7 @@ async def start_match():
     print ("T match_timer = {}".format(T1-T0))
     print ("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
 
-    #robot._adversary_detection_enable = True
+    robot._adversary_detection_enable = True
     await lidar.start()
 
     try:
@@ -119,21 +119,8 @@ async def start_match():
         await asyncio.sleep(1.0)
     except:
         print ("EXCEPTION!")
-        await actuators.pumps_off()
+        await escape_procedure(poses.Final_escape_wp0)
         await asyncio.sleep(0.1)
-        await actuators.position_defensive_laterale()
-        await asyncio.sleep(0.1)
-        while (is_danger()):
-            print ("DANGER!")
-            await asyncio.sleep(1.0)
-        await propulsion.setEnable(False)
-        await asyncio.sleep(0.2)
-        await propulsion.setEnable(True)
-        await asyncio.sleep(0.2)
-        await propulsion.setMotorsEnable(True)
-        await asyncio.sleep(0.2)
-        await propulsion.clearError()
-        await asyncio.sleep(0.2)
 
     T1 = time.time()
     print ("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
@@ -145,21 +132,8 @@ async def start_match():
         await asyncio.sleep(0.1)
     except:
         print ("EXCEPTION!")
-        await actuators.pumps_off()
+        await escape_procedure(poses.Final_escape_wp0)
         await asyncio.sleep(0.1)
-        await actuators.position_defensive_laterale()
-        await asyncio.sleep(0.1)
-        while (is_danger()):
-            print ("DANGER!")
-            await asyncio.sleep(1.0)
-        await propulsion.setEnable(False)
-        await asyncio.sleep(0.2)
-        await propulsion.setEnable(True)
-        await asyncio.sleep(0.2)
-        await propulsion.setMotorsEnable(True)
-        await asyncio.sleep(0.2)
-        await propulsion.clearError()
-        await asyncio.sleep(0.2)
 
     T1 = time.time()
     print ("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
@@ -171,21 +145,8 @@ async def start_match():
         await asyncio.sleep(0.1)
     except:
         print ("EXCEPTION!")
-        await actuators.pumps_off()
+        await escape_procedure(poses.Final_escape_wp0)
         await asyncio.sleep(0.1)
-        await actuators.position_defensive_laterale()
-        await asyncio.sleep(0.1)
-        while (is_danger()):
-            print ("DANGER!")
-            await asyncio.sleep(1.0)
-        await propulsion.setEnable(False)
-        await asyncio.sleep(0.2)
-        await propulsion.setEnable(True)
-        await asyncio.sleep(0.2)
-        await propulsion.setMotorsEnable(True)
-        await asyncio.sleep(0.2)
-        await propulsion.clearError()
-        await asyncio.sleep(0.2)
  
     T1 = time.time()
     print ("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
@@ -197,22 +158,9 @@ async def start_match():
         await asyncio.sleep(0.1)
     except:
         print ("EXCEPTION!")
-        await actuators.pumps_off()
+        await escape_procedure(poses.Final_escape_wp0)
         await asyncio.sleep(0.1)
-        await actuators.position_defensive_laterale()
-        await asyncio.sleep(0.1)
-        while (is_danger()):
-            print ("DANGER!")
-            await asyncio.sleep(1.0)
-        await propulsion.setEnable(False)
-        await asyncio.sleep(0.2)
-        await propulsion.setEnable(True)
-        await asyncio.sleep(0.2)
-        await propulsion.setMotorsEnable(True)
-        await asyncio.sleep(0.2)
-        await propulsion.clearError()
-        await asyncio.sleep(0.2)
-
+    
     T1 = time.time()
     print ("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
     print ("T match_timer = {}".format(T1-T0))
@@ -279,6 +227,36 @@ def is_danger():
         if (dist<global_danger_threshold):
             return True
     return False
+
+@robot.sequence
+async def reset_and_reenable_propulsion():
+    await propulsion.setEnable(False)
+    await asyncio.sleep(0.2)
+    await propulsion.setEnable(True)
+    await asyncio.sleep(0.2)
+    await propulsion.setMotorsEnable(True)
+    await asyncio.sleep(0.2)
+    await propulsion.clearError()
+    await asyncio.sleep(0.2)
+
+@robot.sequence
+async def escape_procedure(escape_point):
+    await actuators.pumps_off()
+    await asyncio.sleep(0.1)
+    await actuators.position_defensive_laterale()
+    await asyncio.sleep(0.1)
+    for i in range (0,5):
+        if (is_danger()):
+            print ("DANGER!")
+            await asyncio.sleep(1.0)
+        else:
+            await reset_and_reenable_propulsion()
+            return
+    # adversary refuses to go away.. try to go to the escape_point..
+    await propulsion.pointTo(escape_point, global_long_speed)
+    await asyncio.sleep(0.1)
+    await propulsion.moveToRetry(escape_point, global_long_speed)
+    await asyncio.sleep(0.1)
 
 
 @robot.sequence
@@ -503,6 +481,68 @@ async def action_2():
 
 
 @robot.sequence
+async def action_42():
+    global poses
+    global start_long_speed
+    global start_turn_speed
+    global global_long_speed
+    global global_turn_speed
+
+    print()
+    print("=======")
+    print("ACTION42")
+    print("=======")
+    print()
+
+    await propulsion.pointTo(pt=poses.Action42_grab_wp0, yaw_rate=global_turn_speed, back=False)
+    await asyncio.sleep(global_short_sleep)
+    await propulsion.moveTo(poses.Action42_grab_wp0, global_long_speed)
+    await asyncio.sleep(global_short_sleep)
+    await propulsion.faceDirection(poses.Action42_grab_wp1[2], global_turn_speed)
+    await asyncio.sleep(global_short_sleep)
+    await propulsion.moveTo(poses.Action42_grab_wp1, global_long_speed)
+    await asyncio.sleep(global_short_sleep)
+
+    await actuators.position_defensive_laterale()
+    await asyncio.sleep(global_short_sleep)
+
+    await asyncio.sleep(0.1)
+    for i in range(0,5):
+        print()
+        print("================")
+        print ("ARUCO TRY {}".format(i))
+        print("----------------")
+        try:
+            aruco_y_configuration = cam.aruco_y_detection()
+        except:
+            print ("aruco_y_detection() failed")
+            aruco_y_configuration = "0000"
+        if (aruco_y_configuration!="0000"):
+            print("VVVVVVVVVVVVVVVV")
+            print()
+            break
+        print("----------------")
+        print()
+        await asyncio.sleep(0.5)
+
+    if (aruco_y_configuration not in grab_y_funcs.keys()):
+        print("Cannot do Action2!")
+        await asyncio.sleep(1.0)
+        return
+    else:
+        await grab_y_funcs[aruco_y_configuration]()
+
+    await propulsion.pointTo(pt=poses.Action42_drop_wp1, yaw_rate=global_turn_speed, back=True)
+    await asyncio.sleep(global_short_sleep)
+    await propulsion.moveTo(poses.Action42_drop_wp1, global_long_speed)
+    await asyncio.sleep(global_short_sleep)
+    await propulsion.faceDirection(poses.Action42_drop_wp1[2], global_turn_speed)
+    await asyncio.sleep(global_short_sleep)
+
+    await do_drop_y_1001()
+
+
+@robot.sequence
 async def action_3():
     global poses
     global start_long_speed
@@ -706,7 +746,7 @@ async def do_grab_y_0011():
     await actuators.goldo_lift_left_move(800)
     await asyncio.sleep(0.2)
 
-    await propulsion.translation(0.030, 0.2)
+    await propulsion.translation(0.040, 0.2)
     await asyncio.sleep(0.1)
 
     #await actuators.arm_right_prep_take()
@@ -779,7 +819,7 @@ async def do_grab_y_1100():
     await actuators.goldo_lift_right_move(800)
     await asyncio.sleep(0.2)
 
-    await propulsion.translation(0.030, 0.2)
+    await propulsion.translation(0.040, 0.2)
     await asyncio.sleep(0.1)
 
     #await actuators.arm_left_prep_take()

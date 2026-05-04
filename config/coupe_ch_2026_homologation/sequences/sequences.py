@@ -111,7 +111,7 @@ async def start_match():
     print ("T match_timer = {}".format(T1-T0))
     print ("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
 
-    #robot._adversary_detection_enable = True
+    robot._adversary_detection_enable = True
     await lidar.start()
 
     try:
@@ -212,7 +212,7 @@ async def start_match():
         await asyncio.sleep(0.2)
         await propulsion.clearError()
         await asyncio.sleep(0.2)
-
+    
     T1 = time.time()
     print ("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
     print ("T match_timer = {}".format(T1-T0))

@@ -39,18 +39,21 @@ class BluePoses:
 
     Corner_wp        = (  1.850,  1.200, -60)
 
-    Border_wp1       = (  1.850,  0.630, -90)
+    #Border_wp1       = (  1.850,  0.630, -90)
+    Border_wp1       = (  1.850,  0.640, -90)
     Border_wp1_N     = (  1.850,  1.500, -90)
 
     Action1_grab_wp1 = (  1.600,  1.084,  90)
     Action1_drop_wp1 = (  1.634,  0.800,   0)
 
     Action2_grab_wp0 = (  1.550,  0.400,   0)
-    Action2_grab_wp1 = (  1.584,  0.400,   0)
+    #Action2_grab_wp1 = (  1.584,  0.400,   0)
+    Action2_grab_wp1 = (  1.594,  0.400,   0)
     Action2_drop_wp1 = (  1.441,  0.000,-180)
 
     Action3_grab_wp0 = (  1.480,  0.350,-180)
-    Action3_grab_wp1 = (  1.441,  0.350,-180)
+    #Action3_grab_wp1 = (  1.441,  0.350,-180)
+    Action3_grab_wp1 = (  1.451,  0.350,-180)
     Action3_drop_wp1 = (  1.441,  0.700,-180)
 
     Final_escape_wp0 = (  1.440,  1.000,-180)
