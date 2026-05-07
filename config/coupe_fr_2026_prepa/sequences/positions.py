@@ -55,6 +55,7 @@ class BluePoses:
 
     Action42_grab_wp0 = (  1.480, -0.350,-180)
     Action42_grab_wp1 = (  1.451, -0.350,-180)
+    Action42_drop_wp0 = (  1.100, -0.350,-180)
     Action42_drop_wp1 = (  0.850,  0.000,-180)
 
     #Action3_grab_wp0 = (  1.480,  0.350,-180)
@@ -108,6 +109,7 @@ class YellowPoses:
 
     Action42_grab_wp0 = symetrie(BluePoses.Action42_grab_wp0)
     Action42_grab_wp1 = symetrie(BluePoses.Action42_grab_wp1)
+    Action42_drop_wp0 = symetrie(BluePoses.Action42_drop_wp0)
     Action42_drop_wp1 = symetrie(BluePoses.Action42_drop_wp1)
 
     Action3_grab_wp0 = symetrie(BluePoses.Action3_grab_wp0)

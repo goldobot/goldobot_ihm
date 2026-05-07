@@ -539,13 +539,17 @@ async def action_42():
         await asyncio.sleep(0.5)
 
     if (aruco_y_configuration not in grab_y_funcs.keys()):
-        print("Cannot do Action2!")
+        print("Cannot do Action42!")
         await asyncio.sleep(1.0)
         return
     else:
         await grab_y_funcs[aruco_y_configuration]()
 
-    await propulsion.pointTo(pt=poses.Action42_drop_wp1, yaw_rate=global_turn_speed, back=True)
+    await propulsion.pointTo(pt=poses.Action42_drop_wp0, yaw_rate=global_turn_speed, back=True)
+    await asyncio.sleep(global_short_sleep)
+    await propulsion.moveTo(poses.Action42_drop_wp0, global_long_speed)
+    await asyncio.sleep(global_short_sleep)
+    await propulsion.pointTo(pt=poses.Action42_drop_wp1, yaw_rate=global_turn_speed, back=False)
     await asyncio.sleep(global_short_sleep)
     await propulsion.moveTo(poses.Action42_drop_wp1, global_long_speed)
     await asyncio.sleep(global_short_sleep)
@@ -690,7 +694,7 @@ async def do_grab_and_push_x_0110():
     await actuators.left_pump_on()
     await asyncio.sleep(global_short_sleep)
     await actuators.right_pump_off()
-    await asyncio.sleep(global_short_sleep)
+    await asyncio.sleep(0.5)
     await actuators.position_defensive_laterale_d()
     await asyncio.sleep(global_short_sleep)
     await actuators.arm_left_take()
