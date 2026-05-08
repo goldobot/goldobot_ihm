@@ -1,5 +1,8 @@
 import asyncio
+import copy
 
+
+global_drop_height = 180
 
 class GoldoLift:
     Unknown = 0
@@ -113,7 +116,7 @@ async def arms_initialize():
     await servos.liftDoHoming(1)
     await asyncio.sleep(4)
     
-    await servos.liftsRaw(65, 60, 65, 60)
+    await servos.liftsRaw(120, 60, 120, 60)
     await asyncio.sleep(1)
     await servos.moveMultiple(arms_initialize_epaules_rentrees, speed=0.7)
     await asyncio.sleep(0.1)
@@ -267,7 +270,7 @@ async def position_defensive_laterale_g():
 
 
 ### PREP TAKE ###
-
+0
 bras_d_prep_take = {
     'epaule_d': 1400,
     'coude_d': 204,
@@ -321,6 +324,13 @@ async def arm_right_take():
     await asyncio.sleep(0.1)
     await goldo_lift_move(GoldoLift.Right,60)
     await asyncio.sleep(0.3)
+@robot.sequence
+async def arm_right_drop():
+    global global_drop_height
+    await servos.moveMultiple(bras_d_take, speed=1)
+    await asyncio.sleep(0.1)
+    await goldo_lift_move(GoldoLift.Right,global_drop_height)
+    await asyncio.sleep(0.3)
 
 
 bras_g_take = {
@@ -334,141 +344,234 @@ async def arm_left_take():
     await asyncio.sleep(0.1)
     await goldo_lift_move(GoldoLift.Left,60)
     await asyncio.sleep(0.3)
+@robot.sequence
+async def arm_left_drop():
+    global global_drop_height
+    await servos.moveMultiple(bras_g_take, speed=1)
+    await asyncio.sleep(0.1)
+    await goldo_lift_move(GoldoLift.Left,global_drop_height)
+    await asyncio.sleep(0.3)
 
 
 ### GRAB Y ("EAST->WEST" ALIGNEMENT) ###
 
+# EXPERIMENTAL
+# max -30mm : 1838
+# +134
+# nominal   : 1704
+# -134
+# max +30mm : 1570
 bras_d_take_y_0 = {
-    'epaule_d': 1720,
+    'epaule_d': 1704,
     'coude_d': 530,
 }
 @robot.sequence
-async def arm_right_take_y_0():
-    await servos.moveMultiple(bras_d_take_y_0, speed=1)
+async def arm_right_take_y_0(y_shift_mm=0.0):
+    if (abs(y_shift_mm)>30.0): return
+    bras_dico = copy.deepcopy(bras_d_take_y_0)
+    if (y_shift_mm<0.0):
+        bras_dico['epaule_d'] += int((134)*abs(y_shift_mm)/30.0)
+    elif (y_shift_mm>0.0):
+        bras_dico['epaule_d'] += int((-134)*abs(y_shift_mm)/30.0)
+    await servos.moveMultiple(bras_dico, speed=1)
     await asyncio.sleep(0.1)
     await goldo_lift_move(GoldoLift.Right,60)
     await asyncio.sleep(0.3)
 
+# EXPERIMENTAL
+# max -30mm : 1628
+# +140
+# nominal   : 1488
+# -151
+# max +30mm : 1337
 bras_d_take_y_1 = {
-    'epaule_d': 1500,
+    'epaule_d': 1488,
     'coude_d': 530,
 }
 @robot.sequence
-async def arm_right_take_y_1():
-    await servos.moveMultiple(bras_d_take_y_1, speed=1)
+async def arm_right_take_y_1(y_shift_mm=0.0):
+    if (abs(y_shift_mm)>30.0): return
+    bras_dico = copy.deepcopy(bras_d_take_y_1)
+    if (y_shift_mm<0.0):
+        bras_dico['epaule_d'] += int((140)*abs(y_shift_mm)/30.0)
+    elif (y_shift_mm>0.0):
+        bras_dico['epaule_d'] += int((-151)*abs(y_shift_mm)/30.0)
+    await servos.moveMultiple(bras_dico, speed=1)
     await asyncio.sleep(0.1)
     await goldo_lift_move(GoldoLift.Right,60)
     await asyncio.sleep(0.3)
 
+# EXPERIMENTAL
+# max -30mm : 1398
+# +162
+# nominal   : 1240
+# -126
+# max +30mm : 1114
 bras_d_take_y_2 = {
-    'epaule_d': 1230,
+    'epaule_d': 1240,
     'coude_d': 530,
 }
 @robot.sequence
-async def arm_right_take_y_2():
-    await servos.moveMultiple(bras_d_take_y_2, speed=1)
+async def arm_right_take_y_2(y_shift_mm=0.0):
+    if (abs(y_shift_mm)>30.0): return
+    bras_dico = copy.deepcopy(bras_d_take_y_2)
+    if (y_shift_mm<0.0):
+        bras_dico['epaule_d'] += int((162)*abs(y_shift_mm)/30.0)
+    elif (y_shift_mm>0.0):
+        bras_dico['epaule_d'] += int((-126)*abs(y_shift_mm)/30.0)
+    await servos.moveMultiple(bras_dico, speed=1)
     await asyncio.sleep(0.1)
     await goldo_lift_move(GoldoLift.Right,60)
     await asyncio.sleep(0.3)
 
 
+# EXPERIMENTAL
+# max -30mm : 2514
+# +139
+# nominal   : 2375
+# -121
+# max +30mm : 2254
 bras_g_take_y_0 = {
-    'epaule_g': 2400,
+    'epaule_g': 2375,
     'coude_g': 497,
 }
 @robot.sequence
-async def arm_left_take_y_0():
-    await servos.moveMultiple(bras_g_take_y_0, speed=1)
+async def arm_left_take_y_0(y_shift_mm=0.0):
+    if (abs(y_shift_mm)>30.0): return
+    bras_dico = copy.deepcopy(bras_g_take_y_0)
+    if (y_shift_mm<0.0):
+        bras_dico['epaule_g'] += int((139)*abs(y_shift_mm)/30.0)
+    elif (y_shift_mm>0.0):
+        bras_dico['epaule_g'] += int((-121)*abs(y_shift_mm)/30.0)
+    await servos.moveMultiple(bras_dico, speed=1)
     await asyncio.sleep(0.1)
     await goldo_lift_move(GoldoLift.Left,60)
     await asyncio.sleep(0.3)
 
+# EXPERIMENTAL
+# max -30mm : 2733
+# +141
+# nominal   : 2592
+# -133
+# max +30mm : 2459
 bras_g_take_y_1 = {
-    'epaule_g': 2610,
+    'epaule_g': 2592,
     'coude_g': 497,
 }
 @robot.sequence
-async def arm_left_take_y_1():
-    await servos.moveMultiple(bras_g_take_y_1, speed=1)
+async def arm_left_take_y_1(y_shift_mm=0.0):
+    if (abs(y_shift_mm)>30.0): return
+    bras_dico = copy.deepcopy(bras_g_take_y_1)
+    if (y_shift_mm<0.0):
+        bras_dico['epaule_g'] += int((141)*abs(y_shift_mm)/30.0)
+    elif (y_shift_mm>0.0):
+        bras_dico['epaule_g'] += int((-133)*abs(y_shift_mm)/30.0)
+    await servos.moveMultiple(bras_dico, speed=1)
     await asyncio.sleep(0.1)
     await goldo_lift_move(GoldoLift.Left,60)
     await asyncio.sleep(0.3)
 
+# EXPERIMENTAL
+# max -30mm : 2976
+# +124
+# nominal   : 2852
+# -161
+# max +30mm : 2691
 bras_g_take_y_2 = {
-    'epaule_g': 2890,
+    'epaule_g': 2852,
     'coude_g': 497,
 }
 @robot.sequence
-async def arm_left_take_y_2():
-    await servos.moveMultiple(bras_g_take_y_2, speed=1)
+async def arm_left_take_y_2(y_shift_mm=0.0):
+    if (abs(y_shift_mm)>30.0): return
+    bras_dico = copy.deepcopy(bras_g_take_y_2)
+    if (y_shift_mm<0.0):
+        bras_dico['epaule_g'] += int((124)*abs(y_shift_mm)/30.0)
+    elif (y_shift_mm>0.0):
+        bras_dico['epaule_g'] += int((-161)*abs(y_shift_mm)/30.0)
+    await servos.moveMultiple(bras_dico, speed=1)
     await asyncio.sleep(0.1)
     await goldo_lift_move(GoldoLift.Left,60)
     await asyncio.sleep(0.3)
 
 
-bras_d_g_take_y_0_0 = {
-    'epaule_d': 1720,
-    'coude_d': 530,
-    'epaule_g': 2400,
-    'coude_g': 497,
-}
+bras_d_g_take_y_0_0 = bras_d_take_y_0 | bras_g_take_y_0
 @robot.sequence
-async def arm_right_left_take_y_0_0():
-    await servos.moveMultiple(bras_d_g_take_y_0_0, speed=1)
+async def arm_right_left_take_y_0_0(y_shift_mm=0.0):
+    if (abs(y_shift_mm)>30.0): return
+    bras_dico = copy.deepcopy(bras_d_g_take_y_0_0)
+    if (y_shift_mm<0.0):
+        bras_dico['epaule_d'] += int((134)*abs(y_shift_mm)/30.0)
+        bras_dico['epaule_g'] += int((139)*abs(y_shift_mm)/30.0)
+    elif (y_shift_mm>0.0):
+        bras_dico['epaule_d'] += int((-134)*abs(y_shift_mm)/30.0)
+        bras_dico['epaule_g'] += int((-121)*abs(y_shift_mm)/30.0)
+    await servos.moveMultiple(bras_dico, speed=1)
     await asyncio.sleep(0.1)
     await goldo_lifts_move(pos = 60, speed = 60)
     await asyncio.sleep(0.3)
 @robot.sequence
 async def arm_right_left_drop_y_0_0():
+    global global_drop_height
     await servos.moveMultiple(bras_d_g_take_y_0_0, speed=1)
     await asyncio.sleep(0.1)
-    await goldo_lifts_move(pos = 120, speed = 60)
+    await goldo_lifts_move(pos = global_drop_height, speed = 60)
     await asyncio.sleep(0.3)
 
 
-bras_d_g_take_y_0_1 = {
-    'epaule_d': 1720,
-    'coude_d': 530,
-    'epaule_g': 2610,
-    'coude_g': 497,
-}
+bras_d_g_take_y_0_1 = bras_d_take_y_0 | bras_g_take_y_1
 @robot.sequence
-async def arm_right_left_take_y_0_1():
-    await servos.moveMultiple(bras_d_g_take_y_0_1, speed=1)
+async def arm_right_left_take_y_0_1(y_shift_mm=0.0):
+    if (abs(y_shift_mm)>30.0): return
+    bras_dico = copy.deepcopy(bras_d_g_take_y_0_1)
+    if (y_shift_mm<0.0):
+        bras_dico['epaule_d'] += int((134)*abs(y_shift_mm)/30.0)
+        bras_dico['epaule_g'] += int((141)*abs(y_shift_mm)/30.0)
+    elif (y_shift_mm>0.0):
+        bras_dico['epaule_d'] += int((-134)*abs(y_shift_mm)/30.0)
+        bras_dico['epaule_g'] += int((-133)*abs(y_shift_mm)/30.0)
+    await servos.moveMultiple(bras_dico, speed=1)
     await asyncio.sleep(0.1)
     await goldo_lifts_move(pos = 60, speed = 60)
     await asyncio.sleep(0.3)
 
-bras_d_g_take_y_1_0 = {
-    'epaule_d': 1500,
-    'coude_d': 530,
-    'epaule_g': 2400,
-    'coude_g': 497,
-}
+bras_d_g_take_y_1_0 = bras_d_take_y_1 | bras_g_take_y_0
 @robot.sequence
-async def arm_right_left_take_y_1_0():
-    await servos.moveMultiple(bras_d_g_take_y_1_0, speed=1)
+async def arm_right_left_take_y_1_0(y_shift_mm=0.0):
+    if (abs(y_shift_mm)>30.0): return
+    bras_dico = copy.deepcopy(bras_d_g_take_y_1_0)
+    if (y_shift_mm<0.0):
+        bras_dico['epaule_d'] += int((140)*abs(y_shift_mm)/30.0)
+        bras_dico['epaule_g'] += int((139)*abs(y_shift_mm)/30.0)
+    elif (y_shift_mm>0.0):
+        bras_dico['epaule_d'] += int((-151)*abs(y_shift_mm)/30.0)
+        bras_dico['epaule_g'] += int((-121)*abs(y_shift_mm)/30.0)
+    await servos.moveMultiple(bras_dico, speed=1)
     await asyncio.sleep(0.1)
     await goldo_lifts_move(pos = 60, speed = 60)
     await asyncio.sleep(0.3)
 
-bras_d_g_take_y_1_1 = {
-    'epaule_d': 1500,
-    'coude_d': 530,
-    'epaule_g': 2610,
-    'coude_g': 497,
-}
+bras_d_g_take_y_1_1 = bras_d_take_y_1 | bras_g_take_y_1
 @robot.sequence
-async def arm_right_left_take_y_1_1():
-    await servos.moveMultiple(bras_d_g_take_y_1_1, speed=1)
+async def arm_right_left_take_y_1_1(y_shift_mm=0.0):
+    if (abs(y_shift_mm)>30.0): return
+    bras_dico = copy.deepcopy(bras_d_g_take_y_1_1)
+    if (y_shift_mm<0.0):
+        bras_dico['epaule_d'] += int((140)*abs(y_shift_mm)/30.0)
+        bras_dico['epaule_g'] += int((141)*abs(y_shift_mm)/30.0)
+    elif (y_shift_mm>0.0):
+        bras_dico['epaule_d'] += int((-151)*abs(y_shift_mm)/30.0)
+        bras_dico['epaule_g'] += int((-133)*abs(y_shift_mm)/30.0)
+    await servos.moveMultiple(bras_dico, speed=1)
     await asyncio.sleep(0.1)
     await goldo_lifts_move(pos = 60, speed = 60)
     await asyncio.sleep(0.3)
 @robot.sequence
 async def arm_right_left_drop_y_1_1():
+    global global_drop_height
     await servos.moveMultiple(bras_d_g_take_y_1_1, speed=1)
     await asyncio.sleep(0.1)
-    await goldo_lifts_move(pos = 120, speed = 60)
+    await goldo_lifts_move(pos = global_drop_height, speed = 60)
     await asyncio.sleep(0.3)
 
 bras_d_g_drop_y_42 = {
@@ -479,9 +582,10 @@ bras_d_g_drop_y_42 = {
 }
 @robot.sequence
 async def arm_right_left_drop_y_42():
+    global global_drop_height
     await servos.moveMultiple(bras_d_g_drop_y_42, speed=1)
     await asyncio.sleep(0.1)
-    await goldo_lifts_move(pos = 120, speed = 60)
+    await goldo_lifts_move(pos = global_drop_height, speed = 60)
     await asyncio.sleep(0.3)
 
 
