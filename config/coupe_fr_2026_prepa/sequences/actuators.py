@@ -2,7 +2,7 @@ import asyncio
 import copy
 
 
-global_drop_height = 180
+global_drop_height = 240
 
 class GoldoLift:
     Unknown = 0
@@ -114,7 +114,7 @@ async def arms_initialize():
     # initialisation ascenseurs    
     await servos.liftDoHoming(0)
     await servos.liftDoHoming(1)
-    await asyncio.sleep(4)
+    await asyncio.sleep(2.0)
     
     await servos.liftsRaw(120, 60, 120, 60)
     await asyncio.sleep(1)

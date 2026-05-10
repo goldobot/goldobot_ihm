@@ -13,6 +13,49 @@ class Side:
     Green = 1
     Blue = 2
 
+
+# FIXME : TODO
+DjWayPoint_preprise = {
+    -10 : ( 1.600, -1.085),
+     10 : ( 1.600,  1.085),
+    }
+
+# FIXME : TODO
+DjWayPoint_predepose = {
+   -100 : ( 1.635, -0.800),
+    100 : ( 1.635,  0.800),
+    }
+
+# FIXME : TODO
+DjWayPoint_start = {
+   -200 : ( 0.320, -1.320),
+    200 : ( 0.320,  1.320),
+    }
+
+# FIXME : TODO
+DjWayPoint_extra = {
+      1 : ( 0.750,  0.000),
+      2 : ( 1.050,  0.000),
+      3 : ( 1.350,  0.000),
+    }
+
+DjWayPoint = {}
+DjWayPoint.update (DjWayPoint_preprise)
+DjWayPoint.update (DjWayPoint_predepose)
+DjWayPoint.update (DjWayPoint_start)
+DjWayPoint.update (DjWayPoint_extra)
+
+# FIXME : TODO
+DjWayPointNet = [
+    (   1,   2),
+    (   2,   3),
+
+    (   3,-100),
+
+    (   3, 100),
+
+    ]
+
 # robot offset : 82 mm
 
 # BLUE : ZONE 1

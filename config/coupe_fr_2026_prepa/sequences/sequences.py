@@ -68,11 +68,11 @@ async def prematch():
     await asyncio.sleep(0.5)
 
     await actuators.arms_close()
-    await asyncio.sleep(2.0)
+    await asyncio.sleep(1.0)
 
     # Placement
     await recalages.recalage()
-    await asyncio.sleep(1.0)
+    await asyncio.sleep(0.5)
 
     await actuators.position_defensive_laterale()
     await asyncio.sleep(0.5)
@@ -753,12 +753,16 @@ grab_and_push_x_funcs = {
 
 @robot.sequence
 async def do_grab_y_0011(x_shift, y_shift):
+    if (abs(x_shift)>0.003) and (abs(x_shift)<0.030):
+        await propulsion.translation(x_shift, global_long_speed)
+        await asyncio.sleep(0.1)
+
     #await actuators.arm_left_prep_take()
     #await asyncio.sleep(0.1)
     await actuators.left_pump_on()
     await asyncio.sleep(0.1)
-    await actuators.arm_left_take_y_0()
-    await asyncio.sleep(0.1)
+    await actuators.arm_left_take_y_0(y_shift_mm=y_shift*1000.0)
+    await asyncio.sleep(0.3)
     #await actuators.position_defensive_laterale_g()
     await actuators.goldo_lift_left_move(800)
     await asyncio.sleep(0.2)
@@ -770,68 +774,88 @@ async def do_grab_y_0011(x_shift, y_shift):
     #await asyncio.sleep(0.1)
     await actuators.right_pump_on()
     await asyncio.sleep(0.1)
-    await actuators.arm_right_take_y_2()
-    await asyncio.sleep(0.1)
+    await actuators.arm_right_take_y_2(y_shift_mm=y_shift*1000.0)
+    await asyncio.sleep(0.3)
     #await actuators.position_defensive_laterale_d()
     await actuators.goldo_lift_right_move(800)
     await asyncio.sleep(0.5)
 
 @robot.sequence
 async def do_grab_y_0101(x_shift, y_shift):
+    if (abs(x_shift)>0.003) and (abs(x_shift)<0.030):
+        await propulsion.translation(x_shift, global_long_speed)
+        await asyncio.sleep(0.1)
+
     #await actuators.arm_right_left_prep_take()
     #await asyncio.sleep(0.1)
     await actuators.pumps_on()
     await asyncio.sleep(0.1)
-    await actuators.arm_right_left_take_y_1_0()
-    await asyncio.sleep(0.1)
+    await actuators.arm_right_left_take_y_1_0(y_shift_mm=y_shift*1000.0)
+    await asyncio.sleep(0.3)
     #await actuators.position_defensive_laterale()
     await actuators.goldo_lifts_move(800)
     await asyncio.sleep(0.5)
 
 @robot.sequence
 async def do_grab_y_0110(x_shift, y_shift):
+    if (abs(x_shift)>0.003) and (abs(x_shift)<0.030):
+        await propulsion.translation(x_shift, global_long_speed)
+        await asyncio.sleep(0.1)
+
     #await actuators.arm_right_left_prep_take()
     #await asyncio.sleep(0.1)
     await actuators.pumps_on()
     await asyncio.sleep(0.1)
-    await actuators.arm_right_left_take_y_1_1()
-    await asyncio.sleep(0.1)
+    await actuators.arm_right_left_take_y_1_1(y_shift_mm=y_shift*1000.0)
+    await asyncio.sleep(0.3)
     #await actuators.position_defensive_laterale()
     await actuators.goldo_lifts_move(800)
     await asyncio.sleep(0.5)
 
 @robot.sequence
 async def do_grab_y_1001(x_shift, y_shift):
+    if (abs(x_shift)>0.003) and (abs(x_shift)<0.030):
+        await propulsion.translation(x_shift, global_long_speed)
+        await asyncio.sleep(0.1)
+
     #await actuators.arm_right_left_prep_take()
     #await asyncio.sleep(0.1)
     await actuators.pumps_on()
     await asyncio.sleep(0.1)
-    await actuators.arm_right_left_take_y_0_0()
-    await asyncio.sleep(0.1)
+    await actuators.arm_right_left_take_y_0_0(y_shift_mm=y_shift*1000.0)
+    await asyncio.sleep(0.3)
     #await actuators.position_defensive_laterale()
     await actuators.goldo_lifts_move(800)
     await asyncio.sleep(0.5)
 
 @robot.sequence
 async def do_grab_y_1010(x_shift, y_shift):
+    if (abs(x_shift)>0.003) and (abs(x_shift)<0.030):
+        await propulsion.translation(x_shift, global_long_speed)
+        await asyncio.sleep(0.1)
+
     #await actuators.arm_right_left_prep_take()
     #await asyncio.sleep(0.1)
     await actuators.pumps_on()
     await asyncio.sleep(0.1)
-    await actuators.arm_right_left_take_y_0_1()
-    await asyncio.sleep(0.1)
+    await actuators.arm_right_left_take_y_0_1(y_shift_mm=y_shift*1000.0)
+    await asyncio.sleep(0.3)
     #await actuators.position_defensive_laterale()
     await actuators.goldo_lifts_move(800)
     await asyncio.sleep(0.5)
 
 @robot.sequence
 async def do_grab_y_1100(x_shift, y_shift):
+    if (abs(x_shift)>0.003) and (abs(x_shift)<0.030):
+        await propulsion.translation(x_shift, global_long_speed)
+        await asyncio.sleep(0.1)
+
     #await actuators.arm_right_prep_take()
     #await asyncio.sleep(0.1)
     await actuators.right_pump_on()
     await asyncio.sleep(0.1)
-    await actuators.arm_right_take_y_0()
-    await asyncio.sleep(0.1)
+    await actuators.arm_right_take_y_0(y_shift_mm=y_shift*1000.0)
+    await asyncio.sleep(0.3)
     #await actuators.position_defensive_laterale_d()
     await actuators.goldo_lift_right_move(800)
     await asyncio.sleep(0.2)
@@ -843,8 +867,8 @@ async def do_grab_y_1100(x_shift, y_shift):
     #await asyncio.sleep(0.1)
     await actuators.left_pump_on()
     await asyncio.sleep(0.1)
-    await actuators.arm_left_take_y_2()
-    await asyncio.sleep(0.1)
+    await actuators.arm_left_take_y_2(y_shift_mm=y_shift*1000.0)
+    await asyncio.sleep(0.3)
     #await actuators.position_defensive_laterale_g()
     await actuators.goldo_lift_left_move(800)
     await asyncio.sleep(0.5)

@@ -210,7 +210,6 @@ def aruco_y_detection():
             miss_color_code = '1'
         print ("miss_color_code={}".format(miss_color_code))
         x_sum = 0.0
-        y_sum = 0.0
         for i in range(0,3):
             ts, my_id, x_real, y_real = detections[i]
             x_sum += x_real
@@ -239,8 +238,8 @@ def aruco_y_detection():
         y_shift = y_sum/4
 
     print("aruco_y_configuration = {}".format(aruco_y_configuration))
-    print("x_shift = {}".format(x_shift))
-    print("y_shift = {}".format(y_shift))
+    print("x_shift = {:6.3f}".format(x_shift))
+    print("y_shift = {:6.3f}".format(y_shift))
 
     return aruco_y_configuration, x_shift, y_shift
 
