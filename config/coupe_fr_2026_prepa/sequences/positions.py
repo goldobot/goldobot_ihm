@@ -15,6 +15,10 @@ class Side:
 
 
 # FIXME : TODO
+Resource = {
+    }
+
+# FIXME : TODO
 DjWayPoint_preprise = {
     -10 : ( 1.600, -1.085),
      10 : ( 1.600,  1.085),
