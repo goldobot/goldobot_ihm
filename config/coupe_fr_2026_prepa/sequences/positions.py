@@ -1,5 +1,5 @@
 import numpy as np
-from . import robot_config as rc
+#from . import robot_config as rc
 
 def symetrie(pose):
     if isinstance(pose, np.ndarray):
