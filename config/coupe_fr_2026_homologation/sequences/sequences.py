@@ -22,11 +22,12 @@ from . import robot_config as rc
 
 poses = None
 
-start_long_speed = 0.30
+#start_long_speed = 0.30
+start_long_speed = 0.25
 start_turn_speed = 2.0
 
-global_long_speed = 0.45
-#global_long_speed = 0.25
+#global_long_speed = 0.45
+global_long_speed = 0.25
 global_turn_speed = 2.5
 
 global_short_sleep = 0.3
