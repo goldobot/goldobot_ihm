@@ -195,6 +195,21 @@ async def start_match():
     print ("T match_timer = {}".format(T1-T0))
     print ("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
 
+    if (T1-T0)>20.0:
+        try:
+            await action_loot_3()
+            await asyncio.sleep(0.1)
+        except:
+            print ("EXCEPTION!")
+            await escape_procedure(poses.Final_escape_wp0)
+            await asyncio.sleep(0.1)
+    
+        T1 = time.time()
+        print ("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
+        print ("T match_timer = {}".format(T1-T0))
+        print ("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
+
+
     print()
     print("=======")
     print("GO HOME")
@@ -667,7 +682,6 @@ async def action_3():
 
     if (aruco_y_configuration not in grab_y_funcs.keys()):
         print("Cannot do Action3!")
-        await asyncio.sleep(1.0)
         return
     else:
         await grab_y_funcs[aruco_y_configuration](x_shift, y_shift)
@@ -680,6 +694,58 @@ async def action_3():
     await asyncio.sleep(global_short_sleep)
 
     await do_drop_y_1001()
+
+
+@robot.sequence
+async def action_loot_3():
+    global poses
+    global start_long_speed
+    global start_turn_speed
+    global global_long_speed
+    global global_turn_speed
+
+    print()
+    print("=======")
+    print("LOOT3")
+    print("=======")
+    print()
+
+    await propulsion.pointTo(pt=poses.Action3_loot_wp0, yaw_rate=global_turn_speed, back=False)
+    await asyncio.sleep(global_short_sleep)
+    await propulsion.moveToRetry(poses.Action3_loot_wp0, global_long_speed)
+    await asyncio.sleep(global_short_sleep)
+    await propulsion.faceDirection(poses.Action3_loot_wp1[2], global_turn_speed)
+    await asyncio.sleep(global_short_sleep)
+    await propulsion.moveToRetry(poses.Action3_loot_wp1, global_long_speed)
+    await asyncio.sleep(global_short_sleep)
+
+    await actuators.position_defensive_laterale()
+    await asyncio.sleep(global_short_sleep)
+
+    loot_ok = False
+
+    await asyncio.sleep(0.1)
+    for i in range(0,5):
+        print()
+        print("================")
+        print ("ARUCO TRY {}".format(i))
+        print("----------------")
+        try:
+            aruco_y_configuration, x_shift, y_shift = cam.aruco_y_loot_detection()
+        except:
+            print ("aruco_y_loot_detection() failed")
+            loot_ok = False
+        if (aruco_y_configuration=="0000"):
+            print("VVVVVVVVVVVVVVVV")
+            print()
+            loot_ok = True
+            break
+        print("----------------")
+        print()
+        await asyncio.sleep(0.3)
+
+    if loot_ok:
+        await do_loot_y_1000(x_shift, y_shift)
 
 
 ########################################################################################
@@ -751,27 +817,11 @@ async def do_grab_and_push_x_0110():
 
     await propulsion.moveToRetry(poses.First_push_out, global_long_speed)
     await asyncio.sleep(global_short_sleep)
-    await asyncio.sleep(global_short_sleep)
-
-    #await do_first_drop()
 
     await propulsion.translation(-0.150, global_long_speed)
     await asyncio.sleep(global_short_sleep)
 
-    await actuators.arms_close_extreme()
-    await asyncio.sleep(global_short_sleep)
-    await actuators.left_pump_on()
-    await asyncio.sleep(global_short_sleep)
-    await actuators.right_pump_off()
-    await asyncio.sleep(0.5)
-    await actuators.position_defensive_laterale_d()
-    await asyncio.sleep(global_short_sleep)
-    await actuators.arm_left_drop()
-    await asyncio.sleep(global_short_sleep)
-    await actuators.left_pump_off()
-    await asyncio.sleep(global_short_sleep)
-    await actuators.position_defensive_laterale_g()
-    await asyncio.sleep(global_short_sleep)
+    await actuators.sleight_of_hand()
 
     await propulsion.translation(-0.150, global_long_speed)
     await asyncio.sleep(0.1)
@@ -796,11 +846,17 @@ async def do_grab_and_push_x_1010():
     await asyncio.sleep(global_short_sleep)
     await actuators.test_grab_right()
     await asyncio.sleep(global_short_sleep)
-    await propulsion.moveToRetry(poses.First_push_out, global_long_speed)
 
+    await propulsion.moveToRetry(poses.First_push_out, global_long_speed)
     await asyncio.sleep(global_short_sleep)
 
-    await do_first_drop()
+    await propulsion.translation(-0.150, global_long_speed)
+    await asyncio.sleep(global_short_sleep)
+
+    await actuators.sleight_of_hand()
+
+    await propulsion.translation(-0.150, global_long_speed)
+    await asyncio.sleep(0.1)
 
 async def do_grab_and_push_x_1100():
     await propulsion.moveToRetry(poses.First_push_out, global_long_speed)
@@ -990,6 +1046,37 @@ async def do_drop_y_42():
     await asyncio.sleep(0.1)
     await actuators.position_defensive_laterale()
     await asyncio.sleep(0.1)
+
+
+########################################################################################
+### LOOT Y
+########################################################################################
+
+@robot.sequence
+async def do_loot_y_1000(x_shift, y_shift):
+    if (abs(x_shift)>0.003) and (abs(x_shift)<0.040):
+        await propulsion.translation(x_shift, global_long_speed)
+        await asyncio.sleep(0.1)
+
+    await actuators.right_pump_on()
+    await asyncio.sleep(0.1)
+    await actuators.arm_right_take_y_0(y_shift_mm=y_shift*1000.0)
+    await asyncio.sleep(0.3)
+    await actuators.position_defensive_laterale_d()
+    await actuators.goldo_lift_right_move(800)
+    await asyncio.sleep(0.2)
+
+    t1 = asyncio.create_task(actuators.sleight_of_hand_prep())
+
+    await propulsion.translation(0.075, 0.2)
+    await asyncio.sleep(0.1)
+    await propulsion.translation(-0.075, 0.2)
+    await asyncio.sleep(0.1)
+
+    await t1
+
+    await actuators.sleight_of_hand_drop()
+
 
 
 

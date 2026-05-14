@@ -243,3 +243,93 @@ def aruco_y_detection():
 
     return aruco_y_configuration, x_shift, y_shift
 
+
+#reference x values: REF_X = 0.328
+# -80 -> ref_y1 = -0.079
+# -30 -> ref_y2 = -0.030
+#  30 -> ref_y3 =  0.030
+#  80 -> ref_y4 =  0.079
+def aruco_y_loot_detection():
+    global aruco_y_configuration
+    REF_X = 0.328
+    x_shift = 0.0
+    y_shift = 0.0
+
+    aruco_y_configuration = "1111"
+
+    ref_y = [-0.080, -0.030, 0.030, 0.080]
+    segm_ref_y = [-0.055, 0.000, 0.055]
+
+    if (robot.start_zone==1):   # BLUE   (Y+,id=36)
+        print("my_color = BLUE (id=36)")
+        my_color = 36
+    elif (robot.start_zone==2): # YELLOW (Y-,id=47)
+        print("my_color = YELLOW (id=47)")
+        my_color = 47
+    else:
+        print("No start zone!")
+        aruco_y_configuration = "1111"
+        return aruco_y_configuration, 0.0, 0.0
+
+    detections_file = "/tmp/detections.txt"
+
+    detections = []
+    try:
+        with open(detections_file) as f:
+            for line in f:
+                print ("DETECTIONS FILE: {}".format(line)) 
+                line = line.strip()
+                parts = line.split()
+                if len(parts) != 4:
+                    continue
+                ts_str, my_id_str, x_str, y_str = parts
+                ts = float(ts_str)
+                my_id = int(my_id_str)
+                x_real = float(x_str)/1000.0
+                y_real = float(y_str)/1000.0
+                if (x_real>(0.330-0.050)) and (x_real<(0.330+0.050)) and (y_real>(ref_y[0]-0.050)) and (y_real<(ref_y[3]+0.050)):
+                    detections.append((ts,my_id,x_real,y_real))
+    except:
+        print ("Cannot read (and parse) {}".format(detections_file))
+        aruco_y_configuration = "1111"
+        return aruco_y_configuration, 0.0, 0.0
+
+    detections.sort(key=lambda d: d[3])
+
+    pres_idx = []
+
+    for i in range(len(detections)):
+        ts, my_id, x_real, y_real = detections[i]
+        print ("ts={:.2f} id={:d} x={:6.3f} y={:6.3f}".format(ts, my_id, x_real, y_real))
+        if (y_real<segm_ref_y[0]):
+            pres_idx.append(0)
+        elif (y_real<segm_ref_y[1]):
+            pres_idx.append(1)
+        elif (y_real<segm_ref_y[2]):
+            pres_idx.append(2)
+        else:
+            pres_idx.append(3)
+    print("Present: {}".format(pres_idx))
+
+    if (len(detections)==4):
+        x_sum = 0.0
+        y_sum = 0.0
+        for i in range(0,4):
+            ts, my_id, x_real, y_real = detections[i]
+            x_sum += x_real
+            y_sum += y_real
+            if (my_id==my_color):
+                aruco_y_configuration = aruco_y_configuration[:i] + '1' + aruco_y_configuration[i+1:]
+        x_shift = x_sum/4 - REF_X
+        y_shift = y_sum/4
+
+        print("aruco_y_loot_configuration = {}".format(aruco_y_configuration))
+        print("x_shift = {:6.3f}".format(x_shift))
+        print("y_shift = {:6.3f}".format(y_shift))
+
+        return aruco_y_configuration, x_shift, y_shift
+    else:
+        print("Cannot detect aruco_y_loot_configuration!")
+        aruco_y_configuration = "1111"
+        return aruco_y_configuration, 0.0, 0.0
+

@@ -652,6 +652,33 @@ async def arm_right_left_drop_y_42():
     await asyncio.sleep(0.3)
 
 
+@robot.sequence
+async def sleight_of_hand_prep():
+    await arms_close_extreme()
+    await asyncio.sleep(0.2)
+    await left_pump_on()
+    await asyncio.sleep(0.2)
+    await right_pump_off()
+    await asyncio.sleep(0.5)
+    await position_defensive_laterale_d()
+    await asyncio.sleep(0.2)
+
+@robot.sequence
+async def sleight_of_hand_drop():
+    await asyncio.sleep(0.2)
+    await arm_left_drop()
+    await asyncio.sleep(0.2)
+    await left_pump_off()
+    await asyncio.sleep(0.2)
+    await position_defensive_laterale_g()
+    await asyncio.sleep(0.2)
+
+@robot.sequence
+async def sleight_of_hand():
+    await sleight_of_hand_prep()
+    await sleight_of_hand_drop()
+
+
 ### THERMO ###
 
 @robot.sequence
