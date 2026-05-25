@@ -127,6 +127,9 @@ async def start_match():
     print ("T match_timer = {}".format(T1-T0))
     print ("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
 
+    # FIXME : DEBUG
+    #await action_loot_3()
+
     robot._adversary_detection_enable = True
 
     try:
@@ -174,7 +177,7 @@ async def start_match():
         await asyncio.sleep(0.1)
     except:
         print ("EXCEPTION!")
-        await escape_procedure(poses.Final_escape_wp0)
+        await escape_procedure(poses.Action42_drop_wp1)
         await asyncio.sleep(0.1)
  
     T1 = time.time()
@@ -195,7 +198,7 @@ async def start_match():
     print ("T match_timer = {}".format(T1-T0))
     print ("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
 
-    if (T1-T0)>20.0:
+    if (T1-T0)<80.0:
         try:
             await action_loot_3()
             await asyncio.sleep(0.1)
@@ -1068,9 +1071,9 @@ async def do_loot_y_1000(x_shift, y_shift):
 
     t1 = asyncio.create_task(actuators.sleight_of_hand_prep())
 
-    await propulsion.translation(0.075, 0.2)
+    await propulsion.translation(0.200, 0.2)
     await asyncio.sleep(0.1)
-    await propulsion.translation(-0.075, 0.2)
+    await propulsion.translation(-0.200, 0.2)
     await asyncio.sleep(0.1)
 
     await t1

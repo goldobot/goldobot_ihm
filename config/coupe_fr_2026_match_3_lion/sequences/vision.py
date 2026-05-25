@@ -314,6 +314,7 @@ def aruco_y_loot_detection():
     if (len(detections)==4):
         x_sum = 0.0
         y_sum = 0.0
+        aruco_y_configuration = "0000"
         for i in range(0,4):
             ts, my_id, x_real, y_real = detections[i]
             x_sum += x_real

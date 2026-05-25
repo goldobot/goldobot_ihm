@@ -225,6 +225,9 @@ class BluePoses:
     Action3_grab_wp1 = (  0.960,  0.350,   0)
     Action3_drop_wp1 = (  0.960,  0.700,   0)
 
+    Action3_loot_wp0 = (  0.940, -0.700,   0)
+    Action3_loot_wp1 = (  0.960, -0.700,   0)
+
     #Final_escape_wp0 = (  1.440,  1.000,-180)
     Final_escape_wp0 = (  0.960,  1.000,-180)
     Final_escape_wp1 = (  0.700,  1.300,-180)
@@ -273,6 +276,9 @@ class YellowPoses:
     Action3_grab_wp0 = symetrie(BluePoses.Action3_grab_wp0)
     Action3_grab_wp1 = symetrie(BluePoses.Action3_grab_wp1)
     Action3_drop_wp1 = symetrie(BluePoses.Action3_drop_wp1)
+
+    Action3_loot_wp0 = symetrie(BluePoses.Action3_loot_wp0)
+    Action3_loot_wp1 = symetrie(BluePoses.Action3_loot_wp1)
 
     Final_escape_wp0 = symetrie(BluePoses.Final_escape_wp0)
     Final_escape_wp1 = symetrie(BluePoses.Final_escape_wp1)
