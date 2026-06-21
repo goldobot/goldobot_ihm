@@ -16,6 +16,7 @@ from . import recalages
 from . import actuators
 from . import vision as cam
 from . import robot_config as rc
+from . import field_monitor as fm
 
 # objects included in the _sequences_globals of RobotMain class, defined in robot_main.py of goldo_main, are available as global variables
 # those objects are used to interact with the robot (send commands, read data)
@@ -25,14 +26,17 @@ poses = None
 start_long_speed = 0.30
 start_turn_speed = 2.0
 
-global_long_speed = 0.47
+global_long_speed = 0.55
 #global_long_speed = 0.25
-global_turn_speed = 2.5
+global_turn_speed = 2.8
 
 global_short_sleep = 0.2
 global_long_sleep  = 2.0
 
 global_danger_threshold = 0.5
+
+global_field_monitor = None
+global_field_monitor_task = None
 
 @robot.sequence
 async def prematch():
@@ -41,6 +45,8 @@ async def prematch():
     global start_turn_speed
     global global_long_speed
     global global_turn_speed
+    global global_field_monitor
+    global global_field_monitor_task
 
     if robot.side == 1: # YELLOW
         poses = pos.YellowPoses
@@ -50,16 +56,13 @@ async def prematch():
         raise RuntimeError('Side not set')
 
     # Propulsion
+    robot._adversary_detection_enable = False
     await odrive.clearErrors()
     await propulsion.clearError()
     await propulsion.setAccelerationLimits(1,1,2,2)
     await propulsion.setMotorsEnable(True)
     await propulsion.setEnable(True)
     
-    # Lidar
-    robot._adversary_detection_enable = False
-    #await lidar.start()
-
     # Actionneurs
     await actuators.arms_initialize()
     await asyncio.sleep(1.0)
@@ -77,6 +80,50 @@ async def prematch():
     await actuators.position_defensive_laterale()
     await asyncio.sleep(0.5)
 
+    # Lidar
+    robot._adversary_detection_enable = False
+    await lidar.start()
+
+    # Field monitor
+    global_field_monitor = fm.FieldMonitor()
+    if (robot.start_zone==1):   # BLUE   (Y+)
+        global_field_monitor.add_region(
+            fm.RegionOfInterest(
+                name="MiddleGrabNear",
+                kind=fm.RegionKind.GrabZone,
+                center=(1.2, 0.35),
+                radius=0.2
+                )
+        )
+        global_field_monitor.add_region(
+            fm.RegionOfInterest(
+                name="MiddleGrabFar",
+                kind=fm.RegionKind.GrabZone,
+                center=(1.2,-0.35),
+                radius=0.2
+                )
+        )
+    elif (robot.start_zone==2): # YELLOW (Y-)
+        global_field_monitor.add_region(
+            fm.RegionOfInterest(
+                name="MiddleGrabNear",
+                kind=fm.RegionKind.GrabZone,
+                center=(1.2,-0.35),
+                radius=0.2
+                )
+        )
+        global_field_monitor.add_region(
+            fm.RegionOfInterest(
+                name="MiddleGrabFar",
+                kind=fm.RegionKind.GrabZone,
+                center=(1.2, 0.35),
+                radius=0.2
+                )
+        )
+    else:
+        print("No start zone!")
+    global_field_monitor_task = asyncio.create_task(global_field_monitor.run())
+
     # Dummy score
     await robot.setScore(42)
     print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
@@ -85,6 +132,7 @@ async def prematch():
     await robot.gpioSet('keyboard_led', True)
 
     await propulsion.setAccelerationLimits(1,1,20,20)
+
 
     return True
 
@@ -101,6 +149,8 @@ async def start_match():
     global start_turn_speed
     global global_long_speed
     global global_turn_speed
+    global global_field_monitor
+    global global_field_monitor_task
 
     T0 = time.time()
 
@@ -112,7 +162,7 @@ async def start_match():
     print ("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
 
     #robot._adversary_detection_enable = True
-    await lidar.start()
+    #await lidar.start()
 
     try:
         await action_0()
@@ -126,9 +176,6 @@ async def start_match():
     print ("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
     print ("T match_timer = {}".format(T1-T0))
     print ("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
-
-    # FIXME : DEBUG
-    #await action_loot_3()
 
     robot._adversary_detection_enable = True
 
@@ -171,14 +218,41 @@ async def start_match():
     print ("T match_timer = {}".format(T1-T0))
     print ("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
 
-    try:
-        #await action_42(grab_wp0=poses.Action2_grab_wp0, grab_wp1=poses.Action2_grab_wp1, drop_wp0=poses.Inter_test_wp, drop_wp1=poses.Action42_drop_wp1)
-        await action_42()
-        await asyncio.sleep(0.1)
-    except:
-        print ("EXCEPTION!")
-        await escape_procedure(poses.Action42_drop_wp1)
-        await asyncio.sleep(0.1)
+    if (global_field_monitor.regions["MiddleGrabFar"].visited_by_opponent):
+        await propulsion.pointTo(poses.Action42_grab_wp0, global_turn_speed)
+        await asyncio.sleep(global_short_sleep)
+        p0_x = propulsion.pose.position.x
+        p0_y = propulsion.pose.position.y
+        goto_loot = [
+            (p0_x, p0_y, 0),
+            poses.Action42_grab_wp0,
+            poses.Action42_drop_wp0
+        ]
+        try :
+            await propulsion.trajectorySpline(goto_loot, speed=global_long_speed)
+            await asyncio.sleep(global_short_sleep)
+        except:
+            print ("EXCEPTION!")
+            await propulsion.setEnable(False)
+            await asyncio.sleep(0.2)
+            await propulsion.setEnable(True)
+            await asyncio.sleep(0.2)
+            await propulsion.setMotorsEnable(True)
+            await asyncio.sleep(0.2)
+            await propulsion.clearError()
+            await asyncio.sleep(0.2)
+            await propulsion.moveToRetry(poses.Action42_drop_wp0, global_long_speed)
+            await asyncio.sleep(global_short_sleep)
+        await action_loot_3()
+    else:
+        try:
+            #await action_42(grab_wp0=poses.Action2_grab_wp0, grab_wp1=poses.Action2_grab_wp1, drop_wp0=poses.Inter_test_wp, drop_wp1=poses.Action42_drop_wp1)
+            await action_42()
+            await asyncio.sleep(0.1)
+        except:
+            print ("EXCEPTION!")
+            await escape_procedure(poses.Action42_drop_wp1)
+            await asyncio.sleep(0.1)
  
     T1 = time.time()
     print ("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
@@ -193,24 +267,24 @@ async def start_match():
         await escape_procedure(poses.Final_escape_wp0)
         await asyncio.sleep(0.1)
     
-    T1 = time.time()
-    print ("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
-    print ("T match_timer = {}".format(T1-T0))
-    print ("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
-    
-    if (T1-T0)<80.0:
-        try:
-            await action_loot_3()
-            await asyncio.sleep(0.1)
-        except:
-            print ("EXCEPTION!")
-            await escape_procedure(poses.Final_escape_wp0)
-            await asyncio.sleep(0.1)
-    
-        T1 = time.time()
-        print ("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
-        print ("T match_timer = {}".format(T1-T0))
-        print ("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
+    #T1 = time.time()
+    #print ("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
+    #print ("T match_timer = {}".format(T1-T0))
+    #print ("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
+    #
+    #if (T1-T0)<80.0:
+    #    try:
+    #        await action_loot_3()
+    #        await asyncio.sleep(0.1)
+    #    except:
+    #        print ("EXCEPTION!")
+    #        await escape_procedure(poses.Final_escape_wp0)
+    #        await asyncio.sleep(0.1)
+    #
+    #    T1 = time.time()
+    #    print ("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
+    #    print ("T match_timer = {}".format(T1-T0))
+    #    print ("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
 
 
     print()
@@ -1164,3 +1238,11 @@ async def aruco_x_detection_async():
 async def aruco_y_detection_async():
     cam.aruco_y_detection()
 
+@robot.sequence
+async def debug_field_monitor():
+    global global_field_monitor
+    global global_field_monitor_task
+
+    print (global_field_monitor)
+    print (global_field_monitor.regions["MiddleGrabNear"])
+    print (global_field_monitor.regions["MiddleGrabFar"])
