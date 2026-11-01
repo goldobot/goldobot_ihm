@@ -9,6 +9,8 @@ global_drop_height = 240
 global_grab_height = 180
 #global_grab_height = 190
 global_lift_prep_take = 400
+right_lift_prep_take  = 100
+left_lift_prep_take   = 1100
 
 global_grab_x_bias = 0
 
@@ -249,8 +251,8 @@ bras_d_prep_take = {
 
 @robot.sequence
 async def arm_right_prep_take():
-    global global_lift_prep_take
-    await goldo_lift_move(GoldoLift.Right, global_lift_prep_take)
+    global right_lift_prep_take
+    await goldo_lift_move(GoldoLift.Right, right_lift_prep_take)
     await asyncio.sleep(0.3)
     await servos.moveMultiple(bras_d_prep_take, speed=1)
     await asyncio.sleep(0.1)
@@ -263,25 +265,76 @@ bras_g_prep_take = {
 
 @robot.sequence
 async def arm_left_prep_take():
-    global global_lift_prep_take
-    await goldo_lift_move(GoldoLift.Left, global_lift_prep_take)
+    global left_lift_prep_take
+    await goldo_lift_move(GoldoLift.Left, left_lift_prep_take)
     await asyncio.sleep(0.3)
     await servos.moveMultiple(bras_g_prep_take, speed=1)
     await asyncio.sleep(0.1)
 
-bras_d_g_prep_take = {
-    'epaule_d': 1400,
+#bras_d_g_prep_take = {
+#    'epaule_d': 1400,
+#    'coude_d': 204,
+#    'epaule_g': 2740,
+#    'coude_g': 824,
+#}
+bras_d_g_prep_take_step0 = {
+    'epaule_d': 1000,
     'coude_d': 204,
-    'epaule_g': 2740,
+    'epaule_g': 3090,
     'coude_g': 824,
+}
+
+bras_d_g_prep_take_step1 = {
+    'epaule_d': 1000,
+    'coude_d': 525,
+    'epaule_g': 3090,
+    'coude_g': 505,
 }
 
 @robot.sequence
 async def arm_right_left_prep_take():
-    global global_lift_prep_take
-    await goldo_lifts_move(pos = global_lift_prep_take, speed = 80)
+    global left_lift_prep_take
+    global right_lift_prep_take
+    await goldo_lift_move(GoldoLift.Left, left_lift_prep_take)
+    await goldo_lift_move(GoldoLift.Right, right_lift_prep_take)
     await asyncio.sleep(0.3)
-    await servos.moveMultiple(bras_d_g_prep_take, speed=1)
+    await servos.moveMultiple(bras_d_g_prep_take_step0, speed=1)
+    await asyncio.sleep(0.1)
+    await servos.moveMultiple(bras_d_g_prep_take_step1, speed=1)
+    await asyncio.sleep(0.1)
+
+
+bras_d_g_take_open_step0 = {
+    'epaule_d': 2000,
+    'coude_d': 525,
+    'epaule_g': 2140,
+    'coude_g': 505,
+}
+
+@robot.sequence
+async def arm_right_left_take_open():
+    global left_lift_prep_take
+    global right_lift_prep_take
+    await goldo_lift_move(GoldoLift.Left, left_lift_prep_take+20)
+    await goldo_lift_move(GoldoLift.Right, right_lift_prep_take+10)
+    await servos.moveMultiple(bras_d_g_take_open_step0, speed=0.05)
+    await asyncio.sleep(0.1)
+
+bras_d_g_take_high_step0 = {
+    'epaule_d': 2000,
+    'coude_d': 204,
+    'epaule_g': 2140,
+    'coude_g': 824,
+}
+
+@robot.sequence
+async def arm_right_left_take_high():
+    pos=1150
+    await servos.liftsRaw(int((pos+global_lift_left_bias)*global_lift_factor), 8, 0, 0)
+    await asyncio.sleep(0.1)
+    await servos.liftsRaw(0, 0, int(pos*global_lift_factor), 6)
+    await asyncio.sleep(0.1)
+    await servos.moveMultiple(bras_d_g_take_high_step0, speed=0.2)
     await asyncio.sleep(0.1)
 
 

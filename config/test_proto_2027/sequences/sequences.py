@@ -13,6 +13,8 @@ import time
 # import modules from sequence directory
 from . import positions as pos
 from . import robot_config as rc
+from . import recalages
+from . import actuators
 
 # objects included in the _sequences_globals of RobotMain class, defined in robot_main.py of goldo_main, are available as global variables
 # those objects are used to interact with the robot (send commands, read data)
@@ -142,7 +144,7 @@ async def action_0():
     print("=======")
     print()
 
-    await actuators.arm_right_left_prep_take()
+    #await actuators.arm_right_left_prep_take()
     await asyncio.sleep(0.5)
 
     await propulsion.pointTo(poses.Action0_traj0_wp1, global_turn_speed)
@@ -152,11 +154,17 @@ async def action_0():
     Action0_traj0 = [
         (p0_x, p0_y, 0),
         poses.Action0_traj0_wp1,
-        poses.Action0_traj0_wp2
+        poses.Action0_traj0_wp2,
+        poses.Action0_traj0_wp3
     ]
     await propulsion.trajectorySpline(Action0_traj0, speed=global_long_speed)
+    await asyncio.sleep(0.1)
+
+    await propulsion.faceDirection(poses.Start_pose[2], 1)
+    await asyncio.sleep(0.1)
 
     # FIXME : TODO
+    await asyncio.sleep(60.0)
 
 
 #=================================================================================

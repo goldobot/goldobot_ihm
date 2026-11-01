@@ -19,15 +19,16 @@ class Side:
 # BLUE : ZONE 1
 class BluePoses:
     # Poses de depart
-    Start_pose        = (  1.000,  0.200, -180)
+    Start_pose        = (  1.000,  1.200,  -90)
 
     # TEST PROTO
-    Action0_traj0_wp1 = (  1.605,  1.084,  90)
-    Action0_traj0_wp2 = (  1.634,  0.800,   0)
+    Action0_traj0_wp1 = (  1.000,  1.000,  -90)
+    Action0_traj0_wp2 = (  1.500,  0.500,  -90)
+    Action0_traj0_wp3 = (  1.500,  0.300,  -90)
 
-    Final_escape_wp0  = (  1.000,  1.000, -180)
-    Final_escape_wp1  = (  1.000,  1.300, -180)
-    Final_pose_wp     = (  1.000,  1.300,    0)
+    Final_escape_wp0  = (  1.000,  1.000,   90)
+    Final_escape_wp1  = (  1.000,  1.200,   90)
+    Final_pose_wp     = (  1.000,  1.200,   90)
 
 
 # YELLOW : ZONE 2
@@ -38,6 +39,7 @@ class YellowPoses:
     # REAL
     Action0_traj0_wp1 = symetrie(BluePoses.Action0_traj0_wp1)
     Action0_traj0_wp2 = symetrie(BluePoses.Action0_traj0_wp2)
+    Action0_traj0_wp3 = symetrie(BluePoses.Action0_traj0_wp3)
 
     Final_escape_wp0  = symetrie(BluePoses.Final_escape_wp0)
     Final_escape_wp1  = symetrie(BluePoses.Final_escape_wp1)
